@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Köstebek - Konu Analizi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-mor: #6A5ACD;
+            --bg-krem: #FFFACD;
+        }
+        body { background-color: var(--bg-krem); }
+        .header-mor { background-color: var(--primary-mor); color: white; }
+        .progress { height: 25px; }
+        .table-dark { background-color: var(--primary-mor) !important; color: white; }
+    </style>
+</head>
+<body>
+
+<header class="header-mor py-3">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h1 class="h4 mb-0"><span class="fw-bold">KÖSTEBEK</span></h1>
+        <a href="{% url 'profil' %}" class="btn btn-outline-light">Profile Dön</a>
+    </div>
+</header>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4" style="color: #4B0082;">🧠 Konu Bazlı Başarı Analizi</h1>
+
+    {% if konu_istatistikleri %}
+        <p class="lead text-center text-muted">Aşağıdaki tablo, çözdüğünüz konulara göre başarı oranlarınızı gösterir. En üstteki konular, **zayıf noktalarınızı** işaret eder.</p>
+
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <table class="table table-hover table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Konu Adı</th>
+                            <th scope="col" class="text-center">Çözülen</th>
+                            <th scope="col" class="text-center">Doğru</th>
+                            <th scope="col" class="text-center">Yanlış</th>
+                            <th scope="col" class="text-center">Başarı Oranı</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for istatistik in konu_istatistikleri %}
+                        <tr>
+                            <td class="align-middle fw-bold">{{ istatistik.konu_adi }}</td>
+                            <td class="text-center align-middle">{{ istatistik.toplam_cozulen }}</td>
+                            <td class="text-center align-middle text-success">{{ istatistik.toplam_dogru }}</td>
+                            <td class="text-center align-middle text-danger">{{ istatistik.toplam_yanlis }}</td>
+                            <td class="text-center align-middle">
+                                <div class="progress">
+                                    {% with oran=istatistik.basari_orani|floatformat:0 %}
+                                    <div class="progress-bar 
+                                        {% if oran >= 75 %}bg-success
+                                        {% elif oran >= 50 %}bg-warning
+                                        {% else %}bg-danger{% endif %}" 
+                                        role="progressbar" 
+                                        style="width: {{ oran }}%;" 
+                                        aria-valuenow="{{ oran }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                        {{ oran|default:"0" }}%
+                                    </div>
+                                    {% endwith %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            Henüz hiç soru çözmediniz. Analizleri görmek için lütfen bir Karşılaşma başlatın!
+        </div>
+    {% endif %}
+    
+    <div class="text-center mt-5">
+        <a href="{% url 'profil' %}" class="btn btn-primary">
+            &larr; Profile Geri Dön
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
