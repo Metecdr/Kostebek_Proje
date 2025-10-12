@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Köstebek - YKS Liderlik Arenası</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-mor: #6A5ACD;
+            --accent-turuncu: #FF8C00;
+            --bg-krem: #FFFACD;
+        }
+        body {
+            background-color: var(--bg-krem);
+        }
+        .header-mor {
+            background-color: var(--primary-mor);
+            color: white;
+        }
+        .btn-vurgu {
+            background-color: var(--accent-turuncu);
+            border-color: var(--accent-turuncu);
+            color: white;
+        }
+        .btn-vurgu:hover {
+            background-color: #e57e00;
+            border-color: #e57e00;
+        }
+        .form-card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="header-mor py-3">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h1 class="h4 mb-0">
+            <span class="fw-bold">KÖSTEBEK</span>
+            <small class="d-block mt-1 fs-6 text-opacity-75">YKS'de Zirveye Kazı</small>
+        </h1>
+        
+        <div>
+            <button class="btn btn-outline-light me-2">Giriş Yap</button>
+            <button class="btn btn-vurgu">Kayıt Ol</button>
+        </div>
+    </div>
+</header>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        
+        <div class="col-md-5">
+            <div class="p-4 bg-white form-card">
+                <h2 class="text-center mb-4 text-dark">Hemen Kayıt Ol</h2>
+                
+                {% if hata %}
+                    <div class="alert alert-danger" role="alert">{{ hata }}</div>
+                {% endif %}
+
+                <form method="POST"> 
+                    {% csrf_token %} 
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Kullanıcı Adı</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-posta Adresi</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Şifre</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-vurgu w-100 mb-3">Kayıt Ol ve Başla</button>
+                    
+                    <p class="text-center my-3">veya</p>
+
+                    <a href="#" class="btn btn-outline-secondary w-100 mb-2">
+                        Google ile Devam Et
+                    </a>
+                    
+                    <hr class="my-4">
+                    
+                    <p class="text-center">Zaten hesabın var mı? <a href="#" class="text-decoration-none" style="color: var(--primary-mor);">Giriş Yap</a></p>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-5 d-flex align-items-center ps-5">
+            <div>
+                <h3 class="display-6 fw-bold" style="color: var(--primary-mor);">YKS'de Rakipsiz Ol!</h3>
+                <p class="lead">Köstebek ile binlerce öğrenci arasında yerini al, anlık sıralamanı gör ve eksiklerini kapat.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><span class="btn-vurgu rounded-circle me-2 p-1">&check;</span> Liderlik Tablosunda Yüksel</li>
+                    <li class="mb-2"><span class="btn-vurgu rounded-circle me-2 p-1">&check;</span> Konu Bazlı Yarışmalara Katıl</li>
+                    <li class="mb-2"><span class="btn-vurgu rounded-circle me-2 p-1">&check;</span> Kendi Profili Düzenle</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

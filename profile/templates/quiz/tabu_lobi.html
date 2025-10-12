@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Sayfanın genel arkaplanı ve yazı tipi */
+    body {
+        background-color: #7B68EE;
+        font-family: 'Nunito', sans-serif;
+        color: white;
+    }
+    
+    .lobi-container {
+        padding-top: 50px;
+    }
+
+    .lobi-header h1 {
+        font-weight: 900;
+        font-size: 4rem;
+    }
+    .lobi-header p {
+        font-size: 1.5rem;
+        color: #e0e0e0;
+    }
+    
+    .game-card {
+        background-color: white;
+        color: #333;
+        border-radius: 25px;
+        padding: 40px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        margin-top: 30px;
+    }
+    
+    .form-label {
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+    
+    .form-control-lg {
+        border-radius: 15px;
+        padding: 15px;
+        background-color: #F2F0FF;
+        border: 2px solid #D9D2FF;
+        color: #333;
+        font-weight: 700;
+    }
+
+    .form-control-lg:focus {
+        background-color: #E8E4FF;
+        color: #333;
+        box-shadow: none;
+        border-color: #7B68EE;
+    }
+    
+    .form-control-lg::placeholder {
+        color: #6c757d;
+    }
+    
+    /* --- YENİ EKLENEN BÖLÜM --- */
+    /* Buton ve logoları içeren container */
+    .button-container {
+        display: flex;
+        justify-content: center; /* Her şeyi ortala */
+        align-items: center;     /* Dikey olarak hizala */
+        margin-top: 20px;
+    }
+
+    /* Logoların boyutu */
+    .logo-image {
+        height: 60px; /* Logo yüksekliği, buradan ayarlayabilirsin */
+    }
+
+    /* Sağdaki logonun ayna görüntüsü olması için */
+    .logo-image.flip {
+        transform: scaleX(-1);
+    }
+    
+    /* Butonun logolardan biraz uzak durması için */
+    .btn-pill-custom {
+        margin: 0 25px; /* Sağ ve sol boşluk */
+    /* --- YENİ BÖLÜM SONU --- */
+        
+        padding: 15px 40px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        border-radius: 50px;
+        border: none;
+    }
+
+    .navbar {
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+
+<div class="container text-center lobi-container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+
+            <div class="lobi-header mb-4">
+                <h1>KÖSTEBEK TABU</h1>
+                <p>Takım isimlerini belirleyerek rekabete başla!</p>
+            </div>
+
+            <div class="game-card">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="takim_a" class="form-label">1. Takım Adı</label>
+                        <input type="text" class="form-control form-control-lg text-center" id="takim_a" name="takim_a" value="Takım A" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="takim_b" class="form-label">2. Takım Adı</label>
+                        <input type="text" class="form-control form-control-lg text-center" id="takim_b" name="takim_b" value="Takım B" required>
+                    </div>
+
+                    <div class="button-container">
+                        <img src="{% static 'images/kostebek_sol.png' %}" alt="Köstebek Logo" class="logo-image">
+                        <button type="submit" class="btn btn-success btn-pill-custom">Oyunu Başlat!</button>
+                        <img src="{% static 'images/kostebek_sag.png' %}" alt="Köstebek Logo" class="logo-image flip">
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

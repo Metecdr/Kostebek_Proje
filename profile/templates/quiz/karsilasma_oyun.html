@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    body { background-color: #f4f4f9; }
+    .game-container { max-width: 800px; margin: 50px auto; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .player-card { padding: 20px; border-radius: 10px; background: #f8f9fa; border: 1px solid #dee2e6; }
+    .vs-icon { font-size: 3rem; font-weight: 700; color: #ffc107; }
+    .cevap-btn { margin-top: 10px; padding: 15px; font-size: 1.2rem; }
+</style>
+
+<div class="container text-center game-container">
+    <h1 class="mb-4">YKS Karşılaşması</h1>
+    <div class="row align-items-center mb-4">
+        <div class="col-5"><div class="player-card"><h3>{{ oda.oyuncu1.username }}</h3><p class="fs-2 fw-bold" id="oyuncu1-skor">{{ oda.oyuncu1_skor }}</p></div></div>
+        <div class="col-2"><span class="vs-icon">VS</span></div>
+        <div class="col-5"><div class="player-card"><h3 id="oyuncu2-isim">{% if oda.oyuncu2 %}{{ oda.oyuncu2.username }}{% else %}...{% endif %}</h3><p class="fs-2 fw-bold" id="oyuncu2-skor">{{ oda.oyuncu2_skor }}</p></div></div>
+    </div>
+    <hr>
+    <div id="bekleme-mesaji" {% if oda.oyuncu2 %}class="d-none"{% endif %}>
+        <h2>Rakip Bekleniyor...</h2>
+        <div class="spinner-border text-primary mt-3" role="status"></div>
+    </div>
+    <div id="oyun-alani" class="d-none">
+        <h3 id="soru-metni" class="mb-4"></h3>
+        <div id="cevap-secenekleri" class="d-grid gap-2"></div>
+        <div id="sonuc-mesaji" class="mt-3 fs-4"></div>
+    </div>
+</div>
+
+<script>
+    const odaId = '{{ oda.oda_id }}';
+    const currentUserUsername = "{{ request.user.username }}";
+    const oyuncu1Username = "{{ oda.oyuncu1.username }}";
+    const csrftoken = getCookie('csrftoken');
+    
+    const beklemeMesaji = document.getElementById('bekleme-mesaji');
+    const oyunAlani = document.getElementById('oyun-alani');
+    const oyuncu1SkorEl = document.getElementById('oyuncu1-skor');
+    const oyuncu2SkorEl = document.getElementById('oyuncu2-skor');
+    const oyuncu2IsimEl = document.getElementById('oyuncu2-isim');
+    const soruMetniEl = document.getElementById('soru-metni');
+    const cevapSecenekleriEl = document.getElementById('cevap-secenekleri');
+    const sonucMesajiEl = document.getElementById('sonuc-mesaji');
+
+    let amIPlayer1 = (currentUserUsername === oyuncu1Username);
+    let pollingInterval;
+
+    function durumGuncelle() {
+        fetch(`/quiz/karsilasma/oda/${odaId}/durum/`)
+            .then(response => response.json())
+            .then(data => {
+                oyuncu1SkorEl.textContent = data.oyuncu1_skor;
+                oyuncu2SkorEl.textContent = data.oyuncu2_skor;
+                if (data.oyuncu2_adi && oyuncu2IsimEl.textContent === '...') {
+                    oyuncu2IsimEl.textContent = data.oyuncu2_adi;
+                }
+
+                if (data.oyun_durumu === 'oynaniyor') {
+                    beklemeMesaji.classList.add('d-none');
+                    oyunAlani.classList.remove('d-none');
+                    
+                    if (soruMetniEl.textContent !== data.soru) {
+                        soruMetniEl.textContent = data.soru;
+                        sonucMesajiEl.innerHTML = '';
+                        cevapSecenekleriEl.innerHTML = '';
+                        data.cevaplar.forEach(cevap => {
+                            const button = document.createElement('button');
+                            button.className = 'btn btn-outline-primary cevap-btn';
+                            button.textContent = cevap.metin;
+                            button.onclick = () => cevapGonder(cevap.id);
+                            cevapSecenekleriEl.appendChild(button);
+                        });
+                    }
+
+                    const userHasAnswered = amIPlayer1 ? data.oyuncu1_cevapladi : data.oyuncu2_cevapladi;
+                    if (userHasAnswered) {
+                        cevapSecenekleriEl.querySelectorAll('button').forEach(btn => btn.disabled = true);
+                        if (!data.oyuncu1_cevapladi || !data.oyuncu2_cevapladi) {
+                            sonucMesajiEl.innerHTML = '<span class="text-info">Cevabın alındı. Rakibin bekleniyor...</span>';
+                        }
+                    }
+                }
+            });
+    }
+
+    function cevapGonder(cevapId) {
+        cevapSecenekleriEl.querySelectorAll('button').forEach(btn => btn.disabled = true);
+        sonucMesajiEl.innerHTML = '<span class="text-info">Cevabın gönderildi...</span>';
+        fetch(`/quiz/karsilasma/oda/${odaId}/durum/`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrftoken},
+            body: JSON.stringify({'cevap_id': cevapId})
+        }).then(() => durumGuncelle());
+    }
+
+    function getCookie(name) { let c = null; if(document.cookie && document.cookie !== ''){const C = document.cookie.split(';');for (let i = 0; i < C.length; i++){const c2 = C[i].trim();if(c2.substring(0,name.length + 1) === (name + '=')){c = decodeURIComponent(c2.substring(name.length + 1));break;}}} return c;}
+
+    pollingInterval = setInterval(durumGuncelle, 2000);
+</script>
+{% endblock %}

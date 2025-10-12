@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Sayfanın genel arkaplanı ve yazı tipi */
+    body {
+        background-color: #FAF3E0;
+        font-family: 'Nunito', sans-serif;
+    }
+    
+    /* --- İSTEĞİN ÜZERİNE GÜNCELLENEN BÖLÜM --- */
+
+    /* Profil Kartı */
+    .profile-card {
+        background-color: white;
+        border-radius: 20px; /* Köşeleri diğer kartlarla uyumlu yapalım */
+        border: none;
+        margin-bottom: 50px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* Gölgeyi biraz daha belirgin yapalım */
+    }
+
+    /* Profil Kartının Başlığı (Header) */
+    .profile-header-custom {
+        background: linear-gradient(45deg, #7B68EE, #6A5ACD); /* Şık bir mor gradyan */
+        color: white;
+        border-top-left-radius: 20px; /* Köşeleri kartla uyumlu yapalım */
+        border-top-right-radius: 20px;
+        padding: 20px;
+        font-weight: 700;
+    }
+
+    /* Profildeki İsim ("None None") */
+    .profile-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #6A5ACD; /* Koyu mor */
+    }
+
+    /* İstatistik başlıkları ("Toplam Puan" vb.) */
+    .stat-title {
+        color: #6c757d; /* Gri bir ton */
+        font-weight: 700;
+    }
+
+    /* İstatistik rakamları ("0") */
+    .stat-number {
+        font-weight: 900;
+        font-size: 2rem;
+        color: #333;
+    }
+    
+    /* --- GÜNCELLEME SONU --- */
+
+    .section-title {
+        font-weight: 900;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .game-card-link {
+        display: block;
+        text-decoration: none;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .game-card-link:hover {
+        transform: scale(1.05);
+    }
+    
+    .game-card-link img {
+        width: 100%;
+        height: auto;
+        border-radius: 20px;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+    }
+
+    .navbar {
+        background-color: #FAF3E0 !important;
+        box-shadow: none !important;
+    }
+    .navbar .nav-link, .navbar .navbar-brand {
+        color: #555 !important;
+        font-weight: 700;
+    }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm profile-card">
+                <div class="card-header profile-header-custom">
+                    <h3>{{ user.username }} | Profil Sayfası</h3>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title profile-name">{{ profil.ad }} {{ profil.soyad }}</h5>
+                    <hr>
+                    <div class="row text-center">
+                        <div class="col">
+                            <h4 class="stat-title">Toplam Puan</h4>
+                            <p class="stat-number">{{ profil.toplam_puan }}</p>
+                        </div>
+                        <div class="col">
+                            <h4 class="stat-title">Haftalık Puan</h4>
+                            <p class="stat-number">{{ profil.haftalik_puan }}</p>
+                        </div>
+                        <div class="col">
+                            <h4 class="stat-title">Çözülen Soru</h4>
+                            <p class="stat-number">{{ profil.cozulen_soru_sayisi }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center text-center">
+        <div class="col-lg-8">
+            <h2 class="section-title">Oyun Seç</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-4 col-lg-3 mb-4">
+    <a href="{% url 'karsilasma_rakip_bul' %}" class="game-card-link">
+        <img src="{% static 'images/karsilasma.png' %}" alt="Karşılaşma">
+    </a>
+</div>
+        <div class="col-md-4 col-lg-3 mb-4">
+            <a href="{% url 'tabu_lobi' %}" class="game-card-link">
+                <img src="{% static 'images/tabu.png' %}" alt="Tabu">
+            </a>
+        </div>
+        <div class="col-md-4 col-lg-3 mb-4">
+            <a href="#" class="game-card-link">
+                <img src="{% static 'images/bulbakalim.png' %}" alt="Bul Bakalım">
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
