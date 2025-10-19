@@ -3,68 +3,647 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Köstebek - Karşılaşma</title>
+    <meta name="description" content="Köstebek YKS Karşılaşma - Rakiplerle yarış, sorular çöz, puan kazan!">
+    <title>Köstebek - Karşılaşma Arenası</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --primary-mor: #6A5ACD;
+            --dark-mor: #5a4abf;
             --accent-turuncu: #FF8C00;
             --bg-krem: #FFFACD;
+            --success-green: #4CAF50;
+            --danger-red: #F44336;
+            --shadow: 0 8px 24px rgba(0,0,0,0.12);
         }
-        body { background-color: var(--bg-krem); }
-        .header-mor { background-color: var(--primary-mor); color: white; }
-        .btn-vurgu { background-color: var(--accent-turuncu); border-color: var(--accent-turuncu); color: white; }
-        .btn-vurgu:hover { background-color: #e57e00; border-color: #e57e00; }
-        .question-card { border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px; margin-bottom: 20px; }
-        .option-label { cursor: pointer; display: block; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px; transition: all 0.2s; }
-        .option-label:hover { background-color: #f0f0f0; border-color: var(--primary-mor); }
-        .option-label input[type="radio"] { margin-right: 10px; }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+        
+        /* HEADER */
+        .header-mor {
+            background: linear-gradient(135deg, var(--primary-mor) 0%, var(--dark-mor) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-mor h1 {
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .btn-outline-light:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* PAGE TITLE */
+        .page-title {
+            font-size: 3rem;
+            font-weight: 900;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            animation: fadeInDown 0.6s ease-out;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* PROGRESS BAR */
+        .progress-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .progress-label {
+            font-weight: 700;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .progress-stats {
+            font-weight: 700;
+            color: var(--primary-mor);
+        }
+        
+        .custom-progress {
+            height: 20px;
+            border-radius: 10px;
+            background: #e9ecef;
+            overflow: hidden;
+        }
+        
+        .custom-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-green), #45a049);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        
+        /* TIMER */
+        .timer-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            border-radius: 15px;
+            padding: 15px 25px;
+            box-shadow: var(--shadow);
+            z-index: 999;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .timer {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--accent-turuncu);
+            text-align: center;
+        }
+        
+        .timer.warning {
+            color: var(--danger-red);
+            animation: shake 0.5s infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        /* QUESTION CARD */
+        .question-card {
+            background: white;
+            border: none;
+            box-shadow: var(--shadow);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+            animation-fill-mode: backwards;
+            transition: all 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+        }
+        
+        .question-header {
+            background: linear-gradient(135deg, var(--primary-mor), var(--dark-mor));
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .question-number {
+            font-weight: 800;
+            font-size: 1.3rem;
+        }
+        
+        .question-points {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            backdrop-filter: blur(10px);
+        }
+        
+        .question-body {
+            padding: 30px;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        /* OPTIONS */
+        .options-container {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .option-label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            margin-bottom: 0;
+            transition: all 0.3s ease;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-label::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(106, 90, 205, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .option-label:hover {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-color: var(--primary-mor);
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .option-label:hover::before {
+            left: 100%;
+        }
+        
+        .option-label input[type="radio"] {
+            margin-right: 15px;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: var(--primary-mor);
+        }
+        
+        .option-label.selected {
+            background: linear-gradient(135deg, #e8e4ff, #f0edff);
+            border-color: var(--primary-mor);
+            box-shadow: 0 4px 15px rgba(106, 90, 205, 0.2);
+        }
+        
+        .option-text {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.05rem;
+        }
+        
+        /* BUTTONS */
+        .btn-vurgu {
+            background: linear-gradient(135deg, var(--accent-turuncu) 0%, #ff7700 100%);
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 18px 50px;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(255, 140, 0, 0.4);
+            border-radius: 30px;
+        }
+        
+        .btn-vurgu:hover {
+            background: linear-gradient(135deg, #ff7700 0%, #e56700 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.5);
+            color: white;
+        }
+        
+        /* ALERT */
+        .alert {
+            border-radius: 15px;
+            border: none;
+            box-shadow: var(--shadow);
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* SUBMIT CONTAINER */
+        .submit-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-top: 40px;
+        }
+        
+        .submit-info {
+            margin-bottom: 20px;
+            color: #6c757d;
+            font-weight: 600;
+        }
+        
+        /* LOADING OVERLAY */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .timer-container {
+                top: auto;
+                bottom: 20px;
+                right: 50%;
+                transform: translateX(50%);
+            }
+            
+            .question-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .option-label {
+                padding: 15px;
+            }
+            
+            .btn-vurgu {
+                padding: 15px 40px;
+                font-size: 1.1rem;
+            }
+        }
     </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header class="header-mor py-3">
     <div class="container d-flex justify-content-between align-items-center">
-        <h1 class="h4 mb-0"><span class="fw-bold">KÖSTEBEK</span></h1>
-        <a href="{% url 'profil' %}" class="btn btn-outline-light">Profile Dön</a>
+        <h1 class="h4 mb-0">
+            <i class="bi bi-gem"></i> <span class="fw-bold">KÖSTEBEK</span>
+        </h1>
+        <a href="{% url 'profil' %}" class="btn btn-outline-light">
+            <i class="bi bi-arrow-left-circle"></i> Profile Dön
+        </a>
     </div>
 </header>
 
+<!-- TIMER (Optional - can be enabled with JavaScript) -->
+<div class="timer-container" id="timerContainer" style="display: none;">
+    <div class="text-center mb-2">
+        <i class="bi bi-clock-fill"></i> <small>Kalan Süre</small>
+    </div>
+    <div class="timer" id="timer">15:00</div>
+</div>
+
+<!-- MAIN CONTENT -->
 <div class="container my-5">
-    <h1 class="text-center mb-4" style="color: var(--primary-mor);">🔥 Karşılaşma Başladı!</h1>
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">
+        <i class="bi bi-lightning-charge-fill"></i> Karşılaşma Başladı!
+    </h1>
     
+    <!-- PROGRESS BAR -->
+    <div class="progress-container" id="progressContainer" style="display: none;">
+        <div class="progress-info">
+            <span class="progress-label">
+                <i class="bi bi-list-check"></i> İlerleme
+            </span>
+            <span class="progress-stats">
+                <span id="answeredCount">0</span> / <span id="totalQuestions">{{ sorular|length }}</span>
+            </span>
+        </div>
+        <div class="custom-progress">
+            <div class="custom-progress-bar" id="progressBar" style="width: 0%">0%</div>
+        </div>
+    </div>
+    
+    <!-- NO QUESTIONS ALERT -->
     {% if not sorular %}
     <div class="alert alert-warning text-center" role="alert">
-        Şu anda veritabanında yeterli soru bulunmamaktadır. Lütfen Admin panelinden soru ekleyin.
+        <i class="bi bi-exclamation-triangle-fill me-2" style="font-size: 2rem;"></i>
+        <h4 class="mb-3">Henüz Soru Yok!</h4>
+        <p class="mb-0">Şu anda veritabanında yeterli soru bulunmamaktadır. Lütfen Admin panelinden soru ekleyin.</p>
     </div>
     {% else %}
 
-    <form method="POST" action="{% url 'karsilasma_sonuc' %}">
+    <!-- QUESTIONS FORM -->
+    <form method="POST" action="{% url 'karsilasma_sonuc' %}" id="quizForm">
         {% csrf_token %}
         
         {% for soru in sorular %}
-        <div class="card question-card p-4">
-            <h5 class="card-title fw-bold mb-3">Soru {{ forloop.counter }} - (Puan: {{ soru.puan }})</h5>
-            <p class="card-text">{{ soru.metin }}</p>
-            <div class="cevap-secenekleri mt-3">
-                {% for cevap in soru.cevap_set.all %}
-                <label class="option-label">
-                    <input type="radio" name="soru_{{ soru.id }}" value="{{ cevap.id }}" required>
-                    {{ cevap.metin }}
-                </label>
-                {% endfor %}
+        <div class="question-card" style="animation-delay: {{ forloop.counter0|add:'0.1' }}s">
+            <div class="question-header">
+                <span class="question-number">
+                    <i class="bi bi-question-circle-fill"></i> Soru {{ forloop.counter }}
+                </span>
+                <span class="question-points">
+                    <i class="bi bi-star-fill"></i> {{ soru.puan }} Puan
+                </span>
+            </div>
+            
+            <div class="question-body">
+                <p class="question-text">{{ soru.metin }}</p>
+                
+                <div class="options-container">
+                    {% for cevap in soru.cevap_set.all %}
+                    <label class="option-label" data-question="{{ soru.id }}">
+                        <input type="radio" name="soru_{{ soru.id }}" value="{{ cevap.id }}" required>
+                        <span class="option-text">{{ forloop.counter|upper|slice:":1" }}) {{ cevap.metin }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
             </div>
         </div>
         {% endfor %}
 
-        <div class="text-center mt-5">
-            <button type="submit" class="btn btn-vurgu btn-lg">Sınavı Bitir ve Sonuçları Gör</button>
+        <!-- SUBMIT CONTAINER -->
+        <div class="submit-container">
+            <div class="submit-info">
+                <i class="bi bi-info-circle-fill"></i> 
+                Tüm soruları cevapladığınızdan emin olun!
+            </div>
+            <button type="submit" class="btn btn-vurgu" id="submitBtn">
+                <i class="bi bi-check-circle-fill"></i> Sınavı Bitir ve Sonuçları Gör
+            </button>
         </div>
     </form>
     
     {% endif %}
 </div>
 
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+        <div class="spinner"></div>
+        <h3>Cevaplarınız Değerlendiriliyor...</h3>
+        <p>Lütfen bekleyin</p>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JS -->
+<script>
+    // Seçenek seçme animasyonu
+    const optionLabels = document.querySelectorAll('.option-label');
+    optionLabels.forEach(label => {
+        const radio = label.querySelector('input[type="radio"]');
+        
+        radio.addEventListener('change', function() {
+            // Aynı sorudaki diğer seçeneklerin selected class'ını kaldır
+            const questionId = label.dataset.question;
+            document.querySelectorAll(`.option-label[data-question="${questionId}"]`).forEach(l => {
+                l.classList.remove('selected');
+            });
+            
+            // Seçilen seçeneğe selected class ekle
+            if (this.checked) {
+                label.classList.add('selected');
+            }
+            
+            // İlerleme çubuğunu güncelle
+            updateProgress();
+        });
+    });
+    
+    // İlerleme çubuğu fonksiyonu
+    function updateProgress() {
+        const totalQuestions = document.querySelectorAll('.question-card').length;
+        const questions = document.querySelectorAll('[name^="soru_"]');
+        const uniqueQuestions = [...new Set([...questions].map(q => q.name))];
+        let answeredCount = 0;
+        
+        uniqueQuestions.forEach(name => {
+            const radios = document.querySelectorAll(`[name="${name}"]`);
+            const isAnswered = [...radios].some(radio => radio.checked);
+            if (isAnswered) answeredCount++;
+        });
+        
+        const percentage = Math.round((answeredCount / totalQuestions) * 100);
+        
+        // Progress bar'ı güncelle
+        const progressBar = document.getElementById('progressBar');
+        const answeredCountEl = document.getElementById('answeredCount');
+        const progressContainer = document.getElementById('progressContainer');
+        
+        if (progressBar && answeredCountEl) {
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+            answeredCountEl.textContent = answeredCount;
+            
+            // İlk cevap verildiğinde progress bar'ı göster
+            if (answeredCount > 0) {
+                progressContainer.style.display = 'block';
+            }
+        }
+    }
+    
+    // Form submit
+    const quizForm = document.getElementById('quizForm');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    
+    if (quizForm) {
+        quizForm.addEventListener('submit', function(e) {
+            // Loading overlay göster
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'flex';
+            }
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+    
+    // Scroll animasyonu
+    window.addEventListener('scroll', function() {
+        const questionCards = document.querySelectorAll('.question-card');
+        questionCards.forEach(card => {
+            const rect = card.getBoundingClientRect();
+            if (rect.top < window.innerHeight * 0.9) {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }
+        });
+    });
+    
+    // Sayfa yüklendiğinde total questions'ı ayarla
+    window.addEventListener('load', function() {
+        const totalQuestionsEl = document.getElementById('totalQuestions');
+        if (totalQuestionsEl) {
+            const totalQuestions = document.querySelectorAll('.question-card').length;
+            totalQuestionsEl.textContent = totalQuestions;
+        }
+    });
+    
+    // Timer (Opsiyonel - aktif etmek için timerContainer'ın display'ini değiştirin)
+    let timeLeft = 900; // 15 dakika
+    
+    function startTimer() {
+        const timerEl = document.getElementById('timer');
+        const timerContainer = document.getElementById('timerContainer');
+        
+        if (!timerEl || !timerContainer) return;
+        
+        const interval = setInterval(function() {
+            timeLeft--;
+            
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            
+            timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Son 2 dakikada warning class ekle
+            if (timeLeft <= 120) {
+                timerEl.classList.add('warning');
+            }
+            
+            // Süre bittiğinde
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                alert('Süre doldu! Form otomatik olarak gönderiliyor.');
+                if (quizForm) quizForm.submit();
+            }
+        }, 1000);
+    }
+    
+    // Timer'ı başlatmak için yorumu kaldırın:
+    // startTimer();
+</script>
+
 </body>
 </html>

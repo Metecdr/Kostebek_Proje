@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Köstebek - Liderlik Tablosu</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-mor: #6A5ACD;
+            --accent-turuncu: #FF8C00;
+            --bg-krem: #FFFACD;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-krem) 0%, #FFF8DC 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .header-mor {
+            background: linear-gradient(135deg, var(--primary-mor) 0%, #5a4abf 100%);
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .liderlik-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .liderlik-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .lider-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .lider-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .lider-sira {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            margin-right: 15px;
+        }
+        
+        .sira-1 { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .sira-2 { background: linear-gradient(135deg, #C0C0C0, #A8A8A8); }
+        .sira-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); }
+        .sira-other { background: linear-gradient(135deg, var(--primary-mor), #5a4abf); }
+        
+        .lider-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tab-button {
+            background: white;
+            border: 2px solid var(--primary-mor);
+            color: var(--primary-mor);
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button:hover, .tab-button.active {
+            background: var(--primary-mor);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .kullanici-sira-card {
+            background: linear-gradient(135deg, var(--primary-mor), #5a4abf);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header-mor py-3 shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h1 class="h4 mb-0">
+            <i class="bi bi-gem"></i> <span class="fw-bold">KÖSTEBEK YKS</span>
+        </h1>
+        <div>
+            <a href="{% url 'profil' %}" class="btn btn-outline-light me-2">
+                <i class="bi bi-person-circle"></i> Profilim
+            </a>
+            <a href="{% url 'cikis' %}" class="btn btn-outline-light">
+                <i class="bi bi-box-arrow-right"></i> Çıkış
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container my-5">
+    
+    <!-- Kullanıcı Sırası -->
+    <div class="kullanici-sira-card">
+        <h2 class="mb-3">
+            <i class="bi bi-trophy-fill"></i> Senin Sıran
+        </h2>
+        <h1 class="display-3 fw-bold">{{ kullanici_sira }}.</h1>
+        <p class="mb-0">Toplam Puan: <strong>{{ request.user.profil.toplam_puan }}</strong></p>
+    </div>
+    
+    <!-- Liderlik Kategorileri -->
+    <div class="text-center mb-4">
+        <h3 class="mb-3">Liderlik Kategorileri</h3>
+        <a href="{% url 'liderlik_genel' %}" class="tab-button">
+            <i class="bi bi-star-fill"></i> Genel Liderlik
+        </a>
+        <a href="{% url 'liderlik_oyun_modu' %}?mod=karsilasma" class="tab-button">
+            <i class="bi bi-controller"></i> Karşılaşma
+        </a>
+        <a href="{% url 'liderlik_oyun_modu' %}?mod=bul_bakalim" class="tab-button">
+            <i class="bi bi-lightbulb-fill"></i> Bul Bakalım
+        </a>
+        <a href="{% url 'liderlik_ders' %}?ders=matematik" class="tab-button">
+            <i class="bi bi-calculator"></i> Dersler
+        </a>
+    </div>
+    
+    <div class="row">
+        
+        <!-- Genel Liderler -->
+        <div class="col-md-6 mb-4">
+            <div class="liderlik-card">
+                <h4 class="mb-3">
+                    <i class="bi bi-trophy-fill text-warning"></i> 
+                    Top 10 Genel Liderler
+                </h4>
+                
+                {% for lider in genel_liderler %}
+                <div class="lider-item">
+                    <div class="lider-sira {% if forloop.counter == 1 %}sira-1{% elif forloop.counter == 2 %}sira-2{% elif forloop.counter == 3 %}sira-3{% else %}sira-other{% endif %}">
+                        {{ forloop.counter }}
+                    </div>
+                    
+                    {% if lider.profil_fotografi %}
+                        <img src="{{ lider.profil_fotografi.url }}" class="lider-avatar" alt="avatar">
+                    {% else %}
+                        <div class="lider-avatar bg-secondary d-flex align-items-center justify-content-center text-white">
+                            {{ lider.kullanici.username|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="flex-grow-1">
+                        <strong>{{ lider.kullanici.username }}</strong>
+                        <div class="text-muted small">{{ lider.get_alan_display }}</div>
+                    </div>
+                    
+                    <div class="text-end">
+                        <div class="fw-bold text-primary">{{ lider.toplam_puan }} 🏆</div>
+                        <div class="text-muted small">{{ lider.genel_basari_orani }}% doğru</div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">Henüz lider yok.</p>
+                {% endfor %}
+                
+                <div class="text-center mt-3">
+                    <a href="{% url 'liderlik_genel' %}" class="btn btn-outline-primary">
+                        Tümünü Gör <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Haftalık Liderler -->
+        <div class="col-md-6 mb-4">
+            <div class="liderlik-card">
+                <h4 class="mb-3">
+                    <i class="bi bi-calendar-week text-success"></i> 
+                    Bu Haftanın Liderleri
+                </h4>
+                
+                {% for lider in haftalik_liderler %}
+                <div class="lider-item">
+                    <div class="lider-sira {% if forloop.counter == 1 %}sira-1{% elif forloop.counter == 2 %}sira-2{% elif forloop.counter == 3 %}sira-3{% else %}sira-other{% endif %}">
+                        {{ forloop.counter }}
+                    </div>
+                    
+                    {% if lider.profil_fotografi %}
+                        <img src="{{ lider.profil_fotografi.url }}" class="lider-avatar" alt="avatar">
+                    {% else %}
+                        <div class="lider-avatar bg-secondary d-flex align-items-center justify-content-center text-white">
+                            {{ lider.kullanici.username|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="flex-grow-1">
+                        <strong>{{ lider.kullanici.username }}</strong>
+                        <div class="text-muted small">{{ lider.get_alan_display }}</div>
+                    </div>
+                    
+                    <div class="text-end">
+                        <div class="fw-bold text-success">{{ lider.haftalik_puan }} 🌟</div>
+                        <div class="text-muted small">{{ lider.haftalik_basari_orani }}% doğru</div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">Henüz haftalık lider yok.</p>
+                {% endfor %}
+                
+                <div class="text-center mt-3">
+                    <a href="{% url 'liderlik_genel' %}?tip=haftalik" class="btn btn-outline-success">
+                        Tümünü Gör <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Karşılaşma Liderleri -->
+        <div class="col-md-6 mb-4">
+            <div class="liderlik-card">
+                <h4 class="mb-3">
+                    <i class="bi bi-controller text-danger"></i> 
+                    Karşılaşma Liderleri
+                </h4>
+                
+                {% for lider in karsilasma_liderler %}
+                <div class="lider-item">
+                    <div class="lider-sira {% if forloop.counter == 1 %}sira-1{% elif forloop.counter == 2 %}sira-2{% elif forloop.counter == 3 %}sira-3{% else %}sira-other{% endif %}">
+                        {{ forloop.counter }}
+                    </div>
+                    
+                    <div class="flex-grow-1">
+                        <strong>{{ lider.profil.kullanici.username }}</strong>
+                        <div class="text-muted small">{{ lider.oynanan_oyun_sayisi }} oyun</div>
+                    </div>
+                    
+                    <div class="text-end">
+                        <div class="fw-bold text-danger">{{ lider.toplam_puan }} 🎮</div>
+                        <div class="text-muted small">%{{ lider.galibiyet_orani }} galibiyet</div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">Henüz lider yok.</p>
+                {% endfor %}
+                
+                <div class="text-center mt-3">
+                    <a href="{% url 'liderlik_oyun_modu' %}?mod=karsilasma" class="btn btn-outline-danger">
+                        Tümünü Gör <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Matematik Liderleri -->
+        <div class="col-md-6 mb-4">
+            <div class="liderlik-card">
+                <h4 class="mb-3">
+                    <i class="bi bi-calculator text-info"></i> 
+                    Matematik Liderleri
+                </h4>
+                
+                {% for lider in matematik_liderler %}
+                <div class="lider-item">
+                    <div class="lider-sira {% if forloop.counter == 1 %}sira-1{% elif forloop.counter == 2 %}sira-2{% elif forloop.counter == 3 %}sira-3{% else %}sira-other{% endif %}">
+                        {{ forloop.counter }}
+                    </div>
+                    
+                    <div class="flex-grow-1">
+                        <strong>{{ lider.profil.kullanici.username }}</strong>
+                        <div class="text-muted small">{{ lider.cozulen_soru }} soru</div>
+                    </div>
+                    
+                    <div class="text-end">
+                        <div class="fw-bold text-info">{{ lider.dogru_sayisi }} ✓</div>
+                        <div class="text-muted small">{{ lider.net|floatformat:2 }} net</div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">Henüz lider yok.</p>
+                {% endfor %}
+                
+                <div class="text-center mt-3">
+                    <a href="{% url 'liderlik_ders' %}?ders=matematik" class="btn btn-outline-info">
+                        Tümünü Gör <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

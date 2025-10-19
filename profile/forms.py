@@ -1,17 +1,21 @@
 from django import forms
 from .models import OgrenciProfili
 
-# Sadece OgrenciProfili modelindeki 'alan' bilgisini düzenlemeye yarayan form
 class ProfilDuzenleForm(forms.ModelForm):
     class Meta:
         model = OgrenciProfili
-        # YENİ ALANLAR EKLENDİ
         fields = ['ad', 'soyad', 'hedef_puan', 'alan']
         
-        # Form elemanlarına Bootstrap sınıfları ekleme
         widgets = {
-            'ad': forms.TextInput(attrs={'class': 'form-control'}),
-            'soyad': forms.TextInput(attrs={'class': 'form-control'}),
-            'hedef_puan': forms.NumberInput(attrs={'class': 'form-control'}),
+            'ad': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Adınız'}),
+            'soyad': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Soyadınız'}),
+            'hedef_puan': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Hedef puanınız', 'min': 0, 'max': 1000}),
             'alan': forms.Select(attrs={'class': 'form-select'})
+        }
+        
+        labels = {
+            'ad': 'Ad',
+            'soyad': 'Soyad',
+            'hedef_puan': 'Hedef Puan',
+            'alan': 'Alan'
         }

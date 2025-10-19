@@ -1,13 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    # Django Yönetim Paneli
     path('admin/', admin.site.urls),
-    
-    # Anasayfa, Giriş, Kayıt, Profil ve Liderlik URL'leri
-    path('', include('profile.urls')), 
-    
-    # Quiz (Karşılaşma) URL'leri
-    path('quiz/', include('quiz.urls')), 
+    path('', include('profile.urls')),
+    path('', include('quiz.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
