@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Köstebek - {{ sayfa_baslik }}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-mor: #6A5ACD;
+            --accent-turuncu: #FF8C00;
+            --bg-krem: #FFFACD;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-krem) 0%, #FFF8DC 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .header-mor {
+            background: linear-gradient(135deg, var(--primary-mor) 0%, #5a4abf 100%);
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .liderlik-table {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .lider-row {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+        
+        .lider-row:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+        
+        .lider-row.me {
+            background: linear-gradient(135deg, rgba(106, 90, 205, 0.1), rgba(106, 90, 205, 0.05));
+            border-left: 5px solid var(--primary-mor);
+        }
+        
+        .lider-sira {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            margin-right: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .sira-1 { 
+            background: linear-gradient(135deg, #FFD700, #FFA500); 
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        .sira-2 { 
+            background: linear-gradient(135deg, #C0C0C0, #A8A8A8); 
+            box-shadow: 0 0 20px rgba(192, 192, 192, 0.5);
+        }
+        .sira-3 { 
+            background: linear-gradient(135deg, #CD7F32, #8B4513); 
+            box-shadow: 0 0 20px rgba(205, 127, 50, 0.5);
+        }
+        .sira-other { 
+            background: linear-gradient(135deg, var(--primary-mor), #5a4abf); 
+        }
+        
+        .lider-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 20px;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .filter-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--primary-mor);
+            background: white;
+            color: var(--primary-mor);
+            border-radius: 10px;
+            margin: 5px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary-mor);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .stat-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 2px;
+        }
+        
+        .badge-puan {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .badge-basari {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+        
+        .badge-soru {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header-mor py-3 shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h1 class="h4 mb-0">
+            <i class="bi bi-gem"></i> <span class="fw-bold">KÖSTEBEK YKS</span>
+        </h1>
+        <div>
+            <a href="{% url 'liderlik' %}" class="btn btn-outline-light me-2">
+                <i class="bi bi-arrow-left"></i> Geri
+            </a>
+            <a href="{% url 'profil' %}" class="btn btn-outline-light me-2">
+                <i class="bi bi-person-circle"></i> Profilim
+            </a>
+            <a href="{% url 'cikis' %}" class="btn btn-outline-light">
+                <i class="bi bi-box-arrow-right"></i> Çıkış
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container my-5">
+    
+    <h2 class="text-center mb-4">
+        <i class="bi bi-trophy-fill text-warning"></i> {{ sayfa_baslik }}
+    </h2>
+    
+    <!-- Filtreler -->
+    <div class="filter-card">
+        <div class="row">
+            <!-- Sıralama Tipi -->
+            <div class="col-md-6 mb-3">
+                <label class="fw-bold mb-2">
+                    <i class="bi bi-sort-down"></i> Sıralama
+                </label>
+                <div>
+                    <a href="?tip=toplam&alan={{ alan_filtresi }}" 
+                       class="filter-btn {% if sirala_tipi == 'toplam' %}active{% endif %}">
+                        📊 Toplam Puan
+                    </a>
+                    <a href="?tip=haftalik&alan={{ alan_filtresi }}" 
+                       class="filter-btn {% if sirala_tipi == 'haftalik' %}active{% endif %}">
+                        📅 Bu Hafta
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Alan Filtresi -->
+            <div class="col-md-6 mb-3">
+                <label class="fw-bold mb-2">
+                    <i class="bi bi-funnel"></i> Alan
+                </label>
+                <div>
+                    {% for kod, isim in alan_tercihleri %}
+                    <a href="?tip={{ sirala_tipi }}&alan={{ kod }}" 
+                       class="filter-btn {% if alan_filtresi == kod %}active{% endif %}">
+                        {{ isim }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Liderlik Tablosu -->
+    <div class="liderlik-table">
+        
+        <!-- Tablo Başlığı -->
+        <div class="lider-row" style="background: linear-gradient(135deg, var(--primary-mor), #5a4abf); color: white; font-weight: bold;">
+            <div class="lider-sira" style="background: rgba(255,255,255,0.2);">
+                #
+            </div>
+            <div style="flex: 1;">Kullanıcı</div>
+            <div style="width: 250px; text-align: center;">İstatistikler</div>
+        </div>
+        
+        <!-- Liderler -->
+        {% for lider in liderler %}
+        <div class="lider-row {% if lider.kullanici == request.user %}me{% endif %}">
+            
+            <!-- Sıra -->
+            <div class="lider-sira {% if forloop.counter == 1 %}sira-1{% elif forloop.counter == 2 %}sira-2{% elif forloop.counter == 3 %}sira-3{% else %}sira-other{% endif %}">
+                {{ forloop.counter }}
+            </div>
+            
+            <!-- Avatar -->
+            {% if lider.profil_fotografi %}
+                <img src="{{ lider.profil_fotografi.url }}" class="lider-avatar" alt="avatar">
+            {% else %}
+                <div class="lider-avatar bg-secondary d-flex align-items-center justify-content-center text-white fw-bold" style="font-size: 1.5rem;">
+                    {{ lider.kullanici.username|slice:":1"|upper }}
+                </div>
+            {% endif %}
+            
+            <!-- Kullanıcı Bilgisi -->
+            <div style="flex: 1;">
+                <div class="fw-bold" style="font-size: 1.1rem;">
+                    {{ lider.kullanici.username }}
+                    {% if lider.kullanici == request.user %}
+                        <span class="badge bg-primary ms-2">SEN</span>
+                    {% endif %}
+                </div>
+                <div class="text-muted small">
+                    <i class="bi bi-book"></i> {{ lider.get_alan_display }}
+                    <span class="mx-2">|</span>
+                    <i class="bi bi-trophy"></i> {{ lider.unvanlar }}
+                </div>
+            </div>
+            
+            <!-- İstatistikler -->
+            <div style="width: 250px; text-align: center;">
+                {% if sirala_tipi == 'haftalik' %}
+                    <span class="stat-badge badge-puan">
+                        🌟 {{ lider.haftalik_puan }} puan
+                    </span>
+                    <span class="stat-badge badge-basari">
+                        ✓ {{ lider.haftalik_basari_orani }}%
+                    </span>
+                    <span class="stat-badge badge-soru">
+                        📝 {{ lider.haftalik_cozulen }} soru
+                    </span>
+                {% else %}
+                    <span class="stat-badge badge-puan">
+                        🏆 {{ lider.toplam_puan }} puan
+                    </span>
+                    <span class="stat-badge badge-basari">
+                        ✓ {{ lider.genel_basari_orani }}%
+                    </span>
+                    <span class="stat-badge badge-soru">
+                        📝 {{ lider.cozulen_soru_sayisi }} soru
+                    </span>
+                {% endif %}
+            </div>
+            
+        </div>
+        {% empty %}
+        <div class="lider-row">
+            <div class="text-center w-100 py-5 text-muted">
+                <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                <p class="mt-3">Henüz lider yok. İlk sen ol! 🚀</p>
+            </div>
+        </div>
+        {% endfor %}
+        
+    </div>
+    
+    <!-- Bilgi Notu -->
+    <div class="alert alert-info mt-4" role="alert">
+        <i class="bi bi-info-circle-fill"></i> 
+        <strong>Not:</strong> 
+        {% if sirala_tipi == 'haftalik' %}
+            Haftalık liderlik her Pazartesi sıfırlanır.
+        {% else %}
+            Toplam puanlara göre sıralama yapılmaktadır.
+        {% endif %}
+    </div>
+    
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

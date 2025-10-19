@@ -1,0 +1,327 @@
+<!-- ROZET KAZANMA BİLDİRİMİ -->
+<div id="rozetBildirimModal" class="rozet-modal" style="display: none;">
+    <div class="rozet-modal-overlay" onclick="closeRozetModal()"></div>
+    <div class="rozet-modal-content">
+        <button class="rozet-modal-close" onclick="closeRozetModal()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+        
+        <div class="rozet-animation">
+            <div class="rozet-icon-container">
+                <div class="rozet-glow"></div>
+                <span class="rozet-icon" id="rozetIcon">🏆</span>
+            </div>
+        </div>
+        
+        <h2 class="rozet-title">🎉 TEBRİKLER! 🎉</h2>
+        <h3 class="rozet-name" id="rozetName">Yeni Rozet Kazandın!</h3>
+        <p class="rozet-description" id="rozetDescription">Harika bir başarı!</p>
+        
+        <button class="rozet-close-btn" onclick="closeRozetModal()">
+            <i class="bi bi-check-circle-fill"></i> Harika!
+        </button>
+    </div>
+</div>
+
+<!-- CONFETTI CANVAS -->
+<canvas id="confettiCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998;"></canvas>
+
+<style>
+    /* MODAL OVERLAY */
+    .rozet-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .rozet-modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    /* MODAL CONTENT */
+    .rozet-modal-content {
+        position: relative;
+        background: white;
+        border-radius: 30px;
+        padding: 50px 40px;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        z-index: 10000;
+    }
+    
+    @keyframes scaleIn {
+        from {
+            transform: scale(0.3);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+    
+    .rozet-modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #f0f0f0;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: #666;
+        transition: all 0.3s ease;
+    }
+    
+    .rozet-modal-close:hover {
+        background: #e0e0e0;
+        transform: rotate(90deg);
+    }
+    
+    /* ROZET ANIMATION */
+    .rozet-animation {
+        margin-bottom: 30px;
+    }
+    
+    .rozet-icon-container {
+        position: relative;
+        display: inline-block;
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        25% { transform: translateY(-20px) rotate(-5deg); }
+        75% { transform: translateY(-10px) rotate(5deg); }
+    }
+    
+    .rozet-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(255, 215, 0, 0.4), transparent);
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.8;
+        }
+        50% {
+            transform: translate(-50%, -50%) scale(1.2);
+            opacity: 0.4;
+        }
+    }
+    
+    .rozet-icon {
+        font-size: 8rem;
+        display: block;
+        position: relative;
+        z-index: 2;
+        animation: rotate 4s linear infinite;
+    }
+    
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    /* TEXT */
+    .rozet-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+        animation: bounce 1s ease infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .rozet-name {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .rozet-description {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 30px;
+    }
+    
+    .rozet-close-btn {
+        background: linear-gradient(135deg, #7B68EE, #6A5ACD);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .rozet-close-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(123, 104, 238, 0.4);
+    }
+    
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .rozet-modal-content {
+            padding: 40px 30px;
+        }
+        
+        .rozet-icon {
+            font-size: 6rem;
+        }
+        
+        .rozet-title {
+            font-size: 2rem;
+        }
+        
+        .rozet-name {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<script>
+    // ROZET MODAL FONKSİYONLARI
+    function showRozetModal(rozet) {
+        const modal = document.getElementById('rozetBildirimModal');
+        document.getElementById('rozetIcon').textContent = rozet.ikon;
+        document.getElementById('rozetName').textContent = rozet.ad;
+        document.getElementById('rozetDescription').textContent = rozet.aciklama;
+        
+        modal.style.display = 'flex';
+        startConfetti();
+        
+        // Ses efekti (opsiyonel)
+        // const audio = new Audio('/static/sounds/success.mp3');
+        // audio.play();
+    }
+    
+    function closeRozetModal() {
+        const modal = document.getElementById('rozetBildirimModal');
+        modal.style.display = 'none';
+        stopConfetti();
+    }
+    
+    // ESC tuşu ile kapatma
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeRozetModal();
+        }
+    });
+    
+    // CONFETTI ANİMASYONU
+    let confettiInterval;
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let confettiPieces = [];
+    
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    class ConfettiPiece {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = -20;
+            this.w = Math.random() * 10 + 5;
+            this.h = Math.random() * 5 + 5;
+            this.color = ['#FFD700', '#FFA500', '#FF6347', '#7B68EE', '#FF1493', '#00CED1'][Math.floor(Math.random() * 6)];
+            this.rotation = Math.random() * 360;
+            this.rotationSpeed = Math.random() * 10 - 5;
+            this.speedY = Math.random() * 3 + 2;
+            this.speedX = Math.random() * 2 - 1;
+        }
+        
+        update() {
+            this.y += this.speedY;
+            this.x += this.speedX;
+            this.rotation += this.rotationSpeed;
+            
+            if (this.y > canvas.height) {
+                this.y = -20;
+                this.x = Math.random() * canvas.width;
+            }
+        }
+        
+        draw() {
+            ctx.save();
+            ctx.translate(this.x + this.w / 2, this.y + this.h / 2);
+            ctx.rotate(this.rotation * Math.PI / 180);
+            ctx.fillStyle = this.color;
+            ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
+            ctx.restore();
+        }
+    }
+    
+    function startConfetti() {
+        confettiPieces = [];
+        for (let i = 0; i < 150; i++) {
+            confettiPieces.push(new ConfettiPiece());
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confettiPieces.forEach(piece => {
+                piece.update();
+                piece.draw();
+            });
+            confettiInterval = requestAnimationFrame(animate);
+        }
+        
+        animate();
+    }
+    
+    function stopConfetti() {
+        cancelAnimationFrame(confettiInterval);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        confettiPieces = [];
+    }
+</script>

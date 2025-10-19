@@ -3,73 +3,552 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Köstebek YKS oyununa kayıt ol - Ücretsiz eğitim platformu">
     <title>Köstebek - YKS Kayıt Ol</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
     <style>
         :root {
             --primary-mor: #6A5ACD;
             --accent-turuncu: #FF8C00;
             --bg-krem: #FFFACD;
+            --shadow: 0 8px 24px rgba(0,0,0,0.12);
         }
-        body { background-color: var(--bg-krem); }
-        .header-mor { background-color: var(--primary-mor); color: white; }
-        .btn-vurgu { background-color: var(--accent-turuncu); border-color: var(--accent-turuncu); color: white; }
-        .btn-vurgu:hover { background-color: #e57e00; border-color: #e57e00; }
-        .form-card { box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px; }
-        .koste-img { max-height: 250px; width: auto; }
-        .full-width-section { margin-top: 30px; }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-krem) 0%, #FFF8DC 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header-mor {
+            background: linear-gradient(135deg, var(--primary-mor) 0%, #5a4abf 100%);
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .btn-vurgu {
+            background: linear-gradient(135deg, var(--accent-turuncu) 0%, #ff7700 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 10px 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-vurgu:hover {
+            background: linear-gradient(135deg, #ff7700 0%, #e56700 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
+        }
+        
+        .btn-outline-light:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+        
+        .form-card {
+            background: white;
+            box-shadow: var(--shadow);
+            border-radius: 20px;
+            border: none;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+            transition: transform 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+        
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-mor) 0%, #5a4abf 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .form-header h2 {
+            margin: 0;
+            font-weight: 700;
+        }
+        
+        .form-header .icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .koste-img {
+            max-height: 250px;
+            width: auto;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-mor);
+            box-shadow: 0 0 0 0.2rem rgba(106, 90, 205, 0.15);
+            transform: scale(1.02);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .password-strength {
+            height: 5px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+        
+        .strength-weak {
+            background-color: #dc3545;
+            width: 33%;
+        }
+        
+        .strength-medium {
+            background-color: #ffc107;
+            width: 66%;
+        }
+        
+        .strength-strong {
+            background-color: #28a745;
+            width: 100%;
+        }
+        
+        .alert {
+            border-radius: 12px;
+            border: none;
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 12px;
+            margin-bottom: 12px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .feature-list li:hover {
+            transform: translateX(10px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        
+        .is-valid {
+            border-color: #28a745 !important;
+            padding-right: calc(1.5em + 0.75rem);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+        
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
+        
+        .invalid-feedback {
+            display: none;
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        .input-group-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            pointer-events: none;
+        }
+        
+        .form-control-with-icon {
+            padding-left: 45px;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        @media (max-width: 768px) {
+            .koste-img {
+                max-height: 200px;
+            }
+            
+            .form-header .icon {
+                font-size: 2.5rem;
+            }
+            
+            .feature-list li {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
 
-<header class="header-mor py-3">
+<!-- Header -->
+<header class="header-mor py-3 shadow-sm">
     <div class="container d-flex justify-content-between align-items-center">
-        <h1 class="h4 mb-0"><span class="fw-bold">KÖSTEBEK</span></h1>
+        <h1 class="h4 mb-0">
+            <i class="bi bi-gem"></i> <span class="fw-bold">KÖSTEBEK YKS</span>
+        </h1>
         <div>
-            <a href="{% url 'giris' %}" class="btn btn-outline-light me-2">Giriş Yap</a>
-            <a href="{% url 'kayit' %}" class="btn btn-vurgu">Kayıt Ol</a>
+            <a href="{% url 'giris' %}" class="btn btn-outline-light me-2">
+                <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+            </a>
+            <a href="{% url 'kayit' %}" class="btn btn-vurgu">
+                <i class="bi bi-person-plus"></i> Kayıt Ol
+            </a>
         </div>
     </div>
 </header>
 
+<!-- Main Content -->
 <div class="container my-5">
-    <div class="row justify-content-center">
+    <div class="row justify-content-center align-items-center">
         
-        <div class="col-md-5">
-            <div class="p-4 bg-white form-card">
-                <h2 class="text-center mb-4 text-dark">Hemen Kayıt Ol</h2>
-                {% if hata %}<div class="alert alert-danger" role="alert">{{ hata }}</div>{% endif %}
+        <!-- Form Column -->
+        <div class="col-md-5 mb-4">
+            <div class="form-card">
+                <div class="form-header">
+                    <div class="icon">
+                        <i class="bi bi-person-plus-fill"></i>
+                    </div>
+                    <h2>Hemen Kayıt Ol!</h2>
+                    <p class="mb-0">Ücretsiz hesap oluştur ve öğrenmeye başla</p>
+                </div>
+                
+                <div class="p-4">
+                    {% if hata %}
+                        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <div><strong>Hata!</strong> {{ hata }}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
 
-                <form method="POST"> 
-                    {% csrf_token %} 
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Kullanıcı Adı</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">E-posta Adresi</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Şifre</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <button type="submit" class="btn btn-vurgu w-100 mb-3">Kayıt Ol ve Başla</button>
-                    <hr class="my-4">
-                    <p class="text-center">Zaten hesabın var mı? <a href="{% url 'giris' %}" class="text-decoration-none" style="color: var(--primary-mor);">Giriş Yap</a></p>
-                </form>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show d-flex align-items-center" role="alert">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                <div>{{ message }}</div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" action="{% url 'kayit' %}"> 
+                        {% csrf_token %}
+                        
+                        <!-- Kullanıcı Adı -->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                <i class="bi bi-person"></i> Kullanıcı Adı
+                            </label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    id="username" 
+                                    name="username" 
+                                    required
+                                    minlength="3"
+                                    maxlength="150"
+                                    pattern="[a-zA-Z0-9_]+"
+                                    title="Sadece harf, rakam ve alt çizgi kullanabilirsiniz"
+                                    placeholder="ornek_kullanici"
+                                >
+                            </div>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> En az 3 karakter, sadece harf, rakam ve alt çizgi
+                            </div>
+                        </div>
+                        
+                        <!-- E-posta -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="bi bi-envelope"></i> E-posta Adresi
+                            </label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="email" 
+                                    class="form-control" 
+                                    id="email" 
+                                    name="email" 
+                                    required
+                                    placeholder="ornek@email.com"
+                                >
+                            </div>
+                        </div>
+                        
+                        <!-- Şifre -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="bi bi-lock"></i> Şifre
+                            </label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="password" 
+                                    class="form-control" 
+                                    id="password" 
+                                    name="password" 
+                                    required
+                                    minlength="8"
+                                    placeholder="••••••••"
+                                >
+                            </div>
+                            <div class="password-strength" id="passwordStrength"></div>
+                            <div class="form-text" id="passwordHelp">
+                                <i class="bi bi-shield-check"></i> En az 8 karakter, büyük/küçük harf ve rakam içermelidir
+                            </div>
+                        </div>
+                        
+                        <!-- Şifre Tekrar -->
+                        <div class="mb-3">
+                            <label for="password2" class="form-label">
+                                <i class="bi bi-lock-fill"></i> Şifre Tekrar
+                            </label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="password" 
+                                    class="form-control" 
+                                    id="password2" 
+                                    name="password2" 
+                                    required
+                                    placeholder="••••••••"  
+                                >
+                            </div>
+                            <div class="invalid-feedback" id="password2Feedback">
+                                <i class="bi bi-x-circle"></i> Şifreler eşleşmiyor!
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-vurgu w-100 mb-3 py-3">
+                            <i class="bi bi-rocket-takeoff"></i> Kayıt Ol ve Başla
+                        </button>
+                        
+                        <hr class="my-4">
+                        
+                        <p class="text-center mb-0">
+                            Zaten hesabın var mı? 
+                            <a href="{% url 'giris' %}" class="text-decoration-none fw-bold" style="color: var(--primary-mor);">
+                                Giriş Yap <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </p>
+                    </form>
+                </div>
             </div>
         </div>
-
-        <div class="col-md-7 text-center d-flex flex-column align-items-center justify-content-center">
-            <h3 class="display-6 fw-bold" style="color: var(--primary-mor);">YKS'de Zirveye Kazı!</h3>
-            <img src="https://via.placeholder.com/250x250/6A5ACD/FFFFFF?text=KOSTEBEK+Karakteri" alt="Köstebek Karakteri" class="koste-img my-3">
-            <p class="lead">TÜRKİYE'NİN DİJİTAL EĞİTİM PLATFORMU</p>
+        
+        <!-- Info Column -->
+        <div class="col-md-5 offset-md-1">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold mb-3" style="color: var(--primary-mor);">
+                    YKS'ye Hazırlanırken Eğlen!
+                </h3>
+                <p class="lead text-muted">
+                    Oyunlaştırılmış sistem ile arkadaşlarınla yarış, konuları pekiştir!
+                </p>
+            </div>
+            
+            <ul class="feature-list">
+                <li>
+                    <i class="bi bi-check-circle-fill text-success"></i> 
+                    <strong>Binlerce YKS sorusu</strong> - Tüm derslerden güncel sorular
+                </li>
+                <li>
+                    <i class="bi bi-trophy-fill text-warning"></i> 
+                    <strong>Liderlik tablosu</strong> - Arkadaşlarınla yarış
+                </li>
+                <li>
+                    <i class="bi bi-controller text-primary"></i> 
+                    <strong>Tabu ve karşılaşma</strong> - Eğlenceli oyun modları
+                </li>
+                <li>
+                    <i class="bi bi-graph-up text-info"></i> 
+                    <strong>İlerleme takibi</strong> - Detaylı performans analizi
+                </li>
+                <li>
+                    <i class="bi bi-award-fill text-danger"></i> 
+                    <strong>Rozet sistemi</strong> - Başarılarını sergi
+                </li>
+            </ul>
         </div>
-
+        
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    // Şifre gücü kontrolü
+    const passwordInput = document.getElementById('password');
+    const strengthBar = document.getElementById('passwordStrength');
+    const helpText = document.getElementById('passwordHelp');
+    
+    if (passwordInput && strengthBar && helpText) {
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+            
+            strengthBar.className = 'password-strength';
+            
+            if (strength <= 2) {
+                strengthBar.classList.add('strength-weak');
+                helpText.innerHTML = '<i class="bi bi-shield-x"></i> Zayıf şifre - Daha güçlü yapın';
+                helpText.className = 'form-text text-danger';
+            } else if (strength <= 4) {
+                strengthBar.classList.add('strength-medium');
+                helpText.innerHTML = '<i class="bi bi-shield-check"></i> Orta güçlükte şifre';
+                helpText.className = 'form-text text-warning';
+            } else {
+                strengthBar.classList.add('strength-strong');
+                helpText.innerHTML = '<i class="bi bi-shield-fill-check"></i> Güçlü şifre!';
+                helpText.className = 'form-text text-success';
+            }
+        });
+    }
+    
+    // Şifre eşleşme kontrolü
+    const password2Input = document.getElementById('password2');
+    const feedback = document.getElementById('password2Feedback');
+    
+    if (password2Input && passwordInput && feedback) {
+        password2Input.addEventListener('input', function() {
+            if (this.value !== passwordInput.value) {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+                feedback.style.display = 'block';
+            } else {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+                feedback.style.display = 'none';
+            }
+        });
+    }
+    
+    // Kullanıcı adı validasyonu
+    const usernameInput = document.getElementById('username');
+    if (usernameInput) {
+        usernameInput.addEventListener('input', function() {
+            const value = this.value;
+            const pattern = /^[a-zA-Z0-9_]+$/;
+            
+            if (value.length >= 3 && pattern.test(value)) {
+                this.classList.add('is-valid');
+                this.classList.remove('is-invalid');
+            } else if (value.length > 0) {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+            }
+        });
+    }
+    
+    // E-posta validasyonu
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+        emailInput.addEventListener('input', function() {
+            if (this.checkValidity()) {
+                this.classList.add('is-valid');
+                this.classList.remove('is-invalid');
+            } else if (this.value.length > 0) {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+            }
+        });
+    }
+    
+    // Form submit kontrolü
+    const kayitForm = document.getElementById('kayitForm');
+    if (kayitForm) {
+        kayitForm.addEventListener('submit', function(e) {
+            if (passwordInput && password2Input && passwordInput.value !== password2Input.value) {
+                e.preventDefault();
+                alert('Şifreler eşleşmiyor! Lütfen aynı şifreyi girin.');
+                password2Input.focus();
+                return false;
+            }
+            
+            if (passwordInput && passwordInput.value.length < 8) {
+                e.preventDefault();
+                alert('Şifre en az 8 karakter olmalıdır!');
+                passwordInput.focus();
+                return false;
+            }
+        });
+    }
+</script>
+
 </body>
 </html>

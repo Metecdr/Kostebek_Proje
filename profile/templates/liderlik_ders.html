@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Köstebek - {{ sayfa_baslik }}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-mor: #6A5ACD;
+            --accent-turuncu: #FF8C00;
+            --bg-krem: #FFFACD;
+            --ders-color: #17a2b8;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-krem) 0%, #FFF8DC 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .header-mor {
+            background: linear-gradient(135deg, var(--primary-mor) 0%, #5a4abf 100%);
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .liderlik-table {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .lider-row {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+        
+        .lider-row:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+        
+        .lider-row.me {
+            background: linear-gradient(135deg, rgba(23, 162, 184, 0.1), rgba(23, 162, 184, 0.05));
+            border-left: 5px solid var(--ders-color);
+        }
+        
+        .lider-sira {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            margin-right: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .sira-1 { 
+            background: linear-gradient(135deg, #FFD700, #FFA500); 
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        .sira-2 { 
+            background: linear-gradient(135deg, #C0C0C0, #A8A8A8); 
+            box-shadow: 0 0 20px rgba(192, 192, 192, 0.5);
+        }
+        .sira-3 { 
+            background: linear-gradient(135deg, #CD7F32, #8B4513); 
+            box-shadow: 0 0 20px rgba(205, 127, 50, 0.5);
+        }
+        .sira-other { 
+            background: linear-gradient(135deg, #17a2b8, #138496); 
+        }
+        
+        .filter-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--ders-color);
+            background: white;
+            color: var(--ders-color);
+            border-radius: 10px;
+            margin: 5px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--ders-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 5px;
+            display: inline-block;
+            min-width: 90px;
+        }
+        
+        .stat-card .label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+        
+        .stat-card .value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--ders-color);
+        }
+        
+        .progress-bar-custom {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--ders-color), #20c997);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .ders-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--ders-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header-mor py-3 shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h1 class="h4 mb-0">
+            <i class="bi bi-gem"></i> <span class="fw-bold">KÖSTEBEK YKS</span>
+        </h1>
+        <div>
+            <a href="{% url 'liderlik' %}" class="btn btn-outline-light me-2">
+                <i class="bi bi-arrow-left"></i> Geri
+            </a>
+            <a href="{% url 'profil' %}" class="btn btn-outline-light me-2">
+                <i class="bi bi-person-circle"></i> Profilim
+            </a>
+            <a href="{% url 'cikis' %}" class="btn btn-outline-light">
+                <i class="bi bi-box-arrow-right"></i> Çıkış
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container my-5">
+    
+    <h2 class="text-center mb-4">
+        <i class="bi bi-book-fill text-info"></i> {{ sayfa_baslik }}
+    </h2>
+    
+    <!-- Filtreler -->
+    <div class="filter-card">
+        <div class="row">
+            <!-- Ders Seçimi -->
+            <div class="col-md-8 mb-3">
+                <label class="fw-bold mb-2">
+                    <i class="bi bi-book"></i> Ders Seçimi
+                </label>
+                <div>
+                    {% for kod, isim in ders_listesi %}
+                    <a href="?ders={{ kod }}&sirala={{ sirala }}" 
+                       class="filter-btn {% if ders == kod %}active{% endif %}">
+                        {% if kod == 'matematik' %}🔢{% elif kod == 'fizik' %}⚛️{% elif kod == 'kimya' %}🧪{% elif kod == 'biyoloji' %}🧬{% elif kod == 'turkce' %}📖{% elif kod == 'tarih' %}🏛️{% elif kod == 'cografya' %}🌍{% elif kod == 'felsefe' %}💭{% elif kod == 'din' %}☪️{% elif kod == 'ingilizce' %}🇬🇧{% endif %}
+                        {{ isim }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Sıralama Tipi -->
+            <div class="col-md-4 mb-3">
+                <label class="fw-bold mb-2">
+                    <i class="bi bi-sort-down"></i> Sıralama
+                </label>
+                <div>
+                    <a href="?ders={{ ders }}&sirala=dogru" 
+                       class="filter-btn {% if sirala == 'dogru' %}active{% endif %}">
+                        ✓ Doğru
+                    </a>
+                    <a href="?ders={{ ders }}&sirala=net" 
+                       class="filter-btn {% if sirala == 'net' %}active{% endif %}">
+                        📊 Net
+                    </a>
+                    <a href="?ders={{ ders }}&sirala=oran" 
+                       class="filter-btn {% if sirala == 'oran' %}active{% endif %}">
+                        % Oran
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Liderlik Tablosu -->
+    <div class="liderlik-table">
+        
+        <!-- Tablo Başlığı -->
+        <div class="lider-row" style="background: linear-gradient(135deg, #17a2b8, #138496); color: white; font-weight: bold;">
+            <div class="lider-sira" style="background: rgba(255,255,255,0.2);">
+                #
+            </div>
+            <div class="ders-icon" style="background: rgba(255,255,255,0.2);">
+                {% if ders == 'matematik' %}🔢{% elif ders == 'fizik' %}⚛️{% elif ders == 'kimya' %}🧪{% elif ders == 'biyoloji' %}🧬{% elif ders == 'turkce' %}📖{% elif ders == 'tarih' %}🏛️{% elif ders == 'cografya' %}🌍{% elif ders == 'felsefe' %}💭{% elif ders == 'din' %}☪️{% elif ders == 'ingilizce' %}🇬🇧{% endif %}
+            </div>
+            <div style="flex: 1;">Öğrenci</div>
+            <div style="width: 450px; text-align: center;">Performans</div>
+        </div>
+        
+        <!-- Liderler -->
+        {% for lider in liderler %}
+        <div class="lider-row {% if lider.profil.kullanici == request.user %}me{% endif %}">
+            
+            <!-- Sıra -->
+            <div class="lider-sira {% if forloop.counter == 1 %}sira-1{% elif forloop.counter == 2 %}sira-2{% elif forloop.counter == 3 %}sira-3{% else %}sira-other{% endif %}">
+                {{ forloop.counter }}
+            </div>
+            
+            <!-- Ders İkonu -->
+            <div class="ders-icon">
+                {% if ders == 'matematik' %}🔢{% elif ders == 'fizik' %}⚛️{% elif ders == 'kimya' %}🧪{% elif ders == 'biyoloji' %}🧬{% elif ders == 'turkce' %}📖{% elif ders == 'tarih' %}🏛️{% elif ders == 'cografya' %}🌍{% elif ders == 'felsefe' %}💭{% elif ders == 'din' %}☪️{% elif ders == 'ingilizce' %}🇬🇧{% endif %}
+            </div>
+            
+            <!-- Kullanıcı Bilgisi -->
+            <div style="flex: 1;">
+                <div class="fw-bold" style="font-size: 1.1rem;">
+                    {{ lider.profil.kullanici.username }}
+                    {% if lider.profil.kullanici == request.user %}
+                        <span class="badge bg-info ms-2">SEN</span>
+                    {% endif %}
+                </div>
+                <div class="text-muted small">
+                    <i class="bi bi-book"></i> {{ lider.profil.get_alan_display }}
+                </div>
+                <!-- Başarı Çubuğu -->
+                <div class="progress-bar-custom">
+                    <div class="progress-fill" style="width: {{ lider.basari_orani }}%;"></div>
+                </div>
+                <small class="text-muted">%{{ lider.basari_orani|floatformat:1 }} başarı oranı</small>
+            </div>
+            
+            <!-- İstatistikler -->
+            <div style="width: 450px; text-align: center;">
+                <div class="stat-card">
+                    <div class="label">Doğru</div>
+                    <div class="value text-success">{{ lider.dogru_sayisi }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Yanlış</div>
+                    <div class="value text-danger">{{ lider.yanlis_sayisi }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Net</div>
+                    <div class="value text-primary">{{ lider.net|floatformat:2 }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Toplam</div>
+                    <div class="value text-info">{{ lider.cozulen_soru }}</div>
+                </div>
+            </div>
+            
+        </div>
+        {% empty %}
+        <div class="lider-row">
+            <div class="text-center w-100 py-5 text-muted">
+                <i class="bi bi-book" style="font-size: 3rem;"></i>
+                <p class="mt-3">Henüz bu derste soru çözen yok. İlk sen ol! 🚀</p>
+            </div>
+        </div>
+        {% endfor %}
+        
+    </div>
+    
+    <!-- Bilgi Kartları -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success">
+                        <i class="bi bi-check-circle-fill"></i> Doğru Sıralaması
+                    </h5>
+                    <p class="card-text small">En çok doğru yapan öğrenciler</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary">
+                        <i class="bi bi-graph-up"></i> Net Sıralaması
+                    </h5>
+                    <p class="card-text small">En yüksek net yapan öğrenciler</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-info">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-info">
+                        <i class="bi bi-percent"></i> Başarı Oranı
+                    </h5>
+                    <p class="card-text small">En yüksek başarı oranına sahip öğrenciler (min 10 soru)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

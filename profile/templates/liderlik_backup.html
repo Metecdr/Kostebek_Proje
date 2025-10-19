@@ -1,0 +1,556 @@
+{% load custom_filters %} 
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Köstebek YKS Liderlik Tablosu - En iyi öğrenciler arasında yerini al!">
+    <title>Köstebek - Liderlik Tablosu</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-mor: #6A5ACD;
+            --dark-mor: #5a4abf;
+            --accent-turuncu: #FF8C00;
+            --bg-krem: #FFFACD;
+            --gold: #FFD700;
+            --silver: #C0C0C0;
+            --bronze: #CD7F32;
+            --shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-krem) 0%, #FFF8DC 100%);
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh;
+        }
+        
+        /* HEADER */
+        .header-mor {
+            background: linear-gradient(135deg, var(--primary-mor) 0%, var(--dark-mor) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-mor h1 {
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        /* BUTTONS */
+        .btn-vurgu {
+            background: linear-gradient(135deg, var(--accent-turuncu) 0%, #ff7700 100%);
+            border: none;
+            color: white;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+        }
+        
+        .btn-vurgu:hover {
+            background: linear-gradient(135deg, #ff7700 0%, #e56700 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 140, 0, 0.4);
+            color: white;
+        }
+        
+        .btn-outline-light:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* PAGE TITLE */
+        .page-title {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary-mor);
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: fadeInDown 0.6s ease-out;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* FILTER BUTTONS */
+        .filter-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .filter-btn {
+            padding: 12px 30px;
+            font-weight: 700;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .filter-btn:not(.btn-vurgu):not(.btn-primary) {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        .filter-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+        
+        /* TABLE */
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.8s ease-out;
+            overflow: hidden;
+        }
+        
+        .table {
+            margin: 0;
+        }
+        
+        .table-dark {
+            background: linear-gradient(135deg, var(--primary-mor), var(--dark-mor)) !important;
+            color: white;
+        }
+        
+        .table-dark th {
+            border: none;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 18px 12px;
+        }
+        
+        .table-striped > tbody > tr {
+            transition: all 0.3s ease;
+        }
+        
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            background-color: #f8f9fa;
+        }
+        
+        .table-hover > tbody > tr:hover {
+            background: linear-gradient(90deg, #fff3e0 0%, #ffffff 100%) !important;
+            transform: scale(1.01);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .table tbody td {
+            padding: 18px 12px;
+            vertical-align: middle;
+            font-weight: 600;
+        }
+        
+        /* MEDAL STYLES */
+        .medal-rank {
+            font-weight: 900;
+            font-size: 1.3rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .medal-1 {
+            color: var(--gold);
+            text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.3);
+        }
+        
+        .medal-2 {
+            color: var(--silver);
+            text-shadow: 2px 2px 4px rgba(192, 192, 192, 0.3);
+        }
+        
+        .medal-3 {
+            color: var(--bronze);
+            text-shadow: 2px 2px 4px rgba(205, 127, 50, 0.3);
+        }
+        
+        /* BADGES */
+        .badge {
+            padding: 6px 14px;
+            font-weight: 700;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .badge:hover {
+            transform: scale(1.1);
+        }
+        
+        .badge.bg-warning {
+            background: linear-gradient(135deg, #FFD700, #FFA500) !important;
+            color: white;
+        }
+        
+        .badge.bg-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057) !important;
+        }
+        
+        /* SUCCESS RATE */
+        .success-rate {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+        
+        .success-rate.high {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        .success-rate.medium {
+            background: linear-gradient(135deg, #FF9800, #fb8c00);
+            color: white;
+        }
+        
+        .success-rate.low {
+            background: linear-gradient(135deg, #F44336, #e53935);
+            color: white;
+        }
+        
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 5rem;
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        /* BACK BUTTON */
+        .back-btn-container {
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        /* STATS CARDS */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary-mor);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            font-weight: 600;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .filter-btn {
+                font-size: 0.85rem;
+                padding: 10px 20px;
+                margin: 5px;
+            }
+            
+            .table-container {
+                padding: 15px;
+                overflow-x: auto;
+            }
+            
+            .table {
+                font-size: 0.9rem;
+            }
+            
+            .medal-rank {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header-mor py-3">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h1 class="h4 mb-0">
+            <i class="bi bi-gem"></i> <span class="fw-bold">KÖSTEBEK</span>
+        </h1>
+        <div>
+            <a href="{% url 'profil' %}" class="btn btn-outline-light me-2">
+                <i class="bi bi-person-circle"></i> Profilim
+            </a>
+            <a href="{% url 'cikis' %}" class="btn btn-vurgu">
+                <i class="bi bi-box-arrow-right"></i> Çıkış
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="container my-5">
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">
+        <i class="bi bi-trophy-fill"></i> Lider Arenası
+    </h1>
+    
+    <!-- FILTER SECTION: Sıralama Tipi -->
+    <div class="filter-section">
+        <h5 class="text-center mb-3 fw-bold">
+            <i class="bi bi-funnel-fill"></i> Sıralama Türü
+        </h5>
+        <div class="text-center">
+            <a href="{% url 'liderlik' %}?tip=toplam&alan={{ alan_filtresi }}" 
+               class="btn filter-btn {% if sirala_tipi == 'toplam' or not sirala_tipi %}btn-vurgu{% else %}btn-outline-secondary{% endif %} me-3">
+                <i class="bi bi-trophy-fill"></i> Genel Puan Sıralaması
+            </a>
+            <a href="{% url 'liderlik' %}?tip=haftalik&alan={{ alan_filtresi }}" 
+               class="btn filter-btn {% if sirala_tipi == 'haftalik' %}btn-vurgu{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-calendar-week-fill"></i> Haftalık Puan Sıralaması
+            </a>
+        </div>
+    </div>
+
+    <!-- FILTER SECTION: Alan Filtresi -->
+    <div class="filter-section">
+        <h5 class="text-center mb-3 fw-bold">
+            <i class="bi bi-book-fill"></i> Alan Filtresi
+        </h5>
+        <div class="text-center">
+            <a href="{% url 'liderlik' %}?tip={{ sirala_tipi }}&alan=genel" 
+               class="btn btn-sm filter-btn {% if alan_filtresi == 'genel' %}btn-primary{% else %}btn-secondary{% endif %} me-1 mb-2">
+                <i class="bi bi-globe"></i> TÜM ALANLAR
+            </a>
+            {% for kod, isim in alan_tercihleri %}
+            <a href="{% url 'liderlik' %}?tip={{ sirala_tipi }}&alan={{ kod }}" 
+               class="btn btn-sm filter-btn {% if alan_filtresi == kod %}btn-primary{% else %}btn-secondary{% endif %} me-1 mb-2">
+                {{ isim }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">
+                            <i class="bi bi-hash"></i> Sıra
+                        </th>
+                        <th scope="col">
+                            <i class="bi bi-person-fill"></i> Kullanıcı Adı
+                        </th>
+                        <th scope="col">
+                            <i class="bi bi-book-fill"></i> Alan
+                        </th>
+                        <th scope="col">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                            {% if sirala_tipi == 'haftalik' %}
+                                Haftalık Puan
+                            {% else %}
+                                Toplam Puan
+                            {% endif %}
+                        </th>
+                        <th scope="col">
+                            <i class="bi bi-percent"></i> Başarı Oranı
+                        </th>
+                        <th scope="col">
+                            <i class="bi bi-award-fill"></i> Unvanlar
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lider in liderler %}
+                    <tr>
+                        <th scope="row">
+                            {% if forloop.counter == 1 %}
+                                <span class="medal-rank medal-1">
+                                    <i class="bi bi-trophy-fill"></i> 1
+                                </span>
+                            {% elif forloop.counter == 2 %}
+                                <span class="medal-rank medal-2">
+                                    <i class="bi bi-trophy-fill"></i> 2
+                                </span>
+                            {% elif forloop.counter == 3 %}
+                                <span class="medal-rank medal-3">
+                                    <i class="bi bi-trophy-fill"></i> 3
+                                </span>
+                            {% else %}
+                                {{ forloop.counter }}
+                            {% endif %}
+                        </th>
+                        <td class="fw-bold">
+                            <i class="bi bi-person-circle text-primary"></i> {{ lider.kullanici.username }}
+                        </td>
+                        <td>
+                            <span class="badge bg-info">{{ lider.get_alan_display }}</span>
+                        </td>
+                        <td class="fw-bold text-primary">
+                            {% if sirala_tipi == 'haftalik' %}
+                                <i class="bi bi-star-fill text-warning"></i> {{ lider.haftalik_puan }}
+                            {% else %}
+                                <i class="bi bi-star-fill text-warning"></i> {{ lider.toplam_puan }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% with oran=lider.basari_orani|floatformat:2 %}
+                                <span class="success-rate {% if oran >= 75 %}high{% elif oran >= 50 %}medium{% else %}low{% endif %}">
+                                    <i class="bi bi-graph-up-arrow"></i> {{ oran }}%
+                                </span>
+                            {% endwith %}
+                        </td>
+                        <td>
+                            {% for unvan in lider.unvanlar|split:"," %}
+                                <span class="badge {% if forloop.first %}bg-warning{% else %}bg-secondary{% endif %}">
+                                    <i class="bi bi-award-fill"></i> {{ unvan }}
+                                </span>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <h3>Henüz Veri Yok</h3>
+                            <p>Seçilen kriterlere göre liderlik tablosunda gösterilecek kayıt bulunmuyor.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- BACK BUTTON -->
+    <div class="back-btn-container">
+        <a href="{% url 'profil' %}" class="btn btn-lg btn-vurgu">
+            <i class="bi bi-arrow-left-circle-fill"></i> Profile Geri Dön
+        </a>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JS -->
+<script>
+    // Tablo satırı animasyonları
+    const tableRows = document.querySelectorAll('tbody tr');
+    tableRows.forEach((row, index) => {
+        row.style.animation = `fadeInUp 0.5s ease-out ${index * 0.05}s forwards`;
+        row.style.opacity = '0';
+    });
+    
+    // FadeInUp animasyonu
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Madalya animasyonu
+    const medals = document.querySelectorAll('.medal-rank');
+    medals.forEach(medal => {
+        medal.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.2) rotate(10deg)';
+        });
+        medal.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1) rotate(0deg)';
+        });
+    });
+</script>
+
+</body>
+</html>
