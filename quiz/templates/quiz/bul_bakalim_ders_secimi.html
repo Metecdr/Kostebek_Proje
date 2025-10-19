@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bul Bakalım - Ders Seçimi{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">🎯 Ders Seçimi</h2>
+    <p class="text-center lead">Lütfen çözmek istediğiniz dersten soruları seçin:</p>
+    
+    <form method="POST" class="mt-4">
+        {% csrf_token %}
+        
+        <div class="row justify-content-center">
+            {% for ders in ders_secenekleri %}
+            <div class="col-md-4 mb-3">
+                <button type="submit" name="selected_ders" value="{{ ders.0 }}" class="btn btn-lg btn-primary w-100">
+                    {{ ders.1 }}
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </form>
+</div>
+{% endblock %}
