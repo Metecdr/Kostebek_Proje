@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Oyun Modları - Köstebek YKS{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4">🎮 Oyun Modları</h1>
+        <p class="lead">Eğlenerek öğren, yarışarak kazan!</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- KARŞILAŞMA MODU -->
+        <div class="col-md-6">
+            <div class="card shadow-lg h-100">
+                <div class="card-body text-center">
+                    <div class="display-1 mb-3">⚔️</div>
+                    <h3 class="card-title">Karşılaşma Modu</h3>
+                    <p class="card-text">
+                        Rakibinle 1v1 yarış! İlk doğru cevap verene bonus puan!
+                    </p>
+                    <a href="{% url 'karsilasma_rakip_bul' %}" class="btn btn-primary btn-lg">
+                        🎯 Rakip Bul
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABU OYUNU -->
+        <div class="col-md-6">
+            <div class="card shadow-lg h-100">
+                <div class="card-body text-center">
+                    <div class="display-1 mb-3">🎭</div>
+                    <h3 class="card-title">Tabu Oyunu</h3>
+                    <p class="card-text">
+                        Yasaklı kelimeleri kullanmadan anlat! Takım oyunu!
+                    </p>
+                    <a href="{% url 'tabu_lobi' %}" class="btn btn-success btn-lg">
+                        🎪 Oyuna Başla
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-lg h-100">
+                <div class="card-body text-center">
+                    <div class="display-1 mb-3">🎯</div>
+                    <h3 class="card-title">Bul Bakalım</h3>
+                     <p class="card-text">
+                        5 uzun soru, 90 saniye! 3 doğru = 1 puan kazan!
+                    </p>
+                    <a href="{% url 'bul_bakalim_basla' %}" class="btn btn-warning btn-lg">
+                        🚀 Başla
+                   </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- İSTATİSTİKLER -->
+    {% if profil %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4>📊 İstatistiklerim</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <h5>{{ profil.toplam_puan }}</h5>
+                            <p class="text-muted">Toplam Puan</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h5>{{ profil.cozulen_soru_sayisi }}</h5>
+                            <p class="text-muted">Çözülen Soru</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h5>{{ profil.genel_basari_orani }}%</h5>
+                            <p class="text-muted">Başarı Oranı</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h5>{{ profil.rozetler.count }}</h5>
+                            <p class="text-muted">Rozet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

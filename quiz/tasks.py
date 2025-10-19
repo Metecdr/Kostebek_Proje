@@ -1,12 +1,22 @@
 from background_task import background
 from django.core.management import call_command
+from django.core.management.base import CommandError
+import logging
 
-# schedule=604800 saniyede bir (7 gün) çalışacak şekilde ayarla
+logger = logging.getLogger(__name__)
+
+# Schedule: 604800 saniye = 7 gün
 @background(schedule=604800)
 def haftalik_sifirlama_gorevi():
-    print("Haftalık puan sıfırlama görevi başlatılıyor...")
+    """Haftalık puanları sıfırlar"""
+    logger.info("Haftalık puan sıfırlama görevi başlatıldı")
+    
     try:
         call_command('sifirla_haftalik_puan')
-        print("Haftalık puanlar başarıyla sıfırlandı.")
+        logger.info("Haftalık puanlar başarıyla sıfırlandı")
+        
+    except CommandError as e:
+        logger.error(f"Management komut hatası: {e}")
+        
     except Exception as e:
-        print(f"Hata oluştu: {e}")
+        logger.exception(f"Beklenmeyen hata oluştu: {e}")
