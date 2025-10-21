@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Köstebek YKS - Liderlik arenasında yerini al, rakiplerini geç, zirveye tırman!">
+    <title>Köstebek - YKS Liderlik Arenası</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-mor: #6A5ACD;
+            --dark-mor: #5a4abf;
+            --accent-turuncu: #FF8C00;
+            --bg-krem: #FFFACD;
+            --shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-krem) 0%, #FFF8DC 100%);
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh;
+        }
+        
+        /* HEADER */
+        .header-mor {
+            background: linear-gradient(135deg, var(--primary-mor) 0%, var(--dark-mor) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-logo {
+            font-weight: 900;
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .header-logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .header-logo small {
+            font-size: 0.7rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+        
+        /* BUTTONS */
+        .btn-vurgu {
+            background: linear-gradient(135deg, var(--accent-turuncu) 0%, #ff7700 100%);
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 10px 24px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+        }
+        
+        .btn-vurgu:hover {
+            background: linear-gradient(135deg, #ff7700 0%, #e56700 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 140, 0, 0.4);
+            color: white;
+        }
+        
+        .btn-outline-light {
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-light:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* FORM CARD */
+        .form-card {
+            background: white;
+            box-shadow: var(--shadow);
+            border-radius: 20px;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+            transition: transform 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+        }
+        
+        .form-card h2 {
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-mor), var(--dark-mor));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* FORM CONTROLS */
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-mor);
+            box-shadow: 0 0 0 0.2rem rgba(106, 90, 205, 0.15);
+            transform: scale(1.01);
+        }
+        
+        .form-label {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        /* ALERT */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* INFO SECTION */
+        .info-section {
+            animation: slideRight 0.8s ease-out;
+        }
+        
+        @keyframes slideRight {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .info-section h3 {
+            font-weight: 900;
+            color: var(--primary-mor);
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .info-section .lead {
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+        
+        /* FEATURE LIST */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-list li:hover {
+            transform: translateX(10px);
+            color: var(--primary-mor);
+        }
+        
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-turuncu), #ff7700);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: 700;
+            box-shadow: 0 3px 10px rgba(255, 140, 0, 0.3);
+        }
+        
+        /* SOCIAL LOGIN */
+        .btn-google {
+            background: white;
+            border: 2px solid #e0e0e0;
+            color: #333;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-google:hover {
+            border-color: #4285F4;
+            color: #4285F4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
+        }
+        
+        /* DIVIDER */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .divider span {
+            padding: 0 15px;
+            color: #6c757d;
+            font-weight: 600;
+        }
+        
+        /* ANIMATIONS */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .info-section {
+                margin-top: 40px;
+                padding: 0 !important;
+            }
+            
+            .header-logo {
+                font-size: 1.2rem;
+            }
+            
+            .form-card {
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header-mor py-3">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="header-logo">
+            <i class="bi bi-gem"></i> KÖSTEBEK
+            <small class="d-block mt-1">YKS'de Zirveye Kazı</small>
+        </div>
+        
+        <div>
+            <a href="{% url 'giris' %}" class="btn btn-outline-light me-2">
+                <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+            </a>
+            <a href="{% url 'kayit' %}" class="btn btn-vurgu">
+                <i class="bi bi-person-plus-fill"></i> Kayıt Ol
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="container my-5">
+    <div class="row justify-content-center align-items-center">
+        
+        <!-- FORM COLUMN -->
+        <div class="col-md-5 mb-4">
+            <div class="p-4 form-card">
+                <h2 class="text-center mb-4">
+                    <i class="bi bi-rocket-takeoff-fill"></i> Hemen Başla!
+                </h2>
+                
+                {% if hata %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Hata!</strong> {{ hata }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endif %}
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST" action="{% url 'kayit' %}"> 
+                    {% csrf_token %} 
+
+                    <!-- Kullanıcı Adı -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="bi bi-person-fill"></i> Kullanıcı Adı
+                        </label>
+                        <input type="text" class="form-control" id="username" name="username" required minlength="3" placeholder="ornek_kullanici">
+                    </div>
+
+                    <!-- E-posta -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            <i class="bi bi-envelope-fill"></i> E-posta Adresi
+                        </label>
+                        <input type="email" class="form-control" id="email" name="email" required placeholder="ornek@email.com">
+                    </div>
+
+                    <!-- Şifre -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock-fill"></i> Şifre
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password" required minlength="8" placeholder="••••••••">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i> En az 8 karakter
+                        </small>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-vurgu w-100 mb-3 py-3 pulse">
+                        <i class="bi bi-rocket-takeoff-fill"></i> Kayıt Ol ve Başla
+                    </button>
+                    
+                    <!-- Divider -->
+                    <div class="divider">
+                        <span>veya</span>
+                    </div>
+
+                    <!-- Google Login -->
+                    <a href="#" class="btn btn-google w-100 mb-2">
+                        <i class="bi bi-google"></i> Google ile Devam Et
+                    </a>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- Login Link -->
+                    <p class="text-center mb-0">
+                        Zaten hesabın var mı? 
+                        <a href="{% url 'giris' %}" class="text-decoration-none fw-bold" style="color: var(--primary-mor);">
+                            Giriş Yap <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <!-- INFO COLUMN -->
+        <div class="col-md-5 offset-md-1 info-section">
+            <div>
+                <h3 class="display-6">
+                    <i class="bi bi-trophy-fill text-warning"></i> YKS'de Rakipsiz Ol!
+                </h3>
+                <p class="lead">
+                    Köstebek ile binlerce öğrenci arasında yerini al, anlık sıralamanı gör ve eksiklerini kapat.
+                </p>
+                
+                <ul class="feature-list">
+                    <li>
+                        <span class="feature-icon">
+                            <i class="bi bi-trophy-fill"></i>
+                        </span>
+                        <span>Liderlik Tablosunda Yüksel</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                        </span>
+                        <span>Konu Bazlı Yarışmalara Katıl</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">
+                            <i class="bi bi-person-gear"></i>
+                        </span>
+                        <span>Kendi Profilini Düzenle</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </span>
+                        <span>İlerleme Takibi Yap</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">
+                            <i class="bi bi-award-fill"></i>
+                        </span>
+                        <span>Rozet ve Başarılar Kazan</span>
+                    </li>
+                </ul>
+                
+                <div class="mt-4 p-4" style="background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <div class="d-flex justify-content-around text-center">
+                        <div>
+                            <h4 class="fw-bold text-primary">10K+</h4>
+                            <small class="text-muted">Aktif Öğrenci</small>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold text-success">50K+</h4>
+                            <small class="text-muted">Çözülen Soru</small>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold text-danger">1000+</h4>
+                            <small class="text-muted">Rozet</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JS -->
+<script>
+    // Form validasyonu
+    const form = document.querySelector('form');
+    const username = document.getElementById('username');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    
+    form.addEventListener('submit', function(e) {
+        let valid = true;
+        
+        // Kullanıcı adı kontrolü
+        if (username.value.trim().length < 3) {
+            e.preventDefault();
+            alert('Kullanıcı adı en az 3 karakter olmalıdır!');
+            username.focus();
+            return false;
+        }
+        
+        // Şifre kontrolü
+        if (password.value.length < 8) {
+            e.preventDefault();
+            alert('Şifre en az 8 karakter olmalıdır!');
+            password.focus();
+            return false;
+        }
+    });
+    
+    // Input animasyonları
+    const inputs = document.querySelectorAll('.form-control');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+            this.parentElement.style.transition = 'all 0.3s ease';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    });
+</script>
+
+</body>
+</html>

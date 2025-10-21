@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Sayfanın genel arkaplanı ve yazı rengi */
+    body {
+        background-color: #7B68EE; /* Senin istediğin mor tonu (Orta Lacivert) */
+        font-family: 'Nunito', sans-serif; /* Daha modern bir yazı tipi */
+    }
+
+    /* Oyunun ana container'ı */
+    .game-container {
+        padding: 30px;
+        color: white;
+    }
+
+    /* Beyaz, yuvarlak köşeli kartlar (Tahmin ve Yasaklılar) */
+    .game-card {
+        background-color: white;
+        color: #333;
+        border-radius: 25px;
+        padding: 25px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    /* Sağdaki gri, yuvarlak köşeli skor kartları */
+    .score-card {
+        background-color: #495057; /* Koyu gri */
+        color: white;
+        border-radius: 25px;
+        padding: 20px;
+        margin-bottom: 20px; /* Kartlar arası boşluk */
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    /* Kartların içindeki başlıklar */
+    .card-title-custom {
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #6c757d;
+    }
+
+    /* Anlatılacak ana kelime */
+    #ana-kelime {
+        font-size: 3.5rem;
+        font-weight: 900;
+    }
+    
+    /* Yasaklı kelimeler listesi */
+    #yasakli-kelimeler li {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+    
+    /* Skorların yazı boyutu */
+    .score-text {
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    /* Butonların yeni stilleri */
+    .game-buttons .btn {
+        margin: 0 10px;
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border-radius: 50px; /* Tam yuvarlak butonlar */
+        border: none;
+    }
+    
+    /* Navbar'ı bu sayfa için şeffaf yapalım */
+    .navbar {
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+
+
+<div class="game-container">
+    <div class="row mb-4 align-items-center">
+        <div class="col-4">
+            <h3 class="fw-bold"> KÖSTEBEK</h3>
+        </div>
+        <div class="col-4 text-center">
+            <h1 class="fw-bolder">TABU</h1>
+        </div>
+        <div class="col-4 text-end">
+            <h3 class="fw-bold">Süre: <span id="zaman">60</span>s</h3>
+        </div>
+    </div>
+
+    <div id="oyun-alani">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="game-card">
+                    <h4 class="card-title-custom">YASAKLI KELİMELER</h4>
+                    <ul id="yasakli-kelimeler" class="list-unstyled">
+                        {% for yasakli in yasaklilar %}
+                            <li>{{ yasakli.yasakli_kelime }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="game-card text-center">
+                    <h1 id="ana-kelime">{{ kelime.kelime }}</h1>
+                </div>
+            </div>
+
+            <div class="col-lg-3">
+                <div class="score-card text-center" id="takim-a-blogu">
+                    <h4 class="card-title-custom">{{ oyun.takim_a_adi }}</h4>
+                    <p class="score-text" id="takim-a-skor">{{ oyun.takim_a_skor }}</p>
+                </div>
+                <div class="score-card text-center" id="takim-b-blogu">
+                    <h4 class="card-title-custom">{{ oyun.takim_b_adi }}</h4>
+                    <p class="score-text" id="takim-b-skor">{{ oyun.takim_b_skor }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col text-center game-buttons">
+                <button onclick="turGuncelle('dogru')" class="btn btn-success">DOĞRU</button>
+                <button onclick="turGuncelle('pas')" class="btn btn-warning">PAS</button>
+                <button onclick="turGuncelle('tabu')" class="btn btn-danger">TABU</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="ara-ekran" class="d-none">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="game-card text-center">
+                    <h2 id="ara-ekran-baslik">Sıradaki Tur</h2>
+                    <h1 class="display-4" id="ara-ekran-metin">Sıra <span id="siradaki-takim"></span> takımında!</h1>
+                    <p id="ara-ekran-aciklama" class="lead">Hazır olduğunuzda oyuna başlayın.</p>
+                    <button onclick="turuBaslat()" class="btn btn-primary btn-lg mt-3">Turu Başlat!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const csrftoken = getCookie('csrftoken'); 
+    let saniye = 60; let sayac; let mevcutKelimeID = {{ kelime.id }}; let oyunModu = '{{ oyun.oyun_modu }}';
+    const zamanElementi = document.getElementById('zaman'); const anaKelimeElementi = document.getElementById('ana-kelime'); const yasakliKelimelerListesi = document.getElementById('yasakli-kelimeler');
+    const takimASkorElementi = document.getElementById('takim-a-skor'); const takimBSkorElementi = document.getElementById('takim-b-skor');
+    const takimABlogu = document.getElementById('takim-a-blogu'); const takimBBlogu = document.getElementById('takim-b-blogu');
+    const oyunAlani = document.getElementById('oyun-alani'); const araEkran = document.getElementById('ara-ekran');
+    const siradakiTakimElementi = document.getElementById('siradaki-takim');
+    const araEkranBaslik = document.getElementById('ara-ekran-baslik'); const araEkranMetin = document.getElementById('ara-ekran-metin'); const araEkranAciklama = document.getElementById('ara-ekran-aciklama');
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const aktifTakim = '{{ oyun.aktif_takim }}'; 
+        const takimAdi = aktifTakim === 'A' ? '{{ oyun.takim_a_adi }}' : '{{ oyun.takim_b_adi }}';
+        siradakiTakimElementi.textContent = takimAdi; 
+        aktifTakimGuncelle(aktifTakim);
+        // Sayfa ilk yüklendiğinde oyun alanı gizli, ara ekran görünür olmalı.
+        oyunAlani.classList.add('d-none');
+        araEkran.classList.remove('d-none');
+    });
+    
+    function aktifTakimGuncelle(aktifTakim) {
+        // ... (Bu fonksiyonun içeriği aynı kalıyor) ...
+        if (aktifTakim === 'A') { takimABlogu.style.border = '3px solid #0D6EFD'; takimBBlogu.style.border = 'none'; } 
+        else { takimBBlogu.style.border = '3px solid #0D6EFD'; takimABlogu.style.border = 'none'; }
+    }
+    function turuBaslat() {
+        // ... (Bu fonksiyonun içeriği aynı kalıyor) ...
+        araEkran.classList.add('d-none'); oyunAlani.classList.remove('d-none');
+        saniye = (oyunModu === 'uzatma') ? 30 : 60; zamanElementi.textContent = saniye;
+        turGuncelle('pas'); sayac = setInterval(zamanlayici, 1000);
+    }
+    function zamanlayici() {
+        // ... (Bu fonksiyonun içeriği aynı kalıyor) ...
+        saniye--; zamanElementi.textContent = saniye;
+        if (saniye <= 0) { clearInterval(sayac); turuBitir(); }
+    }
+    function turuBitir() {
+        // ... (Bu fonksiyonun içeriği aynı kalıyor) ...
+        oyunAlani.classList.add('d-none');
+        fetch("{% url 'tabu_tur_degistir' oyun_id=oyun.id %}", { method: 'POST', headers: {'X-CSRFToken': csrftoken} })
+        .then(response => response.json()).then(data => {
+            if (data.oyun_bitti) { window.location.href = data.redirect_url; return; }
+            if (data.uzatma) {
+                oyunModu = 'uzatma'; araEkranBaslik.textContent = "UZATMALAR!"; araEkranMetin.textContent = `Sıra ${data.yeni_aktif_takim_adi} takımında!`;
+                araEkranAciklama.textContent = "30 saniyelik adil uzatma turu! Hazır olduğunuzda başlayın.";
+            } else {
+                siradakiTakimElementi.textContent = data.yeni_aktif_takim_adi;
+            }
+            aktifTakimGuncelle(data.yeni_aktif_takim_adi === '{{ oyun.takim_a_adi }}' ? 'A' : 'B');
+            araEkran.classList.remove('d-none');
+        });
+    }
+    function turGuncelle(action) {
+        // ... (Bu fonksiyonun içeriği aynı kalıyor) ...
+        fetch("{% url 'tabu_tur_guncelle' oyun_id=oyun.id %}", { method: 'POST', headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrftoken}, body: JSON.stringify({ action: action, mevcut_kelime_id: mevcutKelimeID }) })
+        .then(response => response.json()).then(data => {
+            if (data.oyun_bitti) { window.location.href = data.redirect_url; return; }
+            if (data.tur_bitti_kelime_yok) { clearInterval(sayac); turuBitir(); return; }
+            mevcutKelimeID = data.kelime_id; anaKelimeElementi.textContent = data.kelime;
+            takimASkorElementi.textContent = data.takim_a_skor; takimBSkorElementi.textContent = data.takim_b_skor;
+            yasakliKelimelerListesi.innerHTML = "";
+            data.yasaklilar.forEach(yasakli => { yasakliKelimelerListesi.innerHTML += `<li>${yasakli}</li>`; });
+        });
+    }
+    function getCookie(name) { 
+        // ... (Bu fonksiyonun içeriği aynı kalıyor) ...
+        let c = null; if (document.cookie && document.cookie !== '') { const C = document.cookie.split(';'); for (let i = 0; i < C.length; i++) { const c2 = C[i].trim(); if (c2.substring(0, name.length + 1) === (name + '=')) { c = decodeURIComponent(c2.substring(name.length + 1)); break; } } } return c; 
+    }
+</script>
+{% endblock %}

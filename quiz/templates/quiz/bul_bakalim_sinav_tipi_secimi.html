@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bul Bakalım - Sınav Tipi Seç{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h2 style="font-weight: 800; color: var(--primary-purple);">
+            <i class="bi bi-bookmarks-fill"></i> Sınav Tipi Seçimi
+        </h2>
+        <p class="lead">Lütfen çözmek istediğiniz <strong>sınav türünü</strong> seçin:</p>
+    </div>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row justify-content-center">
+            <div class="col-md-4 mb-3">
+                <button type="submit" name="sinav_tipi" value="tyt" class="btn btn-lg btn-primary w-100 py-3" style="font-size: 1.7rem;">
+                    <i class="bi bi-lightning-fill"></i> TYT
+                </button>
+            </div>
+            <div class="col-md-4 mb-3">
+                <button type="submit" name="sinav_tipi" value="ayt" class="btn btn-lg btn-warning w-100 py-3" style="font-size: 1.7rem;">
+                    <i class="bi bi-star-fill"></i> AYT
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

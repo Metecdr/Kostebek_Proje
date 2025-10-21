@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Köstebek YKS - Profil düzenleme sayfası">
+    <title>Köstebek - Profil Düzenle</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-mor: #6A5ACD;
+            --dark-mor: #5a4abf;
+            --accent-turuncu: #FF8C00;
+            --bg-krem: #FFFACD;
+            --success-green: #4CAF50;
+            --shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+        
+        /* HEADER */
+        .header-mor {
+            background: linear-gradient(135deg, var(--primary-mor) 0%, var(--dark-mor) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-mor h1 {
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .btn-outline-light:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* BUTTONS */
+        .btn-vurgu {
+            background: linear-gradient(135deg, var(--accent-turuncu) 0%, #ff7700 100%);
+            border: none;
+            color: white;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+        }
+        
+        .btn-vurgu:hover {
+            background: linear-gradient(135deg, #ff7700 0%, #e56700 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 140, 0, 0.4);
+            color: white;
+        }
+        
+        /* FORM CARD */
+        .form-card {
+            background: white;
+            box-shadow: var(--shadow);
+            border-radius: 25px;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+            border: none;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-mor), var(--dark-mor));
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .form-header h1 {
+            font-weight: 900;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .form-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+        
+        .form-body {
+            padding: 40px;
+        }
+        
+        /* FORM ELEMENTS */
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.05rem;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-mor);
+            box-shadow: 0 0 0 0.2rem rgba(106, 90, 205, 0.15);
+            transform: scale(1.01);
+        }
+        
+        .form-control:hover, .form-select:hover {
+            border-color: var(--primary-mor);
+        }
+        
+        .form-text {
+            font-weight: 600;
+            color: #6c757d;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+        
+        /* HELP TEXT */
+        .help-box {
+            background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+            border-left: 4px solid var(--success-green);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .help-box h5 {
+            font-weight: 800;
+            color: var(--success-green);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .help-box ul {
+            margin: 0;
+            padding-left: 25px;
+        }
+        
+        .help-box li {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        /* BUTTONS */
+        .btn-custom {
+            padding: 15px 40px;
+            font-weight: 700;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            border: none;
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, var(--success-green), #45a049);
+            color: white;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.5);
+            color: white;
+        }
+        
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+        
+        .btn-cancel:hover {
+            background: #5a6268;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(108, 117, 125, 0.4);
+            color: white;
+        }
+        
+        /* BUTTON CONTAINER */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        /* DIVIDER */
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+            margin: 30px 0;
+        }
+        
+        /* PROFILE PREVIEW */
+        .profile-preview {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .profile-preview h5 {
+            font-weight: 800;
+            color: var(--primary-mor);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .preview-item:last-child {
+            border-bottom: none;
+        }
+        
+        .preview-label {
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .preview-value {
+            font-weight: 700;
+            color: #333;
+        }
+        
+        /* ALERTS */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            box-shadow: var(--shadow);
+            animation: slideDown 0.5s ease-out;
+            font-weight: 600;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .form-header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-body {
+                padding: 25px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn-custom {
+                width: 100%;
+            }
+        }
+        
+        /* FORM AS_P STYLING */
+        p {
+            margin-bottom: 25px;
+        }
+        
+        p label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        p input, p select, p textarea {
+            width: 100%;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        p input:focus, p select:focus, p textarea:focus {
+            border-color: var(--primary-mor);
+            box-shadow: 0 0 0 0.2rem rgba(106, 90, 205, 0.15);
+            outline: none;
+        }
+        
+        p .helptext {
+            display: block;
+            font-weight: 600;
+            color: #6c757d;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header-mor py-3">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h1 class="h4 mb-0">
+            <i class="bi bi-gem"></i> <span class="fw-bold">KÖSTEBEK</span>
+        </h1>
+        <div>
+            <a href="{% url 'profil' %}" class="btn btn-outline-light me-2">
+                <i class="bi bi-person-circle"></i> Profilim
+            </a>
+            <a href="{% url 'cikis' %}" class="btn btn-vurgu">
+                <i class="bi bi-box-arrow-right"></i> Çıkış
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- ALERTS -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <i class="bi bi-{% if message.tags == 'success' %}check-circle-fill{% else %}info-circle-fill{% endif %} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <!-- FORM CARD -->
+            <div class="form-card">
+                <!-- FORM HEADER -->
+                <div class="form-header">
+                    <h1>
+                        <i class="bi bi-pencil-square"></i> Profili Düzenle
+                    </h1>
+                    <p>Kişisel bilgilerini güncelleyebilir ve YKS alan tercihini değiştirebilirsin</p>
+                </div>
+                
+                <!-- FORM BODY -->
+                <div class="form-body">
+                    <!-- HELP BOX -->
+                    <div class="help-box">
+                        <h5>
+                            <i class="bi bi-lightbulb-fill"></i> Bilgilendirme
+                        </h5>
+                        <ul>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> YKS alan tercihinizi güncelleyebilirsiniz</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Kişisel bilgileriniz güvende tutulur</li>
+                            <li><i class="bi bi-check-circle-fill text-success"></i> Değişiklikler anında kaydedilir</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- FORM -->
+                    <form method="POST" enctype="multipart/form-data" id="profileForm">
+                        {% csrf_token %}
+                        
+                        {{ form.as_p }} 
+                        
+                        <div class="divider"></div>
+                        
+                        <!-- BUTTONS -->
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-custom btn-save">
+                                <i class="bi bi-check-circle-fill"></i> Değişiklikleri Kaydet
+                            </button>
+                            <a href="{% url 'profil' %}" class="btn btn-custom btn-cancel">
+                                <i class="bi bi-x-circle-fill"></i> İptal ve Geri Dön
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JS -->
+<script>
+    // Form validasyonu
+    const profileForm = document.getElementById('profileForm');
+    
+    profileForm.addEventListener('submit', function(e) {
+        const inputs = this.querySelectorAll('input[required], select[required]');
+        let valid = true;
+        
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                valid = false;
+                input.classList.add('is-invalid');
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!valid) {
+            e.preventDefault();
+            alert('Lütfen tüm gerekli alanları doldurun!');
+        }
+    });
+    
+    // Input animasyonları
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.style.transform = 'scale(1.02)';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+    
+    // Icon ekleme (form field'lara)
+    const labels = document.querySelectorAll('label');
+    labels.forEach(label => {
+        const text = label.textContent.toLowerCase();
+        
+        if (text.includes('ad') && !text.includes('soyad')) {
+            label.innerHTML = '<i class="bi bi-person-fill"></i> ' + label.textContent;
+        } else if (text.includes('soyad')) {
+            label.innerHTML = '<i class="bi bi-person-fill"></i> ' + label.textContent;
+        } else if (text.includes('email') || text.includes('e-posta')) {
+            label.innerHTML = '<i class="bi bi-envelope-fill"></i> ' + label.textContent;
+        } else if (text.includes('alan')) {
+            label.innerHTML = '<i class="bi bi-book-fill"></i> ' + label.textContent;
+        } else if (text.includes('hedef')) {
+            label.innerHTML = '<i class="bi bi-target"></i> ' + label.textContent;
+        } else if (text.includes('foto') || text.includes('resim')) {
+            label.innerHTML = '<i class="bi bi-camera-fill"></i> ' + label.textContent;
+        }
+    });
+    
+    // Başarılı kayıt animasyonu
+    const successAlert = document.querySelector('.alert-success');
+    if (successAlert) {
+        setTimeout(() => {
+            successAlert.style.animation = 'bounce 1s ease';
+        }, 100);
+    }
+    
+    // Bounce animasyonu
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+
+</body>
+</html>

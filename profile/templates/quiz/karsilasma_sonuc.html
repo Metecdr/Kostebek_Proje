@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    body { 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Nunito', sans-serif;
+        padding: 20px 0;
+    }
+    
+    .result-container {
+        max-width: 700px;
+        margin: 50px auto;
+        padding: 50px;
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        text-align: center;
+    }
+    
+    .result-icon {
+        font-size: 5rem;
+        margin-bottom: 20px;
+    }
+    
+    .result-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin-bottom: 30px;
+    }
+    
+    .winner-title {
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .loser-title {
+        color: #6c757d;
+    }
+    
+    .draw-title {
+        background: linear-gradient(135deg, #7B68EE, #6A5ACD);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .score-display {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        margin: 40px 0;
+        font-size: 2rem;
+        font-weight: 900;
+    }
+    
+    .player-score {
+        padding: 20px 40px;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border: 3px solid #dee2e6;
+    }
+    
+    .winner-score {
+        border-color: #FFD700;
+        background: linear-gradient(135deg, #FFF9E6, #FFE4B5);
+    }
+    
+    .stats {
+        margin: 30px 0;
+        padding: 30px;
+        background: #f8f9fa;
+        border-radius: 15px;
+    }
+    
+    .stat-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px solid #dee2e6;
+        font-size: 1.2rem;
+    }
+    
+    .stat-item:last-child {
+        border-bottom: none;
+    }
+    
+    .btn-custom {
+        margin: 10px;
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    
+    /* MODAL STYLES */
+    .yanlis-item {
+        padding: 20px;
+        margin-bottom: 20px;
+        background: #fff5f5;
+        border-left: 4px solid #dc3545;
+        border-radius: 10px;
+    }
+    
+    .yanlis-item h6 {
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .yanlis-item p {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .cevap-box {
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+    
+    .cevap-yanlis {
+        background: #ffe6e6;
+    }
+    
+    .cevap-dogru {
+        background: #e6ffe6;
+    }
+    
+    @media (max-width: 768px) {
+        .result-container {
+            padding: 30px 20px;
+            margin: 20px auto;
+        }
+        
+        .result-title {
+            font-size: 2rem;
+        }
+        
+        .score-display {
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .player-score {
+            padding: 15px 30px;
+        }
+        
+        .btn-custom {
+            padding: 12px 30px;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<div class="container">
+    <div class="result-container">
+        {% if kazandi %}
+            <div class="result-icon">🏆</div>
+            <h1 class="result-title winner-title">KAZANDIN!</h1>
+        {% elif berabere %}
+            <div class="result-icon">🤝</div>
+            <h1 class="result-title draw-title">BERABERE!</h1>
+        {% else %}
+            <div class="result-icon">😔</div>
+            <h1 class="result-title loser-title">Kaybettin</h1>
+        {% endif %}
+        
+        <!-- SKORLAR -->
+        <div class="score-display">
+            <div class="player-score {% if oda.oyuncu1 == request.user and kazandi %}winner-score{% endif %}">
+                <div style="font-size: 1rem; color: #6c757d; margin-bottom: 5px;">{{ oda.oyuncu1.username }}</div>
+                <div>{{ oda.oyuncu1_skor }}</div>
+            </div>
+            
+            <div style="color: #FFD700;">VS</div>
+            
+            <div class="player-score {% if oda.oyuncu2 == request.user and kazandi %}winner-score{% endif %}">
+                <div style="font-size: 1rem; color: #6c757d; margin-bottom: 5px;">{{ oda.oyuncu2.username }}</div>
+                <div>{{ oda.oyuncu2_skor }}</div>
+            </div>
+        </div>
+        
+        <!-- İSTATİSTİKLER -->
+        <div class="stats">
+            <h3 style="margin-bottom: 20px; font-weight: 800;">📊 Oyun İstatistiklerin</h3>
+            <div class="stat-item">
+                <span>Toplam Soru:</span>
+                <span><strong>{{ oda.toplam_soru }}</strong></span>
+            </div>
+            <div class="stat-item">
+                <span>Senin Doğrun:</span>
+                <span><strong style="color: #28a745;">{{ user_dogru }} ✅</strong></span>
+            </div>
+            <div class="stat-item">
+                <span>Senin Yanlışın:</span>
+                <span><strong style="color: #dc3545;">{{ user_yanlis }} ❌</strong></span>
+            </div>
+            <div class="stat-item">
+                <span>Puan Değişimi:</span>
+                <span>
+                    {% if kazandi %}
+                        <strong style="color: #28a745;">+1 Puan 🎉</strong>
+                    {% elif berabere %}
+                        <strong style="color: #6c757d;">0 Puan</strong>
+                    {% else %}
+                        <strong style="color: #dc3545;">-1 Puan 💔</strong>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+        
+        <!-- BUTONLAR -->
+        <div class="mt-4">
+            {% if yanlis_cevaplar %}
+            <button class="btn btn-warning btn-custom" data-bs-toggle="modal" data-bs-target="#yanlisModal">
+                ❌ Yanlışlarıma Bak ({{ user_yanlis }})
+            </button>
+            {% endif %}
+            
+            <a href="{% url 'karsilasma_rakip_bul' %}" class="btn btn-primary btn-custom">🎮 Tekrar Oyna</a>
+            <a href="{% url 'profil' %}" class="btn btn-secondary btn-custom">👤 Profilim</a>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ YANLIŞLAR MODALI -->
+<div class="modal fade" id="yanlisModal" tabindex="-1" aria-labelledby="yanlisModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white;">
+                <h5 class="modal-title" id="yanlisModalLabel" style="font-weight: 800;">❌ Yanlış Cevaplarım</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if yanlis_cevaplar %}
+                    {% for cevap in yanlis_cevaplar %}
+                    <div class="yanlis-item">
+                        <h6>Soru {{ forloop.counter }}:</h6>
+                        <p>{{ cevap.soru.metin }}</p>
+                        
+                        <div class="cevap-box cevap-yanlis">
+                            <strong style="color: #dc3545;">❌ Senin Cevabın:</strong> {{ cevap.verilen_cevap.metin }}
+                        </div>
+                        
+                        <div class="cevap-box cevap-dogru">
+                            <strong style="color: #28a745;">✅ Doğru Cevap:</strong> 
+                            {% for dogru_cevap in cevap.soru.cevap_set.all %}
+                                {% if dogru_cevap.dogru_mu %}
+                                    {{ dogru_cevap.metin }}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-success">
+                        <strong>🎉 Tebrikler!</strong> Hiç yanlış yapmadın!
+                    </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KAZANMA KONFETİSİ -->
+{% if kazandi %}
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+    // Kazanma konfetisi
+    confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
+</script>
+{% endif %}
+
+{% endblock %}
