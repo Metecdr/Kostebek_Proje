@@ -301,7 +301,7 @@
                         {% endfor %}
                     {% endif %}
 
-                    <form method="POST" action="{% url 'kayit' %}"> 
+                    <form method="POST" action="{% url 'kayit' %}" id=" kayitForm ">
                         {% csrf_token %}
                         
                         <!-- Kullanıcı Adı -->

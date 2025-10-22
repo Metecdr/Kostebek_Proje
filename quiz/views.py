@@ -9,6 +9,7 @@ from .models import (
     BulBakalimOyun  # ✅ EKLE
 )
 from django.http import JsonResponse
+from profile.models import KonuIstatistik
 from django.db import models, transaction
 from django.contrib import messages
 import json
@@ -43,212 +44,141 @@ def quiz_anasayfa(request):
 
 # ==================== TABU OYUNU ====================
 
+TABU_BOLUMLERI = [
+    ('sozel', 'Sözel'),
+    ('esit_agirlik', 'Eşit Ağırlık'),
+    ('sayisal', 'Sayısal'),
+    ('dil', 'Dil'),
+]
+
+BOLUM_KATEGORILERI = {
+    'sayisal': ['biyoloji', 'kimya', 'fizik'],
+    'esit_agirlik': ['cografya', 'tarih', 'edebiyat'],
+    'sozel': ['cografya', 'tarih', 'edebiyat'],
+}
+
+def tabu_bolum_sec(request):
+    if request.method == 'POST':
+        secilen_bolum = request.POST.get('bolum')
+        # Seçilen bölümü session'a kaydet
+        request.session['tabu_bolum'] = secilen_bolum
+        return redirect('tabu_lobi')  # lobiye yönlendir
+    return render(request, 'quiz/tabu_bolum_sec.html', {'bolumler': TABU_BOLUMLERI})
+
+MAX_KELIME = 10
+SURE = 60
 
 def tabu_anasayfa(request):
     """Tabu oyunu ana sayfası"""
     return render(request, 'quiz/tabu_anasayfa.html')
 
+@login_required
+def tabu_lobi(request):
+    bolum = request.session.get('tabu_bolum', None)
+    kategoriler = BOLUM_KATEGORILERI.get(bolum, [])
+    kelimeler = TabuKelime.objects.filter(kategori__in=kategoriler)
+    # kelimeler ile oyunu başlat, template'e gönder, vs.
+    """Tabu lobi ekranı - takım isimleri giriliyor"""
+    if request.method == 'POST':
+        takim_a_adi = request.POST.get('takim_a', 'Takım A')
+        takim_b_adi = request.POST.get('takim_b', 'Takım B')
+        yeni_oyun = TabuOyun.objects.create(
+            takim_a_adi=takim_a_adi,
+            takim_b_adi=takim_b_adi,
+            tur_sayisi=1,
+            aktif_takim="A",
+            oyun_modu="normal",
+            oyun_durumu="devam"
+        )
+        request.session['gorulen_kelime_idler'] = []
+        request.session['tabu_ara_ekran'] = True
+        return redirect('tabu_oyun', oyun_id=yeni_oyun.id)
+    return render(request, 'quiz/tabu_lobi.html')
 
 @login_required
 def tabu_oyun_basla(request):
-    """Tabu oyunu başlat - takım isimlerini al"""
+    """Tabu oyunu başlat - eski, lobi ile birleştiği için opsiyonel"""
     if request.method == 'POST':
         takim_a_adi = request.POST.get('takim_a', 'Takım A')
         takim_b_adi = request.POST.get('takim_b', 'Takım B')
-        
         yeni_oyun = TabuOyun.objects.create(
-            takim_a_adi=takim_a_adi, 
-            takim_b_adi=takim_b_adi, 
-            tur_sayisi=1
+            takim_a_adi=takim_a_adi,
+            takim_b_adi=takim_b_adi,
+            tur_sayisi=1,
+            aktif_takim="A",
+            oyun_modu="normal",
+            oyun_durumu="devam"
         )
-        
         request.session['gorulen_kelime_idler'] = []
-        
+        request.session['tabu_ara_ekran'] = True
         return redirect('tabu_oyun', oyun_id=yeni_oyun.id)
-    
     return render(request, 'quiz/tabu_basla.html')
-
 
 @login_required
 def tabu_oyun(request, oyun_id):
-    """Tabu oyun ekranı"""
+    """Tabu oyun ekranı ve ara ekran kontrolü"""
     oyun = get_object_or_404(TabuOyun, id=oyun_id)
+    aktif_takim = oyun.aktif_takim
     gorulen_idler = request.session.get('gorulen_kelime_idler', [])
-    kelime = TabuKelime.objects.exclude(id__in=gorulen_idler).order_by('?').first()
-    
-    if not kelime:
-        oyun.oyun_durumu = 'bitti'
-        oyun.save()
-        return redirect('tabu_sonuc', oyun_id=oyun.id)
-    
-    yasaklilar = kelime.yasakli_kelimeler.all()
-    context = {
-        'oyun': oyun, 
-        'kelime': kelime, 
-        'yasaklilar': yasaklilar
-    }
-    return render(request, 'quiz/tabu.html', context)
+    ara_ekran = request.session.get('tabu_ara_ekran', True)
 
-
-@login_required
-def tabu_yeni_kelime(request, oyun_id):
-    """AJAX ile yeni kelime getir"""
-    if request.method == 'POST':
-        oyun = get_object_or_404(TabuOyun, id=oyun_id)
-        data = json.loads(request.body)
-        action = data.get('action')
-        mevcut_kelime_id = data.get('mevcut_kelime_id')
-        
-        # Skor güncelle
-        if oyun.aktif_takim == 'A':
-            if action == 'dogru':
-                oyun.takim_a_skor += 1
-            elif action == 'tabu':
-                oyun.takim_a_skor -= 1
-        else:
-            if action == 'dogru':
-                oyun.takim_b_skor += 1
-            elif action == 'tabu':
-                oyun.takim_b_skor -= 1
-        
-        oyun.save()
-        
-        # Görülen kelimelere ekle
-        gorulen_idler = request.session.get('gorulen_kelime_idler', [])
-        if mevcut_kelime_id and mevcut_kelime_id not in gorulen_idler:
-            gorulen_idler.append(mevcut_kelime_id)
-        
-        # Yeni kelime
-        yeni_kelime = TabuKelime.objects.exclude(id__in=gorulen_idler).order_by('?').first()
-        
-        if not yeni_kelime:
-            return JsonResponse({'tur_bitti_kelime_yok': True})
-        
-        request.session['gorulen_kelime_idler'] = gorulen_idler
-        yasaklilar = list(yeni_kelime.yasakli_kelimeler.values_list('yasakli_kelime', flat=True))
-        
-        response_data = {
-            'kelime_id': yeni_kelime.id,
-            'kelime': yeni_kelime.kelime,
-            'yasaklilar': yasaklilar,
-            'takim_a_skor': oyun.takim_a_skor,
-            'takim_b_skor': oyun.takim_b_skor
+    # Ara ekranı göster (her tur başında)
+    if ara_ekran:
+        takim_adi = oyun.takim_a_adi if aktif_takim == 'A' else oyun.takim_b_adi
+        context = {
+            'oyun': oyun,
+            'aktif_takim': aktif_takim,
+            'takim_adi': takim_adi,
+            'MAX_KELIME': MAX_KELIME,
+            'SURE': SURE,
+            'ara_ekran': True,
         }
-        return JsonResponse(response_data)
-    
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+        if request.method == 'POST':
+            request.session['tabu_ara_ekran'] = False
+            return redirect('tabu_oyun', oyun_id=oyun.id)
+        return render(request, 'quiz/tabu.html', context)
 
-
-@login_required
-def tabu_dogru(request, oyun_id):
-    """Doğru cevap"""
-    return tabu_yeni_kelime(request, oyun_id)
-
-
-@login_required
-def tabu_yanlis(request, oyun_id):
-    """Yanlış/Pas cevap"""
-    return tabu_yeni_kelime(request, oyun_id)
-
-
-@login_required
-def tabu_pas(request, oyun_id):
-    """Pas geç"""
-    return tabu_yeni_kelime(request, oyun_id)
-
-
-@login_required
-def tabu_sure_bitti(request, oyun_id):
-    """Süre bitti - takım değiştir"""
-    if request.method == 'POST':
-        oyun = get_object_or_404(TabuOyun, id=oyun_id)
-        
-        if oyun.oyun_modu == 'normal' and oyun.aktif_takim == 'B':
-            # İki takım da oynadı, kontrol et
-            if oyun.takim_a_skor == oyun.takim_b_skor and TabuKelime.objects.exclude(
-                id__in=request.session.get('gorulen_kelime_idler', [])
-            ).exists():
-                # Berabere - uzatma
-                oyun.oyun_modu = 'uzatma'
-                oyun.aktif_takim = 'A'
-                oyun.save()
-                return JsonResponse({
-                    'uzatma': True,
-                    'yeni_aktif_takim_adi': oyun.takim_a_adi
-                })
-            else:
-                # Oyun bitti
-                oyun.oyun_durumu = 'bitti'
-                oyun.save()
-                return JsonResponse({
-                    'oyun_bitti': True,
-                    'redirect_url': f'/quiz/tabu/oyun/{oyun.id}/sonuc/'
-                })
-        elif oyun.oyun_modu == 'uzatma' and oyun.aktif_takim == 'B':
-            # Uzatma bitti
-            oyun.oyun_durumu = 'bitti'
-            oyun.save()
-            return JsonResponse({
-                'oyun_bitti': True,
-                'redirect_url': f'/quiz/tabu/oyun/{oyun.id}/sonuc/'
-            })
-        else:
-            # Takım değiştir
+    # Oyun ekranı (kelime göster)
+    kelime = TabuKelime.objects.exclude(id__in=gorulen_idler).order_by('?').first()
+    # Tur bitimi: kelime yok veya 10 kelime bitti
+    if not kelime or len(gorulen_idler) >= MAX_KELIME:
+        request.session['tabu_ara_ekran'] = True
+        if aktif_takim == 'A':
             oyun.aktif_takim = 'B'
             oyun.save()
             request.session['gorulen_kelime_idler'] = []
-            return JsonResponse({
-                'oyun_bitti': False,
-                'yeni_aktif_takim_adi': oyun.takim_b_adi
-            })
-    
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+            return redirect('tabu_oyun', oyun_id=oyun.id)
+        else:
+            oyun.oyun_durumu = 'bitti'
+            oyun.save()
+            return redirect('tabu_sonuc', oyun_id=oyun.id)
 
-
-@login_required
-def tabu_sonuc(request, oyun_id):
-    """Tabu oyunu sonuç ekranı"""
-    oyun = get_object_or_404(TabuOyun, id=oyun_id)
+    yasaklilar = kelime.yasakli_kelimeler.all()
     context = {
         'oyun': oyun,
-        'kazanan': oyun.get_kazanan()
+        'kelime': kelime,
+        'yasaklilar': yasaklilar,
+        'aktif_takim': aktif_takim,
+        'takim_adi': oyun.takim_a_adi if aktif_takim == 'A' else oyun.takim_b_adi,
+        'MAX_KELIME': MAX_KELIME,
+        'SURE': SURE,
+        'ara_ekran': False,
     }
-    return render(request, 'quiz/tabu_sonuc.html', context)
-
-@login_required
-def tabu_lobi(request):
-    if request.method == 'POST':
-        takim_a_adi = request.POST.get('takim_a', 'Takım A')
-        takim_b_adi = request.POST.get('takim_b', 'Takım B')
-        yeni_oyun = TabuOyun.objects.create(takim_a_adi=takim_a_adi, takim_b_adi=takim_b_adi, tur_sayisi=1)
-        request.session['gorulen_kelime_idler'] = []
-        return redirect('tabu_oyna', oyun_id=yeni_oyun.id)
-    return render(request, 'quiz/tabu_lobi.html')
-
-
-@login_required
-def tabu_oyna(request, oyun_id):
-    oyun = get_object_or_404(TabuOyun, id=oyun_id)
-    gorulen_idler = request.session.get('gorulen_kelime_idler', [])
-    kelime = TabuKelime.objects.exclude(id__in=gorulen_idler).order_by('?').first()
-    if not kelime:
-        oyun.oyun_durumu = 'bitti'
-        oyun.save()
-        return redirect('tabu_sonuc', oyun_id=oyun.id)
-    yasaklilar = kelime.yasakli_kelimeler.all()
-    context = {'oyun': oyun, 'kelime': kelime, 'yasaklilar': yasaklilar}
     return render(request, 'quiz/tabu.html', context)
-
 
 @login_required
 def tabu_tur_guncelle(request, oyun_id):
+    """AJAX ile yeni kelime getir & skoru güncelle"""
     if request.method == 'POST':
         oyun = get_object_or_404(TabuOyun, id=oyun_id)
         data = json.loads(request.body)
         action = data.get('action')
         mevcut_kelime_id = data.get('mevcut_kelime_id')
-        
-        if oyun.aktif_takim == 'A':
+        gorulen_idler = request.session.get('gorulen_kelime_idler', [])
+        aktif_takim = oyun.aktif_takim
+
+        # Skor güncelle
+        if aktif_takim == 'A':
             if action == 'dogru':
                 oyun.takim_a_skor += 1
             elif action == 'tabu':
@@ -258,86 +188,63 @@ def tabu_tur_guncelle(request, oyun_id):
                 oyun.takim_b_skor += 1
             elif action == 'tabu':
                 oyun.takim_b_skor -= 1
-        
         oyun.save()
-        gorulen_idler = request.session.get('gorulen_kelime_idler', [])
+
+        # Görülen kelimeye ekle
         if mevcut_kelime_id and mevcut_kelime_id not in gorulen_idler:
             gorulen_idler.append(mevcut_kelime_id)
-        
+        request.session['gorulen_kelime_idler'] = gorulen_idler
+
+        # 10 kelime bitti mi?
+        if len(gorulen_idler) >= MAX_KELIME:
+            return JsonResponse({'tur_bitti_kelime_yok': True})
+
         yeni_kelime = TabuKelime.objects.exclude(id__in=gorulen_idler).order_by('?').first()
         if not yeni_kelime:
             return JsonResponse({'tur_bitti_kelime_yok': True})
-        
-        request.session['gorulen_kelime_idler'] = gorulen_idler
+
         yasaklilar = list(yeni_kelime.yasakli_kelimeler.values_list('yasakli_kelime', flat=True))
-        
-        response_data = {
+        return JsonResponse({
             'kelime_id': yeni_kelime.id,
             'kelime': yeni_kelime.kelime,
             'yasaklilar': yasaklilar,
             'takim_a_skor': oyun.takim_a_skor,
-            'takim_b_skor': oyun.takim_b_skor
-        }
-        return JsonResponse(response_data)
+            'takim_b_skor': oyun.takim_b_skor,
+        })
     return JsonResponse({'error': 'Invalid request'}, status=400)
-
 
 @login_required
 def tabu_tur_degistir(request, oyun_id):
+    """Süre bittiğinde veya kelime bittiğinde çağrılır"""
     if request.method == 'POST':
         oyun = get_object_or_404(TabuOyun, id=oyun_id)
-        
-        if oyun.oyun_modu == 'normal' and oyun.aktif_takim == 'B':
-            if oyun.takim_a_skor == oyun.takim_b_skor and TabuKelime.objects.exclude(id__in=request.session.get('gorulen_kelime_idler', [])).exists():
-                oyun.oyun_modu = 'uzatma'
-                oyun.aktif_takim = 'A'
-                oyun.save()
-                return JsonResponse({'uzatma': True, 'yeni_aktif_takim_adi': oyun.takim_a_adi})
-            else:
-                oyun.oyun_durumu = 'bitti'
-                oyun.save()
-                return JsonResponse({'oyun_bitti': True, 'redirect_url': f'/quiz/tabu/oyun/{oyun.id}/sonuc/'})
-        
-        elif oyun.oyun_modu == 'uzatma' and oyun.aktif_takim == 'B':
-            oyun.oyun_durumu = 'bitti'
-            oyun.save()
-            return JsonResponse({'oyun_bitti': True, 'redirect_url': f'/quiz/tabu/oyun/{oyun.id}/sonuc/'})
-        
-        else:
+        aktif_takim = oyun.aktif_takim
+        if aktif_takim == 'A':
             oyun.aktif_takim = 'B'
             oyun.save()
             request.session['gorulen_kelime_idler'] = []
-            return JsonResponse({'oyun_bitti': False, 'yeni_aktif_takim_adi': oyun.takim_b_adi})
-    
+            request.session['tabu_ara_ekran'] = True
+            return JsonResponse({'oyun_bitti': False, 'redirect_url': f'/tabu/oyun/{oyun.id}/'})
+        else:
+            oyun.oyun_durumu = 'bitti'
+            oyun.save()
+            return JsonResponse({'oyun_bitti': True, 'redirect_url': f'/tabu/sonuc/{oyun.id}/'})
     return JsonResponse({'error': 'Invalid request'}, status=400)
-
 
 @login_required
 def tabu_sonuc(request, oyun_id):
     oyun = get_object_or_404(TabuOyun, id=oyun_id)
-    
-    # ✅ TABU OYUNU BİTTİ - İSTATİSTİKLERİ GÜNCELLE VE ROZET KONTROLÜ YAP
-    try:
-        profil = request.user.profil
-        
-        # Tabu için oyun modu istatistiği güncelle (veya yeni bir kategori ekle)
-        # Şimdilik genel profil istatistiklerine ekliyoruz
-        profil.toplam_puan += oyun.takim_a_skor  # veya hangisinde oynadıysa
-        profil.save()
-        
-        # ✅ ROZET KONTROLÜ
-        yeni_rozetler = rozet_kontrol_yap(profil)
-        
-        if yeni_rozetler:
-            for rozet in yeni_rozetler:
-                messages.success(request, f'🏆 YENİ ROZET! {rozet.icon} {rozet.get_kategori_display()}')
-    
-    except Exception as e:
-        print(f"❌ Tabu istatistik hatası: {e}")
-    
-    context = {'oyun': oyun, 'kazanan': oyun.get_kazanan()}
-    return render(request, 'quiz/tabu_sonuc.html', context)
-
+    if oyun.takim_a_skor > oyun.takim_b_skor:
+        kazanan = oyun.takim_a_adi
+    elif oyun.takim_b_skor > oyun.takim_a_skor:
+        kazanan = oyun.takim_b_adi
+    else:
+        kazanan = "Berabere"
+    context = {
+        'oyun': oyun,
+        'kazanan': kazanan
+    }
+    return render(request, 'quiz/tabu_sonuc.html', context)        
 
 # --- NİHAİ KARŞILAŞMA FONKSİYONLARI ("YARIŞ DURUMU" DÜZELTİLDİ) ---
 
@@ -578,33 +485,19 @@ def bul_bakalim_basla(request):
 def bul_bakalim_oyun(request, oyun_id):
     """Bul Bakalım oyun sayfası"""
     oyun = get_object_or_404(BulBakalimOyun, oyun_id=oyun_id, oyuncu=request.user)
-    
+
     if oyun.oyun_durumu == 'bitti':
         return redirect('bul_bakalim_sonuc', oyun_id=oyun.oyun_id)
-    
-    # Soruların yeterliliğini kontrol et
-    sorular = list(Soru.objects.filter(ders=oyun.selected_ders, konu__ders=oyun.selected_ders).order_by('?')[:5])
-    if not sorular:
-        messages.error(request, 'Seçtiğiniz derse ait yeterli soru bulunamadı! Lütfen başka bir ders seçin.')
-        return redirect('bul_bakalim_ders_secimi')
-    
-    # Soruları ekle ve devam et
-    oyun.sorular = [soru.id for soru in sorular]
-    oyun.save()
-    
-    # Kaçıncı sorudayız?
+
     cevaplanan_soru_sayisi = len(oyun.cevaplar)
-    
     if cevaplanan_soru_sayisi >= len(oyun.sorular):
-        # Tüm sorular cevaplandı, oyunu bitir
         oyun.oyun_bitir()
         return redirect('bul_bakalim_sonuc', oyun_id=oyun.oyun_id)
-    
-    # Şu anki soru
+
     aktif_soru_id = oyun.sorular[cevaplanan_soru_sayisi]
     aktif_soru = Soru.objects.get(id=aktif_soru_id)
     cevaplar = Cevap.objects.filter(soru=aktif_soru)
-    
+
     context = {
         'oyun': oyun,
         'aktif_soru': aktif_soru,
@@ -613,7 +506,6 @@ def bul_bakalim_oyun(request, oyun_id):
         'toplam_soru': len(oyun.sorular),
         'sure': 90,  # 90 saniye
     }
-    
     return render(request, 'quiz/bul_bakalim_oyun.html', context)
 
 
@@ -805,71 +697,56 @@ def bul_bakalim_sonuc(request, oyun_id):
 
 @login_required
 def bul_bakalim_ders_secimi(request):
-    """Ders seçimi ekranı"""
+    sinav_tipi = request.session.get('bulbakalim_sinav_tipi')
+    ders_secenekleri = BulBakalimOyun.DERS_SECENEKLERI  # Gerekirse TYT/AYT'ye göre filtrele
+
     if request.method == 'POST':
         selected_ders = request.POST.get('selected_ders')
-        
-        # Dersi kontrol et
-        if selected_ders not in [choice[0] for choice in BulBakalimOyun.DERS_SECENEKLERI]:
-            messages.error(request, 'Geçersiz ders seçimi yaptınız! Lütfen tekrar deneyin.')
-            return redirect('bul_bakalim_ders_secimi')
-        
-        # Yeni oyun oluştur ve seçilen ders ekle
         yeni_oyun = BulBakalimOyun.objects.create(
             oyuncu=request.user,
-            selected_ders=selected_ders
+            selected_ders=selected_ders,
+            sinav_tipi=sinav_tipi,
         )
-        
-        # Kullanıcıya bilgi mesajı
-        ders_isim = dict(BulBakalimOyun.DERS_SECENEKLERI).get(selected_ders, 'Bilinmiyor')
-        messages.success(request, f'{ders_isim} dersini seçtiniz! İyi şanslar!')
-        
-        # Doğru yönlendirme
         return redirect('bul_bakalim_oyun', oyun_id=yeni_oyun.oyun_id)
-    
+
     context = {
-        'ders_secenekleri': BulBakalimOyun.DERS_SECENEKLERI
+        'ders_secenekleri': ders_secenekleri,
+        'sinav_tipi': sinav_tipi,
     }
     return render(request, 'quiz/bul_bakalim_ders_secimi.html', context)
 
 @login_required
 def bul_bakalim_oyun(request, oyun_id):
-    """Bul Bakalım oyun sayfası"""
     oyun = get_object_or_404(BulBakalimOyun, oyun_id=oyun_id, oyuncu=request.user)
-    
+
     if oyun.oyun_durumu == 'bitti':
         return redirect('bul_bakalim_sonuc', oyun_id=oyun.oyun_id)
-    
-    # Soruların yeterliliğini kontrol et
-    sorular = list(Soru.objects.filter(ders=oyun.selected_ders).order_by('?')[:5])
-    if not sorular:
-        messages.error(request, 'Seçtiğiniz derse ait yeterli soru bulunamadı! Lütfen başka bir ders seçin.')
-        return redirect('bul_bakalim_ders_secimi')
-    
-    # Soruları ekle ve devam et
-    oyun.sorular = [soru.id for soru in sorular]
-    oyun.save()
-    
-    # Kaçıncı sorudayız?
+
+    # SORU DİZİSİNİ TEKRAR ATAMA KALDIRILDI!
     cevaplanan_soru_sayisi = len(oyun.cevaplar)
-    
     if cevaplanan_soru_sayisi >= len(oyun.sorular):
-        # Tüm sorular cevaplandı, oyunu bitir
         oyun.oyun_bitir()
         return redirect('bul_bakalim_sonuc', oyun_id=oyun.oyun_id)
-    
-    # Şu anki soru
+
     aktif_soru_id = oyun.sorular[cevaplanan_soru_sayisi]
     aktif_soru = Soru.objects.get(id=aktif_soru_id)
     cevaplar = Cevap.objects.filter(soru=aktif_soru)
-    
+
     context = {
         'oyun': oyun,
         'aktif_soru': aktif_soru,
         'cevaplar': cevaplar,
         'soru_no': cevaplanan_soru_sayisi + 1,
         'toplam_soru': len(oyun.sorular),
-        'sure': 90,  # 90 saniye
+        'sure': 90,
     }
-    
     return render(request, 'quiz/bul_bakalim_oyun.html', context)
+
+
+@login_required
+def bul_bakalim_sinav_tipi_secimi(request):
+    if request.method == 'POST':
+        sinav_tipi = request.POST.get('sinav_tipi')
+        request.session['bulbakalim_sinav_tipi'] = sinav_tipi
+        return redirect('bul_bakalim_ders_secimi')
+    return render(request, 'quiz/bul_bakalim_sinav_tipi_secimi.html')

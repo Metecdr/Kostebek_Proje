@@ -18,7 +18,6 @@ class KonuAdmin(admin.ModelAdmin):
     list_editable = ('sira',)  # 'sira' düzenlenebilir hale getirildi
     ordering = ['sira']  # 'sira' sıralama için kullanılıyor
 
-admin.site.register(Konu, KonuAdmin)
 
 @admin.register(Soru)
 class SoruAdmin(admin.ModelAdmin):
@@ -42,11 +41,16 @@ class CevapAdmin(admin.ModelAdmin):
         return obj.soru.metin[:30] + "..." if len(obj.soru.metin) > 30 else obj.soru.metin
     soru_kisaltma.short_description = 'Soru'
 
+class YasakliKelimeInline(admin.TabularInline):
+    model = YasakliKelime
+    extra = 5      # 5 kutucuk çıkar
+    max_num = 5    # En fazla 5 kutucuk olur
+    min_num = 5    # En az 5 kutucuk doldurulmalı (Django 3.1+)
+
 @admin.register(TabuKelime)
 class TabuKelimeAdmin(admin.ModelAdmin):
     list_display = ['kelime']
-    search_fields = ['kelime']
-    list_per_page = 50
+    inlines = [YasakliKelimeInline]
 
 @admin.register(YasakliKelime)
 class YasakliKelimeAdmin(admin.ModelAdmin):

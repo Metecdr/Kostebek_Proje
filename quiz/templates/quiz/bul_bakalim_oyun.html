@@ -151,9 +151,26 @@ document.addEventListener('DOMContentLoaded', function() {
             // Süre bittiğinde modal göster
             showSonucModal(false, 'Süre bitti! ⏰');
             
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000);
+            // Cevap otomatik gönder (cevapsız/yanlış kaydet)
+            // Backend'de cevap yoksa yanlış sayılacak şekilde düzenlenmiş olmalı!
+            fetch('{% url "bul_bakalim_cevapla" oyun.oyun_id %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ cevap_id: null }) // null gönder, backend'e göre yanlış sayılır
+            })
+            .then(response => response.json())
+            .then(data => {
+                setTimeout(() => {
+                    if (data.oyun_bitti) {
+                        window.location.href = data.redirect_url;
+                    } else {
+                        window.location.reload();
+                    }
+                }, 2000);
+            });
         }
     }, 1000);
 
@@ -163,8 +180,6 @@ document.addEventListener('DOMContentLoaded', function() {
     cevapButtons.forEach(btn => {
         btn.addEventListener('click', function() {
             const cevapId = this.dataset.cevapId;
-            
-            console.log('✅ Butona tıklandı! Cevap ID:', cevapId);
             
             // Tüm butonları devre dışı bırak
             cevapButtons.forEach(b => {
@@ -188,17 +203,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({ cevap_id: cevapId })
             })
-            .then(response => {
-                console.log('📡 Response alındı:', response);
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                console.log('📊 Data:', data);
-                
-                // GÜZEL MODAL GÖSTER
                 showSonucModal(data.dogru_mu);
-                
-                // 2 saniye sonra sonraki soruya geç
                 setTimeout(() => {
                     if (data.oyun_bitti) {
                         window.location.href = data.redirect_url;
@@ -208,7 +215,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 2000);
             })
             .catch(error => {
-                console.error('❌ Hata:', error);
                 alert('Bir hata oluştu: ' + error);
                 cevapButtons.forEach(b => {
                     b.disabled = false;
@@ -255,8 +261,6 @@ function showSonucModal(dogruMu, mesaj = '') {
     `;
     
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
-    // Modal'ı göster
     const modal = new bootstrap.Modal(document.getElementById('dinamikModal'));
     modal.show();
 }

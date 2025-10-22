@@ -653,6 +653,7 @@
             <button class="edit-profile-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
                 <i class="bi bi-pencil-fill"></i> Profili Düzenle
             </button>
+            <a href="{% url 'konu_analiz' %}" class="btn btn-info mt-3"><i class="bi bi-bar-chart"></i> Konu Analizleri</a>
         </div>
     </div>
     
@@ -758,11 +759,11 @@
             </div>
         </a>
         
-        <a href="{% url 'liderlik' %}" class="text-decoration-none">
+        <a href="{% url 'bul_bakalim_sinav_tipi_secimi' %}" class="text-decoration-none">
             <div class="game-card-container">
                 <img src="{% static 'images/bulbakalim.png' %}" alt="Liderlik" onerror="this.src='https://via.placeholder.com/400x280/4CAF50/ffffff?text=LİDERLİK'">
                 <div class="game-overlay">
-                    <h3 class="game-title">🏅 LİDERLİK</h3>
+                    <h3 class="game-title">💡 BUL BAKALIM</h3>
                     <p class="mb-0">En iyilerle yarış, zirveye tırman!</p>
                 </div>
             </div>

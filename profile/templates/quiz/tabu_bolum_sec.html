@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="tabu-section-select-container" style="max-width:440px;margin:2rem auto;padding:2rem;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+    <h2 style="text-align:center;margin-bottom:1.5rem;color:#6C63FF;font-weight:700;">
+        <span style="vertical-align:middle"><i class="fas fa-brain"></i></span> Tabu Bölümünü Seç
+    </h2>
+    <form method="post" style="display:flex;flex-direction:column;gap:1.3rem;">
+        {% csrf_token %}
+        {% for kod, ad in bolumler %}
+        <label class="tabu-section-choice" style="display:flex;align-items:center;padding:0.7rem 1rem;border-radius:8px;transition:background 0.2s;cursor:pointer;border:1px solid #ececec;">
+            <input type="radio" name="bolum" value="{{ kod }}" required style="width:20px;height:20px;margin-right:1rem;">
+            <span style="font-size:1.13rem;font-weight:600;">{{ ad }}</span>
+        </label>
+        {% endfor %}
+        <button type="submit" class="tabu-section-btn" style="margin-top:1rem;padding:0.8rem 0;font-size:1.1rem;font-weight:700;background:#6C63FF;color:#fff;border:none;border-radius:8px;cursor:pointer;transition:background 0.2s;">
+            <i class="fas fa-arrow-right"></i> Devam Et
+        </button>
+    </form>
+</div>
+{% endblock %}

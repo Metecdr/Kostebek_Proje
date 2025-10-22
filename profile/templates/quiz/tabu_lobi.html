@@ -223,7 +223,7 @@
                     <i class="bi bi-people-fill"></i> Takım İsimlerini Girin
                 </h2>
                 
-                <form method="POST">
+                <form method="POST" id="tabuLobiForm">
                     {% csrf_token %}
                     
                     <div class="row g-4">
@@ -302,7 +302,7 @@
 
 <script>
     // Form validasyonu
-    document.querySelector('form').addEventListener('submit', function(e) {
+    document.getElementById('tabuLobiForm').addEventListener('submit', function(e) {
         const takimA = document.getElementById('takim_a').value.trim();
         const takimB = document.getElementById('takim_b').value.trim();
         

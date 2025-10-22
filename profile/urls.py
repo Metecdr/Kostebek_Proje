@@ -19,4 +19,7 @@ urlpatterns = [
 
     # İSTATİSTİK SAYFALARI
     path('konu-istatistik/', views.konu_istatistik_view, name='konu_istatistik'),
+
+    # KONU ANALİZİ
+    path('konu-analiz/', views.konu_analiz_view, name='konu_analiz'),
 ]

@@ -3,6 +3,24 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+
+
+# ==================== SINAV SECIMI ====================
+
+SINAV_TIPI_SECENEKLERI = [
+    ('tyt', 'TYT'),
+    ('ayt', 'AYT'),
+]
+
+sinav_tipi = models.CharField(
+    max_length=10,
+    choices=SINAV_TIPI_SECENEKLERI,
+    null=True,
+    blank=True,
+    verbose_name='Sınav Tipi'
+)
+
+
 # ==================== KONU MODELİ ====================
 
 class Konu(models.Model):
@@ -17,6 +35,8 @@ class Konu(models.Model):
         ('tarih', 'Tarih'),
         ('cografya', 'Coğrafya'),
         ('felsefe', 'Felsefe'),
+        ('biyoloji','Biyoloji'),
+
     ]
     ders = models.CharField(max_length=20, choices=DERS_SECENEKLERI, verbose_name='Ders', default='matematik')
     sira = models.PositiveIntegerField(default=0, verbose_name='Sıra')  # Sıra alanı eklendi
@@ -55,6 +75,7 @@ class Soru(models.Model):
         ('tarih', 'Tarih'),
         ('cografya', 'Coğrafya'),
         ('felsefe', 'Felsefe'),
+        ('biyoloji','Biyoloji'),
     ]
     ders = models.CharField(max_length=20, choices=DERS_SECENEKLERI, verbose_name='Ders', default='matematik')
 
@@ -84,16 +105,26 @@ class Cevap(models.Model):
 # ==================== TABU OYUNU MODELLERİ ====================
 
 class TabuKelime(models.Model):
-    """Tabu oyunundaki ana kelimeler"""
     kelime = models.CharField(max_length=100, unique=True, verbose_name="Tabu Kelime")
-
+    kategori = models.CharField(
+        max_length=30,
+        choices=[
+            ('biyoloji', 'Biyoloji'),
+            ('kimya', 'Kimya'),
+            ('fizik', 'Fizik'),
+            ('cografya', 'Coğrafya'),
+            ('tarih', 'Tarih'),
+            ('edebiyat', 'Edebiyat'),
+            # ileride dil için eklenebilir
+        ],
+        verbose_name="Kategori"
+    )
     def __str__(self):
         return self.kelime
 
     class Meta:
         verbose_name = "Tabu Kelime"
         verbose_name_plural = "Tabu Kelimeler"
-
 
 class YasakliKelime(models.Model):
     """Tabu kelimelerine ait yasaklı kelimeler"""
@@ -273,6 +304,8 @@ class BulBakalimOyun(models.Model):
         ('tarih', 'Tarih'),
         ('cografya', 'Coğrafya'),
         ('felsefe', 'Felsefe'),
+        ('biyoloji','Biyoloji'),
+    
     ]
     
     selected_ders = models.CharField(
@@ -281,6 +314,14 @@ class BulBakalimOyun(models.Model):
         null=True,
         blank=True,
         verbose_name='Seçilen Ders'
+    )
+
+    sinav_tipi = models.CharField(
+        max_length=10,
+        choices=[('tyt', 'TYT'), ('ayt', 'AYT')],
+        null=True,
+        blank=True,
+        verbose_name='Sınav Tipi'
     )
     
     oyun_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

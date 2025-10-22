@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .models import OgrenciProfili, OyunModuIstatistik, DersIstatistik, Rozet
+from .models import OgrenciProfili, OyunModuIstatistik, DersIstatistik, Rozet, KonuIstatistik
 from quiz.models import Rozet, KullaniciRozet, Soru, KullaniciCevap
 from django.db.models import F, Q, Count, Sum
 from .rozet_kontrol import rozet_kontrol_yap
@@ -101,21 +101,22 @@ def kayit_view(request):
 
 def giris_view(request):
     """Kullanıcı giriş sayfası"""
-    
+
     if request.method == 'POST':
-        kullanici_adi = request.POST.get('kullanici_adi')
-        sifre = request.POST.get('sifre')
-        
+        # DÜZELTME: FRONTEND'DE 'username' ve 'password' olarak POST ediliyor
+        kullanici_adi = request.POST.get('username')
+        sifre = request.POST.get('password')
+
         # Authenticate
         user = authenticate(request, username=kullanici_adi, password=sifre)
-        
+
         if user is not None:
             login(request, user)
             messages.success(request, f'Hoş geldin {kullanici_adi}!')
             return redirect('profil')
         else:
             messages.error(request, 'Kullanıcı adı veya şifre hatalı!')
-    
+
     return render(request, 'giris.html')
 
 
@@ -442,6 +443,23 @@ def konu_istatistik_view(request):
     
     return render(request, 'konu_istatistik.html', context)
 
+
+# ====================== KONU ANALİZİ ======================
+
+def konu_analiz_view(request):
+    profil = request.user.profil
+    dersler = ['matematik', 'fizik', 'kimya', 'biyoloji', 'turkce']
+    konu_istatistikleri = KonuIstatistik.objects.filter(profil=profil)
+    ders_konular_list = []
+    for ders in dersler:
+        ders_konular_list.append({
+            'ders': ders,
+            'konular': konu_istatistikleri.filter(ders=ders)
+        })
+    return render(request, 'konu_analiz.html', {
+        'dersler': dersler,
+        'ders_konular_list': ders_konular_list,
+    })
 
 # ==================== ROZETLER ====================
 
