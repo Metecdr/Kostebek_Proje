@@ -462,11 +462,14 @@ def karsilasma_sonuc(request, oda_id):
 
 @login_required
 def bul_bakalim_basla(request):
+    ders = request.GET.get('ders')
+    sinav_tipi = request.session.get('bulbakalim_sinav_tipi', 'ayt')  # default ayt
     """Bul Bakalım oyununu başlat"""
     
-    # 5 UZUN SORU SEÇ (paragraf, analiz soruları)
-    # Şimdilik rastgele 5 soru seçiyoruz
-    sorular = list(Soru.objects.order_by('?')[:5])
+    if ders == "karisik":
+       sorular = list(Soru.objects.filter(bul_bakalimda_cikar=True).order_by('?')[:5])
+    else:
+       sorular = list(Soru.objects.filter(ders=ders, bul_bakalimda_cikar=True).order_by('?')[:5])
     
     if len(sorular) < 5:
         messages.error(request, 'Yeterli soru yok! En az 5 soru olmalı.')

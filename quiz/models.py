@@ -51,22 +51,12 @@ class Konu(models.Model):
 # ==================== SORU VE CEVAP MODELLERİ ====================
 
 class Soru(models.Model):
-    """Soru Modeli"""
+    metin = models.TextField()
+    baslik = models.CharField(max_length=100, default="", blank=True)
+    bul_bakalimda_cikar = models.BooleanField(default=True)
+    karsilasmada_cikar = models.BooleanField(default=True)
 
-    metin = models.TextField(verbose_name='Soru Metni')
-    zorluk = models.CharField(
-        max_length=20, 
-        choices=[('kolay', 'Kolay'), ('orta', 'Orta'), ('zor', 'Zor')], 
-        verbose_name='Zorluk Seviyesi'
-    )
-    konu = models.ForeignKey(
-    'Konu', 
-    on_delete=models.CASCADE, 
-    verbose_name='Konu',
-    default=1  # Varsayılan değer olarak bir konu ID belirleyin (örneğin ID=1)
-)
-
-    # Ders seçeneği
+    # Tek bir ders alanı!
     DERS_SECENEKLERI = [
         ('matematik', 'Matematik'),
         ('fizik', 'Fizik'),
@@ -78,6 +68,15 @@ class Soru(models.Model):
         ('biyoloji','Biyoloji'),
     ]
     ders = models.CharField(max_length=20, choices=DERS_SECENEKLERI, verbose_name='Ders', default='matematik')
+
+    sinav_tipi = models.CharField(max_length=10, default="", blank=True)
+    
+    konu = models.ForeignKey(
+        'Konu', 
+        on_delete=models.CASCADE, 
+        verbose_name='Konu',
+        default=1  # ID=1 varsa!
+    )
 
     def __str__(self):
         return self.metin

@@ -460,9 +460,9 @@
                 <div class="rozetler-grid">
                     {% for kullanici_rozet in kazanilan_rozetler %}
                         <div class="rozet-card kazanildi">
-                            <span class="rozet-emoji">{{ kullanici_rozet.rozet.emoji }}</span>
-                            <h3 class="rozet-title">{{ kullanici_rozet.rozet.isim }}</h3>
-                            <p class="rozet-description">{{ kullanici_rozet.rozet.aciklama }}</p>
+                            <span class="rozet-emoji">{{ kullanici_rozet.icon }}</span>
+                            <h3 class="rozet-title">{{ kullanici_rozet.get_kategori_display }} ({{ kullanici_rozet.get_seviye_display }})</h3>
+                            <p class="rozet-description">{{ kullanici_rozet.aciklama }}</p>
                             <span class="rozet-badge badge-kazanildi">✓ Kazanıldı</span>
                             <div class="rozet-date">
                                 📅 {{ kullanici_rozet.kazanma_tarihi|date:"d F Y" }}

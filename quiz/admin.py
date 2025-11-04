@@ -21,8 +21,8 @@ class KonuAdmin(admin.ModelAdmin):
 
 @admin.register(Soru)
 class SoruAdmin(admin.ModelAdmin):
-    list_display = ['metin_kisaltma', 'konu', 'zorluk']
-    list_filter = ['zorluk', 'konu']
+    list_display = ['metin_kisaltma', 'ders', 'konu', 'bul_bakalimda_cikar']
+    list_filter = ['ders', 'konu', 'bul_bakalimda_cikar']
     search_fields = ['metin']
     list_per_page = 20
     
