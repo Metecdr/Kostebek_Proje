@@ -8,6 +8,8 @@ from .models import OgrenciProfili, OyunModuIstatistik, DersIstatistik, Rozet, K
 from quiz.models import Rozet, KullaniciRozet, Soru, KullaniciCevap
 from django.db.models import F, Q, Count, Sum
 from .rozet_kontrol import rozet_kontrol_yap
+from profile.rozet_aciklama import ROZET_ACIKLAMALARI
+from profile.models import Rozet
 
 # ==================== ANASAYFA ====================
 
@@ -462,6 +464,44 @@ def konu_analiz_view(request):
     })
 
 # ==================== ROZETLER ====================
+
+def rozetlerim(request):
+    profil = request.user.profil
+    kazanilan_rozetler = Rozet.objects.filter(profil=profil)
+    
+    # Tüm rozetlerin kategori/seviye kombinasyonunu al (örnek)
+    tum_rozet_tanimi = []
+    for kategori, _ in Rozet.KATEGORI_SECENEKLERI:
+        for seviye, _ in Rozet.SEVIYE_SECENEKLERI:
+            tum_rozet_tanimi.append({'kategori': kategori, 'seviye': seviye})
+    
+    # Kullanıcının rozetlerini set olarak al
+    kazanilan_set = {(r.kategori, r.seviye) for r in kazanilan_rozetler}
+
+    # Kazanılmamış rozetler
+    kazanilmamis_rozetler = []
+    for tanim in tum_rozet_tanimi:
+        if (tanim['kategori'], tanim['seviye']) not in kazanilan_set:
+            # Dummy rozet objesi: isim, emoji, aciklama vs.
+            isim = dict(Rozet.KATEGORI_SECENEKLERI).get(tanim['kategori'])
+            emoji = Rozet(None, kategori=tanim['kategori'], seviye=tanim['seviye']).icon  # Property'den çek
+            aciklama = ROZET_ACIKLAMALARI.get(tanim['kategori'], {}).get(tanim['seviye'], "Açıklama bulunamadı.")
+            kazanilmamis_rozetler.append({
+                'kategori': tanim['kategori'],
+                'seviye': tanim['seviye'],
+                'isim': isim,
+                'emoji': emoji,
+                'aciklama': aciklama
+            })
+
+    context = {
+        "kazanilan_rozetler": kazanilan_rozetler,
+        "kazanilmamis_rozetler": kazanilmamis_rozetler,
+        "kazanilan_sayi": len(kazanilan_rozetler),
+        "toplam_rozet": len(tum_rozet_tanimi),
+    }
+    return render(request, "quiz/rozetler.html", context)
+
 
 @login_required
 def rozetler_view(request):

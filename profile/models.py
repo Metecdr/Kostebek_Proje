@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import datetime, timedelta
+import profile.rozet_aciklama as rozet_aciklama
 
 class OgrenciProfili(models.Model):
     ALAN_SECENEKLERI = [
@@ -244,6 +245,11 @@ class Rozet(models.Model):
         ('usta', 'Usta'),
     ]
     
+    @property
+    def aciklama(self):
+        """Rozet açıklamasını getir"""
+        return rozet_aciklama.ROZET_ACIKLAMALARI.get(self.kategori, {}).get(self.seviye, "Açıklama bulunamadı.")
+
     profil = models.ForeignKey(OgrenciProfili, on_delete=models.CASCADE, related_name='rozetler')
     kategori = models.CharField(max_length=50, choices=KATEGORI_SECENEKLERI)
     seviye = models.CharField(max_length=20, choices=SEVIYE_SECENEKLERI, default='caylak')
