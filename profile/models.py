@@ -18,13 +18,13 @@ class OgrenciProfili(models.Model):
     profil_fotografi = models.ImageField(upload_to='profil_fotograflari/', null=True, blank=True)
     
     # GENEL İSTATİSTİKLER
-    toplam_puan = models.IntegerField(default=0)
-    cozulen_soru_sayisi = models.IntegerField(default=0)
+    toplam_puan = models.IntegerField(default=0, db_index=True)  # ✅ INDEX
+    cozulen_soru_sayisi = models.IntegerField(default=0, db_index=True)  # ✅ INDEX
     toplam_dogru = models.IntegerField(default=0)
     toplam_yanlis = models.IntegerField(default=0)
     
     # HAFTALIK İSTATİSTİKLER
-    haftalik_puan = models.IntegerField(default=0)
+    haftalik_puan = models.IntegerField(default=0, db_index=True)  # ✅ INDEX
     haftalik_cozulen = models.IntegerField(default=0)
     haftalik_dogru = models.IntegerField(default=0)
     haftalik_yanlis = models.IntegerField(default=0)
@@ -34,7 +34,7 @@ class OgrenciProfili(models.Model):
     unvanlar = models.CharField(max_length=255, default='Çaylak')
     
     # TARİH BİLGİLERİ
-    kayit_tarihi = models.DateTimeField(auto_now_add=True)
+    kayit_tarihi = models.DateTimeField(auto_now_add=True, db_index=True)  # ✅ INDEX
     son_giris = models.DateTimeField(auto_now=True)
     
     def __str__(self):
@@ -65,6 +65,11 @@ class OgrenciProfili(models.Model):
         verbose_name = 'Öğrenci Profili'
         verbose_name_plural = 'Öğrenci Profilleri'
         ordering = ['-toplam_puan']
+        # ✅ COMPOSITE INDEX'LER
+        indexes = [
+            models.Index(fields=['-toplam_puan', '-haftalik_puan'], name='profil_puan_idx'),
+            models.Index(fields=['alan', '-toplam_puan'], name='profil_alan_puan_idx'),
+        ]
 
 
 class OyunModuIstatistik(models.Model):
@@ -76,10 +81,10 @@ class OyunModuIstatistik(models.Model):
     ]
     
     profil = models.ForeignKey(OgrenciProfili, on_delete=models.CASCADE, related_name='oyun_istatistikleri')
-    oyun_modu = models.CharField(max_length=20, choices=OYUN_MODLARI)
+    oyun_modu = models.CharField(max_length=20, choices=OYUN_MODLARI, db_index=True)  # ✅ INDEX
     
     # İSTATİSTİKLER
-    toplam_puan = models.IntegerField(default=0)
+    toplam_puan = models.IntegerField(default=0, db_index=True)  # ✅ INDEX
     oynanan_oyun_sayisi = models.IntegerField(default=0)
     kazanilan_oyun = models.IntegerField(default=0)
     kaybedilen_oyun = models.IntegerField(default=0)
@@ -88,7 +93,7 @@ class OyunModuIstatistik(models.Model):
     yanlis_sayisi = models.IntegerField(default=0)
     
     # HAFTALIK
-    haftalik_puan = models.IntegerField(default=0)
+    haftalik_puan = models.IntegerField(default=0, db_index=True)  # ✅ INDEX
     haftalik_oyun_sayisi = models.IntegerField(default=0)
     haftalik_dogru = models.IntegerField(default=0)
     haftalik_yanlis = models.IntegerField(default=0)
@@ -118,6 +123,11 @@ class OyunModuIstatistik(models.Model):
         verbose_name = 'Oyun Modu İstatistiği'
         verbose_name_plural = 'Oyun Modu İstatistikleri'
         unique_together = ['profil', 'oyun_modu']
+        # ✅ COMPOSITE INDEX'LER
+        indexes = [
+            models.Index(fields=['oyun_modu', '-toplam_puan'], name='oyun_mod_puan_idx'),
+            models.Index(fields=['oyun_modu', '-haftalik_puan'], name='oyun_mod_haft_idx'),
+        ]
     
     def __str__(self):
         return f"{self.profil.kullanici.username} - {self.get_oyun_modu_display()}"
@@ -140,12 +150,12 @@ class DersIstatistik(models.Model):
     ]
     
     profil = models.ForeignKey(OgrenciProfili, on_delete=models.CASCADE, related_name='ders_istatistikleri')
-    ders = models.CharField(max_length=20, choices=DERSLER)
+    ders = models.CharField(max_length=20, choices=DERSLER, db_index=True)  # ✅ INDEX
     
     # GENEL İSTATİSTİKLER
-    toplam_puan = models.IntegerField(default=0)
+    toplam_puan = models.IntegerField(default=0, db_index=True)  # ✅ INDEX
     cozulen_soru = models.IntegerField(default=0)
-    dogru_sayisi = models.IntegerField(default=0)
+    dogru_sayisi = models.IntegerField(default=0, db_index=True)  # ✅ INDEX
     yanlis_sayisi = models.IntegerField(default=0)
     bos_sayisi = models.IntegerField(default=0)
     
@@ -185,6 +195,11 @@ class DersIstatistik(models.Model):
         verbose_name = 'Ders İstatistiği'
         verbose_name_plural = 'Ders İstatistikleri'
         unique_together = ['profil', 'ders']
+        # ✅ COMPOSITE INDEX'LER
+        indexes = [
+            models.Index(fields=['ders', '-dogru_sayisi'], name='ders_dogru_idx'),
+            models.Index(fields=['ders', '-toplam_puan'], name='ders_puan_idx'),
+        ]
     
     def __str__(self):
         return f"{self.profil.kullanici.username} - {self.get_ders_display()}"
@@ -251,15 +266,19 @@ class Rozet(models.Model):
         return rozet_aciklama.ROZET_ACIKLAMALARI.get(self.kategori, {}).get(self.seviye, "Açıklama bulunamadı.")
 
     profil = models.ForeignKey(OgrenciProfili, on_delete=models.CASCADE, related_name='rozetler')
-    kategori = models.CharField(max_length=50, choices=KATEGORI_SECENEKLERI)
+    kategori = models.CharField(max_length=50, choices=KATEGORI_SECENEKLERI, db_index=True)  # ✅ INDEX
     seviye = models.CharField(max_length=20, choices=SEVIYE_SECENEKLERI, default='caylak')
-    kazanilma_tarihi = models.DateTimeField(auto_now_add=True)
+    kazanilma_tarihi = models.DateTimeField(auto_now_add=True, db_index=True)  # ✅ INDEX
     
     class Meta:
         verbose_name = 'Rozet'
         verbose_name_plural = 'Rozetler'
         unique_together = ['profil', 'kategori', 'seviye']
         ordering = ['-kazanilma_tarihi']
+        # ✅ COMPOSITE INDEX
+        indexes = [
+            models.Index(fields=['profil', '-kazanilma_tarihi'], name='rozet_profil_idx'),
+        ]
     
     def __str__(self):
         return f"{self.profil.kullanici.username} - {self.get_kategori_display()} ({self.get_seviye_display()})"
@@ -311,6 +330,26 @@ class Rozet(models.Model):
         else:
             return '#ffd700'  # Altın
 
+class KonuIstatistik(models.Model):
+    profil = models.ForeignKey(OgrenciProfili, on_delete=models.CASCADE)
+    ders = models.CharField(max_length=50, db_index=True)  # ✅ INDEX
+    konu = models.CharField(max_length=100)
+    dogru_sayisi = models.IntegerField(default=0)
+    yanlis_sayisi = models.IntegerField(default=0)
+    bos_sayisi = models.IntegerField(default=0)
+    toplam_soru = models.IntegerField(default=0)
+
+    def basari_orani(self):
+        if self.toplam_soru == 0:
+            return 0
+        return round(100 * self.dogru_sayisi / self.toplam_soru, 1)
+
+    class Meta:
+        unique_together = ['profil', 'ders', 'konu']
+        # ✅ INDEX
+        indexes = [
+            models.Index(fields=['profil', 'ders'], name='konu_ist_idx'),
+        ]
 
 class RozetKosul(models.Model):
     """Rozet Kazanma Koşulları"""

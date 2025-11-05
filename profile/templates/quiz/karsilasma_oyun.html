@@ -3,45 +3,52 @@
 
 {% block content %}
 <style>
-    body { 
+    /* ✅ MODERN TASARIM */
+    body {
+        font-family: 'Nunito', sans-serif;
+    }
+    
+    .game-arena {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
-        font-family: 'Nunito', sans-serif;
-        padding: 20px 0;
+        padding: 20px;
     }
     
-    .game-container { 
-        max-width: 900px; 
-        margin: 50px auto; 
-        padding: 40px; 
-        background: white; 
-        border-radius: 25px; 
-        box-shadow: 0 15px 40px rgba(0,0,0,0.2); 
-    }
-    
-    .game-title {
-        font-size: 2.5rem;
-        font-weight: 900;
-        background: linear-gradient(135deg, #7B68EE, #6A5ACD);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+    /* ✅ SKORBOARD */
+    .scoreboard {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 20px;
         margin-bottom: 30px;
-        text-align: center;
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     }
     
-    .player-card { 
-        padding: 25px; 
-        border-radius: 15px; 
-        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-        border: 3px solid #dee2e6; 
-        transition: all 0.3s ease;
+    .player-info {
         text-align: center;
+        position: relative;
     }
     
-    .player-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    .player-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #7B68EE, #6A5ACD);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+        font-weight: 900;
+        margin: 0 auto 15px;
+        border: 4px solid #fff;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .player-avatar.player2-avatar {
+        background: linear-gradient(135deg, #FF6347, #DC143C);
     }
     
     .player-name {
@@ -52,22 +59,139 @@
     }
     
     .player-score {
-        font-size: 2.5rem;
+        font-size: 3rem;
         font-weight: 900;
-        margin: 0;
-    }
-    
-    .player-card.player1 .player-score {
         color: #7B68EE;
+        margin: 10px 0;
     }
     
-    .player-card.player2 .player-score {
+    .player2-score {
         color: #FF6347;
     }
     
-    .vs-icon { 
-        font-size: 3rem; 
-        font-weight: 900; 
+    /* ✅ PROGRESS BAR (Round Göstergesi) */
+    .round-progress {
+        background: rgba(255,255,255,0.3);
+        height: 10px;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 20px 0;
+    }
+    
+    .round-progress-bar {
+        background: linear-gradient(90deg, #FFD700, #FFA500);
+        height: 100%;
+        transition: width 0.5s ease;
+    }
+    
+    .round-text {
+        text-align: center;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+    
+    /* ✅ SORU KARTI */
+    .question-card {
+        background: white;
+        border-radius: 25px;
+        padding: 40px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        margin-bottom: 30px;
+        animation: slideIn 0.5s ease;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .question-number {
+        background: linear-gradient(135deg, #7B68EE, #6A5ACD);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 20px;
+        display: inline-block;
+        font-weight: 800;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+    
+    .question-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+    
+    /* ✅ CEVAP BUTONLARI */
+    .answers-grid {
+        display: grid;
+        gap: 15px;
+    }
+    
+    .answer-btn {
+        width: 100%;
+        padding: 20px;
+        border: 3px solid #e0e0e0;
+        border-radius: 15px;
+        background: white;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-align: left;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .answer-btn:hover:not(:disabled) {
+        transform: translateX(10px);
+        border-color: #7B68EE;
+        background: #f8f7ff;
+        box-shadow: 0 5px 15px rgba(123, 104, 238, 0.2);
+    }
+    
+    .answer-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    .answer-btn.correct {
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+        border-color: #4CAF50;
+        animation: correctPulse 0.6s ease;
+    }
+    
+    .answer-btn.wrong {
+        background: linear-gradient(135deg, #F44336, #e53935);
+        color: white;
+        border-color: #F44336;
+        animation: shake 0.5s ease;
+    }
+    
+    @keyframes correctPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+    }
+    
+    /* ✅ VS ICON */
+    .vs-divider {
+        font-size: 2.5rem;
+        font-weight: 900;
         background: linear-gradient(135deg, #FFD700, #FFA500);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -75,18 +199,15 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 100%;
     }
     
-    .divider {
-        border: 2px solid #e9ecef;
-        margin: 30px 0;
-        border-radius: 2px;
-    }
-    
+    /* ✅ BEKLEME ALANI */
     .waiting-area {
         text-align: center;
         padding: 60px 20px;
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
     }
     
     .waiting-title {
@@ -100,124 +221,63 @@
         width: 4rem;
         height: 4rem;
         border-width: 0.4rem;
-    }
-    
-    .game-area {
-        padding: 20px;
-    }
-    
-    .question-container {
-        background: linear-gradient(135deg, #f8f9fa, #ffffff);
-        border-radius: 20px;
-        padding: 30px;
-        margin-bottom: 30px;
-        border: 3px solid #7B68EE;
-        box-shadow: 0 5px 15px rgba(123, 104, 238, 0.2);
-    }
-    
-    .question-number {
         color: #7B68EE;
-        font-size: 0.9rem;
-        font-weight: 700;
-        margin-bottom: 15px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
     }
     
-    .question-text {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #333;
-        line-height: 1.6;
-        margin: 0;
-    }
-    
-    .answers-grid {
-        display: grid;
-        gap: 15px;
-    }
-    
-    .answer-btn { 
-        padding: 20px; 
-        font-size: 1.1rem;
-        border-radius: 15px;
-        font-weight: 700;
-        transition: all 0.3s ease;
-        border: 2px solid #7B68EE;
-        background: white;
-        color: #7B68EE;
-        cursor: pointer;
-        text-align: left;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .answer-btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(123, 104, 238, 0.1), transparent);
-        transition: left 0.5s ease;
-    }
-    
-    .answer-btn:hover::before {
-        left: 100%;
-    }
-    
-    .answer-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(123, 104, 238, 0.3);
-        background: linear-gradient(135deg, #7B68EE, #6A5ACD);
-        color: white;
-        border-color: #6A5ACD;
-    }
-    
-    .answer-btn:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-    }
-    
-    .answer-btn:disabled:hover {
-        background: white;
-        color: #7B68EE;
-        box-shadow: none;
-    }
-    
+    /* ✅ RESULT MESSAGE */
     .result-message {
-        text-align: center;
-        margin-top: 30px;
         padding: 20px;
         border-radius: 15px;
+        margin-top: 20px;
         font-weight: 700;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+        text-align: center;
     }
     
     .result-message.waiting {
-        background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
-        color: #1976D2;
+        background: #FFF3CD;
+        color: #856404;
+        border: 2px solid #FFE69C;
     }
     
     .result-message.success {
-        background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
-        color: #388E3C;
+        background: #D4EDDA;
+        color: #155724;
+        border: 2px solid #C3E6CB;
     }
     
+    .result-message.danger {
+        background: #F8D7DA;
+        color: #721C24;
+        border: 2px solid #F5C6CB;
+    }
+    
+    /* ✅ GAME TITLE */
+    .game-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: white;
+        text-align: center;
+        margin-bottom: 30px;
+        text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+    }
+    
+    /* ✅ RESPONSIVE */
     @media (max-width: 768px) {
-        .game-container {
-            padding: 20px;
-            margin: 20px auto;
+        .scoreboard {
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
         
-        .game-title {
-            font-size: 2rem;
+        .vs-divider {
+            transform: rotate(90deg);
+            margin: 20px 0;
         }
         
-        .player-card {
-            padding: 20px;
+        .player-avatar {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
         }
         
         .player-score {
@@ -229,8 +289,8 @@
         }
         
         .answer-btn {
-            padding: 15px;
             font-size: 1rem;
+            padding: 15px;
         }
     }
 </style>
@@ -239,59 +299,76 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-<div class="container game-container">
-    <h1 class="game-title">⚔️ YKS KARŞILAŞMASI</h1>
-    
-    <!-- OYUNCU KARTLARI -->
-    <div class="row align-items-center mb-4">
-        <div class="col-md-5 col-12 mb-3 mb-md-0">
-            <div class="player-card player1">
-                <div class="player-name">{{ oda.oyuncu1.username }}</div>
-                <p class="player-score" id="oyuncu1-skor">{{ oda.oyuncu1_skor }}</p>
-            </div>
-        </div>
+<div class="game-arena">
+    <div class="container">
+        <h1 class="game-title">⚔️ YKS KARŞILAŞMASI</h1>
         
-        <div class="col-md-2 col-12 mb-3 mb-md-0">
-            <div class="vs-icon">VS</div>
-        </div>
-        
-        <div class="col-md-5 col-12">
-            <div class="player-card player2">
-                <div class="player-name" id="oyuncu2-isim">
-                    {% if oda.oyuncu2 %}{{ oda.oyuncu2.username }}{% else %}Rakip Bekleniyor...{% endif %}
+        <!-- ✅ SCOREBOARD -->
+        <div class="scoreboard">
+            <!-- Oyuncu 1 -->
+            <div class="player-info">
+                <div class="player-avatar">
+                    {{ oda.oyuncu1.username|first|upper }}
                 </div>
-                <p class="player-score" id="oyuncu2-skor">{{ oda.oyuncu2_skor }}</p>
+                <div class="player-name">{{ oda.oyuncu1.username }}</div>
+                <div class="player-score" id="oyuncu1-skor">{{ oda.oyuncu1_skor }}</div>
+            </div>
+            
+            <!-- VS -->
+            <div class="vs-divider">VS</div>
+            
+            <!-- Oyuncu 2 -->
+            <div class="player-info">
+                {% if oda.oyuncu2 %}
+                    <div class="player-avatar player2-avatar">
+                        {{ oda.oyuncu2.username|first|upper }}
+                    </div>
+                    <div class="player-name" id="oyuncu2-isim">{{ oda.oyuncu2.username }}</div>
+                    <div class="player-score player2-score" id="oyuncu2-skor">{{ oda.oyuncu2_skor }}</div>
+                {% else %}
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Rakip bekleniyor...</span>
+                    </div>
+                    <div class="player-name" id="oyuncu2-isim">Rakip Bekleniyor...</div>
+                    <div class="player-score player2-score" id="oyuncu2-skor">0</div>
+                {% endif %}
             </div>
         </div>
-    </div>
-    
-    <hr class="divider">
-    
-    <!-- BEKLEME MESAJI -->
-    <div id="bekleme-mesaji" {% if oda.oyuncu2 %}class="d-none"{% endif %}>
-        <div class="waiting-area">
-            <h2 class="waiting-title">⏳ Rakip Bekleniyor...</h2>
-            <p style="color: #6c757d; font-size: 1.1rem; margin-bottom: 30px;">
-                Bir rakip bulunduğunda oyun başlayacak
-            </p>
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Yükleniyor...</span>
+        
+        <!-- ✅ ROUND PROGRESS -->
+        <div class="round-progress">
+            <div class="round-progress-bar" id="progress-bar" style="width: 20%"></div>
+        </div>
+        <p class="round-text" id="round-text">
+            <strong>SORU 1 / 5</strong>
+        </p>
+        
+        <!-- ✅ BEKLEME MESAJI -->
+        <div id="bekleme-mesaji" {% if oda.oyuncu2 %}class="d-none"{% endif %}>
+            <div class="waiting-area">
+                <h2 class="waiting-title">⏳ Rakip Bekleniyor...</h2>
+                <p style="color: #6c757d; font-size: 1.1rem; margin-bottom: 30px;">
+                    Bir rakip bulunduğunda oyun otomatik başlayacak
+                </p>
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Yükleniyor...</span>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <!-- OYUN ALANI -->
-    <div id="oyun-alani" class="game-area d-none">
-        <div class="question-container">
-            <div class="question-number" id="soru-numarasi">SORU 1/5</div>
-            <p class="question-text" id="soru-metni">Soru yükleniyor...</p>
-        </div>
         
-        <div class="answers-grid" id="cevap-secenekleri">
-            <!-- Cevaplar buraya gelecek -->
+        <!-- ✅ OYUN ALANI -->
+        <div id="oyun-alani" class="d-none">
+            <div class="question-card">
+                <div class="question-number" id="soru-numarasi">SORU 1/5</div>
+                <p class="question-text" id="soru-metni">Soru yükleniyor...</p>
+                
+                <div class="answers-grid" id="cevap-secenekleri">
+                    <!-- Cevaplar JavaScript ile gelecek -->
+                </div>
+                
+                <div id="sonuc-mesaji"></div>
+            </div>
         </div>
-        
-        <div id="sonuc-mesaji"></div>
     </div>
 </div>
 
@@ -300,6 +377,14 @@
     const currentUserUsername = "{{ request.user.username }}";
     const oyuncu1Username = "{{ oda.oyuncu1.username }}";
     const csrftoken = getCookie('csrftoken');
+    
+    // ✅ URL'yi Django template ile oluştur
+    const durumUrl = "{% url 'karsilasma_durum' oda_id=oda.oda_id %}";
+    const sonucUrl = "{% url 'karsilasma_sonuc' oda_id=oda.oda_id %}";  // ✅ EKLE
+
+    console.log('🔗 Durum URL:', durumUrl);
+    console.log('🔗 Sonuç URL:', sonucUrl);  // ✅ EKLE
+
     
     console.log('🔍 DEBUG - Oda ID:', odaId);
     console.log('🔍 DEBUG - Kullanıcı:', currentUserUsername);
@@ -314,15 +399,18 @@
     const soruMetniEl = document.getElementById('soru-metni');
     const cevapSecenekleriEl = document.getElementById('cevap-secenekleri');
     const sonucMesajiEl = document.getElementById('sonuc-mesaji');
+    const progressBarEl = document.getElementById('progress-bar');
+    const roundTextEl = document.getElementById('round-text');
 
     let amIPlayer1 = (currentUserUsername === oyuncu1Username);
     let pollingInterval;
     let sonSoru = '';
 
     function durumGuncelle() {
-        console.log('📡 Durum güncelleniyor...');
-        
-        fetch(`/quiz/karsilasma/oda/${odaId}/durum/`)
+    console.log('📡 Durum güncelleniyor...');
+    
+        // ✅ Django template'ten gelen URL kullan
+        fetch(durumUrl)
             .then(response => {
                 console.log('📥 Response status:', response.status);
                 if (!response.ok) {
@@ -331,118 +419,126 @@
                 return response.json();
             })
             .then(data => {
-                console.log('📥 Gelen veri:', data);
+            console.log('📥 Gelen veri:', data);
+            console.log('📥 Soru:', data.soru);  // ✅ EKLE
+            console.log('📥 Cevaplar:', data.cevaplar);  // ✅ EKLE
+            
+            // ✅ Skorları güncelle
+            oyuncu1SkorEl.textContent = data.oyuncu1_skor;
+            oyuncu2SkorEl.textContent = data.oyuncu2_skor;
+            
+            // ✅ Oyuncu 2 adını güncelle
+            if (data.oyuncu2_adi && (oyuncu2IsimEl.textContent === 'Rakip Bekleniyor...' || oyuncu2IsimEl.textContent.includes('Bekleniyor'))) {
+                oyuncu2IsimEl.textContent = data.oyuncu2_adi;
+            }
+
+            // ✅ OYUN BİTTİ KONTROLÜ
+            if (data.oyun_durumu === 'bitti') {
+                console.log('🏁 Oyun bitti! Sonuç ekranına yönlendiriliyor...');
+                clearInterval(pollingInterval);
                 
-                // Skorları güncelle
-                oyuncu1SkorEl.textContent = data.oyuncu1_skor;
-                oyuncu2SkorEl.textContent = data.oyuncu2_skor;
+                sonucMesajiEl.innerHTML = '<div class="result-message success">🏁 Oyun bitti! Yönlendiriliyorsunuz...</div>';
                 
-                // Oyuncu 2 adını güncelle
-                if (data.oyuncu2_adi && (oyuncu2IsimEl.textContent === 'Rakip Bekleniyor...' || oyuncu2IsimEl.textContent === '...')) {
-                    oyuncu2IsimEl.textContent = data.oyuncu2_adi;
-                }
+                setTimeout(() => {
+                        window.location.href = sonucUrl;  // ✅ Django URL kullan
+                }, 2000);
+                return;
+            }
 
-                // ✅ OYUN BİTTİ KONTROLÜ - HER İKİ OYUNCU İÇİN
-                if (data.oyun_durumu === 'bitti') {
-                    console.log('🏁 Oyun bitti! Sonuç ekranına yönlendiriliyor...');
-                    clearInterval(pollingInterval);
+            // ✅ OYUN OYNANIYOR - SORU GÖSTER
+            if (data.oyun_durumu === 'oynaniyor') {
+                console.log('🎮 Oyun oynanıyor...');
+                
+                // Bekleme mesajını gizle, oyun alanını göster
+                beklemeMesaji.classList.add('d-none');
+                oyunAlani.classList.remove('d-none');
+                
+                // ✅ Progress bar güncelle
+                const questionNumber = data.aktif_soru_no || 1;
+                const totalQuestions = data.toplam_soru || 5;
+                const progressPercent = (questionNumber / totalQuestions) * 100;
+                progressBarEl.style.width = progressPercent + '%';
+                roundTextEl.innerHTML = `<strong>SORU ${questionNumber} / ${totalQuestions}</strong>`;
+                
+                // ✅ SORU KONTROLÜ - DATA.SORU NULL DEĞİLSE GÖSTER
+                if (data.soru && data.soru !== 'Oyun Bitti!' && data.soru !== sonSoru) {
+                    console.log('❓ Yeni soru gösteriliyor:', data.soru);
+                    sonSoru = data.soru;
                     
-                    // Sonuç mesajı göster
-                    sonucMesajiEl.innerHTML = '<div class="result-message success">🏁 Oyun bitti! Yönlendiriliyorsunuz...</div>';
+                    // Soru numarasını güncelle
+                    soruNumarasiEl.textContent = `SORU ${questionNumber}/${totalQuestions}`;
                     
-                    // 2 saniye sonra yönlendir
-                    setTimeout(() => {
-                        window.location.href = `/quiz/karsilasma/oda/${odaId}/sonuc/`;  // ✅ Oda ID eklendi
-                    }, 2000);
-                    return;
-                }
-
-                // Oyun oynanıyor mu?
-                if (data.oyun_durumu === 'oynaniyor') {
-                    console.log('🎮 Oyun oynanıyor...');
+                    // ✅ SORU METNİNİ GÖSTER
+                    soruMetniEl.textContent = data.soru;
+                    soruMetniEl.style.display = 'block';  // ✅ EKLE
                     
-                    // Bekleme mesajını gizle, oyun alanını göster
-                    beklemeMesaji.classList.add('d-none');
-                    oyunAlani.classList.remove('d-none');
+                    // Sonuç mesajını temizle
+                    sonucMesajiEl.innerHTML = '';
                     
-                    // Soru var mı?
-                    if (data.soru && data.soru !== sonSoru) {
-                        console.log('❓ Yeni soru:', data.soru);
-                        sonSoru = data.soru;
-                        
-                        // Soru numarasını güncelle
-                        const questionNumber = data.aktif_soru_no || 1;
-                        const totalQuestions = data.toplam_soru || 5;
-                        soruNumarasiEl.textContent = `SORU ${questionNumber}/${totalQuestions}`;
-                        
-                        // Soru metnini güncelle
-                        soruMetniEl.textContent = data.soru;
-                        
-                        // Sonuç mesajını temizle
-                        sonucMesajiEl.innerHTML = '';
-                        
-                        // Cevapları temizle ve yeniden oluştur
-                        cevapSecenekleriEl.innerHTML = '';
-                        
-                        if (data.cevaplar && data.cevaplar.length > 0) {
-                            console.log('📝 Cevaplar yükleniyor:', data.cevaplar.length, 'adet');
-                            
-                            data.cevaplar.forEach((cevap, index) => {
-                                const button = document.createElement('button');
-                                button.className = 'answer-btn';
-                                button.textContent = String.fromCharCode(65 + index) + ') ' + cevap.metin;
-                                button.onclick = () => cevapGonder(cevap.id);
-                                cevapSecenekleriEl.appendChild(button);
-                            });
-                        } else {
-                            console.warn('⚠️ Cevap bulunamadı!');
-                            soruMetniEl.textContent = 'Cevaplar yükleniyor...';
-                        }
-                    }
-
-                    // Kullanıcı cevap verdi mi?
-                    const userHasAnswered = amIPlayer1 ? data.oyuncu1_cevapladi : data.oyuncu2_cevapladi;
+                    // ✅ CEVAPLARI OLUŞTUR
+                    cevapSecenekleriEl.innerHTML = '';
                     
-                    if (userHasAnswered) {
-                        console.log('✅ Kullanıcı cevap verdi');
+                    if (data.cevaplar && data.cevaplar.length > 0) {
+                        console.log('📝 Cevaplar oluşturuluyor:', data.cevaplar.length, 'adet');
                         
-                        // Tüm butonları devre dışı bırak
-                        cevapSecenekleriEl.querySelectorAll('button').forEach(btn => {
-                            btn.disabled = true;
+                        data.cevaplar.forEach((cevap, index) => {
+                            const button = document.createElement('button');
+                            button.className = 'answer-btn';
+                            button.textContent = String.fromCharCode(65 + index) + ') ' + cevap.metin;
+                            button.onclick = () => cevapGonder(cevap.id);
+                            cevapSecenekleriEl.appendChild(button);
                         });
                         
-                        // Her iki oyuncu da cevaplamadıysa bekleme mesajı göster
-                        if (!data.oyuncu1_cevapladi || !data.oyuncu2_cevapladi) {
-                            sonucMesajiEl.innerHTML = '<div class="result-message waiting">✅ Cevabın alındı! Rakibin bekleniyor...</div>';
-                        } else {
-                            // ✅ İKİSİ DE CEVAPLADI - SONRAKI SORUYA GEÇİŞ MESAJI
-                            sonucMesajiEl.innerHTML = '<div class="result-message success">⏭️ Sonraki soruya geçiliyor...</div>';
-                        }
+                        console.log('✅ Cevaplar DOM\'a eklendi');
+                    } else {
+                        console.warn('⚠️ Cevap bulunamadı!');
+                        soruMetniEl.textContent = 'Cevaplar yükleniyor...';
                     }
-                } else if (data.oyun_durumu === 'bekleniyor') {
-                    console.log('⏳ Rakip bekleniyor...');
-                    beklemeMesaji.classList.remove('d-none');
-                    oyunAlani.classList.add('d-none');
+                } else if (!data.soru) {
+                    // ✅ SORU NULL İSE
+                    console.warn('⚠️ Soru null geldi!');
+                    soruMetniEl.textContent = 'Soru yükleniyor...';
                 }
-            })
-            .catch(error => {
-                console.error('❌ HATA:', error);
-                console.error('❌ HATA Detayı:', error.message);
-            });
-    }
+
+                // ✅ Kullanıcı cevap verdi mi?
+                const userHasAnswered = amIPlayer1 ? data.oyuncu1_cevapladi : data.oyuncu2_cevapladi;
+                
+                if (userHasAnswered) {
+                    console.log('✅ Kullanıcı cevap verdi');
+                    
+                    cevapSecenekleriEl.querySelectorAll('button').forEach(btn => {
+                        btn.disabled = true;
+                    });
+                    
+                    if (!data.oyuncu1_cevapladi || !data.oyuncu2_cevapladi) {
+                        sonucMesajiEl.innerHTML = '<div class="result-message waiting">✅ Cevabın alındı! Rakibin bekleniyor...</div>';
+                    } else {
+                        sonucMesajiEl.innerHTML = '<div class="result-message success">⏭️ Sonraki soruya geçiliyor...</div>';
+                    }
+                }
+            } else if (data.oyun_durumu === 'bekleniyor') {
+                console.log('⏳ Rakip bekleniyor...');
+                beklemeMesaji.classList.remove('d-none');
+                oyunAlani.classList.add('d-none');
+            }
+        })
+        .catch(error => {
+            console.error('❌ HATA:', error);
+            console.error('❌ HATA Detayı:', error.message);
+        });
+}
 
     function cevapGonder(cevapId) {
         console.log('📤 Cevap gönderiliyor:', cevapId);
         
-        // Tüm butonları devre dışı bırak
         cevapSecenekleriEl.querySelectorAll('button').forEach(btn => {
             btn.disabled = true;
         });
         
-        // Gönderiliyor mesajı
         sonucMesajiEl.innerHTML = '<div class="result-message waiting">📤 Cevabın gönderiliyor...</div>';
         
-        fetch(`/quiz/karsilasma/oda/${odaId}/durum/`, {
+        // ✅ Aynı URL'yi kullan (POST için)
+        fetch(durumUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', 
@@ -462,7 +558,7 @@
         })
         .catch(error => {
             console.error('❌ Cevap gönderme hatası:', error);
-            sonucMesajiEl.innerHTML = '<div class="result-message" style="background: #FFEBEE; color: #C62828;">❌ Bir hata oluştu. Tekrar deneyin.</div>';
+            sonucMesajiEl.innerHTML = '<div class="result-message danger">❌ Bir hata oluştu. Tekrar deneyin.</div>';
         });
     }
 
@@ -481,13 +577,10 @@
         return cookieValue;
     }
 
-    // Sayfa yüklendiğinde ilk güncelleme
-    console.log('🚀 Sayfa yüklendi, ilk güncelleme yapılıyor...');
+    console.log('🚀 Sayfa yüklendi, sistem başlatılıyor...');
     durumGuncelle();
-    
-    // Her 2 saniyede bir durum güncelle
     pollingInterval = setInterval(durumGuncelle, 2000);
-    console.log('⏰ Otomatik güncelleme başlatıldı (2 saniyede bir)');
+    console.log('⏰ Otomatik güncelleme başlatıldı');
 </script>
 
 {% endblock %}
