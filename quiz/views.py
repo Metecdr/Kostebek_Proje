@@ -6,13 +6,18 @@ from .models import (
     Soru, 
     KarsilasmaOdasi, 
     Cevap, 
-    BulBakalimOyun  # ✅ EKLE
+    BulBakalimOyun
 )
 from django.http import JsonResponse
 from profile.models import KonuIstatistik
 from django.db import models, transaction
 from django.contrib import messages
+from django.core.cache import cache  # ✅ EKLE
+from django.db.models import Prefetch  # ✅ EKLE
+from django.utils import timezone
+from datetime import timedelta
 import json
+import random  # ✅ EKLE
 
 # ✅ ROZET SİSTEMİ İMPORT'LARI
 from profile.models import OgrenciProfili, OyunModuIstatistik, DersIstatistik
@@ -24,13 +29,19 @@ from profile.rozet_kontrol import rozet_kontrol_yap
 def quiz_anasayfa(request):
     """Quiz ana sayfa - Oyun modları seçimi"""
     try:
+        # ✅ select_related ile profil'i önceden çek
         profil = request.user.profil
         
-        # Oyun modu istatistikleri
-        karsilasma_ist = OyunModuIstatistik.objects.filter(
-            profil=profil,
-            oyun_modu='karsilasma'
-        ).first()
+        # ✅ Cache'den al (60 saniye)
+        cache_key = f'karsilasma_ist_{profil.id}'
+        karsilasma_ist = cache.get(cache_key)
+        
+        if karsilasma_ist is None:
+            karsilasma_ist = OyunModuIstatistik.objects.filter(
+                profil=profil,
+                oyun_modu='karsilasma'
+            ).first()
+            cache.set(cache_key, karsilasma_ist, 60)
         
         context = {
             'profil': profil,
@@ -249,32 +260,6 @@ def tabu_sonuc(request, oyun_id):
 # --- NİHAİ KARŞILAŞMA FONKSİYONLARI ("YARIŞ DURUMU" DÜZELTİLDİ) ---
 
 @login_required
-def karsilasma_rakip_bul(request):
-    aktif_oda = KarsilasmaOdasi.objects.filter(
-        models.Q(oyuncu1=request.user) | models.Q(oyuncu2=request.user),
-        oyun_durumu__in=['bekleniyor', 'oynaniyor']
-    ).first()
-    
-    if aktif_oda:
-        return redirect('karsilasma_oyun', oda_id=aktif_oda.oda_id)
-    
-    bekleyen_oda = KarsilasmaOdasi.objects.filter(
-        oyun_durumu='bekleniyor',
-        oyuncu2=None
-    ).exclude(oyuncu1=request.user).first()
-    
-    if bekleyen_oda:
-        bekleyen_oda.oyuncu2 = request.user
-        bekleyen_oda.oyun_durumu = 'oynaniyor'
-        bekleyen_oda.aktif_soru = Soru.objects.order_by('?').first()
-        bekleyen_oda.save()
-        return redirect('karsilasma_oyun', oda_id=bekleyen_oda.oda_id)
-    else:
-        yeni_oda = KarsilasmaOdasi.objects.create(oyuncu1=request.user)
-        return redirect('karsilasma_oyun', oda_id=yeni_oda.oda_id)
-
-
-@login_required
 def karsilasma_oyun(request, oda_id):
     oda = get_object_or_404(KarsilasmaOdasi, oda_id=oda_id)
     context = {'oda': oda}
@@ -284,100 +269,52 @@ def karsilasma_oyun(request, oda_id):
 @login_required
 @transaction.atomic
 def karsilasma_durum_guncelle(request, oda_id):
-    # DÜZELTME: 'select_for_update()' ile bu oyun odasının satırını kilitliyoruz.
-    oda = get_object_or_404(KarsilasmaOdasi.objects.select_for_update(), oda_id=oda_id)
+    oda = get_object_or_404(
+        KarsilasmaOdasi.objects.select_for_update().select_related(
+            'oyuncu1', 'oyuncu2', 'aktif_soru', 'ilk_dogru_cevaplayan'
+        ),
+        oda_id=oda_id
+    )
     
     if request.method == 'POST':
         data = json.loads(request.body)
         cevap_id = data.get('cevap_id')
-        cevap_obj = Cevap.objects.get(id=cevap_id)
+        cevap_obj = Cevap.objects.select_related('soru').get(id=cevap_id)
         
-        # Sadece odanın aktif sorusuna cevap verilebilir
         if oda.aktif_soru and cevap_obj.soru == oda.aktif_soru:
             is_oyuncu1 = (oda.oyuncu1 == request.user)
             
-            # Oyuncunun daha önce cevap verip vermediğini KİLİT ALTINDA kontrol et
             if (is_oyuncu1 and not oda.oyuncu1_cevapladi) or (not is_oyuncu1 and not oda.oyuncu2_cevapladi):
+                # ✅ CEVAP ZAMANINI KAYDET
+                cevap_zamani = timezone.now()
                 if is_oyuncu1:
                     oda.oyuncu1_cevapladi = True
+                    oda.oyuncu1_cevap_zamani = cevap_zamani
                 else:
                     oda.oyuncu2_cevapladi = True
+                    oda.oyuncu2_cevap_zamani = cevap_zamani
 
-                # ✅ DOĞRU CEVAP İSTATİSTİKLERİ
-                if cevap_obj.dogru_mu:
-                    puan = 10
-                    bonus = 2
-                    
-                    # ✅ Profil istatistiklerini güncelle
-                    try:
-                        profil = request.user.profil
-                        profil.toplam_dogru += 1
-                        profil.haftalik_dogru += 1
-                        profil.cozulen_soru_sayisi += 1
-                        profil.haftalik_cozulen += 1
-                        
-                        # İlk doğru cevaplayan bonusu
-                        if oda.ilk_dogru_cevaplayan is None:
-                            oda.ilk_dogru_cevaplayan = request.user
-                            if is_oyuncu1:
-                                oda.oyuncu1_skor += puan + bonus
-                            else:
-                                oda.oyuncu2_skor += puan + bonus
-                            profil.toplam_puan += puan + bonus
-                            profil.haftalik_puan += puan + bonus
-                        else:
-                            if is_oyuncu1:
-                                oda.oyuncu1_skor += puan
-                            else:
-                                oda.oyuncu2_skor += puan
-                            profil.toplam_puan += puan
-                            profil.haftalik_puan += puan
-                        
-                        profil.save()
-                        
-                        # Oyun modu istatistiği güncelle
-                        oyun_ist, created = OyunModuIstatistik.objects.get_or_create(
-                            profil=profil,
-                            oyun_modu='karsilasma'
-                        )
-                        oyun_ist.cozulen_soru += 1
-                        oyun_ist.dogru_sayisi += 1
-                        oyun_ist.toplam_puan += puan + (bonus if oda.ilk_dogru_cevaplayan == request.user else 0)
-                        oyun_ist.save()
-                        
-                    except Exception as e:
-                        print(f"❌ İstatistik güncelleme hatası: {e}")
-                
-                else:
-                    # ✅ YANLIŞ CEVAP İSTATİSTİKLERİ
-                    try:
-                        profil = request.user.profil
-                        profil.toplam_yanlis += 1
-                        profil.haftalik_yanlis += 1
-                        profil.cozulen_soru_sayisi += 1
-                        profil.haftalik_cozulen += 1
-                        profil.save()
-                        
-                        # Oyun modu istatistiği
-                        oyun_ist, created = OyunModuIstatistik.objects.get_or_create(
-                            profil=profil,
-                            oyun_modu='karsilasma'
-                        )
-                        oyun_ist.cozulen_soru += 1
-                        oyun_ist.yanlis_sayisi += 1
-                        oyun_ist.save()
-                    
-                    except Exception as e:
-                        print(f"❌ İstatistik güncelleme hatası: {e}")
+                # ✅ COMBO + HIZ BONUSU İLE İSTATİSTİK GÜNCELLE
+                _update_stats_with_combo(request.user, oda, cevap_obj, is_oyuncu1)
             
-            # Her iki oyuncu da cevapladıysa, yeni soruya geç
+            # ✅ Her iki oyuncu da cevapladıysa
             if oda.oyuncu1_cevapladi and oda.oyuncu2_cevapladi:
-                oda.aktif_soru = Soru.objects.order_by('?').first()
-                oda.oyuncu1_cevapladi = False
-                oda.oyuncu2_cevapladi = False
-                oda.ilk_dogru_cevaplayan = None
+                oda.aktif_soru_no += 1
                 
-                # ✅ Her 10 soruda bir rozet kontrolü yap
+                # ✅ OYUN BİTİŞ KONTROLÜ
+                if oda.aktif_soru_no > oda.toplam_soru:
+                    oda.oyun_durumu = 'bitti'
+                    oda.aktif_soru = None
+                    print(f"🏁 Oyun bitti! Oda: {oda_id}")
+                else:
+                    # ✅ YENİ SORU (3 saniye sonra değişecek - frontend'de)
+                    oda.aktif_soru = _get_random_soru()
+                    oda.oyuncu1_cevapladi = False
+                    oda.oyuncu2_cevapladi = False
+                    oda.ilk_dogru_cevaplayan = None
+                    oda.soru_baslangic_zamani = timezone.now()  # ✅ YENİ SORU ZAMANI
+                
+                # ✅ Rozet kontrolü
                 try:
                     profil = request.user.profil
                     if profil.cozulen_soru_sayisi % 10 == 0:
@@ -387,26 +324,139 @@ def karsilasma_durum_guncelle(request, oda_id):
                 except Exception as e:
                     print(f"❌ Rozet kontrol hatası: {e}")
             
-            oda.save()  # Kilit burada açılır.
+            oda.save()
 
-    # Her durumda odanın en güncel durumunu döndür
+    # ✅ Response
     soru_obj = oda.aktif_soru
     cevaplar = []
     if soru_obj:
-        cevaplar_qs = Cevap.objects.filter(soru=soru_obj)
+        cevaplar_qs = Cevap.objects.filter(soru=soru_obj).only('id', 'metin')
         cevaplar = [{'id': c.id, 'metin': c.metin} for c in cevaplar_qs]
 
     response_data = {
         'oyuncu1_skor': oda.oyuncu1_skor,
         'oyuncu2_skor': oda.oyuncu2_skor,
+        'oyuncu1_combo': oda.oyuncu1_combo,  # ✅ COMBO EKLE
+        'oyuncu2_combo': oda.oyuncu2_combo,  # ✅ COMBO EKLE
         'oyuncu2_adi': oda.oyuncu2.username if oda.oyuncu2 else None,
         'oyun_durumu': oda.oyun_durumu,
-        'soru': soru_obj.metin if soru_obj else "Oyun Bitti! Sonuçlar bekleniyor...",
+        'soru': soru_obj.metin if soru_obj else None,
         'cevaplar': cevaplar,
         'oyuncu1_cevapladi': oda.oyuncu1_cevapladi,
         'oyuncu2_cevapladi': oda.oyuncu2_cevapladi,
+        'aktif_soru_no': oda.aktif_soru_no,
+        'toplam_soru': oda.toplam_soru,
     }
+    
     return JsonResponse(response_data)
+
+
+# ✅ YENİ FONKSİYON: COMBO + HIZ BONUSU
+def _update_stats_with_combo(user, oda, cevap_obj, is_oyuncu1):
+    """Combo ve hız bonusu ile istatistik güncelle"""
+    try:
+        profil = user.profil
+        base_puan = 10
+        bonus_puan = 0
+        
+        # ✅ HIZ BONUSU HESAPLA (5 saniye içinde)
+        if is_oyuncu1 and oda.oyuncu1_cevap_zamani and oda.soru_baslangic_zamani:
+            sure = (oda.oyuncu1_cevap_zamani - oda.soru_baslangic_zamani).total_seconds()
+            if sure < 5:
+                bonus_puan += 5
+                print(f"⚡ {user.username} hız bonusu kazandı! ({sure:.1f}s)")
+        elif not is_oyuncu1 and oda.oyuncu2_cevap_zamani and oda.soru_baslangic_zamani:
+            sure = (oda.oyuncu2_cevap_zamani - oda.soru_baslangic_zamani).total_seconds()
+            if sure < 5:
+                bonus_puan += 5
+                print(f"⚡ {user.username} hız bonusu kazandı! ({sure:.1f}s)")
+        
+        if cevap_obj.dogru_mu:
+            # ✅ COMBO ARTTIR
+            if is_oyuncu1:
+                oda.oyuncu1_combo += 1
+                combo = oda.oyuncu1_combo
+                oda.oyuncu1_dogru += 1
+            else:
+                oda.oyuncu2_combo += 1
+                combo = oda.oyuncu2_combo
+                oda.oyuncu2_dogru += 1
+            
+            # ✅ COMBO BONUSU (Max 20 puan)
+            combo_bonus = min(combo * 2, 20)
+            bonus_puan += combo_bonus
+            
+            print(f"🔥 {user.username} COMBO x{combo}! Bonus: +{combo_bonus}")
+            
+            # ✅ İLK DOĞRU CEVAPLAYAN BONUSU
+            if oda.ilk_dogru_cevaplayan is None:
+                oda.ilk_dogru_cevaplayan = user
+                bonus_puan += 3
+                print(f"🥇 {user.username} ilk doğru cevaplayan! +3 puan")
+            
+            # ✅ TOPLAM PUAN
+            toplam_puan = base_puan + bonus_puan
+            
+            # ✅ SKORA EKLE
+            if is_oyuncu1:
+                oda.oyuncu1_skor += toplam_puan
+            else:
+                oda.oyuncu2_skor += toplam_puan
+            
+            # ✅ PROFİL İSTATİSTİKLERİ
+            profil.toplam_dogru += 1
+            profil.haftalik_dogru += 1
+            profil.cozulen_soru_sayisi += 1
+            profil.haftalik_cozulen += 1
+            profil.toplam_puan += toplam_puan
+            profil.haftalik_puan += toplam_puan
+            profil.save()
+            
+            # ✅ OYUN MODU İSTATİSTİKLERİ
+            oyun_ist, created = OyunModuIstatistik.objects.get_or_create(
+                profil=profil,
+                oyun_modu='karsilasma'
+            )
+            oyun_ist.cozulen_soru += 1
+            oyun_ist.dogru_sayisi += 1
+            oyun_ist.toplam_puan += toplam_puan
+            oyun_ist.save()
+            
+            print(f"✅ {user.username} +{toplam_puan} puan kazandı! (Base: {base_puan}, Bonus: {bonus_puan})")
+            
+        else:
+            # ✅ YANLIŞ CEVAP - COMBO SIFIRLA
+            if is_oyuncu1:
+                oda.oyuncu1_combo = 0
+                oda.oyuncu1_yanlis += 1
+            else:
+                oda.oyuncu2_combo = 0
+                oda.oyuncu2_yanlis += 1
+            
+            print(f"❌ {user.username} yanlış cevap! Combo sıfırlandı.")
+            
+            # ✅ PROFİL İSTATİSTİKLERİ
+            profil.toplam_yanlis += 1
+            profil.haftalik_yanlis += 1
+            profil.cozulen_soru_sayisi += 1
+            profil.haftalik_cozulen += 1
+            profil.save()
+            
+            # ✅ OYUN MODU İSTATİSTİKLERİ
+            oyun_ist, created = OyunModuIstatistik.objects.get_or_create(
+                profil=profil,
+                oyun_modu='karsilasma'
+            )
+            oyun_ist.cozulen_soru += 1
+            oyun_ist.yanlis_sayisi += 1
+            oyun_ist.save()
+        
+        # ✅ Cache'i temizle
+        cache_key = f'karsilasma_ist_{profil.id}'
+        cache.delete(cache_key)
+        
+    except Exception as e:
+        print(f"❌ İstatistik güncelleme hatası: {e}")
 
 
 # ✅ KARŞILAŞMA SONUÇ SAYFASI (YENİ)
@@ -460,34 +510,119 @@ def karsilasma_sonuc(request, oda_id):
 
     # ✅ BUL BAKALIM OYUNU
 
+# ✅ KARŞILAŞMA RAKIP BUL (Optimized)
+@login_required
+def karsilasma_rakip_bul(request):
+    """Rakip bulma ve eşleştirme"""
+    
+    # ✅ Aktif oda kontrolü
+    aktif_oda = KarsilasmaOdasi.objects.select_related('oyuncu1', 'oyuncu2').filter(
+        models.Q(oyuncu1=request.user) | models.Q(oyuncu2=request.user),
+        oyun_durumu__in=['bekleniyor', 'oynaniyor']
+    ).first()
+    
+    if aktif_oda:
+        return redirect('karsilasma_oyun', oda_id=aktif_oda.oda_id)
+    
+    # ✅ Bekleyen oda ara
+    bekleyen_oda = KarsilasmaOdasi.objects.select_related('oyuncu1').filter(
+        oyun_durumu='bekleniyor',
+        oyuncu2=None
+    ).exclude(oyuncu1=request.user).first()
+    
+    if bekleyen_oda:
+        # ✅ Oyuncu 2 katıldı
+        bekleyen_oda.oyuncu2 = request.user
+        bekleyen_oda.oyun_durumu = 'oynaniyor'
+        
+        # ✅ İLK SORUYU ATAR
+        bekleyen_oda.aktif_soru = _get_random_soru()
+        bekleyen_oda.aktif_soru_no = 1
+        
+        bekleyen_oda.save()
+        
+        print(f"✅ Oyuncu 2 katıldı! İlk soru: {bekleyen_oda.aktif_soru}")
+        
+        return redirect('karsilasma_oyun', oda_id=bekleyen_oda.oda_id)
+    else:
+        # ✅ Yeni oda oluştur (beklemede)
+        yeni_oda = KarsilasmaOdasi.objects.create(
+            oyuncu1=request.user,
+            oyun_durumu='bekleniyor'
+        )
+        
+        print(f"✅ Yeni oda oluşturuldu: {yeni_oda.oda_id}")
+        
+        return redirect('karsilasma_oyun', oda_id=yeni_oda.oda_id)
+
+
+# ✅ OPTIMIZE EDİLMİŞ RANDOM SORU SEÇİMİ
+def _get_random_soru():
+    """Cache'li ve optimize edilmiş random soru seçimi"""
+    cache_key = 'all_soru_ids'
+    soru_ids = cache.get(cache_key)
+    
+    if soru_ids is None:
+        soru_ids = list(Soru.objects.values_list('id', flat=True))
+        cache.set(cache_key, soru_ids, 300)  # 5 dakika cache
+    
+    if soru_ids:
+        random_id = random.choice(soru_ids)
+        return Soru.objects.get(id=random_id)
+    return None
+
+
+# BUL BAKALIM OYUNU FONKSİYONLARINI EKLE
+
+# ✅ BUL BAKALIM BAŞLA (Optimized)
 @login_required
 def bul_bakalim_basla(request):
-    ders = request.GET.get('ders')
-    sinav_tipi = request.session.get('bulbakalim_sinav_tipi', 'ayt')  # default ayt
     """Bul Bakalım oyununu başlat"""
+    ders = request.GET.get('ders')
+    sinav_tipi = request.session.get('bulbakalim_sinav_tipi', 'ayt')
     
-    if ders == "karisik":
-       sorular = list(Soru.objects.filter(bul_bakalimda_cikar=True).order_by('?')[:5])
-    else:
-       sorular = list(Soru.objects.filter(ders=ders, bul_bakalimda_cikar=True).order_by('?')[:5])
+    # ✅ Cache'li soru seçimi
+    cache_key = f'bulbakalim_sorular_{ders}_{sinav_tipi}'
+    sorular = cache.get(cache_key)
+    
+    if sorular is None:
+        if ders == "karisik":
+            sorular = list(Soru.objects.filter(
+                bul_bakalimda_cikar=True
+            ).only('id').values_list('id', flat=True))
+        else:
+            sorular = list(Soru.objects.filter(
+                ders=ders, 
+                bul_bakalimda_cikar=True
+            ).only('id').values_list('id', flat=True))
+        
+        cache.set(cache_key, sorular, 300)  # 5 dakika cache
     
     if len(sorular) < 5:
         messages.error(request, 'Yeterli soru yok! En az 5 soru olmalı.')
         return redirect('quiz_anasayfa')
     
+    # Random 5 soru seç
+    secilen_sorular = random.sample(sorular, min(5, len(sorular)))
+    
     # Yeni oyun oluştur
     yeni_oyun = BulBakalimOyun.objects.create(
         oyuncu=request.user,
-        sorular=[soru.id for soru in sorular]
+        sorular=secilen_sorular
     )
     
     return redirect('bul_bakalim_oyun', oyun_id=yeni_oyun.oyun_id)
 
 
+# ✅ BUL BAKALIM OYUN (Optimized)
 @login_required
 def bul_bakalim_oyun(request, oyun_id):
     """Bul Bakalım oyun sayfası"""
-    oyun = get_object_or_404(BulBakalimOyun, oyun_id=oyun_id, oyuncu=request.user)
+    oyun = get_object_or_404(
+        BulBakalimOyun.objects.select_related('oyuncu'), 
+        oyun_id=oyun_id, 
+        oyuncu=request.user
+    )
 
     if oyun.oyun_durumu == 'bitti':
         return redirect('bul_bakalim_sonuc', oyun_id=oyun.oyun_id)
@@ -498,8 +633,10 @@ def bul_bakalim_oyun(request, oyun_id):
         return redirect('bul_bakalim_sonuc', oyun_id=oyun.oyun_id)
 
     aktif_soru_id = oyun.sorular[cevaplanan_soru_sayisi]
-    aktif_soru = Soru.objects.get(id=aktif_soru_id)
-    cevaplar = Cevap.objects.filter(soru=aktif_soru)
+    
+    # ✅ prefetch_related ile cevapları önceden çek
+    aktif_soru = Soru.objects.prefetch_related('cevaplar').get(id=aktif_soru_id)
+    cevaplar = aktif_soru.cevaplar.all()
 
     context = {
         'oyun': oyun,
@@ -507,18 +644,23 @@ def bul_bakalim_oyun(request, oyun_id):
         'cevaplar': cevaplar,
         'soru_no': cevaplanan_soru_sayisi + 1,
         'toplam_soru': len(oyun.sorular),
-        'sure': 90,  # 90 saniye
+        'sure': 90,
     }
     return render(request, 'quiz/bul_bakalim_oyun.html', context)
 
 
+# ✅ BUL BAKALIM CEVAPLA (Optimized)
 @login_required
 def bul_bakalim_cevapla(request, oyun_id):
     """Soruya cevap ver"""
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request'}, status=400)
     
-    oyun = get_object_or_404(BulBakalimOyun, oyun_id=oyun_id, oyuncu=request.user)
+    oyun = get_object_or_404(
+        BulBakalimOyun.objects.select_related('oyuncu'), 
+        oyun_id=oyun_id, 
+        oyuncu=request.user
+    )
     
     if oyun.oyun_durumu == 'bitti':
         return JsonResponse({'error': 'Oyun bitti'}, status=400)
@@ -529,8 +671,8 @@ def bul_bakalim_cevapla(request, oyun_id):
     if not cevap_id:
         return JsonResponse({'error': 'Cevap bulunamadı'}, status=400)
     
-    # Cevabı kontrol et
-    cevap = Cevap.objects.get(id=cevap_id)
+    # ✅ select_related ile soru'yu önceden çek
+    cevap = Cevap.objects.select_related('soru').get(id=cevap_id)
     soru = cevap.soru
     
     # Cevabı kaydet
@@ -544,7 +686,7 @@ def bul_bakalim_cevapla(request, oyun_id):
     
     oyun.save()
     
-    # ✅ PROFİL İSTATİSTİKLERİNİ GÜNCELLE
+    # ✅ PROFİL İSTATİSTİKLERİNİ GÜNCELLE (Optimize edildi)
     try:
         profil = request.user.profil
         profil.cozulen_soru_sayisi += 1
@@ -593,28 +735,41 @@ def bul_bakalim_cevapla(request, oyun_id):
     })
 
 
+# ✅ BUL BAKALIM SONUÇ (Optimized)
 @login_required
 def bul_bakalim_sonuc(request, oyun_id):
     """Bul Bakalım sonuç sayfası"""
-    oyun = get_object_or_404(BulBakalimOyun, oyun_id=oyun_id, oyuncu=request.user)
+    oyun = get_object_or_404(
+        BulBakalimOyun.objects.select_related('oyuncu'), 
+        oyun_id=oyun_id, 
+        oyuncu=request.user
+    )
     
     # Oyun bitmemişse bitir
     if oyun.oyun_durumu != 'bitti':
         oyun.oyun_bitir()
     
-    # ✅ DETAYLI SONUÇLARI AL
+    # ✅ DETAYLI SONUÇLARI AL (Optimize edildi)
     sonuclar = []
     yanlislar = []
     
+    # ✅ Tüm soruları ve cevapları tek sorguda çek
+    soru_ids = oyun.sorular
+    sorular = Soru.objects.filter(id__in=soru_ids).prefetch_related('cevaplar')
+    soru_dict = {soru.id: soru for soru in sorular}
+    
     for soru_id in oyun.sorular:
         try:
-            soru = Soru.objects.get(id=soru_id)
+            soru = soru_dict.get(soru_id)
+            if not soru:
+                continue
+                
             verilen_cevap_id = oyun.cevaplar.get(str(soru_id))
             
-            dogru_cevap = Cevap.objects.filter(soru=soru, dogru_mu=True).first()
+            dogru_cevap = next((c for c in soru.cevaplar.all() if c.dogru_mu), None)
             
             if verilen_cevap_id:
-                verilen_cevap = Cevap.objects.filter(id=verilen_cevap_id).first()
+                verilen_cevap = next((c for c in soru.cevaplar.all() if c.id == int(verilen_cevap_id)), None)
                 dogru_mu = verilen_cevap.dogru_mu if verilen_cevap else False
                 
                 sonuc_item = {
@@ -626,11 +781,9 @@ def bul_bakalim_sonuc(request, oyun_id):
                 
                 sonuclar.append(sonuc_item)
                 
-                # Yanlışsa listeye ekle
                 if not dogru_mu:
                     yanlislar.append(sonuc_item)
             else:
-                # Cevap verilmemiş
                 sonuc_item = {
                     'soru': soru,
                     'verilen_cevap': None,
@@ -644,26 +797,15 @@ def bul_bakalim_sonuc(request, oyun_id):
             print(f"❌ Sonuç alma hatası (Soru ID: {soru_id}): {e}")
             continue
     
-    # ✅ DEBUG: Konsola yazdır
-    print(f"\n🎯 SONUÇLAR:")
-    print(f"   Toplam Soru: {len(sonuclar)}")
-    print(f"   Yanlış Sayısı: {len(yanlislar)}")
-    for idx, yanlis in enumerate(yanlislar, 1):
-        print(f"   {idx}. Yanlış Soru: {yanlis['soru'].metin[:50]}...")
-        print(f"      Verilen Cevap: {yanlis['verilen_cevap'].metin[:50] if yanlis['verilen_cevap'] else 'Boş'}")
-        print(f"      Doğru Cevap: {yanlis['dogru_cevap'].metin[:50] if yanlis['dogru_cevap'] else 'Yok'}")
-    
     # ✅ PROFİL İSTATİSTİKLERİNİ GÜNCELLE
     try:
         profil = request.user.profil
         
-        # Puan ekle (3+ doğru = 1 puan)
         if oyun.toplam_puan > 0:
             profil.toplam_puan += oyun.toplam_puan
             profil.haftalik_puan += oyun.toplam_puan
             profil.save()
         
-        # Oyun modu istatistiği
         oyun_ist, created = OyunModuIstatistik.objects.get_or_create(
             profil=profil,
             oyun_modu='bul_bakalim'
@@ -694,23 +836,21 @@ def bul_bakalim_sonuc(request, oyun_id):
         'sonuclar': sonuclar,
         'yanlislar': yanlislar,
         'kazandi': oyun.dogru_sayisi >= 3,
+        'aktif_ders': request.GET.get('ders', 'karisik'),
     }
     
     return render(request, 'quiz/bul_bakalim_sonuc.html', context)
 
+
+# ✅ BUL BAKALIM DERS SEÇİMİ
 @login_required
 def bul_bakalim_ders_secimi(request):
-    sinav_tipi = request.session.get('bulbakalim_sinav_tipi')
-    ders_secenekleri = BulBakalimOyun.DERS_SECENEKLERI  # Gerekirse TYT/AYT'ye göre filtrele
+    sinav_tipi = request.session.get('bulbakalim_sinav_tipi', 'ayt')
+    ders_secenekleri = BulBakalimOyun.DERS_SECENEKLERI
 
     if request.method == 'POST':
         selected_ders = request.POST.get('selected_ders')
-        yeni_oyun = BulBakalimOyun.objects.create(
-            oyuncu=request.user,
-            selected_ders=selected_ders,
-            sinav_tipi=sinav_tipi,
-        )
-        return redirect('bul_bakalim_oyun', oyun_id=yeni_oyun.oyun_id)
+        return redirect('bul_bakalim_basla') + f'?ders={selected_ders}'
 
     context = {
         'ders_secenekleri': ders_secenekleri,
@@ -718,34 +858,8 @@ def bul_bakalim_ders_secimi(request):
     }
     return render(request, 'quiz/bul_bakalim_ders_secimi.html', context)
 
-@login_required
-def bul_bakalim_oyun(request, oyun_id):
-    oyun = get_object_or_404(BulBakalimOyun, oyun_id=oyun_id, oyuncu=request.user)
 
-    if oyun.oyun_durumu == 'bitti':
-        return redirect('bul_bakalim_sonuc', oyun_id=oyun.oyun_id)
-
-    # SORU DİZİSİNİ TEKRAR ATAMA KALDIRILDI!
-    cevaplanan_soru_sayisi = len(oyun.cevaplar)
-    if cevaplanan_soru_sayisi >= len(oyun.sorular):
-        oyun.oyun_bitir()
-        return redirect('bul_bakalim_sonuc', oyun_id=oyun.oyun_id)
-
-    aktif_soru_id = oyun.sorular[cevaplanan_soru_sayisi]
-    aktif_soru = Soru.objects.get(id=aktif_soru_id)
-    cevaplar = Cevap.objects.filter(soru=aktif_soru)
-
-    context = {
-        'oyun': oyun,
-        'aktif_soru': aktif_soru,
-        'cevaplar': cevaplar,
-        'soru_no': cevaplanan_soru_sayisi + 1,
-        'toplam_soru': len(oyun.sorular),
-        'sure': 90,
-    }
-    return render(request, 'quiz/bul_bakalim_oyun.html', context)
-
-
+# ✅ BUL BAKALIM SINAV TİPİ SEÇİMİ
 @login_required
 def bul_bakalim_sinav_tipi_secimi(request):
     if request.method == 'POST':

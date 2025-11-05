@@ -38,11 +38,15 @@ class Konu(models.Model):
         ('biyoloji','Biyoloji'),
 
     ]
-    ders = models.CharField(max_length=20, choices=DERS_SECENEKLERI, verbose_name='Ders', default='matematik')
-    sira = models.PositiveIntegerField(default=0, verbose_name='Sıra')  # Sıra alanı eklendi
+    ders = models.CharField(max_length=20, choices=DERS_SECENEKLERI, verbose_name='Ders', default='matematik', db_index=True)  # ✅ INDEX
+    sira = models.PositiveIntegerField(default=0, verbose_name='Sıra', db_index=True)  # ✅ INDEX
 
     class Meta:
         ordering = ['sira']  # Varsayılan sıralama 'sira' alanına göre yapılacak
+        # ✅ COMPOSITE INDEX
+        indexes = [
+            models.Index(fields=['ders', 'sira'], name='konu_ders_sira_idx'),
+        ]
 
     def __str__(self):
         return self.isim
@@ -53,8 +57,8 @@ class Konu(models.Model):
 class Soru(models.Model):
     metin = models.TextField()
     baslik = models.CharField(max_length=100, default="", blank=True)
-    bul_bakalimda_cikar = models.BooleanField(default=True)
-    karsilasmada_cikar = models.BooleanField(default=True)
+    bul_bakalimda_cikar = models.BooleanField(default=True, db_index=True)  # ✅ INDEX
+    karsilasmada_cikar = models.BooleanField(default=True, db_index=True)  # ✅ INDEX
 
     # Tek bir ders alanı!
     DERS_SECENEKLERI = [
@@ -67,9 +71,9 @@ class Soru(models.Model):
         ('felsefe', 'Felsefe'),
         ('biyoloji','Biyoloji'),
     ]
-    ders = models.CharField(max_length=20, choices=DERS_SECENEKLERI, verbose_name='Ders', default='matematik')
+    ders = models.CharField(max_length=20, choices=DERS_SECENEKLERI, verbose_name='Ders', default='matematik', db_index=True)  # ✅ INDEX
 
-    sinav_tipi = models.CharField(max_length=10, default="", blank=True)
+    sinav_tipi = models.CharField(max_length=10, default="", blank=True, db_index=True)  # ✅ INDEX
     
     konu = models.ForeignKey(
         'Konu', 
@@ -84,13 +88,19 @@ class Soru(models.Model):
     class Meta:
         verbose_name = "Soru"
         verbose_name_plural = "Sorular"
+        # ✅ COMPOSITE INDEX'LER - SORU MODELİNDE
+        indexes = [
+            models.Index(fields=['ders', 'bul_bakalimda_cikar'], name='soru_ders_bb_idx'),
+            models.Index(fields=['ders', 'karsilasmada_cikar'], name='soru_ders_kar_idx'),
+            models.Index(fields=['bul_bakalimda_cikar', 'ders'], name='soru_bb_ders_idx'),
+        ]
 
 
 class Cevap(models.Model):
     """Sorulara ait cevaplar"""
     soru = models.ForeignKey(Soru, on_delete=models.CASCADE, related_name='cevaplar')
     metin = models.CharField(max_length=500, verbose_name="Cevap Metni")
-    dogru_mu = models.BooleanField(default=False, verbose_name="Doğru mu?")
+    dogru_mu = models.BooleanField(default=False, verbose_name="Doğru mu?", db_index=True)  # ✅ INDEX
 
     def __str__(self):
         dogru_text = "✅" if self.dogru_mu else "❌"
@@ -99,6 +109,11 @@ class Cevap(models.Model):
     class Meta:
         verbose_name = "Cevap"
         verbose_name_plural = "Cevaplar"
+        # ✅ COMPOSITE INDEX'LER (Sık kullanılan sorgular için)
+        indexes = [
+            models.Index(fields=['soru', 'dogru_mu'], name='cevap_soru_dogru_idx'),
+        ]
+
 
 
 # ==================== TABU OYUNU MODELLERİ ====================
@@ -116,7 +131,9 @@ class TabuKelime(models.Model):
             ('edebiyat', 'Edebiyat'),
             # ileride dil için eklenebilir
         ],
-        verbose_name="Kategori"
+        verbose_name="Kategori",
+        db_index=True  # ✅ INDEX
+
     )
     def __str__(self):
         return self.kelime
@@ -159,7 +176,8 @@ class TabuOyun(models.Model):
         choices=[
             ('devam_ediyor', 'Devam Ediyor'),
             ('bitti', 'Bitti'),
-        ]
+        ],
+        db_index=True  # ✅ INDEX
     )
     oyun_modu = models.CharField(
         max_length=20, 
@@ -170,7 +188,7 @@ class TabuOyun(models.Model):
         ]
     )
     tur_sayisi = models.IntegerField(default=1)
-    olusturma_tarihi = models.DateTimeField(auto_now_add=True)
+    olusturma_tarihi = models.DateTimeField(auto_now_add=True, db_index=True)  # ✅ INDEX
 
     def get_kazanan(self):
         """Kazanan takımı döndürür"""
@@ -200,20 +218,84 @@ class KarsilasmaOdasi(models.Model):
     oyuncu1 = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
-        related_name='karsilasma_oyuncu1'
+        related_name='karsilasma_oyuncu1',
+        db_index=True  # ✅ INDEX
     )
     oyuncu2 = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
         null=True, 
         blank=True, 
-        related_name='karsilasma_oyuncu2'
+        related_name='karsilasma_oyuncu2',
+        db_index=True  # ✅ INDEX
     )
     
+
+    # ✅ ROUND SİSTEMİ
+    aktif_round = models.IntegerField(default=1)
+    toplam_round = models.IntegerField(default=5)  # 5 soru = 5 round
+    
+    # ✅ ROUND ARASI MOLA
+    round_bitti = models.BooleanField(default=False)
+    round_bitis_zamani = models.DateTimeField(null=True, blank=True)
+
     # Skorlar
     oyuncu1_skor = models.IntegerField(default=0, verbose_name="Oyuncu 1 Skoru")
     oyuncu2_skor = models.IntegerField(default=0, verbose_name="Oyuncu 2 Skoru")
+
+    # ✅ COMBO SİSTEMİ
+    oyuncu1_combo = models.IntegerField(default=0, verbose_name="Oyuncu 1 Combo")
+    oyuncu2_combo = models.IntegerField(default=0, verbose_name="Oyuncu 2 Combo")
     
+    # ✅ HIZLI CEVAP BONUSU
+    oyuncu1_hizli_cevap = models.IntegerField(default=0)
+    oyuncu2_hizli_cevap = models.IntegerField(default=0)
+
+    # ✅ HIZ BONUSU İÇİN ZAMAN KAYDI
+    oyuncu1_cevap_zamani = models.DateTimeField(null=True, blank=True)
+    oyuncu2_cevap_zamani = models.DateTimeField(null=True, blank=True)
+    soru_baslangic_zamani = models.DateTimeField(null=True, blank=True)
+    
+    olusturma_tarihi = models.DateTimeField(auto_now_add=True, db_index=True)
+    
+    def calculate_score(self, oyuncu, dogru_mu, sure):
+        """Gelişmiş skor hesaplama"""
+        is_oyuncu1 = (self.oyuncu1 == oyuncu)
+        
+        if dogru_mu:
+            base_puan = 10
+            
+            # ✅ COMBO BONUSU
+            if is_oyuncu1:
+                self.oyuncu1_combo += 1
+                combo_bonus = min(self.oyuncu1_combo * 2, 20)  # Max 20 bonus
+            else:
+                self.oyuncu2_combo += 1
+                combo_bonus = min(self.oyuncu2_combo * 2, 20)
+            
+            # ✅ HIZLI CEVAP BONUSU (5 saniye içinde)
+            hiz_bonus = 5 if sure < 5 else 0
+            
+            # ✅ İLK DOĞRU BONUSU
+            ilk_bonus = 3 if self.ilk_dogru_cevaplayan is None else 0
+            
+            toplam_puan = base_puan + combo_bonus + hiz_bonus + ilk_bonus
+            
+            if is_oyuncu1:
+                self.oyuncu1_skor += toplam_puan
+            else:
+                self.oyuncu2_skor += toplam_puan
+            
+            return toplam_puan
+        else:
+            # ✅ YANLIŞ CEVAP - COMBO SIFIRLA
+            if is_oyuncu1:
+                self.oyuncu1_combo = 0
+            else:
+                self.oyuncu2_combo = 0
+            
+            return 0
+
     # ✅ OYUN İÇİ DOĞRU/YANLIŞ İSTATİSTİKLERİ
     oyuncu1_dogru = models.IntegerField(default=0, verbose_name="Oyuncu 1 Doğru Sayısı")
     oyuncu1_yanlis = models.IntegerField(default=0, verbose_name="Oyuncu 1 Yanlış Sayısı")
@@ -228,7 +310,8 @@ class KarsilasmaOdasi(models.Model):
             ('bekleniyor', 'Bekleniyor'),
             ('oynaniyor', 'Oynanıyor'),
             ('bitti', 'Bitti'),
-        ]
+        ],
+        db_index=True  # ✅ INDEX
     )
     aktif_soru = models.ForeignKey(
         Soru, 
@@ -251,7 +334,7 @@ class KarsilasmaOdasi(models.Model):
         related_name='ilk_cevaplayan'
     )
     
-    olusturma_tarihi = models.DateTimeField(auto_now_add=True)
+    olusturma_tarihi = models.DateTimeField(auto_now_add=True, db_index=True)  # ✅ INDEX
 
     def yeni_soru_getir(self):
         """Rastgele yeni soru getir"""
@@ -265,18 +348,24 @@ class KarsilasmaOdasi(models.Model):
         verbose_name = "Karşılaşma Odası"
         verbose_name_plural = "Karşılaşma Odaları"
         ordering = ['-olusturma_tarihi']
+        # ✅ COMPOSITE INDEX'LER (Kritik sorgular için)
+        indexes = [
+            models.Index(fields=['oyun_durumu', '-olusturma_tarihi'], name='oda_durum_tarih_idx'),
+            models.Index(fields=['oyuncu1', 'oyun_durumu'], name='oda_oyuncu1_durum_idx'),
+            models.Index(fields=['oyuncu2', 'oyun_durumu'], name='oda_oyuncu2_durum_idx'),
+        ]
 
 
 # ==================== KULLANICI CEVAP MODELİ ====================
 
 class KullaniciCevap(models.Model):
     """Kullanıcının verdiği cevapları kaydeder (yanlış analizi için)"""
-    kullanici = models.ForeignKey(User, on_delete=models.CASCADE)
+    kullanici = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)  # ✅ INDEX
     oda = models.ForeignKey(KarsilasmaOdasi, on_delete=models.CASCADE)
     soru = models.ForeignKey(Soru, on_delete=models.CASCADE)
     verilen_cevap = models.ForeignKey(Cevap, on_delete=models.CASCADE)
-    dogru_mu = models.BooleanField()
-    tarih = models.DateTimeField(auto_now_add=True)
+    dogru_mu = models.BooleanField(db_index=True)  # ✅ INDEX
+    tarih = models.DateTimeField(auto_now_add=True, db_index=True)  # ✅ INDEX
 
     def __str__(self):
         durum = "✅ Doğru" if self.dogru_mu else "❌ Yanlış"
@@ -286,6 +375,12 @@ class KullaniciCevap(models.Model):
         verbose_name = "Kullanıcı Cevabı"
         verbose_name_plural = "Kullanıcı Cevapları"
         ordering = ['-tarih']
+        # ✅ COMPOSITE INDEX
+        indexes = [
+            models.Index(fields=['kullanici', '-tarih'], name='cevap_kullanici_idx'),
+            models.Index(fields=['kullanici', 'dogru_mu'], name='cevap_kullanici_dogru_idx'),
+        ]
+
 
 class BulBakalimOyun(models.Model):
     """Bul Bakalım oyun oturumu"""
@@ -312,7 +407,8 @@ class BulBakalimOyun(models.Model):
         choices=DERS_SECENEKLERI,
         null=True,
         blank=True,
-        verbose_name='Seçilen Ders'
+        verbose_name='Seçilen Ders',
+        db_index=True
     )
 
     sinav_tipi = models.CharField(
@@ -320,12 +416,13 @@ class BulBakalimOyun(models.Model):
         choices=[('tyt', 'TYT'), ('ayt', 'AYT')],
         null=True,
         blank=True,
-        verbose_name='Sınav Tipi'
+        verbose_name='Sınav Tipi',
+        db_index=True
     )
     
     oyun_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    oyuncu = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bul_bakalim_oyunlari')
-    oyun_durumu = models.CharField(max_length=20, choices=OYUN_DURUMU_SECENEKLERI, default='devam_ediyor')
+    oyuncu = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bul_bakalim_oyunlari', db_index=True)  # ✅ INDEX
+    oyun_durumu = models.CharField(max_length=20, choices=OYUN_DURUMU_SECENEKLERI, default='devam_ediyor', db_index=True)  # ✅ INDEX
     
     # Skorlar
     dogru_sayisi = models.IntegerField(default=0)
@@ -337,7 +434,7 @@ class BulBakalimOyun(models.Model):
     cevaplar = models.JSONField(default=dict)  # {soru_id: cevap_id, ...}
     
     # Tarihler
-    olusturulma_tarihi = models.DateTimeField(auto_now_add=True)
+    olusturulma_tarihi = models.DateTimeField(auto_now_add=True, db_index=True)  # ✅ INDEX
     bitirme_tarihi = models.DateTimeField(null=True, blank=True)
     
     class Meta:
@@ -345,6 +442,11 @@ class BulBakalimOyun(models.Model):
         verbose_name = 'Bul Bakalım Oyunu'
         verbose_name_plural = 'Bul Bakalım Oyunları'
         ordering = ['-olusturulma_tarihi']
+        # ✅ COMPOSITE INDEX'LER
+        indexes = [
+            models.Index(fields=['oyuncu', '-olusturulma_tarihi'], name='bb_oyuncu_tarih_idx'),
+            models.Index(fields=['oyuncu', 'oyun_durumu'], name='bb_oyuncu_durum_idx'),
+        ]
     
     def __str__(self):
         return f"{self.oyuncu.username} - {self.dogru_sayisi}/5 - {self.oyun_durumu}"
@@ -414,10 +516,11 @@ class Rozet(models.Model):
             ('basari_orani', 'Başarı Oranı'),
             ('seri', 'Seri (Üst Üste Doğru)'),
         ],
-        verbose_name="Koşul Türü"
+        verbose_name="Koşul Türü",
+        db_index=True
     )
     kosul_degeri = models.IntegerField(verbose_name="Koşul Değeri")
-    sira = models.IntegerField(default=0, verbose_name="Sıra")
+    sira = models.IntegerField(default=0, verbose_name="Sıra", db_index=True)  # ✅ INDEX
 
     def __str__(self):
         return f"{self.ikon} {self.adi}"
@@ -430,9 +533,9 @@ class Rozet(models.Model):
 
 class KullaniciRozet(models.Model):
     """Kullanıcıların kazandığı rozetler"""
-    kullanici = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rozetler')
+    kullanici = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rozetler', db_index=True)  # ✅ INDEX
     rozet = models.ForeignKey(Rozet, on_delete=models.CASCADE)  # ✅ ForeignKey eklendi
-    kazanma_tarihi = models.DateTimeField(auto_now_add=True)
+    kazanma_tarihi = models.DateTimeField(auto_now_add=True, db_index=True)  # ✅ INDEX
 
     def __str__(self):
         return f"{self.kullanici.username} - {self.rozet.adi}"
@@ -442,3 +545,25 @@ class KullaniciRozet(models.Model):
         verbose_name_plural = "Kullanıcı Rozetleri"
         unique_together = ['kullanici', 'rozet']  # ✅ Aynı rozet tekrar kazanılmasın
         ordering = ['-kazanma_tarihi']
+        # ✅ COMPOSITE INDEX
+        indexes = [
+            models.Index(fields=['kullanici', '-kazanma_tarihi'], name='kulrozet_kullanici_idx'),
+        ]
+
+
+class OyunMesaj(models.Model):
+    """Oyun içi emoji/mesaj sistemi"""
+    oda = models.ForeignKey(KarsilasmaOdasi, on_delete=models.CASCADE, related_name='mesajlar')
+    gonderen = models.ForeignKey(User, on_delete=models.CASCADE)
+    mesaj_tipi = models.CharField(max_length=20, choices=[
+        ('emoji', 'Emoji'),
+        ('hizli_mesaj', 'Hızlı Mesaj'),
+    ])
+    icerik = models.CharField(max_length=100)
+    olusturma_tarihi = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-olusturma_tarihi']
+        indexes = [
+            models.Index(fields=['oda', '-olusturma_tarihi']),
+        ]

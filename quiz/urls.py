@@ -18,6 +18,7 @@ urlpatterns = [
     path('karsilasma/', views.karsilasma_rakip_bul, name='karsilasma_rakip_bul'),
     path('karsilasma/oda/<uuid:oda_id>/', views.karsilasma_oyun, name='karsilasma_oyun'),
     path('karsilasma/oda/<uuid:oda_id>/durum/', views.karsilasma_durum_guncelle, name='karsilasma_durum'),
+    path('karsilasma/oda/<uuid:oda_id>/sonuc/', views.karsilasma_sonuc, name='karsilasma_sonuc'),  # ✅ EKLE
 
     # BUL BAKALIM OYUNU
     path('bul-bakalim/', views.bul_bakalim_basla, name='bul_bakalim_basla'),
