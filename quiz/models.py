@@ -213,7 +213,7 @@ class TabuOyun(models.Model):
 class KarsilasmaOdasi(models.Model):
     """1v1 Karşılaşma odaları"""
     oda_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    
+
     # Oyuncular
     oyuncu1 = models.ForeignKey(
         User, 
@@ -334,6 +334,9 @@ class KarsilasmaOdasi(models.Model):
         related_name='ilk_cevaplayan'
     )
     
+        # ✅✅✅ ARA EKRAN FLAG (DOĞRU YER!) ✅✅✅
+    ara_ekran_bekleniyor = models.BooleanField(default=False, verbose_name="Ara Ekran Bekleniyor")
+
     olusturma_tarihi = models.DateTimeField(auto_now_add=True, db_index=True)  # ✅ INDEX
 
     def yeni_soru_getir(self):
