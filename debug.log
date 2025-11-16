@@ -1583,3 +1583,43 @@ django.db.utils.OperationalError: database is locked
 "GET /karsilasma/oda/2f6a2cd0-da6b-4e80-81b7-9e740fa1fcdd/durum/ HTTP/1.1" 500 179938
 Not Found: /favicon.ico
 "GET /favicon.ico HTTP/1.1" 404 10837
+Not Found: /karsilasma/oda/2f6a2cd0-da6b-4e80-81b7-9e740fa1fcdd/durum/
+"GET /karsilasma/oda/2f6a2cd0-da6b-4e80-81b7-9e740fa1fcdd/durum/ HTTP/1.1" 404 8790
+Not Found: /karsilasma/oda/2f6a2cd0-da6b-4e80-81b7-9e740fa1fcdd/
+"GET /karsilasma/oda/2f6a2cd0-da6b-4e80-81b7-9e740fa1fcdd/ HTTP/1.1" 404 8463
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 11416
+Internal Server Error: /karsilasma/sinav-tipi/
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\quiz\views.py", line 256, in karsilasma_sinav_tipi_secimi
+    return redirect('karsilasma_ders_secimi') + f'?sinav_tipi={sinav_tipi}'
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'HttpResponseRedirect' and 'str'
+"POST /karsilasma/sinav-tipi/ HTTP/1.1" 500 72085
+Internal Server Error: /karsilasma/sinav-tipi/
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\quiz\views.py", line 256, in karsilasma_sinav_tipi_secimi
+    return redirect('karsilasma_ders_secimi') + f'?sinav_tipi={sinav_tipi}'
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'HttpResponseRedirect' and 'str'
+"POST /karsilasma/sinav-tipi/ HTTP/1.1" 500 72085
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 11416
