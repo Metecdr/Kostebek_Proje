@@ -1,0 +1,310 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karşılaşma - Ders Seç</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #F5DEB3 0%, #FAEBD7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+            padding: 20px 40px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+            color: white;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .content {
+            background: #FAEBD7;
+            padding: 60px 40px;
+            border-radius: 0 0 20px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .left-panel {
+            background: linear-gradient(135deg, #D8BFD8 0%, #DDA0DD 100%);
+            border-radius: 25px;
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .panel-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            line-height: 1.3;
+        }
+
+        .change-btn {
+            background: white;
+            color: #8B5CF6;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .change-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            font-size: 32px;
+            font-weight: 800;
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: linear-gradient(135deg, #E6E6FA 0%, #F0E6FF 100%);
+            border-radius: 15px;
+        }
+
+        .section-header.ayt-header {
+            background: linear-gradient(135deg, #E6E6FA 0%, #DDA0DD 100%);
+        }
+
+        .section-header.tyt-header {
+            background: linear-gradient(135deg, #FFE4E1 0%, #FFB6C1 100%);
+        }
+
+        .ders-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .ders-btn {
+            padding: 30px 20px;
+            border-radius: 20px;
+            border: none;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .ders-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        /* AYT Ders Renkleri */
+        .ders-edebiyat { background: #D4A574; color: white; }
+        .ders-tarih { background: #F4C542; color: #333; }
+        .ders-cografya { background: #90EE90; color: #333; }
+        .ders-felsefe { background: #F4C542; color: #333; }
+        .ders-matematik { background: #B0C4DE; color: #333; }
+        .ders-biyoloji { background: #DDA0DD; color: white; }
+        .ders-kimya { background: #98FB98; color: #333; }
+        .ders-fizik { background: #FFA500; color: white; }
+
+        /* TYT Ders Renkleri */
+        .ders-turkce { background: #D4A574; color: white; }
+
+        .karisik-btn {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #FFB6C1 0%, #FFC0CB 100%);
+            color: #333;
+            font-size: 24px;
+            padding: 25px;
+        }
+
+        .ders-icon {
+            font-size: 32px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ders-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .ders-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .ders-btn {
+                font-size: 16px;
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <img src="{% static 'images/kostebek_sag.png' %}" alt="Köstebek">
+            <span>KÖSTEBEK YKS</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <form method="POST" action="{% url 'karsilasma_ders_secimi' %}">
+            {% csrf_token %}
+            
+            <!-- Sınav tipini gizli olarak taşı -->
+            <input type="hidden" name="sinav_tipi" value="{{ sinav_tipi }}">
+            
+            <div class="main-grid"></div>
+                <!-- SOL PANEL -->
+                <div class="left-panel">
+                    <div class="panel-icon">⚔️</div>
+                    <div class="panel-title">
+                        KARŞILAŞMA<br>
+                        RAKIBINLE BIRE BIR<br>
+                        YARIŞ, TEST<br>
+                        FORMATINDAKI İÖ<br>
+                        SORUYA KIM DAHA ÇOK<br>
+                        DOĞRU CEVAP VERIRSE<br>
+                        O KAZANIR.
+                    </div>
+                    <button type="button" class="change-btn" onclick="window.location.href='{% url 'karsilasma_sinav_tipi_secimi' %}'">
+                        DEĞİŞTİR
+                    </button>
+                </div>
+
+                <!-- AYT BÖLÜMÜ -->
+                {% if sinav_tipi == 'ayt' %}
+                <div class="section">
+                    <div class="section-header ayt-header">AYT</div>
+                    <div class="ders-grid">
+                        <button type="submit" name="selected_ders" value="edebiyat" class="ders-btn ders-edebiyat">
+                            <span class="ders-icon">📖</span> EDEBİYAT
+                        </button>
+                        <button type="submit" name="selected_ders" value="tarih" class="ders-btn ders-tarih">
+                            <span class="ders-icon">🏛️</span> TARİH
+                        </button>
+                        <button type="submit" name="selected_ders" value="cografya" class="ders-btn ders-cografya">
+                            <span class="ders-icon">🌍</span> COĞRAFYA
+                        </button>
+                        <button type="submit" name="selected_ders" value="felsefe" class="ders-btn ders-felsefe">
+                            <span class="ders-icon">💭</span> FELSEFE
+                        </button>
+                        <button type="submit" name="selected_ders" value="matematik" class="ders-btn ders-matematik">
+                            <span class="ders-icon">🔢</span> MATEMATİK
+                        </button>
+                        <button type="submit" name="selected_ders" value="biyoloji" class="ders-btn ders-biyoloji">
+                            <span class="ders-icon">🧬</span> BİYOLOJİ
+                        </button>
+                        <button type="submit" name="selected_ders" value="kimya" class="ders-btn ders-kimya">
+                            <span class="ders-icon">🧪</span> KİMYA
+                        </button>
+                        <button type="submit" name="selected_ders" value="fizik" class="ders-btn ders-fizik">
+                            <span class="ders-icon">⚛️</span> FİZİK
+                        </button>
+                    </div>
+                    <button type="submit" name="selected_ders" value="karisik" class="ders-btn karisik-btn">
+                        KARIŞIK
+                    </button>
+                </div>
+                {% endif %}
+
+                <!-- TYT BÖLÜMÜ -->
+                {% if sinav_tipi == 'tyt' %}
+                <div class="section">
+                    <div class="section-header tyt-header">TYT</div>
+                    <div class="ders-grid">
+                        <button type="submit" name="selected_ders" value="turkce" class="ders-btn ders-turkce">
+                            <span class="ders-icon">📖</span> TÜRKÇE
+                        </button>
+                        <button type="submit" name="selected_ders" value="tarih" class="ders-btn ders-tarih">
+                            <span class="ders-icon">🏛️</span> TARİH
+                        </button>
+                        <button type="submit" name="selected_ders" value="cografya" class="ders-btn ders-cografya">
+                            <span class="ders-icon">🌍</span> COĞRAFYA
+                        </button>
+                        <button type="submit" name="selected_ders" value="felsefe" class="ders-btn ders-felsefe">
+                            <span class="ders-icon">💭</span> FELSEFE
+                        </button>
+                        <button type="submit" name="selected_ders" value="matematik" class="ders-btn ders-matematik">
+                            <span class="ders-icon">🔢</span> MATEMATİK
+                        </button>
+                        <button type="submit" name="selected_ders" value="biyoloji" class="ders-btn ders-biyoloji">
+                            <span class="ders-icon">🧬</span> BİYOLOJİ
+                        </button>
+                        <button type="submit" name="selected_ders" value="kimya" class="ders-btn ders-kimya">
+                            <span class="ders-icon">🧪</span> KİMYA
+                        </button>
+                        <button type="submit" name="selected_ders" value="fizik" class="ders-btn ders-fizik">
+                            <span class="ders-icon">⚛️</span> FİZİK
+                        </button>
+                    </div>
+                    <button type="submit" name="selected_ders" value="karisik" class="ders-btn karisik-btn">
+                        KARIŞIK
+                    </button>
+                </div>
+                {% endif %}
+
+                <!-- BOŞ BÖLÜM (Görsel Denge için) -->
+                <div></div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

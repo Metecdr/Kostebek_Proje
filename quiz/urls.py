@@ -14,11 +14,13 @@ urlpatterns = [
     path('tabu/oyun/<int:oyun_id>/tur-degistir/', views.tabu_tur_degistir, name='tabu_tur_degistir'),
     path('tabu/sonuc/<int:oyun_id>/', views.tabu_sonuc, name='tabu_sonuc'),
 
-    # Karşılaşma Modu
+# Karşılaşma Modu - YENİ
+    path('karsilasma/sinav-tipi/', views.karsilasma_sinav_tipi_secimi, name='karsilasma_sinav_tipi_secimi'),
+    path('karsilasma/ders-secimi/', views.karsilasma_ders_secimi, name='karsilasma_ders_secimi'),
     path('karsilasma/', views.karsilasma_rakip_bul, name='karsilasma_rakip_bul'),
     path('karsilasma/oda/<uuid:oda_id>/', views.karsilasma_oyun, name='karsilasma_oyun'),
     path('karsilasma/oda/<uuid:oda_id>/durum/', views.karsilasma_durum_guncelle, name='karsilasma_durum'),
-    path('karsilasma/oda/<uuid:oda_id>/sonuc/', views.karsilasma_sonuc, name='karsilasma_sonuc'),  # ✅ EKLE
+    path('karsilasma/oda/<uuid:oda_id>/sonuc/', views.karsilasma_sonuc, name='karsilasma_sonuc'),
 
     # BUL BAKALIM OYUNU
     path('bul-bakalim/', views.bul_bakalim_basla, name='bul_bakalim_basla'),

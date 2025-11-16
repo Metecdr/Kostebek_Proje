@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karşılaşma - Sınav Tipi Seç</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: linear-gradient(135deg, #f8f4ff 0%, #fff 100%);
+            border-radius: 30px;
+            padding: 60px 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        h1 {
+            font-size: 42px;
+            font-weight: 800;
+            color: #7c5cdb;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 50px;
+        }
+
+        .sinav-tipi-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .sinav-btn {
+            background: white;
+            border: 4px solid #7c5cdb;
+            border-radius: 20px;
+            padding: 60px 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sinav-btn:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(124, 92, 219, 0.4);
+        }
+
+        .sinav-btn input[type="radio"] {
+            display: none;
+        }
+
+        .sinav-btn input[type="radio"]:checked + label {
+            background: linear-gradient(135deg, #7c5cdb 0%, #a855f7 100%);
+            color: white;
+        }
+
+        .sinav-btn label {
+            font-size: 48px;
+            font-weight: 800;
+            color: #7c5cdb;
+            cursor: pointer;
+            display: block;
+            transition: all 0.3s;
+        }
+
+        .sinav-btn input[type="radio"]:checked + label {
+            color: white;
+        }
+
+        .basla-btn {
+            background: linear-gradient(135deg, #7c5cdb 0%, #a855f7 100%);
+            color: white;
+            border: none;
+            padding: 20px 60px;
+            border-radius: 50px;
+            font-size: 24px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(124, 92, 219, 0.4);
+        }
+
+        .basla-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(124, 92, 219, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .sinav-tipi-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .sinav-btn {
+                padding: 40px 20px;
+            }
+
+            .sinav-btn label {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="{% static 'images/kostebek_sag.png' %}" alt="Köstebek">
+        </div>
+        
+        <h1>KARŞILAŞMA</h1>
+        <p class="subtitle">Rakibinle bire bir yarış, test formatındaki İÖ soruya kim daha çok doğru cevap verirse o kazanır.</p>
+        
+        <form method="POST" action="{% url 'karsilasma_sinav_tipi_secimi' %}">
+            {% csrf_token %}
+            
+            <div class="sinav-tipi-buttons">
+            <div class="sinav-btn">
+                <input type="radio" name="sinav_tipi" value="ayt" id="ayt" checked>
+                <label for="ayt">AYT</label>
+            </div>
+            
+            <div class="sinav-btn">
+                <input type="radio" name="sinav_tipi" value="tyt" id="tyt">
+                <label for="tyt">TYT</label>
+            </div>
+            </div>
+            
+            <button type="submit" class="basla-btn">DEĞİŞTİR →</button>
+        </form>
+    </div>
+
+    <script>
+        // Radio butonlarına tıklayınca parent div'e de aktif class ekle
+        document.querySelectorAll('.sinav-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.sinav-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+    </script>
+</body>
+</html>

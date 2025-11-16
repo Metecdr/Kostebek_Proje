@@ -247,6 +247,56 @@ def tabu_sonuc(request, oyun_id):
 
 # ==================== KARŞILAŞMA ====================
 
+
+@login_required
+def karsilasma_sinav_tipi_secimi(request):
+    """Karşılaşma için sınav tipi seçimi (TYT/AYT)"""
+    if request.method == 'POST':
+        sinav_tipi = request.POST.get('sinav_tipi', 'ayt')
+        return redirect('karsilasma_ders_secimi') + f'?sinav_tipi={sinav_tipi}'
+    
+    return render(request, 'quiz/karsilasma_sinav_tipi_secimi.html')
+
+@login_required
+def karsilasma_ders_secimi(request):
+    """Karşılaşma için ders seçimi"""
+    sinav_tipi = request.GET.get('sinav_tipi', 'ayt')
+    
+    # TYT veya AYT'ye göre dersleri filtrele
+    if sinav_tipi == 'tyt':
+        ders_secenekleri = [
+            ('matematik', 'Matematik'),
+            ('turkce', 'Türkçe'),
+            ('fizik', 'Fizik'),
+            ('kimya', 'Kimya'),
+            ('biyoloji', 'Biyoloji'),
+            ('karisik', 'Karışık'),
+        ]
+    else:  # AYT
+        ders_secenekleri = [
+            ('matematik', 'Matematik'),
+            ('fizik', 'Fizik'),
+            ('kimya', 'Kimya'),
+            ('biyoloji', 'Biyoloji'),
+            ('edebiyat', 'Edebiyat'),
+            ('tarih', 'Tarih'),
+            ('cografya', 'Coğrafya'),
+            ('felsefe', 'Felsefe'),
+            ('karisik', 'Karışık'),
+        ]
+    
+    if request.method == 'POST':
+        selected_ders = request.POST.get('selected_ders')
+        return redirect('karsilasma_rakip_bul') + f'?ders={selected_ders}&sinav_tipi={sinav_tipi}'
+
+    
+    context = {
+        'ders_secenekleri': ders_secenekleri,
+        'sinav_tipi': sinav_tipi,
+    }
+    
+    return render(request, 'quiz/karsilasma_ders_secimi.html', context)
+
 @login_required
 def karsilasma_oyun(request, oda_id):
     oda = get_object_or_404(KarsilasmaOdasi, oda_id=oda_id)
@@ -297,12 +347,11 @@ def karsilasma_durum_guncelle(request, oda_id):
                     oda.aktif_soru_no += 1
                     print(f"🔄 Yeni soruya geçiliyor: Soru {oda.aktif_soru_no}/{oda.toplam_soru}")
                     
-                    yeni_soru = _get_random_soru()
+                    # ✅ Seçilen derse göre soru getir
+                    yeni_soru = _get_random_soru_by_ders(oda.secilen_ders)
                     if yeni_soru:
                         oda.aktif_soru = yeni_soru
                         oda.soru_baslangic_zamani = timezone.now()
-                        
-                        # ✅✅✅ ARA EKRAN ZAMANI KAYDET! ✅✅✅
                         oda.round_bitis_zamani = timezone.now()
                         
                         print(f"✅ Yeni soru atandı: {yeni_soru.id}")
@@ -314,7 +363,8 @@ def karsilasma_durum_guncelle(request, oda_id):
                     profil = request.user.profil
                     if profil.cozulen_soru_sayisi % 10 == 0:
                         yeni_rozetler = rozet_kontrol_yap(profil)
-                except: pass
+                except: 
+                    pass
             
             oda.save()
     
@@ -543,47 +593,173 @@ def karsilasma_sonuc(request, oda_id):
 
 @login_required
 def karsilasma_rakip_bul(request):
+    """Rakip bulma sistemi - Ders bazlı"""
+    # URL parametrelerinden al
+    secilen_ders = request.GET.get('ders', 'karisik')
+    sinav_tipi = request.GET.get('sinav_tipi', 'ayt')
+    
+    print(f"🎮 Karşılaşma başlatılıyor: Ders={secilen_ders}, Sınav Tipi={sinav_tipi}")
+    
+    # ✅ ESKİ ODALARI TEMİZLE (5 dakikadan eski ve rakip yoksa)
+    from datetime import timedelta
+    bes_dakika_once = timezone.now() - timedelta(minutes=5)
+    
+    eski_odalar = KarsilasmaOdasi.objects.filter(
+        oyuncu1=request.user,
+        oyun_durumu='bekleniyor',
+        oyuncu2=None,
+        olusturma_tarihi__lt=bes_dakika_once
+    )
+    
+    if eski_odalar.exists():
+        eski_sayisi = eski_odalar.count()
+        eski_odalar.update(oyun_durumu='bitti')
+        print(f"🗑️ {eski_sayisi} eski oda temizlendi")
+    
+    # Kullanıcının AYNI DERSTEN aktif odasını kontrol et
+    aktif_oda = KarsilasmaOdasi.objects.select_related('oyuncu1', 'oyuncu2').filter(
+        models.Q(oyuncu1=request.user) | models.Q(oyuncu2=request.user),
+        oyun_durumu__in=['bekleniyor', 'oynaniyor'],
+        secilen_ders=secilen_ders,
+        sinav_tipi=sinav_tipi
+    ).first()
+    
+    if aktif_oda:
+        print(f"✅ Kullanıcının aktif odası bulundu: {aktif_oda.oda_id}")
+        return redirect('karsilasma_oyun', oda_id=aktif_oda.oda_id)
+    
+    # ✅ FARKLI DERSE GEÇMEK İSTİYORSA ESKİ ODALARI BİTİR
+    baska_dersler = KarsilasmaOdasi.objects.filter(
+        models.Q(oyuncu1=request.user) | models.Q(oyuncu2=request.user),
+        oyun_durumu__in=['bekleniyor', 'oynaniyor']
+    ).exclude(
+        secilen_ders=secilen_ders,
+        sinav_tipi=sinav_tipi
+    )
+    
+    if baska_dersler.exists():
+        baska_dersler.update(oyun_durumu='bitti')
+        print(f"🔄 Farklı dersteki {baska_dersler.count()} oda kapatıldı")
+    
+    # Aynı dersi seçmiş bekleyen oda bul
+    bekleyen_oda = KarsilasmaOdasi.objects.select_related('oyuncu1').filter(
+        oyun_durumu='bekleniyor',
+        oyuncu2=None,
+        secilen_ders=secilen_ders,
+        sinav_tipi=sinav_tipi
+    ).exclude(oyuncu1=request.user).first()
+    
+    if bekleyen_oda:
+        print(f"🔄 Bekleyen odaya katılıyor: {bekleyen_oda.oda_id}")
+        bekleyen_oda.oyuncu2 = request.user
+        bekleyen_oda.oyun_durumu = 'oynaniyor'
+        
+        # İlk soruyu getir
+        ilk_soru = _get_random_soru_by_ders(secilen_ders)
+        if ilk_soru:
+            bekleyen_oda.aktif_soru = ilk_soru
+            bekleyen_oda.aktif_soru_no = 1
+            bekleyen_oda.soru_baslangic_zamani = timezone.now()
+            print(f"✅ İlk soru atandı: {ilk_soru.id}")
+        else:
+            print(f"❌ Soru bulunamadı!")
+        
+        bekleyen_oda.save()
+        return redirect('karsilasma_oyun', oda_id=bekleyen_oda.oda_id)
+    else:
+        # Yeni oda oluştur
+        print(f"🆕 Yeni oda oluşturuluyor...")
+        yeni_oda = KarsilasmaOdasi.objects.create(
+            oyuncu1=request.user,
+            oyun_durumu='bekleniyor',
+            secilen_ders=secilen_ders,
+            sinav_tipi=sinav_tipi
+        )
+        print(f"✅ Yeni oda oluşturuldu: {yeni_oda.oda_id}")
+        
+        return redirect('karsilasma_oyun', oda_id=yeni_oda.oda_id)
+
+    
+    # Kullanıcının aktif odasını kontrol et
     aktif_oda = KarsilasmaOdasi.objects.select_related('oyuncu1', 'oyuncu2').filter(
         models.Q(oyuncu1=request.user) | models.Q(oyuncu2=request.user),
         oyun_durumu__in=['bekleniyor', 'oynaniyor']
     ).first()
     
     if aktif_oda:
+        print(f"✅ Kullanıcının aktif odası bulundu: {aktif_oda.oda_id}")
         return redirect('karsilasma_oyun', oda_id=aktif_oda.oda_id)
     
+    # Aynı dersi seçmiş bekleyen oda bul
     bekleyen_oda = KarsilasmaOdasi.objects.select_related('oyuncu1').filter(
         oyun_durumu='bekleniyor',
-        oyuncu2=None
+        oyuncu2=None,
+        secilen_ders=secilen_ders,
+        sinav_tipi=sinav_tipi
     ).exclude(oyuncu1=request.user).first()
     
     if bekleyen_oda:
+        print(f"🔄 Bekleyen odaya katılıyor: {bekleyen_oda.oda_id}")
         bekleyen_oda.oyuncu2 = request.user
         bekleyen_oda.oyun_durumu = 'oynaniyor'
-        bekleyen_oda.aktif_soru = _get_random_soru()
+        bekleyen_oda.aktif_soru = _get_random_soru_by_ders(secilen_ders)
         bekleyen_oda.aktif_soru_no = 1
+        bekleyen_oda.soru_baslangic_zamani = timezone.now()  # ✅ Zaman başlat
         bekleyen_oda.save()
-        
+
+        # İlk soruyu getir
+        ilk_soru = _get_random_soru_by_ders(secilen_ders)
+        if ilk_soru:
+            bekleyen_oda.aktif_soru = ilk_soru
+            bekleyen_oda.aktif_soru_no = 1
+            bekleyen_oda.soru_baslangic_zamani = timezone.now()
+            print(f"✅ İlk soru atandı: {ilk_soru.id}")
+        else:
+            print(f"❌ Soru bulunamadı!")
+
+        bekleyen_oda.save() 
         return redirect('karsilasma_oyun', oda_id=bekleyen_oda.oda_id)
     else:
+        # Yeni oda oluştur
+        print(f"🆕 Yeni oda oluşturuluyor...")
         yeni_oda = KarsilasmaOdasi.objects.create(
             oyuncu1=request.user,
-            oyun_durumu='bekleniyor'
+            oyun_durumu='bekleniyor',
+            secilen_ders=secilen_ders,
+            sinav_tipi=sinav_tipi
         )
         
         return redirect('karsilasma_oyun', oda_id=yeni_oda.oda_id)
 
 
-def _get_random_soru():
-    cache_key = 'all_soru_ids'
+def _get_random_soru_by_ders(ders='karisik'):
+    """Seçilen derse göre rastgele soru getir"""
+    print(f"🔍 Soru aranıyor: Ders={ders}")
+    
+    cache_key = f'karsilasma_soru_ids_{ders}'
     soru_ids = cache.get(cache_key)
     
     if soru_ids is None:
-        soru_ids = list(Soru.objects.values_list('id', flat=True))
+        if ders == 'karisik':
+            soru_ids = list(Soru.objects.filter(
+                karsilasmada_cikar=True
+            ).values_list('id', flat=True))
+        else:
+            soru_ids = list(Soru.objects.filter(
+                ders=ders,
+                karsilasmada_cikar=True
+            ).values_list('id', flat=True))
+        
         cache.set(cache_key, soru_ids, 300)
+        print(f"📝 {len(soru_ids)} soru bulundu")
     
     if soru_ids:
         random_id = random.choice(soru_ids)
-        return Soru.objects.get(id=random_id)
+        soru = Soru.objects.get(id=random_id)
+        print(f"✅ Soru seçildi: ID={random_id}")
+        return soru
+    
+    print(f"❌ Hiç soru bulunamadı!")
     return None
 
 

@@ -230,6 +230,35 @@ class KarsilasmaOdasi(models.Model):
         db_index=True  # ✅ INDEX
     )
     
+    # ✅ YENİ: DERS SEÇİMİ
+    DERS_SECENEKLERI = [
+        ('matematik', 'Matematik'),
+        ('fizik', 'Fizik'),
+        ('kimya', 'Kimya'),
+        ('turkce', 'Türkçe'),
+        ('tarih', 'Tarih'),
+        ('cografya', 'Coğrafya'),
+        ('felsefe', 'Felsefe'),
+        ('biyoloji', 'Biyoloji'),
+        ('karisik', 'Karışık'),
+    ]
+    
+    secilen_ders = models.CharField(
+        max_length=20,
+        choices=DERS_SECENEKLERI,
+        default='karisik',
+        verbose_name='Seçilen Ders',
+        db_index=True
+    )
+    
+    sinav_tipi = models.CharField(
+        max_length=10,
+        choices=[('tyt', 'TYT'), ('ayt', 'AYT')],
+        default='ayt',
+        verbose_name='Sınav Tipi',
+        db_index=True
+    )
+
 
     # ✅ ROUND SİSTEMİ
     aktif_round = models.IntegerField(default=1)
