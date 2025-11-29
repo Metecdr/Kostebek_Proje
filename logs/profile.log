@@ -1,0 +1,33 @@
+[DEBUG] 2025-11-29 15:44:08 profile.views views.rozetler_view:564 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-11-29 15:44:08 profile.views views.rozetler_view:647 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-11-29 15:44:30 profile.views views.cikis_view:147 - Cache temizlendi: Kullanýcý=admin
+[INFO] 2025-11-29 15:44:30 profile.views views.cikis_view:153 - Kullanýcý çýkýþ yaptý: admin
+[INFO] 2025-11-29 15:44:47 profile.views views.kayit_view:84 - Kullanýcý kaydý (profil mevcut): kostebek
+[INFO] 2025-11-29 15:44:47 profile.views views.profil_view:182 - Yeni rozetler kazanýldý: Kullanýcý=kostebek, Sayý=3
+[DEBUG] 2025-11-29 16:12:12 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-11-29 16:12:12 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-11-29 16:13:13 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-11-29 16:13:13 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-11-29 16:13:20 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-11-29 16:13:20 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-11-29 16:13:27 profile.views views.liderlik_oyun_modu_view:382 - Oyun modu liderlik cache'den alýnamadý: Mod=karsilasma, Tip=toplam
+[DEBUG] 2025-11-29 16:15:52 profile.views views.liderlik_oyun_modu_view:382 - Oyun modu liderlik cache'den alýnamadý: Mod=karsilasma, Tip=toplam
+[DEBUG] 2025-11-29 16:16:11 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=kostebek
+[DEBUG] 2025-11-29 16:16:11 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=kostebek
+[DEBUG] 2025-11-29 16:16:26 profile.views views.konu_analiz_view:460 - Konu analizi cache'den alýnamadý: Kullanýcý=kostebek
+[DEBUG] 2025-11-29 16:55:57 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-11-29 16:55:57 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-11-29 16:56:04 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=kostebek
+[DEBUG] 2025-11-29 16:56:04 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=kostebek
+[INFO] 2025-11-29 17:08:27 profile.views views.giris_view:109 - Baþarýlý giriþ: kostebek
+[INFO] 2025-11-29 17:14:51 profile.views views.giris_view:109 - Baþarýlý giriþ: admin
+[INFO] 2025-11-29 17:42:39 profile.views views.giris_view:109 - Baþarýlý giriþ: kostebek
+[DEBUG] 2025-11-29 17:43:39 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=kostebek
+[DEBUG] 2025-11-29 17:43:39 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=kostebek
+[INFO] 2025-11-29 17:52:34 profile.views views.giris_view:109 - Baþarýlý giriþ: admin
+[DEBUG] 2025-11-29 17:55:26 profile.views views.cikis_view:138 - Cache temizlendi: Kullanýcý=admin
+[INFO] 2025-11-29 17:55:26 profile.views views.cikis_view:146 - Kullanýcý çýkýþ yaptý: admin
+[INFO] 2025-11-29 17:55:31 profile.views views.giris_view:109 - Baþarýlý giriþ: kostebek
+[DEBUG] 2025-11-29 18:28:51 profile.views views.cikis_view:138 - Cache temizlendi: Kullanýcý=admin
+[INFO] 2025-11-29 18:28:51 profile.views views.cikis_view:146 - Kullanýcý çýkýþ yaptý: admin
+[INFO] 2025-11-29 18:28:56 profile.views views.giris_view:109 - Baþarýlý giriþ: kostebek

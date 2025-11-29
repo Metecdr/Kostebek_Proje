@@ -18,11 +18,29 @@
         border-radius: 25px;
         box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         text-align: center;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     
     .result-icon {
         font-size: 5rem;
         margin-bottom: 20px;
+        animation: bounce 1s ease infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
     }
     
     .result-title {
@@ -64,11 +82,13 @@
         border-radius: 15px;
         background: linear-gradient(135deg, #f8f9fa, #e9ecef);
         border: 3px solid #dee2e6;
+        transition: all 0.3s ease;
     }
     
     .winner-score {
         border-color: #FFD700;
         background: linear-gradient(135deg, #FFF9E6, #FFE4B5);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
     }
     
     .stats {
@@ -97,11 +117,33 @@
         font-weight: 700;
         border-radius: 15px;
         transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
     }
     
     .btn-custom:hover {
         transform: translateY(-3px);
         box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    
+    @media (max-width: 768px) {
+        .result-container {
+            padding: 30px 20px;
+            margin: 20px;
+        }
+        
+        .result-title {
+            font-size: 2rem;
+        }
+        
+        .score-display {
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .stat-item {
+            font-size: 1rem;
+        }
     }
 </style>
 
@@ -142,7 +184,7 @@
         </div>
     </div>
     
-    <!-- 📊 OYUN İSTATİSTİKLERİN -->
+    <!-- OYUN İSTATİSTİKLERİN -->
     <div class="stats">
         <h5 style="font-weight: 800; color: #333; margin-bottom: 20px;">📊 Oyun İstatistiklerin</h5>
         
@@ -161,22 +203,23 @@
             <strong style="color: #F44336;">❌ {{ benim_yanlisim }}</strong>
         </div>
         
-<div class="stat-item">
-    <span>Puan Değişimi:</span>
-    <strong style="color: {% if puan_degisimi > 0 %}#4CAF50{% elif puan_degisimi < 0 %}#F44336{% else %}#6c757d{% endif %};">
-        {% if puan_degisimi > 0 %}
-            +{{ puan_degisimi }} 💰
-        {% elif puan_degisimi < 0 %}
-            {{ puan_degisimi }} 💰
-        {% else %}
-            0 💰
-        {% endif %}
-    </strong>
-</div>
+        <div class="stat-item">
+            <span>Puan Değişimi:</span>
+            <strong style="color: {% if puan_degisimi > 0 %}#4CAF50{% elif puan_degisimi < 0 %}#F44336{% else %}#6c757d{% endif %};">
+                {% if puan_degisimi > 0 %}
+                    +{{ puan_degisimi }} 💰
+                {% elif puan_degisimi < 0 %}
+                    {{ puan_degisimi }} 💰
+                {% else %}
+                    0 💰
+                {% endif %}
+            </strong>
+        </div>
+    </div>
     
     <!-- BUTONLAR -->
     <div style="margin-top: 40px;">
-        <a href="{% url 'karsilasma_rakip_bul' %}" class="btn btn-primary btn-custom">
+        <a href="{% url 'karsilasma_sinav_tipi_secimi' %}" class="btn btn-primary btn-custom">
             🔄 Tekrar Oyna
         </a>
         <a href="{% url 'profil' %}" class="btn btn-secondary btn-custom">
