@@ -265,8 +265,9 @@ class KarsilasmaOdasi(models.Model):
     toplam_round = models.IntegerField(default=5)  # 5 soru = 5 round
     
     # ✅ ROUND ARASI MOLA
-    round_bitti = models.BooleanField(default=False)
-    round_bitis_zamani = models.DateTimeField(null=True, blank=True)
+    round_bekleme_durumu = models.BooleanField(default=False)  # ✅ YENİ
+    round_bitis_zamani = models.DateTimeField(null=True, blank=True)  
+
 
     # Skorlar
     oyuncu1_skor = models.IntegerField(default=0, verbose_name="Oyuncu 1 Skoru")

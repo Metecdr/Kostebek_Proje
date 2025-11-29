@@ -1623,3 +1623,5 @@ TypeError: unsupported operand type(s) for +: 'HttpResponseRedirect' and 'str'
 "POST /karsilasma/sinav-tipi/ HTTP/1.1" 500 72085
 Not Found: /favicon.ico
 "GET /favicon.ico HTTP/1.1" 404 11416
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 11416
