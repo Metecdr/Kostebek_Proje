@@ -3,115 +3,479 @@
 
 {% block title %}Bul Bakalım - Soru {{ soru_no }}/{{ toplam_soru }}{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-    <!-- ÜST BAR: İLERLEME VE SÜRE -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h5 class="mb-2">🎯 Bul Bakalım</h5>
-                    <div class="progress" style="height: 25px;">
-                        <div class="progress-bar bg-success" role="progressbar" 
-                             style="width: {{ soru_no|floatformat:0|add:0 }}0%;" 
-                             aria-valuenow="{{ soru_no }}" aria-valuemin="0" aria-valuemax="5">
-                            Soru {{ soru_no }} / {{ toplam_soru }}
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 text-center">
-                    <h6 class="mb-1">⏱️ Kalan Süre</h6>
-                    <h2 id="timer" class="text-danger mb-0">90</h2>
-                </div>
-                <div class="col-md-3 text-center">
-                    <h6 class="mb-1">📊 Skor</h6>
-                    <h4 class="mb-0">
-                        <span class="text-success">✅ {{ oyun.dogru_sayisi }}</span> / 
-                        <span class="text-danger">❌ {{ oyun.yanlis_sayisi }}</span>
-                    </h4>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SORU KARTI -->
-    <div class="card shadow-lg">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">📝 Soru {{ soru_no }}</h4>
-        </div>
-        <div class="card-body p-4">
-            <!-- SORU METNİ -->
-            <div class="alert alert-light border" style="font-size: 1.1rem; line-height: 1.8;">
-                {{ aktif_soru.metin }}
-            </div>
-
-            <!-- CEVAP ŞIKLARı -->
-            <div class="mt-4">
-                <h5 class="mb-3">Cevapları seçin:</h5>
-                {% for cevap in cevaplar %}
-                <div class="d-grid gap-2 mb-3">
-                    <button class="btn btn-outline-primary btn-lg text-start cevap-btn" 
-                            data-cevap-id="{{ cevap.id }}"
-                            style="padding: 15px 20px; font-size: 1.1rem;">
-                        <strong>{{ forloop.counter|upper }})</strong> {{ cevap.metin }}
-                    </button>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-
-    <!-- BİLGİ -->
-    <div class="alert alert-info mt-4">
-        <strong>💡 İpucu:</strong> 3 veya daha fazla doğru cevap verirseniz 1 puan kazanırsınız!
-    </div>
-</div>
-
-<!-- CEVAP SONUÇ MODAL -->
-<div class="modal fade" id="cevapModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body text-center p-5">
-                <div id="dogru-sonuc" style="display: none;">
-                    <div class="display-1 text-success">✅</div>
-                    <h3 class="text-success mt-3">DOĞRU!</h3>
-                    <p class="lead">Tebrikler! Doğru cevap verdiniz!</p>
-                </div>
-                <div id="yanlis-sonuc" style="display: none;">
-                    <div class="display-1 text-danger">❌</div>
-                    <h3 class="text-danger mt-3">YANLIŞ!</h3>
-                    <p class="lead">Üzgünüz, yanlış cevap...</p>
-                </div>
-                <button type="button" class="btn btn-primary btn-lg mt-3" id="devam-btn">
-                    Sonraki Soru →
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
+{% block extra_css %}
 <style>
-.cevap-btn {
-    transition: all 0.3s ease;
-}
-.cevap-btn:hover {
-    transform: translateX(10px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-.cevap-btn:disabled {
-    cursor: not-allowed;
-}
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+
+    .game-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* HEADER BAR */
+    .game-header {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .game-title-header {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #667eea;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* PROGRESS BAR */
+    .progress-wrapper {
+        margin-bottom: 20px;
+    }
+
+    .progress-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .progress-label {
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .custom-progress {
+        height: 25px;
+        border-radius: 15px;
+        background: #e9ecef;
+        overflow: hidden;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #10b981, #34d399);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .custom-progress-bar::after {
+        content: '';
+        position: absolute;
+        top:  0;
+        left: 0;
+        right: 0;
+        bottom:  0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% {
+            transform: translateX(-100%);
+        }
+        100% {
+            transform: translateX(100%);
+        }
+    }
+
+    /* STATS GRID */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .stat-box {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        padding: 15px;
+        border-radius:  12px;
+        text-align:  center;
+        border: 2px solid #dee2e6;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight:  900;
+    }
+
+    .timer-value {
+        color: #10b981;
+    }
+
+    .timer-value.warning {
+        color: #f59e0b;
+        animation: pulse 1s infinite;
+    }
+
+    .timer-value.danger {
+        color: #ef4444;
+        animation: pulse 0.5s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform:  scale(1);
+        }
+        50% {
+            transform:  scale(1.1);
+        }
+    }
+
+    .score-correct {
+        color: #10b981;
+    }
+
+    .score-wrong {
+        color: #ef4444;
+    }
+
+    /* QUESTION CARD */
+    .question-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        margin-bottom: 30px;
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .question-number {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 10px 25px;
+        border-radius:  25px;
+        display: inline-block;
+        font-weight: 800;
+        font-size: 1rem;
+        margin-bottom: 25px;
+    }
+
+    .question-text {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2c3e50;
+        line-height: 1.8;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        border-left: 5px solid #667eea;
+        margin-bottom: 30px;
+    }
+
+    /* ANSWERS */
+    .answers-title {
+        font-size: 1.2rem;
+        font-weight:  700;
+        color: #2c3e50;
+        margin-bottom: 20px;
+    }
+
+    .answer-grid {
+        display: grid;
+        gap: 15px;
+    }
+
+    .cevap-btn {
+        background: white;
+        border: 3px solid #e9ecef;
+        border-radius: 15px;
+        padding: 20px 25px;
+        font-size:  1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cevap-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left:  -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+        transition: left 0.5s;
+    }
+
+    .cevap-btn:hover {
+        transform: translateX(10px);
+        border-color: #667eea;
+        background: linear-gradient(135deg, #f8f9ff, #ffffff);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .cevap-btn:hover::before {
+        left:  100%;
+    }
+
+    .cevap-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .cevap-btn.selected {
+        border-color: #667eea;
+        background:  linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        transform: scale(1.02);
+    }
+
+    /* INFO BOX */
+    .info-box {
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        border: 2px solid #60a5fa;
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 30px;
+        animation: fadeIn 0.6s ease-out 0.4s both;
+    }
+
+    .info-box strong {
+        color: #1e40af;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* MODAL */
+    .result-modal-content {
+        border: none;
+        border-radius: 25px;
+        overflow: hidden;
+    }
+
+    .result-modal-body {
+        padding: 60px 40px;
+        text-align:  center;
+    }
+
+    .result-modal-body.success {
+        background: linear-gradient(135deg, #10b981, #34d399);
+        color: white;
+    }
+
+    .result-modal-body.error {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+    }
+
+    .result-icon {
+        font-size: 100px;
+        animation: bounceIn 0.6s;
+        margin-bottom: 20px;
+    }
+
+    @keyframes bounceIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.3);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .result-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin-bottom: 15px;
+    }
+
+    .result-text {
+        font-size: 1.3rem;
+        margin-bottom: 30px;
+        opacity: 0.95;
+    }
+
+    .loading-spinner {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .game-header {
+            padding: 20px;
+        }
+
+        .game-title-header {
+            font-size: 1.4rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .question-card {
+            padding: 25px;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+        }
+
+        .cevap-btn {
+            padding: 15px 20px;
+            font-size:  1rem;
+        }
+
+        .result-modal-body {
+            padding: 40px 20px;
+        }
+
+        .result-icon {
+            font-size: 70px;
+        }
+
+        .result-title {
+            font-size: 2rem;
+        }
+
+        .result-text {
+            font-size: 1.1rem;
+        }
+    }
 </style>
+{% endblock %}
 
-<script>
-if (typeof bootstrap === 'undefined') {
-    console.log('Bootstrap yükleniyor...');
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js';
-    document.head.appendChild(script);
-}
-</script>
+{% block content %}
+<div class="game-container">
+    <!-- HEADER BAR -->
+    <div class="game-header">
+        <h1 class="game-title-header">
+            <span>🎯</span>
+            <span>BUL BAKALIM</span>
+        </h1>
 
+        <!-- PROGRESS BAR -->
+        <div class="progress-wrapper">
+            <div class="progress-info">
+                <span class="progress-label">İlerleme</span>
+                <span class="progress-label">{{ soru_no }} / {{ toplam_soru }}</span>
+            </div>
+            <div class="custom-progress">
+                <div class="custom-progress-bar" style="width: {{ soru_no|floatformat:0|add:0 }}0%;">
+                    Soru {{ soru_no }} / {{ toplam_soru }}
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-label">⏱️ Kalan Süre</div>
+                <div class="stat-value timer-value" id="timer">{{ sure }}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">📊 Skor</div>
+                <div class="stat-value">
+                    <span class="score-correct">{{ oyun.dogru_sayisi }}</span>
+                    <span style="color: #6c757d;">/</span>
+                    <span class="score-wrong">{{ oyun.yanlis_sayisi }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUESTION CARD -->
+    <div class="question-card">
+        <div class="question-number">📝 SORU {{ soru_no }}</div>
+
+        <div class="question-text">
+            {{ aktif_soru.metin }}
+        </div>
+
+        <h5 class="answers-title">Cevapları seçin: </h5>
+
+        <div class="answer-grid">
+            {% for cevap in cevaplar %}
+            <button class="cevap-btn" data-cevap-id="{{ cevap.id }}">
+                <strong>{{ forloop.counter|upper }})</strong> {{ cevap.metin }}
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- INFO BOX -->
+    <div class="info-box">
+        <strong>💡 İpucu:</strong> 3 veya daha fazla doğru cevap verirseniz 1 puan kazanırsınız! 
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
 // CSRF TOKEN AL
 function getCookie(name) {
@@ -130,9 +494,7 @@ function getCookie(name) {
 }
 const csrftoken = getCookie('csrftoken');
 
-// Sayfa yüklendiğinde çalışsın
 document.addEventListener('DOMContentLoaded', function() {
-    
     // SÜRE SAYACI
     let kalanSure = {{ sure }};
     const timerElement = document.getElementById('timer');
@@ -140,26 +502,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const interval = setInterval(() => {
         kalanSure--;
         timerElement.textContent = kalanSure;
-        
-        if (kalanSure <= 10) {
-            timerElement.classList.add('text-danger');
-            timerElement.style.fontWeight = 'bold';
+
+        // Renk değişimi
+        if (kalanSure <= 30 && kalanSure > 10) {
+            timerElement.className = 'stat-value timer-value warning';
+        } else if (kalanSure <= 10) {
+            timerElement.className = 'stat-value timer-value danger';
         }
-        
+
         if (kalanSure <= 0) {
             clearInterval(interval);
-            // Süre bittiğinde modal göster
-            showSonucModal(false, 'Süre bitti! ⏰');
-            
-            // Cevap otomatik gönder (cevapsız/yanlış kaydet)
-            // Backend'de cevap yoksa yanlış sayılacak şekilde düzenlenmiş olmalı!
+            showSonucModal(false, 'Süre bitti!  ⏰');
+            showToast('Süre doldu!', 'warning');
+
+            // Cevap otomatik gönder
             fetch('{% url "bul_bakalim_cevapla" oyun.oyun_id %}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrftoken
                 },
-                body: JSON.stringify({ cevap_id: null }) // null gönder, backend'e göre yanlış sayılır
+                body: JSON.stringify({ cevap_id: null })
             })
             .then(response => response.json())
             .then(data => {
@@ -180,20 +543,21 @@ document.addEventListener('DOMContentLoaded', function() {
     cevapButtons.forEach(btn => {
         btn.addEventListener('click', function() {
             const cevapId = this.dataset.cevapId;
-            
+
             // Tüm butonları devre dışı bırak
             cevapButtons.forEach(b => {
                 b.disabled = true;
-                b.style.opacity = '0.5';
             });
-            
+
             // Tıklanan butonu vurgula
-            this.style.transform = 'scale(1.05)';
-            this.style.boxShadow = '0 0 20px rgba(0,123,255,0.5)';
-            
+            this.classList.add('selected');
+
             // Süreyi durdur
             clearInterval(interval);
-            
+
+            // Loading göster
+            showLoading('Cevabınız değerlendiriliyor...');
+
             // Cevabı gönder
             fetch('{% url "bul_bakalim_cevapla" oyun.oyun_id %}', {
                 method: 'POST',
@@ -205,92 +569,70 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
+                hideLoading();
                 showSonucModal(data.dogru_mu);
+
+                if (data.dogru_mu) {
+                    showToast('Doğru cevap!  Tebrikler!  🎉', 'success');
+                } else {
+                    showToast('Yanlış cevap! Devam et! 💪', 'error');
+                }
+
                 setTimeout(() => {
                     if (data.oyun_bitti) {
                         window.location.href = data.redirect_url;
                     } else {
                         window.location.reload();
                     }
-                }, 2000);
+                }, 2500);
             })
             .catch(error => {
-                alert('Bir hata oluştu: ' + error);
+                hideLoading();
+                showToast('Bir hata oluştu! ', 'error');
+                console.error('Hata:', error);
                 cevapButtons.forEach(b => {
                     b.disabled = false;
-                    b.style.opacity = '1';
                 });
+                this.classList.remove('selected');
             });
         });
     });
 });
 
-// GÜZEL SONUÇ MODALI
+// SONUÇ MODALI
 function showSonucModal(dogruMu, mesaj = '') {
-    // Mevcut modal'ı kaldır
     const mevcutModal = document.getElementById('dinamikModal');
     if (mevcutModal) {
         mevcutModal.remove();
     }
-    
-    // Yeni modal oluştur
+
     const modalHTML = `
         <div class="modal fade" id="dinamikModal" tabindex="-1" style="z-index: 9999;">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-body text-center p-5" style="background: ${dogruMu ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'}; color: white; border-radius: 15px;">
-                        <div style="font-size: 100px; animation: bounceIn 0.6s;">
+                <div class="modal-content result-modal-content">
+                    <div class="modal-body result-modal-body ${dogruMu ? 'success' : 'error'}">
+                        <div class="result-icon">
                             ${dogruMu ? '✅' : '❌'}
                         </div>
-                        <h2 class="mt-3 mb-2" style="font-weight: bold; font-size: 2.5rem;">
-                            ${dogruMu ? 'DOĞRU!' : 'YANLIŞ!'}
+                        <h2 class="result-title">
+                            ${dogruMu ?  'DOĞRU!' : 'YANLIŞ!'}
                         </h2>
-                        <p class="lead mb-0" style="font-size: 1.3rem;">
-                            ${mesaj || (dogruMu ? 'Tebrikler! Harika gidiyorsun! 🎉' : 'Üzülme, bir sonraki sefere! 💪')}
+                        <p class="result-text">
+                            ${mesaj || (dogruMu ? 'Tebrikler! Harika gidiyorsun!  🎉' : 'Üzülme, bir sonraki sefere!  💪')}
                         </p>
-                        <div class="mt-4">
-                            <div class="spinner-border text-light" role="status">
-                                <span class="visually-hidden">Yükleniyor...</span>
-                            </div>
-                            <p class="mt-2 mb-0" style="font-size: 0.9rem;">Sonraki soruya geçiliyor...</p>
+                        <div>
+                            <div class="loading-spinner"></div>
+                            <p class="mt-3 mb-0">Sonraki soruya geçiliyor...</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     `;
-    
+
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     const modal = new bootstrap.Modal(document.getElementById('dinamikModal'));
     modal.show();
 }
 </script>
-
-<style>
-@keyframes bounceIn {
-    0% {
-        opacity: 0;
-        transform: scale(0.3);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-.cevap-btn {
-    transition: all 0.3s ease;
-    border: 2px solid #0d6efd;
-}
-
-.cevap-btn:hover {
-    transform: translateX(10px);
-    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
-    background-color: #0d6efd;
-    color: white;
-}
-</style>
 {% endblock %}

@@ -24,8 +24,8 @@ INSTALLED_APPS = [
     'profile',
     'quiz',
     'utils',
-    'background_task',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -191,3 +191,4 @@ LOGGING = {
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
+

@@ -1,0 +1,335 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabu - Bölüm Seç | Köstebek YKS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height:  100vh;
+            display:  flex;
+            align-items:  center;
+            justify-content:  center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 60px 40px;
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content:  '🎭';
+            position:  absolute;
+            font-size: 20rem;
+            opacity: 0.05;
+            top: -80px;
+            right: -80px;
+            animation: rotate 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform:  translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            width: 100px;
+            margin: 0 auto 30px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .logo img {
+            width: 100%;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color:  transparent;
+            background-clip:  text;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin:  40px 0;
+        }
+
+        .option-wrapper {
+            position: relative;
+        }
+
+        input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor:  pointer;
+        }
+
+        .option {
+            border: 3px solid #e9ecef;
+            border-radius:  20px;
+            padding:  35px 20px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background:  linear-gradient(135deg, #667eea, #764ba2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            z-index: 0;
+        }
+
+        .option:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        input[type="radio"]:checked + .option {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(102, 126, 234, 0.5);
+        }
+
+        input[type="radio"]:checked + .option .icon,
+        input[type="radio"]:checked + .option .name {
+            color: white;
+        }
+
+        .option:hover.icon,
+        .option:hover.name {
+            color: white;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom:  15px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #333;
+            position: relative;
+            z-index: 1;
+            transition:  all 0.3s;
+        }
+
+        .devam-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border:  none;
+            padding: 20px 60px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight:  800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .devam-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width:  0;
+            height: 0;
+            border-radius:  50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .devam-btn:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .devam-btn:hover {
+            transform: translateY(-5px);
+            box-shadow:  0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 25px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .option {
+                padding: 30px 20px;
+            }
+
+            .name {
+                font-size: 1.1rem;
+            }
+
+            .devam-btn {
+                padding: 18px 50px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="logo">
+            <img src="{% static 'images/kostebek_sag.png' %}" alt="Köstebek">
+        </div>
+
+        <h1>🎭 TABU OYUNU</h1>
+        <p class="subtitle">
+            Yasaklı kelimeleri kullanmadan kelimeyi anlat! <br>
+            Hangi bölüm soruları ile oynamak istersin?
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="grid">
+                
+                <label class="option-wrapper">
+                    <input type="radio" name="bolum" value="sayisal" checked>
+                    <div class="option">
+                        <div class="icon">🔬</div>
+                        <div class="name">Sayısal</div>
+                    </div>
+                </label>
+                
+                <label class="option-wrapper">
+                    <input type="radio" name="bolum" value="sozel">
+                    <div class="option">
+                        <div class="icon">📚</div>
+                        <div class="name">Sözel</div>
+                    </div>
+                </label>
+                
+                <label class="option-wrapper">
+                    <input type="radio" name="bolum" value="esit_agirlik">
+                    <div class="option">
+                        <div class="icon">⚖️</div>
+                        <div class="name">Eşit Ağırlık</div>
+                    </div>
+                </label>
+                
+                <label class="option-wrapper">
+                    <input type="radio" name="bolum" value="dil">
+                    <div class="option">
+                        <div class="icon">🌍</div>
+                        <div class="name">Dil</div>
+                    </div>
+                </label>
+                
+            </div>
+            
+            <button type="submit" class="devam-btn">
+                DEVAM ET →
+            </button>
+        </form>
+
+        <a href="{% url 'tabu_anasayfa' %}" class="back-link">
+            ← Geri Dön
+        </a>
+
+    </div>
+</body>
+</html>

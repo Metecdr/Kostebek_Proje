@@ -129,6 +129,7 @@ class TabuKelime(models.Model):
             ('cografya', 'Coğrafya'),
             ('tarih', 'Tarih'),
             ('edebiyat', 'Edebiyat'),
+            ('felsefe', 'Felsefe'),
             # ileride dil için eklenebilir
         ],
         verbose_name="Kategori",

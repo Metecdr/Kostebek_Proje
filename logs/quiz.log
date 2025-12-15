@@ -1540,3 +1540,302 @@
 [DEBUG] 2025-11-29 18:38:37 quiz.helpers helpers.update_stats_with_combo:47 - Hýz bonusu: Kullanýcý=kostebek, Süre=2.3s
 [DEBUG] 2025-11-29 18:38:37 quiz.helpers helpers.update_stats_with_combo:66 - Combo bonusu: Kullanýcý=kostebek, Combo=1, Bonus=2
 [INFO] 2025-11-29 18:38:37 quiz.helpers helpers.update_stats_with_combo:94 - Ýstatistik güncellendi: Kullanýcý=kostebek, Puan=17, Doðru=True
+[INFO] 2025-12-07 12:53:30 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-07 12:53:39 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_basla:43 - Bul Bakalým baþlatýlýyor: Kullanýcý=admin, Ders=kimya, Sýnav Tipi=ayt
+[DEBUG] 2025-12-07 12:53:39 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_basla:54 - Bul Bakalým sorularý cache'lendi: Ders=kimya, Sayý=10
+[INFO] 2025-12-07 12:53:45 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_basla:63 - Bul Bakalým oyunu oluþturuldu: Oyun ID=0f7accef-9275-4adb-8d37-68927c5d11b6, Kullanýcý=admin
+[DEBUG] 2025-12-07 12:53:47 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_cevapla:109 - Bul Bakalým yanlýþ cevap: Oyun ID=0f7accef-9275-4adb-8d37-68927c5d11b6, Soru ID=204
+[INFO] 2025-12-07 12:53:57 quiz.views_karsilasma views_karsilasma.karsilasma_sinav_tipi_secimi:24 - Sýnav tipi seçildi: ayt, Kullanýcý: admin
+[INFO] 2025-12-07 12:53:59 quiz.views_karsilasma views_karsilasma.karsilasma_ders_secimi:47 - Ders seçildi: kimya, Sýnav: ayt, User: admin
+[INFO] 2025-12-07 12:54:00 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:271 - Rakip aranýyor: User=admin, Ders=karisik, Sýnav=ayt
+[INFO] 2025-12-07 12:54:00 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:330 - Yeni oda: 40c732d1-3f60-4c98-8944-772f8ce4fb3c
+[INFO] 2025-12-07 12:59:04 quiz.views_karsilasma views_karsilasma.karsilasma_sinav_tipi_secimi:24 - Sýnav tipi seçildi: ayt, Kullanýcý: mete
+[INFO] 2025-12-07 12:59:19 quiz.views_karsilasma views_karsilasma.karsilasma_ders_secimi:47 - Ders seçildi: fizik, Sýnav: ayt, User: mete
+[INFO] 2025-12-07 12:59:19 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:271 - Rakip aranýyor: User=mete, Ders=karisik, Sýnav=ayt
+[DEBUG] 2025-12-07 12:59:19 quiz.helpers helpers.get_random_soru_by_ders:14 - Soru aranýyor: Ders=karisik
+[DEBUG] 2025-12-07 12:59:19 quiz.helpers helpers.get_random_soru_by_ders:24 - Soru ID'leri cache'lendi: Ders=karisik, Sayý=27
+[DEBUG] 2025-12-07 12:59:19 quiz.helpers helpers.get_random_soru_by_ders:29 - Soru seçildi: ID=206, Ders=karisik
+[INFO] 2025-12-07 12:59:19 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:318 - Oyun baþladý: Oda=40c732d1-3f60-4c98-8944-772f8ce4fb3c
+[DEBUG] 2025-12-07 12:59:23 quiz.helpers helpers.update_stats_with_combo:52 - Hýz bonusu: Kullanýcý=mete, Süre=4.0s
+[DEBUG] 2025-12-07 12:59:23 quiz.helpers helpers.update_stats_with_combo:103 - Yanlýþ cevap: Kullanýcý=mete, Combo sýfýrlandý
+[DEBUG] 2025-12-07 12:59:26 quiz.helpers helpers.update_stats_with_combo:103 - Yanlýþ cevap: Kullanýcý=admin, Combo sýfýrlandý
+[DEBUG] 2025-12-07 12:59:29 quiz.helpers helpers.get_random_soru_by_ders:14 - Soru aranýyor: Ders=karisik
+[DEBUG] 2025-12-07 12:59:29 quiz.helpers helpers.get_random_soru_by_ders:29 - Soru seçildi: ID=194, Ders=karisik
+[DEBUG] 2025-12-07 12:59:32 quiz.helpers helpers.update_stats_with_combo:52 - Hýz bonusu: Kullanýcý=mete, Süre=2.5s
+[DEBUG] 2025-12-07 12:59:32 quiz.helpers helpers.update_stats_with_combo:103 - Yanlýþ cevap: Kullanýcý=mete, Combo sýfýrlandý
+[DEBUG] 2025-12-07 12:59:34 quiz.helpers helpers.update_stats_with_combo:47 - Hýz bonusu: Kullanýcý=admin, Süre=5.0s
+[DEBUG] 2025-12-07 12:59:34 quiz.helpers helpers.update_stats_with_combo:103 - Yanlýþ cevap: Kullanýcý=admin, Combo sýfýrlandý
+[DEBUG] 2025-12-07 12:59:37 quiz.helpers helpers.get_random_soru_by_ders:14 - Soru aranýyor: Ders=karisik
+[DEBUG] 2025-12-07 12:59:37 quiz.helpers helpers.get_random_soru_by_ders:29 - Soru seçildi: ID=182, Ders=karisik
+[DEBUG] 2025-12-07 12:59:39 quiz.helpers helpers.update_stats_with_combo:47 - Hýz bonusu: Kullanýcý=admin, Süre=1.5s
+[DEBUG] 2025-12-07 12:59:39 quiz.helpers helpers.update_stats_with_combo:103 - Yanlýþ cevap: Kullanýcý=admin, Combo sýfýrlandý
+[DEBUG] 2025-12-07 12:59:40 quiz.helpers helpers.update_stats_with_combo:52 - Hýz bonusu: Kullanýcý=mete, Süre=2.9s
+[DEBUG] 2025-12-07 12:59:40 quiz.helpers helpers.update_stats_with_combo:66 - Combo bonusu: Kullanýcý=mete, Combo=1, Bonus=2
+[DEBUG] 2025-12-07 12:59:40 quiz.helpers helpers.update_stats_with_combo:71 - Ýlk doðru bonusu: Kullanýcý=mete
+[INFO] 2025-12-07 12:59:40 quiz.helpers helpers.update_stats_with_combo:94 - Ýstatistik güncellendi: Kullanýcý=mete, Puan=20, Doðru=True
+[DEBUG] 2025-12-07 12:59:43 quiz.helpers helpers.get_random_soru_by_ders:14 - Soru aranýyor: Ders=karisik
+[DEBUG] 2025-12-07 12:59:43 quiz.helpers helpers.get_random_soru_by_ders:29 - Soru seçildi: ID=206, Ders=karisik
+[DEBUG] 2025-12-07 13:02:26 quiz.helpers helpers.update_stats_with_combo:103 - Yanlýþ cevap: Kullanýcý=admin, Combo sýfýrlandý
+[DEBUG] 2025-12-07 13:02:27 quiz.helpers helpers.update_stats_with_combo:103 - Yanlýþ cevap: Kullanýcý=mete, Combo sýfýrlandý
+[DEBUG] 2025-12-07 13:02:31 quiz.helpers helpers.get_random_soru_by_ders:14 - Soru aranýyor: Ders=karisik
+[DEBUG] 2025-12-07 13:02:31 quiz.helpers helpers.get_random_soru_by_ders:29 - Soru seçildi: ID=194, Ders=karisik
+[DEBUG] 2025-12-07 13:03:42 quiz.helpers helpers.update_stats_with_combo:103 - Yanlýþ cevap: Kullanýcý=admin, Combo sýfýrlandý
+[DEBUG] 2025-12-07 13:03:44 quiz.helpers helpers.update_stats_with_combo:103 - Yanlýþ cevap: Kullanýcý=mete, Combo sýfýrlandý
+[INFO] 2025-12-07 13:04:09 quiz.views_karsilasma views_karsilasma.karsilasma_sinav_tipi_secimi:24 - Sýnav tipi seçildi: ayt, Kullanýcý: mete
+[INFO] 2025-12-07 13:04:10 quiz.views_karsilasma views_karsilasma.karsilasma_ders_secimi:47 - Ders seçildi: tarih, Sýnav: ayt, User: mete
+[INFO] 2025-12-07 13:04:10 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:271 - Rakip aranýyor: User=mete, Ders=karisik, Sýnav=ayt
+[INFO] 2025-12-07 13:04:10 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:330 - Yeni oda: 6c816196-e16b-4165-9668-61ec7f02cac3
+[INFO] 2025-12-07 13:04:12 quiz.views_karsilasma views_karsilasma.karsilasma_sinav_tipi_secimi:24 - Sýnav tipi seçildi: ayt, Kullanýcý: admin
+[INFO] 2025-12-07 13:04:13 quiz.views_karsilasma views_karsilasma.karsilasma_ders_secimi:47 - Ders seçildi: tarih, Sýnav: ayt, User: admin
+[INFO] 2025-12-07 13:04:13 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:271 - Rakip aranýyor: User=admin, Ders=karisik, Sýnav=ayt
+[DEBUG] 2025-12-07 13:04:13 quiz.helpers helpers.get_random_soru_by_ders:14 - Soru aranýyor: Ders=karisik
+[DEBUG] 2025-12-07 13:04:13 quiz.helpers helpers.get_random_soru_by_ders:24 - Soru ID'leri cache'lendi: Ders=karisik, Sayý=27
+[DEBUG] 2025-12-07 13:04:13 quiz.helpers helpers.get_random_soru_by_ders:29 - Soru seçildi: ID=187, Ders=karisik
+[INFO] 2025-12-07 13:04:13 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:318 - Oyun baþladý: Oda=6c816196-e16b-4165-9668-61ec7f02cac3
+[DEBUG] 2025-12-07 13:04:14 quiz.helpers helpers.update_stats_with_combo:52 - Hýz bonusu: Kullanýcý=admin, Süre=1.6s
+[DEBUG] 2025-12-07 13:04:14 quiz.helpers helpers.update_stats_with_combo:103 - Yanlýþ cevap: Kullanýcý=admin, Combo sýfýrlandý
+[DEBUG] 2025-12-07 13:04:16 quiz.helpers helpers.update_stats_with_combo:47 - Hýz bonusu: Kullanýcý=mete, Süre=3.7s
+[DEBUG] 2025-12-07 13:04:16 quiz.helpers helpers.update_stats_with_combo:103 - Yanlýþ cevap: Kullanýcý=mete, Combo sýfýrlandý
+[DEBUG] 2025-12-07 13:04:20 quiz.helpers helpers.get_random_soru_by_ders:14 - Soru aranýyor: Ders=karisik
+[DEBUG] 2025-12-07 13:04:20 quiz.helpers helpers.get_random_soru_by_ders:29 - Soru seçildi: ID=181, Ders=karisik
+[DEBUG] 2025-12-07 13:04:50 quiz.helpers helpers.update_stats_with_combo:103 - Yanlýþ cevap: Kullanýcý=mete, Combo sýfýrlandý
+[DEBUG] 2025-12-07 13:05:18 quiz.helpers helpers.update_stats_with_combo:103 - Yanlýþ cevap: Kullanýcý=admin, Combo sýfýrlandý
+[DEBUG] 2025-12-07 13:05:21 quiz.helpers helpers.get_random_soru_by_ders:14 - Soru aranýyor: Ders=karisik
+[DEBUG] 2025-12-07 13:05:21 quiz.helpers helpers.get_random_soru_by_ders:29 - Soru seçildi: ID=191, Ders=karisik
+[DEBUG] 2025-12-07 13:05:30 quiz.helpers helpers.update_stats_with_combo:66 - Combo bonusu: Kullanýcý=admin, Combo=1, Bonus=2
+[DEBUG] 2025-12-07 13:05:30 quiz.helpers helpers.update_stats_with_combo:71 - Ýlk doðru bonusu: Kullanýcý=admin
+[INFO] 2025-12-07 13:05:30 quiz.helpers helpers.update_stats_with_combo:94 - Ýstatistik güncellendi: Kullanýcý=admin, Puan=15, Doðru=True
+[DEBUG] 2025-12-07 13:05:34 quiz.helpers helpers.update_stats_with_combo:66 - Combo bonusu: Kullanýcý=mete, Combo=1, Bonus=2
+[INFO] 2025-12-07 13:05:34 quiz.helpers helpers.update_stats_with_combo:94 - Ýstatistik güncellendi: Kullanýcý=mete, Puan=12, Doðru=True
+[DEBUG] 2025-12-07 13:05:37 quiz.helpers helpers.get_random_soru_by_ders:14 - Soru aranýyor: Ders=karisik
+[DEBUG] 2025-12-07 13:05:37 quiz.helpers helpers.get_random_soru_by_ders:29 - Soru seçildi: ID=192, Ders=karisik
+[INFO] 2025-12-07 13:25:48 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-07 13:33:24 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-07 13:33:39 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=tyt
+[INFO] 2025-12-07 13:33:49 quiz.views_tabu views_tabu.tabu_lobi:43 - Yeni Tabu oyunu oluþturuldu: Oyun ID=15
+[DEBUG] 2025-12-07 13:33:50 quiz.views_tabu views_tabu.tabu_oyun:73 - Tabu ara ekran geçildi: Oyun ID=15, Takým=A
+[DEBUG] 2025-12-07 13:33:51 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:33:52 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:33:52 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:33:52 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:33:53 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:33:53 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=tabu, Takým=A
+[DEBUG] 2025-12-07 13:33:53 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:33:54 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=pas, Takým=A
+[DEBUG] 2025-12-07 13:33:54 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=A
+[INFO] 2025-12-07 13:33:55 quiz.views_tabu views_tabu.tabu_tur_degistir:161 - Tabu tur deðiþti: Oyun ID=15, Yeni Takým=B
+[DEBUG] 2025-12-07 13:33:55 quiz.views_tabu views_tabu.tabu_oyun:73 - Tabu ara ekran geçildi: Oyun ID=15, Takým=B
+[DEBUG] 2025-12-07 13:33:56 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:33:56 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:33:56 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:33:56 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:33:56 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:33:57 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:33:57 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:33:57 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:33:57 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:33:57 quiz.views_tabu views_tabu.tabu_tur_guncelle:126 - Tabu tur güncellendi: Oyun ID=15, Action=dogru, Takým=B
+[INFO] 2025-12-07 13:33:58 quiz.views_tabu views_tabu.tabu_tur_degistir:166 - Tabu oyunu tamamlandý: Oyun ID=15
+[INFO] 2025-12-07 13:43:55 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-07 13:44:10 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-07 13:44:39 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-07 13:49:39 quiz.views_tabu views_tabu.tabu_bolum_sec:26 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-07 13:55:31 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-07 13:55:33 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=16, Bölüm=sayisal
+[DEBUG] 2025-12-07 13:55:34 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=16, Takým=A
+[DEBUG] 2025-12-07 13:55:35 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:55:35 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:55:36 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:55:36 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:55:36 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:55:37 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:55:37 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:55:37 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:55:38 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=A
+[DEBUG] 2025-12-07 13:55:38 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=A
+[INFO] 2025-12-07 13:55:38 quiz.views_tabu views_tabu.tabu_tur_degistir:254 - Tur deðiþti: Oyun=16, Yeni Takým=B
+[DEBUG] 2025-12-07 13:55:39 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=16, Takým=B
+[DEBUG] 2025-12-07 13:55:40 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=pas, Takým=B
+[DEBUG] 2025-12-07 13:55:40 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:55:40 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:55:40 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:55:40 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:55:40 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:55:41 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:55:41 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:55:41 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=B
+[DEBUG] 2025-12-07 13:55:41 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=16, Action=dogru, Takým=B
+[INFO] 2025-12-07 13:55:42 quiz.views_tabu views_tabu.tabu_tur_degistir:262 - Oyun tamamlandý: Oyun=16
+[INFO] 2025-12-07 13:55:45 quiz.views_tabu views_tabu.tabu_tur_degistir:262 - Oyun tamamlandý: Oyun=16
+[INFO] 2025-12-07 13:55:47 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: esit_agirlik
+[WARNING] 2025-12-07 13:55:47 quiz.views_tabu views_tabu.tabu_lobi:60 - Yetersiz tabu kelimesi: Bölüm=esit_agirlik, Mevcut=0
+[WARNING] 2025-12-07 13:55:50 quiz.views_tabu views_tabu.tabu_lobi:60 - Yetersiz tabu kelimesi: Bölüm=esit_agirlik, Mevcut=0
+[INFO] 2025-12-07 13:55:50 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=17, Bölüm=esit_agirlik
+[DEBUG] 2025-12-07 13:55:50 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=17, Takým=A
+[INFO] 2025-12-07 13:55:50 quiz.views_tabu views_tabu.tabu_oyun:153 - Tur deðiþti: Oyun=17, Yeni Takým=B
+[DEBUG] 2025-12-07 13:55:51 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=17, Takým=B
+[INFO] 2025-12-07 13:55:51 quiz.views_tabu views_tabu.tabu_oyun:158 - Oyun bitti: Oyun=17, A:0 B:0
+[DEBUG] 2025-12-07 13:55:52 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=17, Takým=B
+[INFO] 2025-12-07 13:55:52 quiz.views_tabu views_tabu.tabu_oyun:158 - Oyun bitti: Oyun=17, A:0 B:0
+[DEBUG] 2025-12-07 13:55:52 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=17, Takým=B
+[INFO] 2025-12-07 13:55:52 quiz.views_tabu views_tabu.tabu_oyun:158 - Oyun bitti: Oyun=17, A:0 B:0
+[INFO] 2025-12-07 13:59:03 quiz.views_karsilasma views_karsilasma.karsilasma_sinav_tipi_secimi:24 - Sýnav tipi seçildi: ayt, Kullanýcý: admin
+[INFO] 2025-12-07 13:59:10 quiz.views_karsilasma views_karsilasma.karsilasma_sinav_tipi_secimi:24 - Sýnav tipi seçildi: tyt, Kullanýcý: admin
+[INFO] 2025-12-07 13:59:12 quiz.views_karsilasma views_karsilasma.karsilasma_sinav_tipi_secimi:24 - Sýnav tipi seçildi: ayt, Kullanýcý: admin
+[INFO] 2025-12-07 13:59:13 quiz.views_karsilasma views_karsilasma.karsilasma_ders_secimi:47 - Ders seçildi: matematik, Sýnav: ayt, User: admin
+[INFO] 2025-12-07 13:59:13 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:271 - Rakip aranýyor: User=admin, Ders=karisik, Sýnav=ayt
+[INFO] 2025-12-07 13:59:13 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:291 - Aktif oda bulundu: 6c816196-e16b-4165-9668-61ec7f02cac3
+[INFO] 2025-12-07 13:59:18 quiz.views_karsilasma views_karsilasma.karsilasma_sinav_tipi_secimi:24 - Sýnav tipi seçildi: ayt, Kullanýcý: admin
+[INFO] 2025-12-07 14:00:11 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-13 18:33:34 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-13 18:33:39 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-13 18:33:41 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=18, Bölüm=sayisal
+[DEBUG] 2025-12-13 18:33:42 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=18, Takým=A
+[DEBUG] 2025-12-13 18:33:43 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 18:33:43 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 18:33:44 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 18:33:44 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 18:33:44 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=pas, Takým=A
+[DEBUG] 2025-12-13 18:33:45 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 18:33:45 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 18:33:45 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 18:33:46 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=A
+[INFO] 2025-12-13 18:33:46 quiz.views_tabu views_tabu.tabu_tur_degistir:254 - Tur deðiþti: Oyun=18, Yeni Takým=B
+[DEBUG] 2025-12-13 18:33:47 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=18, Takým=B
+[DEBUG] 2025-12-13 18:33:48 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=pas, Takým=B
+[DEBUG] 2025-12-13 18:33:48 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=B
+[DEBUG] 2025-12-13 18:33:48 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=pas, Takým=B
+[DEBUG] 2025-12-13 18:33:49 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=B
+[DEBUG] 2025-12-13 18:33:49 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=B
+[DEBUG] 2025-12-13 18:33:49 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=B
+[DEBUG] 2025-12-13 18:33:49 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=B
+[DEBUG] 2025-12-13 18:33:49 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=B
+[DEBUG] 2025-12-13 18:33:49 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=18, Action=dogru, Takým=B
+[INFO] 2025-12-13 18:33:50 quiz.views_tabu views_tabu.tabu_tur_degistir:262 - Oyun tamamlandý: Oyun=18
+[INFO] 2025-12-13 18:52:26 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-13 18:52:28 quiz.views_karsilasma views_karsilasma.karsilasma_sinav_tipi_secimi:24 - Sýnav tipi seçildi: ayt, Kullanýcý: admin
+[INFO] 2025-12-13 18:52:31 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-13 19:53:49 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-13 19:53:51 quiz.views_karsilasma views_karsilasma.karsilasma_sinav_tipi_secimi:24 - Sýnav tipi seçildi: ayt, Kullanýcý: admin
+[INFO] 2025-12-13 19:53:55 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-13 19:53:56 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_basla:43 - Bul Bakalým baþlatýlýyor: Kullanýcý=admin, Ders=kimya, Sýnav Tipi=ayt
+[DEBUG] 2025-12-13 19:53:56 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_basla:54 - Bul Bakalým sorularý cache'lendi: Ders=kimya, Sayý=10
+[INFO] 2025-12-13 19:53:56 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_basla:63 - Bul Bakalým oyunu oluþturuldu: Oyun ID=b7df6572-526e-4800-89a3-4aeddc63bbb3, Kullanýcý=admin
+[DEBUG] 2025-12-13 19:53:59 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_cevapla:106 - Bul Bakalým doðru cevap: Oyun ID=b7df6572-526e-4800-89a3-4aeddc63bbb3, Soru ID=201
+[DEBUG] 2025-12-13 19:54:02 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_cevapla:106 - Bul Bakalým doðru cevap: Oyun ID=b7df6572-526e-4800-89a3-4aeddc63bbb3, Soru ID=203
+[DEBUG] 2025-12-13 19:54:05 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_cevapla:109 - Bul Bakalým yanlýþ cevap: Oyun ID=b7df6572-526e-4800-89a3-4aeddc63bbb3, Soru ID=208
+[DEBUG] 2025-12-13 19:54:08 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_cevapla:106 - Bul Bakalým doðru cevap: Oyun ID=b7df6572-526e-4800-89a3-4aeddc63bbb3, Soru ID=202
+[DEBUG] 2025-12-13 19:54:11 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_cevapla:109 - Bul Bakalým yanlýþ cevap: Oyun ID=b7df6572-526e-4800-89a3-4aeddc63bbb3, Soru ID=204
+[INFO] 2025-12-13 19:54:11 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_cevapla:143 - Bul Bakalým oyunu bitti: Oyun ID=b7df6572-526e-4800-89a3-4aeddc63bbb3, Doðru=3, Yanlýþ=2
+[INFO] 2025-12-13 19:54:14 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sonuc:205 - Bul Bakalým kazanýldý: Kullanýcý=admin, Oyun ID=b7df6572-526e-4800-89a3-4aeddc63bbb3
+[INFO] 2025-12-13 19:54:23 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-13 19:54:25 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=19, Bölüm=sayisal
+[DEBUG] 2025-12-13 19:54:26 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=19, Takým=A
+[DEBUG] 2025-12-13 19:54:45 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=19, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 19:54:45 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=19, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 19:54:46 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=19, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 19:54:46 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=19, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 19:54:46 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=19, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 19:54:47 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=19, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 19:54:47 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=19, Action=dogru, Takým=A
+[DEBUG] 2025-12-13 19:54:48 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=19, Action=pas, Takým=A
+[DEBUG] 2025-12-13 19:54:48 quiz.views_tabu views_tabu.tabu_tur_guncelle:204 - Skor güncellendi: Oyun=19, Action=pas, Takým=A
+[INFO] 2025-12-13 19:54:49 quiz.views_tabu views_tabu.tabu_tur_degistir:254 - Tur deðiþti: Oyun=19, Yeni Takým=B
+[DEBUG] 2025-12-13 19:54:51 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=19, Takým=B
+[INFO] 2025-12-13 19:55:09 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=tyt
+[INFO] 2025-12-13 19:55:09 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_basla:43 - Bul Bakalým baþlatýlýyor: Kullanýcý=admin, Ders=kimya, Sýnav Tipi=tyt
+[DEBUG] 2025-12-13 19:55:09 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_basla:54 - Bul Bakalým sorularý cache'lendi: Ders=kimya, Sayý=10
+[INFO] 2025-12-13 19:55:09 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_basla:63 - Bul Bakalým oyunu oluþturuldu: Oyun ID=0d6c91c6-75f4-4ab7-bb2a-f27cfb4db5dc, Kullanýcý=admin
+[INFO] 2025-12-14 13:58:49 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-14 14:24:29 quiz.views_karsilasma views_karsilasma.karsilasma_sinav_tipi_secimi:24 - Sýnav tipi seçildi: ayt, Kullanýcý: admin
+[INFO] 2025-12-14 14:26:14 quiz.views_karsilasma views_karsilasma.karsilasma_sinav_tipi_secimi:24 - Sýnav tipi seçildi: ayt, Kullanýcý: admin
+[INFO] 2025-12-14 14:26:24 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-14 14:26:34 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:271 - Rakip aranýyor: User=admin, Ders=matematik, Sýnav=TYT
+[INFO] 2025-12-14 14:26:34 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:330 - Yeni oda: 384c6148-0f09-4048-ad88-c9be76ece491
+[INFO] 2025-12-14 14:34:09 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-14 14:37:37 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-14 14:44:23 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-14 14:49:20 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-14 14:49:26 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-14 14:50:04 quiz.views_karsilasma views_karsilasma.karsilasma_ders_secimi:47 - Ders seçildi: cografya, Sýnav: ayt, User: admin
+[INFO] 2025-12-14 14:50:04 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:271 - Rakip aranýyor: User=admin, Ders=karisik, Sýnav=ayt
+[INFO] 2025-12-14 14:50:04 quiz.views_karsilasma views_karsilasma.karsilasma_rakip_bul:330 - Yeni oda: 168b74c8-c0be-44ce-bbc4-fc5df14f7823
+[INFO] 2025-12-14 14:50:07 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-14 14:50:11 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_basla:43 - Bul Bakalým baþlatýlýyor: Kullanýcý=admin, Ders=kimya, Sýnav Tipi=ayt
+[DEBUG] 2025-12-14 14:50:11 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_basla:54 - Bul Bakalým sorularý cache'lendi: Ders=kimya, Sayý=10
+[INFO] 2025-12-14 14:50:11 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_basla:63 - Bul Bakalým oyunu oluþturuldu: Oyun ID=5b820937-fd11-4c18-9249-bfa1a340ed9d, Kullanýcý=admin
+[DEBUG] 2025-12-14 14:50:14 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_cevapla:109 - Bul Bakalým yanlýþ cevap: Oyun ID=5b820937-fd11-4c18-9249-bfa1a340ed9d, Soru ID=208
+[DEBUG] 2025-12-14 14:50:18 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_cevapla:109 - Bul Bakalým yanlýþ cevap: Oyun ID=5b820937-fd11-4c18-9249-bfa1a340ed9d, Soru ID=205
+[DEBUG] 2025-12-14 14:50:20 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_cevapla:109 - Bul Bakalým yanlýþ cevap: Oyun ID=5b820937-fd11-4c18-9249-bfa1a340ed9d, Soru ID=203
+[DEBUG] 2025-12-14 14:50:24 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_cevapla:106 - Bul Bakalým doðru cevap: Oyun ID=5b820937-fd11-4c18-9249-bfa1a340ed9d, Soru ID=207
+[DEBUG] 2025-12-14 14:50:27 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_cevapla:109 - Bul Bakalým yanlýþ cevap: Oyun ID=5b820937-fd11-4c18-9249-bfa1a340ed9d, Soru ID=201
+[INFO] 2025-12-14 14:50:27 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_cevapla:143 - Bul Bakalým oyunu bitti: Oyun ID=5b820937-fd11-4c18-9249-bfa1a340ed9d, Doðru=1, Yanlýþ=4
+[INFO] 2025-12-14 14:50:29 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sonuc:208 - Bul Bakalým kaybedildi: Kullanýcý=admin, Oyun ID=5b820937-fd11-4c18-9249-bfa1a340ed9d
+[INFO] 2025-12-15 17:10:02 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 17:18:08 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 17:19:40 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 17:23:57 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 17:24:00 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-15 17:24:13 quiz.views_bul_bakalim views_bul_bakalim.bul_bakalim_sinav_tipi_secimi:22 - Bul Bakalým sýnav tipi seçildi: Kullanýcý=admin, Sýnav Tipi=ayt
+[INFO] 2025-12-15 17:24:17 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 17:24:20 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=20, Bölüm=sayisal
+[DEBUG] 2025-12-15 17:24:21 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=20, Takým=A
+[INFO] 2025-12-15 17:33:28 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 17:33:31 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=21, Bölüm=sayisal
+[DEBUG] 2025-12-15 17:33:34 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=21, Takým=A
+[INFO] 2025-12-15 17:33:39 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=22, Bölüm=sayisal
+[DEBUG] 2025-12-15 17:33:40 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=22, Takým=A
+[INFO] 2025-12-15 17:39:20 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 17:39:23 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=23, Bölüm=sayisal
+[INFO] 2025-12-15 17:49:39 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 17:49:41 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=24, Bölüm=sayisal
+[INFO] 2025-12-15 17:49:43 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 17:49:46 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=25, Bölüm=sayisal
+[INFO] 2025-12-15 17:54:22 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 17:54:24 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=26, Bölüm=sayisal
+[DEBUG] 2025-12-15 17:54:25 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=26, Takým=A
+[INFO] 2025-12-15 17:58:22 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 17:58:24 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=27, Bölüm=sayisal
+[DEBUG] 2025-12-15 17:58:25 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=27, Takým=A
+[INFO] 2025-12-15 18:08:29 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 18:08:32 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=28, Bölüm=sayisal
+[DEBUG] 2025-12-15 18:08:33 quiz.views_tabu views_tabu.tabu_oyun:130 - Ara ekran geçildi: Oyun=28, Takým=A
+[INFO] 2025-12-15 18:15:07 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 18:15:10 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=29, Bölüm=sayisal
+[DEBUG] 2025-12-15 18:15:12 quiz.views_tabu views_tabu.tabu_oyun:120 - Ara ekran geçildi: Oyun=29, Takým=A
+[DEBUG] 2025-12-15 18:15:15 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=dogru, Takým=A
+[DEBUG] 2025-12-15 18:15:16 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=dogru, Takým=A
+[DEBUG] 2025-12-15 18:15:16 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=dogru, Takým=A
+[DEBUG] 2025-12-15 18:15:16 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=dogru, Takým=A
+[DEBUG] 2025-12-15 18:15:17 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=dogru, Takým=A
+[DEBUG] 2025-12-15 18:15:17 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=pas, Takým=A
+[DEBUG] 2025-12-15 18:15:17 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=pas, Takým=A
+[DEBUG] 2025-12-15 18:15:17 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=pas, Takým=A
+[DEBUG] 2025-12-15 18:15:18 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=tabu, Takým=A
+[DEBUG] 2025-12-15 18:15:18 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=tabu, Takým=A
+[INFO] 2025-12-15 18:15:18 quiz.views_tabu views_tabu.tabu_tur_degistir:259 - Tur deðiþti: Oyun=29, Yeni Takým=B
+[INFO] 2025-12-15 18:15:19 quiz.views_tabu views_tabu.tabu_tur_degistir:267 - Oyun tamamlandý: Oyun=29
+[DEBUG] 2025-12-15 18:15:20 quiz.views_tabu views_tabu.tabu_oyun:120 - Ara ekran geçildi: Oyun=29, Takým=B
+[DEBUG] 2025-12-15 18:15:21 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=dogru, Takým=B
+[DEBUG] 2025-12-15 18:15:22 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=dogru, Takým=B
+[DEBUG] 2025-12-15 18:15:22 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=dogru, Takým=B
+[DEBUG] 2025-12-15 18:15:22 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=pas, Takým=B
+[DEBUG] 2025-12-15 18:15:23 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=dogru, Takým=B
+[DEBUG] 2025-12-15 18:15:23 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=dogru, Takým=B
+[DEBUG] 2025-12-15 18:15:24 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=tabu, Takým=B
+[DEBUG] 2025-12-15 18:15:24 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=tabu, Takým=B
+[DEBUG] 2025-12-15 18:15:24 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=dogru, Takým=B
+[DEBUG] 2025-12-15 18:15:25 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=29, Action=dogru, Takým=B
+[INFO] 2025-12-15 18:15:25 quiz.views_tabu views_tabu.tabu_tur_degistir:267 - Oyun tamamlandý: Oyun=29
+[INFO] 2025-12-15 18:15:46 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 18:20:40 quiz.views_tabu views_tabu.tabu_bolum_sec:40 - Tabu bölüm seçildi: sayisal
+[INFO] 2025-12-15 18:20:59 quiz.views_tabu views_tabu.tabu_lobi:75 - Yeni Tabu oyunu: ID=30, Bölüm=sayisal
+[DEBUG] 2025-12-15 18:21:00 quiz.views_tabu views_tabu.tabu_oyun:120 - Ara ekran geçildi: Oyun=30, Takým=A
+[DEBUG] 2025-12-15 18:21:02 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=30, Action=dogru, Takým=A
+[DEBUG] 2025-12-15 18:21:02 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=30, Action=dogru, Takým=A
+[DEBUG] 2025-12-15 18:21:02 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=30, Action=dogru, Takým=A
+[DEBUG] 2025-12-15 18:21:02 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=30, Action=dogru, Takým=A
+[DEBUG] 2025-12-15 18:21:02 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=30, Action=dogru, Takým=A
+[DEBUG] 2025-12-15 18:21:02 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=30, Action=dogru, Takým=A
+[DEBUG] 2025-12-15 18:21:02 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=30, Action=dogru, Takým=A
+[DEBUG] 2025-12-15 18:21:03 quiz.views_tabu views_tabu.tabu_tur_guncelle:209 - Skor güncellendi: Oyun=30, Action=dogru, Takým=A

@@ -1,182 +1,331 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karşılaşma - Sınav Tipi Seç</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+
+{% block title %}Sınav Tipi Seçimi - Karşılaşma{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background:  linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+
+    .sinav-tipi-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* PAGE HEADER */
+    .page-header {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        border-radius: 25px;
+        padding: 50px 40px;
+        margin-bottom: 50px;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        animation: slideDown 0.8s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '⚔️';
+        position:  absolute;
+        font-size: 20rem;
+        opacity: 0.05;
+        top: -80px;
+        right: -80px;
+        animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-icon {
+        font-size: 5rem;
+        margin-bottom:  20px;
+        animation:  bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0) rotate(-10deg); }
+        50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    .page-title {
+        font-size: 3rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+    }
+
+    .page-subtitle {
+        font-size: 1.3rem;
+        color: #666;
+        font-weight: 600;
+    }
+
+    /* SINAV CARDS */
+    .sinav-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+        animation: fadeInUp 0.8s ease-out 0.3s backwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .sinav-card {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        border-radius: 25px;
+        padding: 50px 40px;
+        text-align: center;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        text-decoration: none;
+        display: block;
+    }
+
+    .sinav-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height:  6px;
+    }
+
+    .sinav-card.tyt::before {
+        background: linear-gradient(90deg, #4facfe, #00f2fe);
+    }
+
+    .sinav-card.ayt::before {
+        background:  linear-gradient(90deg, #f093fb, #f5576c);
+    }
+
+    .sinav-card:hover {
+        transform: translateY(-15px) scale(1.05);
+        box-shadow: 0 25px 70px rgba(0,0,0,0.3);
+    }
+
+    .sinav-icon {
+        font-size: 5rem;
+        margin-bottom:  25px;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+    }
+
+    .sinav-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin-bottom: 20px;
+    }
+
+    .sinav-card.tyt .sinav-title {
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .sinav-card.ayt .sinav-title {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        -webkit-background-clip:  text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .sinav-description {
+        font-size: 1.1rem;
+        color: #666;
+        font-weight: 600;
+        line-height: 1.8;
+        margin-bottom: 25px;
+    }
+
+    .sinav-badge {
+        display: inline-block;
+        padding: 10px 25px;
+        border-radius: 50px;
+        font-size:  0.9rem;
+        font-weight: 700;
+        margin:  5px;
+    }
+
+    .sinav-card.tyt .sinav-badge {
+        background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+        color: #006064;
+    }
+
+    .sinav-card.ayt .sinav-badge {
+        background:  linear-gradient(135deg, #fce4ec, #f8bbd0);
+        color: #880e4f;
+    }
+
+    /* BACK BUTTON */
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 35px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        color: #667eea;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-decoration: none;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .back-button::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .back-button:hover::before {
+        width: 400px;
+        height: 400px;
+    }
+
+    .back-button:hover {
+        color: white;
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+    }
+
+    .back-button span {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+        .sinav-grid {
+            grid-template-columns: 1fr;
         }
 
-        .container {
-            background: linear-gradient(135deg, #f8f4ff 0%, #fff 100%);
-            border-radius: 30px;
-            padding: 60px 40px;
-            max-width: 800px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            text-align: center;
+        .sinav-card {
+            padding: 40px 30px;
         }
+    }
+</style>
+{% endblock %}
 
-        .logo {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 30px;
-        }
-
-        .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        h1 {
-            font-size: 42px;
-            font-weight: 800;
-            color: #7c5cdb;
-            margin-bottom: 20px;
-        }
-
-        .subtitle {
-            font-size: 20px;
-            color: #666;
-            margin-bottom: 50px;
-        }
-
-        .sinav-tipi-buttons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .sinav-btn {
-            background: white;
-            border: 4px solid #7c5cdb;
-            border-radius: 20px;
-            padding: 60px 40px;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .sinav-btn:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(124, 92, 219, 0.4);
-        }
-
-        .sinav-btn input[type="radio"] {
-            display: none;
-        }
-
-        .sinav-btn input[type="radio"]:checked + label {
-            background: linear-gradient(135deg, #7c5cdb 0%, #a855f7 100%);
-            color: white;
-        }
-
-        .sinav-btn label {
-            font-size: 48px;
-            font-weight: 800;
-            color: #7c5cdb;
-            cursor: pointer;
-            display: block;
-            transition: all 0.3s;
-        }
-
-        .sinav-btn input[type="radio"]:checked + label {
-            color: white;
-        }
-
-        .basla-btn {
-            background: linear-gradient(135deg, #7c5cdb 0%, #a855f7 100%);
-            color: white;
-            border: none;
-            padding: 20px 60px;
-            border-radius: 50px;
-            font-size: 24px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(124, 92, 219, 0.4);
-        }
-
-        .basla-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(124, 92, 219, 0.6);
-        }
-
-        @media (max-width: 768px) {
-            .sinav-tipi-buttons {
-                grid-template-columns: 1fr;
-            }
-
-            h1 {
-                font-size: 32px;
-            }
-
-            .sinav-btn {
-                padding: 40px 20px;
-            }
-
-            .sinav-btn label {
-                font-size: 36px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="logo">
-            <img src="{% static 'images/kostebek_sag.png' %}" alt="Köstebek">
-        </div>
-        
-        <h1>KARŞILAŞMA</h1>
-        <p class="subtitle">Rakibinle bire bir yarış, test formatındaki İÖ soruya kim daha çok doğru cevap verirse o kazanır.</p>
-        
-        <form method="POST" action="{% url 'karsilasma_sinav_tipi_secimi' %}">
-            {% csrf_token %}
-            
-            <div class="sinav-tipi-buttons">
-            <div class="sinav-btn">
-                <input type="radio" name="sinav_tipi" value="ayt" id="ayt" checked>
-                <label for="ayt">AYT</label>
-            </div>
-            
-            <div class="sinav-btn">
-                <input type="radio" name="sinav_tipi" value="tyt" id="tyt">
-                <label for="tyt">TYT</label>
-            </div>
-            </div>
-            
-            <button type="submit" class="basla-btn">DEĞİŞTİR →</button>
-        </form>
+{% block content %}
+<div class="sinav-tipi-container">
+    
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div class="page-icon">⚔️</div>
+        <h1 class="page-title">Karşılaşma</h1>
+        <p class="page-subtitle">Hangi sınav tipinde yarışmak istersin?</p>
     </div>
 
-    <script>
-        // Radio butonlarına tıklayınca parent div'e de aktif class ekle
-        document.querySelectorAll('.sinav-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.sinav-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                this.querySelector('input[type="radio"]').checked = true;
-            });
-        });
-    </script>
-</body>
-</html>
+    <!-- SINAV CARDS -->
+    <div class="sinav-grid">
+        
+        <!-- TYT CARD -->
+        <a href="{% url 'karsilasma_ders_secimi' %}?sinav_tipi=TYT" class="sinav-card tyt">
+            <div class="sinav-icon">📘</div>
+            <h2 class="sinav-title">TYT</h2>
+            <p class="sinav-description">
+                Temel Yeterlilik Testi<br>
+                Temel düzey sorularla rakibinle yarış
+            </p>
+            <div>
+                <span class="sinav-badge">Türkçe</span>
+                <span class="sinav-badge">Matematik</span>
+                <span class="sinav-badge">Fen</span>
+                <span class="sinav-badge">Sosyal</span>
+            </div>
+        </a>
+
+        <!-- AYT CARD -->
+        <a href="{% url 'karsilasma_ders_secimi' %}?sinav_tipi=AYT" class="sinav-card ayt">
+            <div class="sinav-icon">📕</div>
+            <h2 class="sinav-title">AYT</h2>
+            <p class="sinav-description">
+                Alan Yeterlilik Testi<br>
+                İleri düzey sorularla yeteneklerini göster
+            </p>
+            <div>
+                <span class="sinav-badge">Sayısal</span>
+                <span class="sinav-badge">Sözel</span>
+                <span class="sinav-badge">Eşit Ağırlık</span>
+            </div>
+        </a>
+
+    </div>
+
+    <!-- BACK BUTTON -->
+    <div style="text-align: center;">
+        <a href="{% url 'profil' %}" class="back-button">
+            <span><i class="bi bi-arrow-left-circle-fill"></i> Ana Sayfaya Dön</span>
+        </a>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        showToast('Karşılaşmaya hoş geldin!  ⚔️', 'info');
+    });
+</script>
+{% endblock %}

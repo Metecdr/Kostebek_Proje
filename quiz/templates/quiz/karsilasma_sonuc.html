@@ -1,0 +1,635 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if kazandim %}Kazandın! {% elif berabere %}Berabere!{% else %}Kaybettin{% endif %} - Köstebek YKS
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    body { 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Poppins', 'Nunito', sans-serif;
+        padding: 20px 0;
+        overflow-x: hidden;
+    }
+    
+    .result-container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 50px;
+        background: white;
+        border-radius: 30px;
+        box-shadow:  0 25px 80px rgba(0,0,0,0.4);
+        text-align: center;
+        animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        position: relative;
+        overflow:  hidden;
+    }
+
+    .result-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+    
+    @keyframes popIn {
+        0% {
+            opacity: 0;
+            transform:  scale(0.3) rotate(-10deg);
+        }
+        70% {
+            transform: scale(1.1) rotate(5deg);
+        }
+        100% {
+            opacity:  1;
+            transform: scale(1) rotate(0deg);
+        }
+    }
+    
+    .result-icon {
+        font-size: 8rem;
+        margin-bottom:  20px;
+        animation:  bounceRotate 1.5s ease-in-out infinite;
+        display: inline-block;
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+    }
+    
+    @keyframes bounceRotate {
+        0%, 100% { 
+            transform: translateY(0) rotate(0deg) scale(1);
+        }
+        25% {
+            transform: translateY(-30px) rotate(-10deg) scale(1.1);
+        }
+        50% { 
+            transform: translateY(0) rotate(0deg) scale(1);
+        }
+        75% {
+            transform: translateY(-15px) rotate(10deg) scale(1.05);
+        }
+    }
+    
+    .result-title {
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin-bottom: 20px;
+        text-shadow:  2px 2px 4px rgba(0,0,0,0.1);
+        animation: slideInDown 0.8s ease-out 0.3s backwards;
+    }
+
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform:  translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .winner-title {
+        background: linear-gradient(135deg, #FFD700, #FFA500, #FFD700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradient 3s ease infinite;
+        background-size: 200% 200%;
+    }
+
+    @keyframes gradient {
+        0%, 100% { background-position:  0% 50%; }
+        50% { background-position:  100% 50%; }
+    }
+    
+    .loser-title {
+        color: #6c757d;
+    }
+    
+    .draw-title {
+        background: linear-gradient(135deg, #7B68EE, #6A5ACD);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .result-subtitle {
+        font-size: 1.3rem;
+        color: #6c757d;
+        margin-bottom: 30px;
+        animation: fadeIn 0.8s ease-out 0.5s backwards;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    /* SCORE DISPLAY */
+    .score-display {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        margin: 40px 0;
+        font-size: 2rem;
+        font-weight:  900;
+        animation: fadeInUp 0.8s ease-out 0.6s backwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .player-score {
+        padding: 25px 45px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border: 3px solid #dee2e6;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .player-score::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        transition: left 0.5s;
+    }
+
+    .player-score:hover::before {
+        left: 100%;
+    }
+    
+    .winner-score {
+        border-color: #FFD700;
+        background: linear-gradient(135deg, #FFF9E6, #FFE4B5);
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+        animation: glow 2s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+        0%, 100% {
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+        50% {
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.9);
+        }
+    }
+
+    .player-score:hover {
+        transform: scale(1.05) translateY(-5px);
+    }
+
+    .vs-text {
+        font-size: 2.5rem;
+        color: #6c757d;
+        font-weight: 900;
+        animation: rotate 2s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    /* STATS */
+    .stats {
+        margin: 40px 0;
+        padding:  30px;
+        background:  linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 20px;
+        animation: fadeInUp 0.8s ease-out 0.8s backwards;
+        border: 2px solid #dee2e6;
+    }
+    
+    .stats-title {
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 25px;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .stat-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        margin-bottom: 10px;
+        background: white;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .stat-item:hover {
+        transform: translateX(10px);
+        box-shadow:  0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .stat-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .stat-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #555;
+    }
+
+    .stat-value {
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    /* BUTTONS */
+    .action-buttons {
+        margin-top: 40px;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+        animation: fadeInUp 0.8s ease-out 1s backwards;
+    }
+
+    .btn-custom {
+        padding: 15px 40px;
+        font-size:  1.2rem;
+        font-weight: 700;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-custom::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.5);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-custom:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .btn-custom:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    }
+
+    .btn-custom:active {
+        transform: translateY(-2px);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #6c757d, #495057);
+        color: white;
+        box-shadow: 0 10px 25px rgba(108, 117, 125, 0.4);
+    }
+
+    /* CONFETTI */
+    .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        z-index: 9999;
+        pointer-events: none;
+    }
+
+    @keyframes confettiFall {
+        to {
+            transform: translateY(100vh) rotate(720deg);
+            opacity: 0;
+        }
+    }
+
+    /* FIREWORKS */
+    .firework {
+        position: fixed;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        z-index: 9999;
+        pointer-events: none;
+    }
+
+    @keyframes fireworkExplode {
+        0% {
+            transform: translate(0, 0);
+            opacity: 1;
+        }
+        100% {
+            transform: translate(var(--x), var(--y));
+            opacity: 0;
+        }
+    }
+    
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .result-container {
+            padding: 30px 20px;
+            margin: 20px;
+        }
+        
+        .result-icon {
+            font-size: 5rem;
+        }
+
+        .result-title {
+            font-size: 2.5rem;
+        }
+
+        .result-subtitle {
+            font-size: 1.1rem;
+        }
+        
+        .score-display {
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .player-score {
+            padding: 20px 35px;
+        }
+        
+        .stat-item {
+            font-size: 1rem;
+            flex-direction: column;
+            text-align: center;
+            gap: 8px;
+        }
+
+        .stat-item:hover {
+            transform: translateX(0) scale(1.02);
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-custom {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="result-container">
+    {% if kazandim %}
+        <div class="result-icon">🏆</div>
+        <h1 class="result-title winner-title">KAZANDIN!</h1>
+        <p class="result-subtitle">Harika bir performans! Rakibini geride bıraktın!  🎉</p>
+    {% elif berabere %}
+        <div class="result-icon">🤝</div>
+        <h1 class="result-title draw-title">BERABERE! </h1>
+        <p class="result-subtitle">İyi mücadele! Her iki taraf da eşit güçteydi! 💪</p>
+    {% else %}
+        <div class="result-icon">😢</div>
+        <h1 class="result-title loser-title">KAYBETTİN</h1>
+        <p class="result-subtitle">Üzülme! Bir sonraki sefere daha iyi olacaksın! 💪</p>
+    {% endif %}
+    
+    <!-- SKORLAR -->
+    <div class="score-display">
+        <div class="player-score {% if kazandim %}winner-score{% endif %}">
+            <div style="font-size: 1rem; color: #6c757d; margin-bottom: 10px; font-weight: 600;">
+                {{ request.user.username }}
+            </div>
+            <div id="myScore">{{ benim_skorom }}</div>
+        </div>
+        
+        <div class="vs-text">VS</div>
+        
+        <div class="player-score {% if not kazandim and not berabere %}winner-score{% endif %}">
+            <div style="font-size: 1rem; color: #6c757d; margin-bottom: 10px; font-weight: 600;">
+                {% if is_oyuncu1 %}
+                    {{ oda.oyuncu2.username }}
+                {% else %}
+                    {{ oda.oyuncu1.username }}
+                {% endif %}
+            </div>
+            <div id="opponentScore">{{ rakip_skorom }}</div>
+        </div>
+    </div>
+    
+    <!-- OYUN İSTATİSTİKLERİN -->
+    <div class="stats">
+        <h5 class="stats-title">
+            <i class="bi bi-bar-chart-fill"></i>
+            Oyun İstatistiklerin
+        </h5>
+        
+        <div class="stat-item">
+            <span class="stat-label">
+                <i class="bi bi-journal-text"></i>
+                Toplam Soru
+            </span>
+            <span class="stat-value">{{ oda.toplam_soru }}</span>
+        </div>
+        
+        <div class="stat-item">
+            <span class="stat-label">
+                <i class="bi bi-check-circle-fill" style="color: #4CAF50;"></i>
+                Senin Doğrun
+            </span>
+            <span class="stat-value" style="color: #4CAF50;">
+                <strong id="correctCount">{{ benim_dogrum }}</strong>
+            </span>
+        </div>
+        
+        <div class="stat-item">
+            <span class="stat-label">
+                <i class="bi bi-x-circle-fill" style="color: #F44336;"></i>
+                Senin Yanlışın
+            </span>
+            <span class="stat-value" style="color: #F44336;">
+                <strong id="wrongCount">{{ benim_yanlisim }}</strong>
+            </span>
+        </div>
+        
+        <div class="stat-item">
+            <span class="stat-label">
+                <i class="bi bi-cash-coin"></i>
+                Puan Değişimi
+            </span>
+            <span class="stat-value" style="color: {% if puan_degisimi > 0 %}#4CAF50{% elif puan_degisimi < 0 %}#F44336{% else %}#6c757d{% endif %};">
+                {% if puan_degisimi > 0 %}
+                    <strong id="pointChange">+{{ puan_degisimi }}</strong> 💰
+                {% elif puan_degisimi < 0 %}
+                    <strong id="pointChange">{{ puan_degisimi }}</strong> 💰
+                {% else %}
+                    <strong id="pointChange">0</strong> 💰
+                {% endif %}
+            </span>
+        </div>
+    </div>
+    
+    <!-- BUTONLAR -->
+    <div class="action-buttons">
+        <a href="{% url 'karsilasma_sinav_tipi_secimi' %}" class="btn btn-primary btn-custom">
+            <span style="position: relative; z-index: 1;">
+                <i class="bi bi-arrow-repeat"></i> Tekrar Oyna
+            </span>
+        </a>
+        <a href="{% url 'profil' %}" class="btn btn-secondary btn-custom">
+            <span style="position: relative; z-index: 1;">
+                <i class="bi bi-person-circle"></i> Profile Dön
+            </span>
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const kazandim = {{ kazandim|yesno:"true,false" }};
+        
+        // Sayaç animasyonları
+        animateValue(document.getElementById('myScore'), 0, {{ benim_skorom }}, 1000);
+        animateValue(document.getElementById('opponentScore'), 0, {{ rakip_skorom }}, 1000);
+        animateValue(document.getElementById('correctCount'), 0, {{ benim_dogrum }}, 1000);
+        animateValue(document.getElementById('wrongCount'), 0, {{ benim_yanlisim }}, 1000);
+        
+        const pointChange = {{ puan_degisimi }};
+        const pointElement = document.getElementById('pointChange');
+        if (pointChange > 0) {
+            animateValue(pointElement, 0, pointChange, 1000, '+');
+        } else if (pointChange < 0) {
+            animateValue(pointElement, 0, pointChange, 1000, '');
+        }
+
+        // Kazanma durumunda confetti ve fireworks
+        if (kazandim) {
+            setTimeout(() => {
+                createConfetti();
+                createFireworks();
+                showToast('Tebrikler! Harika bir zafer!  🏆', 'success');
+            }, 500);
+        } else if ({{ berabere|yesno:"true,false" }}) {
+            showToast('İyi mücadele! Berabere kaldınız! 🤝', 'info');
+        } else {
+            showToast('Üzülme! Bir sonraki sefere kazanacaksın! 💪', 'warning');
+        }
+    });
+
+    function animateValue(element, start, end, duration, prefix = '') {
+        let startTime = null;
+        const step = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const value = Math.floor(progress * (end - start) + start);
+            element.textContent = prefix + value;
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    // Confetti Effect
+    function createConfetti() {
+        const colors = ['#FFD700', '#FFA500', '#FF6347', '#4CAF50', '#2196F3', '#9C27B0'];
+        const confettiCount = 150;
+
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = '-10px';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animation = `confettiFall ${Math.random() * 3 + 2}s linear forwards`;
+            confetti.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(confetti);
+
+            setTimeout(() => confetti.remove(), 6000);
+        }
+    }
+
+    // Fireworks Effect
+    function createFireworks() {
+        const colors = ['#FFD700', '#FFA500', '#FF6347', '#4CAF50', '#2196F3'];
+        
+        for (let i = 0; i < 3; i++) {
+            setTimeout(() => {
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight * 0.5;
+                
+                for (let j = 0; j < 30; j++) {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    firework.style.left = x + 'px';
+                    firework.style.top = y + 'px';
+                    firework.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    const angle = (Math.PI * 2 * j) / 30;
+                    const velocity = 100 + Math.random() * 100;
+                    const tx = Math.cos(angle) * velocity;
+                    const ty = Math.sin(angle) * velocity;
+                    
+                    firework.style.setProperty('--x', tx + 'px');
+                    firework.style.setProperty('--y', ty + 'px');
+                    firework.style.animation = 'fireworkExplode 1s ease-out forwards';
+                    
+                    document.body.appendChild(firework);
+                    setTimeout(() => firework.remove(), 1000);
+                }
+            }, i * 800);
+        }
+    }
+</script>
+{% endblock %}
