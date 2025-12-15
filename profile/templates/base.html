@@ -1,6 +1,6 @@
 {% load static %}
-<!doctype html>
-<html lang="tr">
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>">
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -20,43 +20,112 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <title>{% block title %}Köstebek YKS - Eğlenerek Öğren{% endblock %}</title>
     
     <style>
+        /* ==================== CSS VARIABLES ==================== */
         :root {
+            /* Light Mode Colors */
             --primary-purple: #7B68EE;
             --dark-purple: #6A5ACD;
             --accent-orange: #FF8C00;
             --success-green: #4CAF50;
             --danger-red: #F44336;
-            --light-bg: #f8f9fa;
-            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            
+            --bg-primary: #ffffff;
+            --bg-secondary:  #f8f9fa;
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-muted: #888888;
+            
+            --card-bg: #ffffff;
+            --card-border:  #e9ecef;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            
+            --navbar-bg-start: #667eea;
+            --navbar-bg-end: #764ba2;
+            --navbar-text: #ffffff;
+            
+            --footer-bg-start: #2c3e50;
+            --footer-bg-end: #34495e;
+            
+            --input-bg: #ffffff;
+            --input-border:  #dee2e6;
+            
+            --shadow:  0 2px 10px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
+            
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Premium Colors */
+            --bg-primary: #0a0a1f;
+            --bg-secondary:  #13132e;
+            --bg-gradient-start: #1a1a3e;
+            --bg-gradient-end: #0f0f2e;
+            
+            --text-primary: #ffffff;
+            --text-secondary: #a8b3cf;
+            --text-muted: #7b8ba3;
+            
+            --card-bg: #1a1f3a;
+            --card-border: #2d3454;
+            --card-shadow:  rgba(0, 0, 0, 0.8);
+            
+            --navbar-bg-start: #1e2749;
+            --navbar-bg-end: #151b35;
+            
+            --footer-bg-start:  #0d0d22;
+            --footer-bg-end: #15152d;
+            
+            --input-bg: #1a1f3a;
+            --input-border: #2d3454;
+            
+            --shadow: 0 4px 20px rgba(0,0,0,0.7);
+            --shadow-lg:  0 15px 50px rgba(0,0,0,0.9);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
         
         body {
-            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Poppins', 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            background:  linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: var(--text-primary);
+        }
+
+        /* ==================== DARK MODE BODY ==================== */
+        [data-theme="dark"] body {
+            background: linear-gradient(135deg, #1a1a3e 0%, #0f0f2e 100%) !important;
         }
         
-        /* NAVBAR STYLES */
+        /* ==================== NAVBAR ==================== */
         .navbar-dark {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            background:  linear-gradient(135deg, var(--navbar-bg-start), var(--navbar-bg-end)) !important;
+            box-shadow: 0 4px 15px var(--card-shadow);
             padding: 12px 0;
             position: sticky;
-            top: 0;
-            z-index: 1000;
+            top:  0;
+            z-index: 1030;
             backdrop-filter: blur(10px);
+        }
+
+        [data-theme="dark"] .navbar-dark {
+            background: linear-gradient(135deg, #1e2749, #151b35) !important;
+            border-bottom: 2px solid #2d3454 !important;
         }
         
         .navbar-brand {
@@ -65,6 +134,7 @@
             letter-spacing: -0.5px;
             transition: all 0.3s ease;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            color: var(--navbar-text) !important;
         }
         
         .navbar-brand:hover {
@@ -75,17 +145,18 @@
         .nav-link {
             font-weight: 600;
             transition: all 0.3s ease;
-            padding: 8px 16px !important;
+            padding: 8px 16px ! important;
             border-radius: 8px;
             position: relative;
             overflow: hidden;
+            color: var(--navbar-text) !important;
         }
         
         .nav-link::before {
-            content: '';
+            content:  '';
             position: absolute;
             top: 0;
-            left: -100%;
+            left:  -100%;
             width: 100%;
             height: 100%;
             background: rgba(255, 255, 255, 0.1);
@@ -121,19 +192,720 @@
             box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
         }
         
-        /* USER BADGE */
         .user-badge {
             background: rgba(255, 255, 255, 0.2);
             padding: 6px 16px;
-            border-radius: 20px;
+            border-radius:  20px;
             font-weight: 700;
             display: inline-flex;
             align-items: center;
             gap: 8px;
             backdrop-filter: blur(10px);
+            color: var(--navbar-text) !important;
+        }
+
+        /* ==================== DARK MODE PREMIUM KARTLAR ==================== */
+        [data-theme="dark"] .card,
+        [data-theme="dark"] .profile-card,
+        [data-theme="dark"] .stat-card,
+        [data-theme="dark"] .white-box,
+        [data-theme="dark"] .lobi-card,
+        [data-theme="dark"] [style*="background:  white"],
+        [data-theme="dark"] [style*="background: white"],
+        [data-theme="dark"] [style*="background:#fff"],
+        [data-theme="dark"] [style*="background:  #fff"] {
+            background: linear-gradient(145deg, #1a1f3a, #151929) !important;
+            color: #ffffff !important;
+            border:  2px solid #2d3454 !important;
+            box-shadow: 0 8px 32px rgba(30, 39, 73, 0.4), 0 0 0 1px rgba(255,255,255,0.05) !important;
+        }
+
+        /* Başlıklar */
+        [data-theme="dark"] h1,
+        [data-theme="dark"] h2,
+        [data-theme="dark"] h3,
+        [data-theme="dark"] h4,
+        [data-theme="dark"] h5,
+        [data-theme="dark"] h6 {
+            color: #ffffff !important;
+            text-shadow: 0 2px 10px rgba(139, 92, 246, 0.3) !important;
+        }
+
+        [data-theme="dark"] .card-title,
+        [data-theme="dark"] h2,
+        [data-theme="dark"] h3 {
+            background: linear-gradient(135deg, #a78bfa, #60a5fa) !important;
+            -webkit-background-clip: text ! important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        }
+
+        /* Sayılar - Parlak */
+        [data-theme="dark"] .stat-value,
+        [data-theme="dark"] .score-number,
+        [data-theme="dark"] .stat-card h1,
+        [data-theme="dark"] .stat-card h2 {
+            color: #ffffff ! important;
+            text-shadow:  0 0 20px rgba(255,255,255,0.3), 0 0 40px rgba(139, 92, 246, 0.2) !important;
+            font-weight: 900 !important;
+        }
+
+        [data-theme="dark"] .stat-label,
+        [data-theme="dark"] .text-muted,
+        [data-theme="dark"] small,
+        [data-theme="dark"] p {
+            color: #a8b3cf !important;
+        }
+
+        /* İstatistik kutuları */
+        [data-theme="dark"] .stats-grid > div,
+        [data-theme="dark"] .stat-box,
+        [data-theme="dark"] .stat-card {
+            background: linear-gradient(145deg, #1e2749, #151b35) !important;
+            border: 2px solid #2d3454 !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+        }
+
+        /* İlerleme kartı */
+        [data-theme="dark"] .progress-card,
+        [data-theme="dark"] .info-section {
+            background: linear-gradient(145deg, #2d1b69, #1a1042) !important;
+            border-left: 5px solid #8b5cf6 !important;
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.2) !important;
+        }
+
+        [data-theme="dark"] .info-title {
+            color: #a78bfa !important;
+            text-shadow: 0 0 10px rgba(167, 139, 250, 0.5) !important;
+        }
+
+        [data-theme="dark"] .info-list li {
+            color: #d1d5db !important;
+            border-bottom-color: rgba(139, 92, 246, 0.2) !important;
+        }
+
+        [data-theme="dark"] .progress {
+            background: #1e2749 !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5) !important;
+        }
+
+        [data-theme="dark"] .progress-bar {
+            background: linear-gradient(90deg, #8b5cf6, #60a5fa) !important;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5) !important;
+        }
+
+        /* Input */
+        [data-theme="dark"] input,
+        [data-theme="dark"] textarea,
+        [data-theme="dark"] select,
+        [data-theme="dark"] .takim-input {
+            background: #1a1f3a !important;
+            border: 2px solid #2d3454 !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] input:focus,
+        [data-theme="dark"] textarea:focus,
+        [data-theme="dark"] .takim-input:focus {
+            border-color: #8b5cf6 !important;
+            background: #1e2749 !important;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3), 0 4px 12px rgba(139, 92, 246, 0.2) !important;
+        }
+
+        [data-theme="dark"] input::placeholder,
+        [data-theme="dark"] textarea::placeholder {
+            color: #6b7280 !important;
+        }
+
+        /* Butonlar */
+        [data-theme="dark"] .btn-secondary,
+        [data-theme="dark"] .geri-btn {
+            background: linear-gradient(145deg, #2d3454, #1e2749) !important;
+            border: 2px solid #3d4a6e !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .btn-secondary:hover,
+        [data-theme="dark"] .geri-btn:hover {
+            background: linear-gradient(145deg, #3d4a6e, #2d3454) !important;
+            border-color: #8b5cf6 !important;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3) !important;
+        }
+
+        /* Tablolar */
+        [data-theme="dark"] table {
+            background: #1a1f3a !important;
+            color: #ffffff !important;
+            border: 2px solid #2d3454 !important;
+        }
+
+        [data-theme="dark"] th {
+            background: linear-gradient(145deg, #1e2749, #151b35) !important;
+            color: #ffffff !important;
+            border-color: #2d3454 !important;
+            text-shadow: 0 2px 8px rgba(139, 92, 246, 0.3) !important;
+        }
+
+        [data-theme="dark"] td {
+            border-color: #2d3454 !important;
+            color: #e5e7eb !important;
+        }
+
+        [data-theme="dark"] tr:hover {
+            background: rgba(139, 92, 246, 0.1) !important;
+        }
+
+        /* Modal */
+        [data-theme="dark"] .modal-content {
+            background: linear-gradient(145deg, #1a1f3a, #151929) !important;
+            border: 2px solid #2d3454 ! important;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.9) !important;
+        }
+
+        [data-theme="dark"] .modal-header,
+        [data-theme="dark"] .modal-footer {
+            border-color: #2d3454 !important;
+        }
+
+        [data-theme="dark"] .modal-title {
+            color: #ffffff ! important;
+        }
+
+        /* Dropdown */
+        [data-theme="dark"] .dropdown-menu {
+            background: #1a1f3a !important;
+            border: 2px solid #2d3454 !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.7) !important;
+        }
+
+        [data-theme="dark"] .dropdown-item {
+            color: #e5e7eb !important;
+        }
+
+        [data-theme="dark"] .dropdown-item:hover {
+            background: linear-gradient(145deg, #2d3454, #1e2749) !important;
+            color: #ffffff !important;
+        }
+
+        /* Scrollbar */
+        [data-theme="dark"] ::-webkit-scrollbar {
+            width: 12px;
+            background: #0d0d22 !important;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-track {
+            background: #13132e !important;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #6d28d9) !important;
+            border-radius: 6px;
+            border: 2px solid #13132e !important;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+            background:  linear-gradient(180deg, #a78bfa, #8b5cf6) !important;
+        }
+
+        /* Link */
+        [data-theme="dark"] a:not(.btn):not(.button):not(.nav-link) {
+            color: #a78bfa !important;
+            text-decoration: none;
+        }
+
+        [data-theme="dark"] a:not(.btn):not(.button):not(.nav-link):hover {
+            color:  #c4b5fd !important;
+            text-shadow: 0 0 8px rgba(167, 139, 250, 0.4) !important;
+        }
+
+        [data-theme="dark"] hr {
+            border-color: #2d3454 !important;
+            opacity: 0.3;
+        }
+
+        [data-theme="dark"] .badge {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9) !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3) !important;
+        }
+
+        [data-theme="dark"] .notification,
+        [data-theme="dark"] .alert-custom {
+            background: linear-gradient(145deg, #1a1f3a, #151929) !important;
+            border:  2px solid #2d3454 !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .toast-notification {
+            background: linear-gradient(145deg, #1a1f3a, #151929) !important;
+            border: 2px solid #2d3454 !important;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.8) !important;
+        }
+
+        [data-theme="dark"] .toast-title {
+            color: #ffffff ! important;
+        }
+
+        [data-theme="dark"] .toast-message {
+            color: #d1d5db !important;
+        }
+
+        /* Hover glow */
+        [data-theme="dark"] .stat-card:hover,
+        [data-theme="dark"] .card:hover {
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4), 0 0 0 1px rgba(167, 139, 250, 0.2) !important;
+            border-color: #8b5cf6 !important;
+        }
+
+        [data-theme="dark"] .stat-icon,
+        [data-theme="dark"] [class*="bi-"] {
+            filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4));
+        }
+
+        /* Footer */
+        [data-theme="dark"] .site-footer {
+            background: linear-gradient(135deg, #0d0d22, #15152d) !important;
+            border-top: 2px solid #2d3454 !important;
+        }
+
+        /* ==================== PROFİL SAYFASI ÖZEL DARK MODE ==================== */
+
+        /* Profil kartı üst kısım (admin bilgileri) */
+        [data-theme="dark"] .profile-header,
+        [data-theme="dark"] .user-profile-card,
+        [data-theme="dark"] .profile-info-card {
+            background:  linear-gradient(145deg, #1e2749, #151b35) !important;
+            border:  2px solid #2d3454 !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+        }
+
+        /* Profil kartındaki başlıklar (admin, @admin) */
+        [data-theme="dark"] .profile-header h1,
+        [data-theme="dark"] .profile-header h2,
+        [data-theme="dark"] .profile-info-card h1,
+        [data-theme="dark"] .profile-info-card h2 {
+            background: linear-gradient(135deg, #a78bfa, #60a5fa) !important;
+            -webkit-background-clip:  text !important;
+            -webkit-text-fill-color: transparent !important;
+            text-shadow: none !important;
+            background-clip: text !important;
+        }
+
+        /* İlerleme durumu kartı (Başarı Oranı) */
+        [data-theme="dark"] .progress-section,
+        [data-theme="dark"] .achievement-card,
+        [data-theme="dark"] .stats-card {
+            background: linear-gradient(145deg, #1e2749, #151b35) !important;
+            border: 2px solid #2d3454 !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+        }
+
+        /* İlerleme başlıkları */
+        [data-theme="dark"] .progress-section h2,
+        [data-theme="dark"] .progress-section h3,
+        [data-theme="dark"] .achievement-card h2,
+        [data-theme="dark"] .stats-card h2 {
+            color: #60a5fa !important;
+            text-shadow: 0 0 15px rgba(96, 165, 250, 0.5) !important;
+        }
+
+        /* İlerleme metinleri */
+        [data-theme="dark"] .progress-section p,
+        [data-theme="dark"] .progress-section span,
+        [data-theme="dark"] .achievement-card p,
+        [data-theme="dark"] .stats-card p {
+            color: #a8b3cf !important;
+        }
+
+        /* İlerleme yüzdesi */
+        [data-theme="dark"] .progress-percentage,
+        [data-theme="dark"] .completion-rate {
+            color: #60a5fa !important;
+            text-shadow: 0 0 10px rgba(96, 165, 250, 0.6) !important;
+            font-weight: 900 !important;
+        }
+
+        /* İlerleme çubuğu container */
+        [data-theme="dark"] .progress-container {
+            background: #0f172a !important;
+            border-radius: 10px;
+            padding: 4px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5) !important;
+        }
+
+        /* İlerleme çubuğu fill */
+        [data-theme="dark"] .progress-fill,
+        [data-theme="dark"] .progress-bar-fill {
+            background: linear-gradient(90deg, #8b5cf6, #60a5fa) !important;
+            box-shadow: 0 0 15px rgba(96, 165, 250, 0.6) !important;
+            border-radius: 8px;
+        }
+
+        /* İstatistik kutuları - TOPLAM PUAN vb. */
+        [data-theme="dark"] .stat-item,
+        [data-theme="dark"] .stat-container,
+        [data-theme="dark"] .score-box {
+            background: linear-gradient(145deg, #1e2749, #151b35) !important;
+            border: 2px solid #2d3454 !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+        }
+
+        /* İstatistik sayıları - EKSTRA BEYAZ */
+        [data-theme="dark"] .stat-card h1,
+        [data-theme="dark"] .stat-card h2,
+        [data-theme="dark"] .stat-card .stat-value,
+        [data-theme="dark"] .stats-grid h1,
+        [data-theme="dark"] .stats-grid h2,
+        [data-theme="dark"] [class*="stat"] h1,
+        [data-theme="dark"] [class*="stat"] h2 {
+            color: #ffffff ! important;
+            text-shadow:  0 0 25px rgba(255,255,255,0.5), 0 0 50px rgba(96, 165, 250, 0.3) !important;
+            font-weight: 900 !important;
+            -webkit-text-fill-color:  #ffffff !important;
+            background: none !important;
+        }
+
+        /* İstatistik kutularındaki LABEL (TOPLAM PUAN, ÇÖZÜLEN SORU) */
+        [data-theme="dark"] .stat-item .stat-label,
+        [data-theme="dark"] .score-box .label,
+        [data-theme="dark"] .stat-container .title {
+            color: #60a5fa !important;
+            text-shadow: 0 0 10px rgba(96, 165, 250, 0.5) !important;
+            font-weight: 700 !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* İstatistik kutularındaki RAKAMLAR (1527, 299, 106) */
+        [data-theme="dark"] .stat-item .stat-number,
+        [data-theme="dark"] .score-box .value,
+        [data-theme="dark"] .stat-container .number {
+            color: #ffffff !important;
+            text-shadow: 0 0 20px rgba(255,255,255,0.4), 0 0 40px rgba(96, 165, 250, 0.3) !important;
+            font-weight: 900 !important;
+        }
+
+        /* İstatistik kutuları hover efekti */
+        [data-theme="dark"] .stat-item:hover,
+        [data-theme="dark"] .score-box:hover,
+        [data-theme="dark"] .stat-container:hover {
+            box-shadow: 0 8px 32px rgba(96, 165, 250, 0.4), 0 0 0 2px rgba(96, 165, 250, 0.2) !important;
+            border-color: #60a5fa !important;
+            transform: translateY(-4px);
+        }
+
+        /* Rozetler ve badge'ler */
+        [data-theme="dark"] .badge-container,
+        [data-theme="dark"] .achievement-badge {
+            background: linear-gradient(145deg, #2d1b69, #1a1042) !important;
+            border: 2px solid #8b5cf6 !important;
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3) !important;
+        }
+
+        /* Rozet metinleri */
+        [data-theme="dark"] .badge-container h3,
+        [data-theme="dark"] .achievement-badge h3 {
+            color: #a78bfa !important;
+            text-shadow: 0 0 10px rgba(167, 139, 250, 0.5) !important;
+        }
+
+        /* Profil butonları */
+        [data-theme="dark"] .profile-button,
+        [data-theme="dark"] .action-button {
+            background: linear-gradient(145deg, #2d3454, #1e2749) !important;
+            border: 2px solid #3d4a6e !important;
+            color: #60a5fa !important;
+            text-shadow: 0 0 8px rgba(96, 165, 250, 0.4) !important;
+        }
+
+        [data-theme="dark"] .profile-button:hover,
+        [data-theme="dark"] .action-button:hover {
+            background:  linear-gradient(145deg, #3d4a6e, #2d3454) !important;
+            border-color: #60a5fa ! important;
+            box-shadow: 0 4px 20px rgba(96, 165, 250, 0.4) !important;
+            color: #ffffff !important;
+        }
+
+        /* Profil listeleri */
+        [data-theme="dark"] .profile-list,
+        [data-theme="dark"] .achievement-list {
+            background: transparent !important;
+        }
+
+        [data-theme="dark"] .profile-list li,
+        [data-theme="dark"] .achievement-list li {
+            background: linear-gradient(145deg, #1e2749, #151b35) !important;
+            border:  1px solid #2d3454 !important;
+            color: #e5e7eb !important;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        [data-theme="dark"] .profile-list li:hover,
+        [data-theme="dark"] .achievement-list li:hover {
+            background: linear-gradient(145deg, #2d3454, #1e2749) !important;
+            border-color:  #60a5fa !important;
+            box-shadow: 0 4px 16px rgba(96, 165, 250, 0.3) !important;
+        }
+
+        /* Profil avatarı */
+        [data-theme="dark"] .profile-avatar,
+        [data-theme="dark"] .user-avatar {
+            border: 4px solid #60a5fa ! important;
+            box-shadow:  0 0 20px rgba(96, 165, 250, 0.5) !important;
+        }
+
+        /* Profil badge'leri */
+        [data-theme="dark"] .profile-badge,
+        [data-theme="dark"] .user-badge-item {
+            background: linear-gradient(135deg, #2d3454, #1e2749) !important;
+            border: 2px solid #60a5fa !important;
+            color: #60a5fa !important;
+            box-shadow: 0 2px 8px rgba(96, 165, 250, 0.3) !important;
+        }
+
+        /* Puan animasyonu */
+        @keyframes scoreGlow {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(255,255,255,0.3), 0 0 40px rgba(96, 165, 250, 0.2);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(255,255,255,0.5), 0 0 60px rgba(96, 165, 250, 0.4);
+            }
+        }
+
+        [data-theme="dark"] .stat-number,
+        [data-theme="dark"] .score-value {
+            animation: scoreGlow 2s ease-in-out infinite;
+        }
+
+        /* Container */
+        [data-theme="dark"] .profile-container,
+        [data-theme="dark"] .user-dashboard {
+            background: transparent !important;
+        }
+
+        /* Alt kartlar */
+        [data-theme="dark"] .info-card,
+        [data-theme="dark"] .detail-card {
+            background: linear-gradient(145deg, #1e2749, #151b35) !important;
+            border: 2px solid #2d3454 ! important;
+            box-shadow:  0 8px 24px rgba(0,0,0,0.6) !important;
+        }
+
+        [data-theme="dark"] .info-card h3,
+        [data-theme="dark"] .detail-card h3 {
+            color: #60a5fa !important;
+            text-shadow: 0 0 10px rgba(96, 165, 250, 0.5) !important;
+        }
+
+        [data-theme="dark"] .info-card p,
+        [data-theme="dark"] .detail-card p {
+            color: #a8b3cf !important;
+        }
+
+        /* Divider */
+        [data-theme="dark"] .profile-divider,
+        [data-theme="dark"] .section-divider {
+            border-color: #2d3454 !important;
+            opacity: 0.5;
+        }
+
+        /* İkon glow */
+        [data-theme="dark"] .stat-icon,
+        [data-theme="dark"] .achievement-icon {
+            filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.5));
         }
         
-        /* ALERTS */
+        /* ==================== LOADING OVERLAY ==================== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(102, 126, 234, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner-container {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-top: 8px solid #ffffff;
+            border-radius: 50%;
+            animation:  spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform:  rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 20px;
+            font-weight:  600;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ==================== TOAST NOTIFICATION ==================== */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index:  9998;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+        }
+
+        .toast-notification {
+            background: var(--card-bg);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            animation: slideIn 0.3s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .toast-notification::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width:  4px;
+        }
+
+        .toast-notification.success::before {
+            background: #10b981;
+        }
+
+        .toast-notification.error::before,
+        .toast-notification.danger::before {
+            background: #ef4444;
+        }
+
+        .toast-notification.warning::before {
+            background: #f59e0b;
+        }
+
+        .toast-notification.info::before {
+            background:  #3b82f6;
+        }
+
+        .toast-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .toast-notification.success .toast-icon {
+            color: #10b981;
+        }
+
+        .toast-notification.error .toast-icon,
+        .toast-notification.danger .toast-icon {
+            color: #ef4444;
+        }
+
+        .toast-notification.warning .toast-icon {
+            color: #f59e0b;
+        }
+
+        .toast-notification.info .toast-icon {
+            color: #3b82f6;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .toast-close:hover {
+            background:  var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .toast-notification.removing {
+            animation: slideOut 0.3s ease-out forwards;
+        }
+        
+        /* ==================== ALERTS ==================== */
         .alert {
             border-radius: 12px;
             border: none;
@@ -145,11 +917,11 @@
         @keyframes slideDown {
             from {
                 opacity: 0;
-                transform: translateY(-20px);
+                transform:  translateY(-20px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform:  translateY(0);
             }
         }
         
@@ -165,7 +937,7 @@
         
         .alert-warning {
             background: linear-gradient(135deg, #FF9800, #fb8c00);
-            color: white;
+            color:  white;
         }
         
         .alert-info {
@@ -181,19 +953,185 @@
         .alert .btn-close:hover {
             opacity: 1;
         }
+
+        /* ==================== DARK MODE TOGGLE ==================== */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            box-shadow: 0 8px 25px var(--card-shadow);
+            transition: all 0.3s ease;
+            z-index: 9997;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow:  0 12px 35px var(--card-shadow);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .theme-toggle .icon {
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover .icon {
+            transform: rotate(20deg) scale(1.2);
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+        .btn-animated {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .btn-animated::before {
+            content:  '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background:  rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-animated:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-animated:active {
+            transform: scale(0.95);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow:  0 20px 40px var(--card-shadow);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--card-bg) 50%, var(--bg-secondary) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-text {
+            height: 16px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-title {
+            height: 24px;
+            width: 60%;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-card {
+            height: 200px;
+            border-radius: 12px;
+        }
+
+        .progress-animated {
+            height: 8px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-animated {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            border-radius: 10px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar-animated::after {
+            content: '';
+            position: absolute;
+            top:  0;
+            left: 0;
+            bottom: 0;
+            right:  0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
         
-        /* MAIN CONTENT */
+        /* ==================== MAIN CONTENT ==================== */
         .container {
             flex: 1;
         }
         
-        /* FOOTER */
+        /* ==================== FOOTER ==================== */
         .site-footer {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, var(--footer-bg-start), var(--footer-bg-end));
             color: white;
             padding: 40px 0 20px;
             margin-top: 60px;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 -4px 15px var(--card-shadow);
         }
         
         .footer-content {
@@ -259,12 +1197,12 @@
         }
         
         .social-link:hover {
-            background: #FFD700;
-            color: #2c3e50;
+            background:  #FFD700;
+            color:  #2c3e50;
             transform: translateY(-3px);
         }
         
-        /* SCROLL TO TOP BUTTON */
+        /* ==================== SCROLL TO TOP ==================== */
         #scrollTopBtn {
             position: fixed;
             bottom: 30px;
@@ -280,62 +1218,51 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px var(--card-shadow);
             transition: all 0.3s ease;
             z-index: 999;
         }
         
         #scrollTopBtn:hover {
             transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 20px var(--card-shadow);
         }
         
         #scrollTopBtn.show {
             display: flex;
         }
-        
-        /* LOADING SPINNER */
-        .loading-spinner {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            display: none;
+
+        body.theme-transitioning * {
+            transition: none !important;
         }
         
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(123, 104, 238, 0.2);
-            border-top-color: var(--primary-purple);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* RESPONSIVE */
+        /* ==================== RESPONSIVE ==================== */
         @media (max-width: 768px) {
             .navbar-brand {
                 font-size: 1.2rem;
             }
             
             .nav-link {
-                padding: 10px 16px !important;
+                padding: 10px 16px ! important;
             }
             
             .user-badge {
-                margin: 10px 0;
+                margin:  10px 0;
             }
             
             #scrollTopBtn {
-                bottom: 20px;
-                right: 20px;
+                bottom:  20px;
+                right:  20px;
                 width: 45px;
                 height: 45px;
+            }
+
+            .theme-toggle {
+                bottom: 20px;
+                left: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
             }
             
             .footer-content {
@@ -346,26 +1273,38 @@
             .social-links {
                 justify-content: center;
             }
-        }
-        
-        /* ANIMATIONS */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
+
+            .toast-container {
+                right: 10px;
+                left: 10px;
+                top: 70px;
             }
-            to {
-                opacity: 1;
+
+            .toast-notification {
+                min-width: auto;
             }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
         }
     </style>
     
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <div class="loading-text">Yükleniyor...</div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- DARK MODE TOGGLE -->
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Tema Değiştir">
+        <span class="icon" id="themeIcon">🌙</span>
+    </button>
 
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -399,7 +1338,6 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <!-- BUL BAKALIM SEKME BURAYA EKLENDİ -->
                         <a class="nav-link" href="{% url 'bul_bakalim_sinav_tipi_secimi' %}">
                             <i class="bi bi-lightbulb"></i> Bul Bakalım
                         </a>
@@ -441,7 +1379,6 @@
 
     <!-- MAIN CONTENT -->
     <div class="container mt-4">
-        <!-- ALERTS -->
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -452,7 +1389,6 @@
             {% endfor %}
         {% endif %}
         
-        <!-- PAGE CONTENT -->
         {% block content %}
         {% endblock %}
     </div>
@@ -463,7 +1399,7 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h4><i class="bi bi-gem"></i> Köstebek YKS</h4>
-                    <p>Eğlenerek YKS'ye hazırlan! Oyunlaştırılmış eğitim platformu ile sınavda başarıya ulaş.</p>
+                    <p>Eğlenerek YKS'ye hazırlan!  Oyunlaştırılmış eğitim platformu ile sınavda başarıya ulaş.</p>
                     <div class="social-links">
                         <a href="#" class="social-link" title="Instagram">
                             <i class="bi bi-instagram"></i>
@@ -495,7 +1431,7 @@
                     <ul class="footer-links">
                         <li><a href="{% url 'karsilasma_sinav_tipi_secimi' %}"><i class="bi bi-chevron-right"></i> Karşılaşma Modu</a></li>
                         <li><a href="{% url 'tabu_anasayfa' %}"><i class="bi bi-chevron-right"></i> Tabu Oyunu</a></li>
-                        <li><a href="#"><i class="bi bi-chevron-right"></i> Günlük Yarışma</a></li>
+                        <li><a href="{% url 'bul_bakalim_sinav_tipi_secimi' %}"><i class="bi bi-chevron-right"></i> Bul Bakalım</a></li>
                         <li><a href="#"><i class="bi bi-chevron-right"></i> Turnuvalar</a></li>
                     </ul>
                 </div>
@@ -513,29 +1449,230 @@
             
             <div class="footer-bottom">
                 <p class="mb-0">
-                    &copy; 2025 Köstebek YKS. Tüm hakları saklıdır. 
+                    &copy; 2025 Köstebek YKS.Tüm hakları saklXıdır.
                     <i class="bi bi-heart-fill text-danger"></i> ile geliştirildi.
                 </p>
             </div>
         </div>
     </footer>
 
-    <!-- SCROLL TO TOP BUTTON -->
+    <!-- SCROLL TO TOP -->
     <button id="scrollTopBtn" title="Yukarı Çık">
         <i class="bi bi-arrow-up"></i>
     </button>
 
-    <!-- LOADING SPINNER -->
-    <div class="loading-spinner" id="loadingSpinner">
-        <div class="spinner"></div>
-    </div>
-
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Custom JS -->
     <script>
-        // Scroll to top button
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.body.classList.add('theme-transitioning');
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+            
+            const message = newTheme === 'dark' ?  'Karanlık mod aktif!  🌙' : 'Aydınlık mod aktif!  ☀️';
+            showToast(message, 'info');
+
+            setTimeout(() => {
+                document.body.classList.remove('theme-transitioning');
+            }, 300);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('themeIcon');
+            if (icon) {
+                icon.textContent = theme === 'dark' ?  '☀️' : '🌙';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initTheme);
+
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        function showLoading(text = 'Yükleniyor...') {
+            const loadingText = document.querySelector('.loading-text');
+            if (loadingText) loadingText.textContent = text;
+            loadingOverlay.classList.add('active');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+        }
+
+        function showToast(message, type = 'info', title = '', duration = 4000) {
+            const container = document.getElementById('toastContainer');
+            
+            const icons = {
+                success: '✓',
+                error: '✕',
+                danger: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+
+            const titles = {
+                success: title || 'Başarılı! ',
+                error: title || 'Hata!',
+                danger: title || 'Hata!',
+                warning: title || 'Uyarı!',
+                info: title || 'Bilgi'
+            };
+
+            const toast = document.createElement('div');
+            toast.className = `toast-notification ${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon">${icons[type]}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${titles[type]}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="removeToast(this)">×</button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                removeToast(toast.querySelector('.toast-close'));
+            }, duration);
+        }
+
+        function removeToast(button) {
+            const toast = button.closest('.toast-notification');
+            toast.classList.add('removing');
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }
+
+        function animateCounter(element, start, end, duration = 1000) {
+            let startTime = null;
+            
+            function animate(currentTime) {
+                if (! startTime) startTime = currentTime;
+                const progress = Math.min((currentTime - startTime) / duration, 1);
+                
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+
+        function createConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            const confettiCount = 100;
+
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = '-10px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animation = `confetti-fall ${(Math.random() * 3 + 2)}s linear forwards`;
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.zIndex = '9999';
+                document.body.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes confetti-fall {
+                to {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior:  'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if messages %}
+                {% for message in messages %}
+                    showToast(
+                        "{{ message }}",
+                        "{{ message.tags }}".includes('error') ? 'error' : 
+                        "{{ message.tags }}".includes('danger') ? 'danger' : 
+                        "{{ message.tags }}".includes('success') ? 'success' : 
+                        "{{ message.tags }}".includes('warning') ? 'warning' : 'info'
+                    );
+                {% endfor %}
+            {% endif %}
+        });
+
+        async function ajaxRequest(url, method = 'GET', data = null) {
+            showLoading();
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                };
+
+                if (data && method !== 'GET') {
+                    options.body = JSON.stringify(data);
+                }
+
+                const response = await fetch(url, options);
+                const result = await response.json();
+                
+                hideLoading();
+                return result;
+            } catch (error) {
+                hideLoading();
+                showToast('Bir hata oluştu! ', 'error');
+                throw error;
+            }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
         const scrollTopBtn = document.getElementById('scrollTopBtn');
         
         window.addEventListener('scroll', function() {
@@ -553,7 +1690,6 @@
             });
         });
         
-        // Active nav link
         const currentLocation = window.location.pathname;
         const navLinks = document.querySelectorAll('.nav-link');
         
@@ -563,26 +1699,15 @@
             }
         });
         
-        // Auto dismiss alerts after 5 seconds
-        // Sadece sistem mesajlarını kapat, alert-light hariç!
         const alerts = document.querySelectorAll('.alert');
         alerts.forEach(alert => {
-            if (!alert.classList.contains('alert-light')) {
+            if (! alert.classList.contains('alert-light')) {
                 setTimeout(() => {
                     const bsAlert = new bootstrap.Alert(alert);
                     bsAlert.close();
                 }, 5000);
             }
         });
-        
-        // Loading spinner (örnek kullanım)
-        function showLoading() {
-            document.getElementById('loadingSpinner').style.display = 'block';
-        }
-        
-        function hideLoading() {
-            document.getElementById('loadingSpinner').style.display = 'none';
-        }
     </script>
     
     {% block extra_js %}{% endblock %}

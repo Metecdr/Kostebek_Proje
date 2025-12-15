@@ -35,7 +35,7 @@ class OgrenciProfili(models.Model):
         verbose_name='Profil Fotoğrafı'
     )
     
-    # GENEL İSTATİSTİKLER
+    # TOPLAM İSTATİSTİKLER
     toplam_puan = models.IntegerField(
         default=0, 
         db_index=True,
@@ -55,23 +55,48 @@ class OgrenciProfili(models.Model):
         verbose_name='Toplam Yanlış'
     )
     
-    # HAFTALIK İSTATİSTİKLER
+    # PERİYODİK PUANLAR
+    gunluk_puan = models.IntegerField(
+        default=0, 
+        db_index=True,
+        verbose_name='Günlük Puan'
+    )
     haftalik_puan = models.IntegerField(
         default=0, 
         db_index=True,
         verbose_name='Haftalık Puan'
     )
-    haftalik_cozulen = models.IntegerField(
-        default=0,
-        verbose_name='Haftalık Çözülen'
+    aylik_puan = models.IntegerField(
+        default=0, 
+        db_index=True,
+        verbose_name='Aylık Puan'
     )
-    haftalik_dogru = models.IntegerField(
-        default=0,
-        verbose_name='Haftalık Doğru'
+    
+    # PERİYODİK İSTATİSTİKLER
+    gunluk_cozulen = models.IntegerField(default=0, verbose_name='Günlük Çözülen')
+    gunluk_dogru = models.IntegerField(default=0, verbose_name='Günlük Doğru')
+    gunluk_yanlis = models.IntegerField(default=0, verbose_name='Günlük Yanlış')
+    
+    haftalik_cozulen = models.IntegerField(default=0, verbose_name='Haftalık Çözülen')
+    haftalik_dogru = models.IntegerField(default=0, verbose_name='Haftalık Doğru')
+    haftalik_yanlis = models.IntegerField(default=0, verbose_name='Haftalık Yanlış')
+    
+    aylik_cozulen = models.IntegerField(default=0, verbose_name='Aylık Çözülen')
+    aylik_dogru = models.IntegerField(default=0, verbose_name='Aylık Doğru')
+    aylik_yanlis = models.IntegerField(default=0, verbose_name='Aylık Yanlış')
+    
+    # RESET TARİHLERİ
+    son_gunluk_reset = models.DateField(
+        default=timezone.now,
+        verbose_name='Son Günlük Reset'
     )
-    haftalik_yanlis = models.IntegerField(
-        default=0,
-        verbose_name='Haftalık Yanlış'
+    son_haftalik_reset = models.DateField(
+        default=timezone.now,
+        verbose_name='Son Haftalık Reset'
+    )
+    son_aylik_reset = models.DateField(
+        default=timezone.now,
+        verbose_name='Son Aylık Reset'
     )
     hafta_baslangic = models.DateTimeField(
         default=timezone.now,
@@ -95,18 +120,101 @@ class OgrenciProfili(models.Model):
         auto_now=True,
         verbose_name='Son Giriş'
     )
+    aktif_mi = models.BooleanField(
+        default=True,
+        verbose_name='Aktif Mi'
+    )
     
     class Meta:
         verbose_name = 'Öğrenci Profili'
         verbose_name_plural = 'Öğrenci Profilleri'
         ordering = ['-toplam_puan']
         indexes = [
-            models.Index(fields=['-toplam_puan', '-haftalik_puan'], name='profil_puan_idx'),
+            models.Index(fields=['-toplam_puan'], name='profil_toplam_idx'),
+            models.Index(fields=['-haftalik_puan'], name='profil_haftalik_idx'),
+            models.Index(fields=['-aylik_puan'], name='profil_aylik_idx'),
+            models.Index(fields=['-gunluk_puan'], name='profil_gunluk_idx'),
             models.Index(fields=['alan', '-toplam_puan'], name='profil_alan_puan_idx'),
         ]
     
     def __str__(self):
-        return self.kullanici.username
+        return f"{self.kullanici.username} - {self.toplam_puan} puan"
+    
+    def puan_ekle(self, puan):
+        """Puan ekleme ve otomatik reset kontrolleri"""
+        self.reset_kontrolu()
+        self.toplam_puan += puan
+        self.gunluk_puan += puan
+        self.haftalik_puan += puan
+        self.aylik_puan += puan
+        self.save()
+    
+    def reset_kontrolu(self):
+        """Otomatik reset kontrolleri"""
+        bugun = timezone.now().date()
+        degisti = False
+        
+        if self.son_gunluk_reset < bugun:
+            self.gunluk_puan = 0
+            self.gunluk_cozulen = 0
+            self.gunluk_dogru = 0
+            self.gunluk_yanlis = 0
+            self.son_gunluk_reset = bugun
+            degisti = True
+        
+        haftanin_basi = bugun - timedelta(days=bugun.weekday())
+        if self.son_haftalik_reset < haftanin_basi:
+            self.haftalik_puan = 0
+            self.haftalik_cozulen = 0
+            self.haftalik_dogru = 0
+            self.haftalik_yanlis = 0
+            self.son_haftalik_reset = haftanin_basi
+            self.hafta_baslangic = timezone.now()
+            degisti = True
+        
+        ayin_basi = bugun.replace(day=1)
+        if self.son_aylik_reset < ayin_basi: 
+            self.aylik_puan = 0
+            self.aylik_cozulen = 0
+            self.aylik_dogru = 0
+            self.aylik_yanlis = 0
+            self.son_aylik_reset = ayin_basi
+            degisti = True
+        
+        if degisti:
+            self.save()
+    
+    @property
+    def gunluk_siralama(self):
+        """Günlük sıralamayı getir"""
+        return OgrenciProfili.objects.filter(
+            aktif_mi=True,
+            gunluk_puan__gt=self.gunluk_puan
+        ).count() + 1
+    
+    @property
+    def haftalik_siralama(self):
+        """Haftalık sıralamayı getir"""
+        return OgrenciProfili.objects.filter(
+            aktif_mi=True,
+            haftalik_puan__gt=self.haftalik_puan
+        ).count() + 1
+    
+    @property
+    def aylik_siralama(self):
+        """Aylık sıralamayı getir"""
+        return OgrenciProfili.objects.filter(
+            aktif_mi=True,
+            aylik_puan__gt=self.aylik_puan
+        ).count() + 1
+    
+    @property
+    def genel_siralama(self):
+        """Genel sıralamayı getir"""
+        return OgrenciProfili.objects.filter(
+            aktif_mi=True,
+            toplam_puan__gt=self.toplam_puan
+        ).count() + 1
     
     @property
     def genel_basari_orani(self):
@@ -116,23 +224,29 @@ class OgrenciProfili(models.Model):
         return 0
     
     @property
+    def gunluk_basari_orani(self):
+        """Günlük başarı oranını hesapla"""
+        if self.gunluk_cozulen > 0:
+            return round((self.gunluk_dogru / self.gunluk_cozulen) * 100, 2)
+        return 0
+    
+    @property
     def haftalik_basari_orani(self):
         """Haftalık başarı oranını hesapla"""
         if self.haftalik_cozulen > 0:
             return round((self.haftalik_dogru / self.haftalik_cozulen) * 100, 2)
         return 0
     
+    @property
+    def aylik_basari_orani(self):
+        """Aylık başarı oranını hesapla"""
+        if self.aylik_cozulen > 0:
+            return round((self.aylik_dogru / self.aylik_cozulen) * 100, 2)
+        return 0
+    
     def haftalik_sifirla(self):
-        """Haftalık istatistikleri sıfırla"""
-        self.haftalik_puan = 0
-        self.haftalik_cozulen = 0
-        self.haftalik_dogru = 0
-        self.haftalik_yanlis = 0
-        self.hafta_baslangic = timezone.now()
-        self.save(update_fields=[
-            'haftalik_puan', 'haftalik_cozulen', 
-            'haftalik_dogru', 'haftalik_yanlis', 'hafta_baslangic'
-        ])
+        """ESKİ METOD - Artık reset_kontrolu() kullanılıyor"""
+        self.reset_kontrolu()
 
 
 class OyunModuIstatistik(models.Model):
@@ -448,7 +562,7 @@ class Rozet(models.Model):
         verbose_name='Kazanılma Tarihi'
     )
     
-    class Meta:
+    class Meta: 
         verbose_name = 'Rozet'
         verbose_name_plural = 'Rozetler'
         unique_together = ['profil', 'kategori', 'seviye']
@@ -509,7 +623,7 @@ class Rozet(models.Model):
     @property
     def renk(self):
         """Rozet rengini döndür"""
-        if self.seviye == 'caylak':
+        if self.seviye == 'caylak': 
             return '#6c757d'  # Gri
         else:
             return '#ffd700'  # Altın

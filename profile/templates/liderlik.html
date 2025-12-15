@@ -1,557 +1,796 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Köstebek - Liderlik Tablosu</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 0;
-        }
+{% block title %}Liderlik Tablosu - Köstebek YKS{% endblock %}
 
-        .header {
-            background: linear-gradient(135deg, #7c5cdb 0%, #a855f7 100%);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2? family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+    }
 
-        .header-top {
-            padding: 15px 40px;
-            display: flex;
+    .leaderboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* ==================== KATEGORİ TABS ==================== */
+    .leaderboard-categories {
+        display: flex;
+        gap: 15px;
+        margin-bottom:  30px;
+        justify-content: center;
+        flex-wrap: wrap;
+        animation: fadeIn 0.8s ease-out 0.5s backwards;
+    }
+
+    .category-btn {
+        background: rgba(255,255,255,0.9);
+        color: #667eea;
+        padding: 12px 25px;
+        border:  none;
+        border-radius:  50px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .category-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .category-btn:hover::before,
+    .category-btn.active::before {
+        width:  300px;
+        height: 300px;
+    }
+
+    .category-btn:hover,
+    .category-btn.active {
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .category-btn span {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ==================== USER RANK SECTION ==================== */
+    .user-rank-container {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        padding: 40px;
+        text-align: center;
+        border-radius: 25px;
+        margin-bottom:  30px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        animation: slideDown 0.8s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .user-rank-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102,126,234,0.2), transparent);
+        animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .rank-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    .rank-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color:  transparent;
+        background-clip:  text;
+        margin-bottom: 20px;
+    }
+
+    .rank-number {
+        font-size: 5rem;
+        font-weight:  900;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color:  transparent;
+        background-clip:  text;
+        line-height: 1;
+        margin-bottom: 10px;
+        animation: countUp 1.5s ease-out;
+    }
+
+    @keyframes countUp {
+        from {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        to {
+            opacity:  1;
+            transform: scale(1);
+        }
+    }
+
+    .rank-label {
+        font-size: 1.2rem;
+        color: #666;
+        font-weight: 600;
+    }
+
+    /* ==================== PODIUM SECTION ==================== */
+    .podium-section {
+        margin-bottom: 40px;
+        animation: fadeInUp 0.8s ease-out 0.3s backwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .podium-container {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 40px;
+        height: 400px;
+    }
+
+    .podium-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .podium-item:hover {
+        transform: translateY(-10px);
+    }
+
+    .podium-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius:  50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: white;
+        font-weight: 900;
+        margin-bottom: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        position: relative;
+        animation: scaleIn 0.6s ease-out backwards;
+    }
+
+    .podium-item:nth-child(1) .podium-avatar { animation-delay: 0.4s; }
+    .podium-item:nth-child(2) .podium-avatar { animation-delay: 0.2s; }
+    .podium-item:nth-child(3) .podium-avatar { animation-delay: 0.6s; }
+
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .podium-crown {
+        position: absolute;
+        top: -25px;
+        font-size: 2.5rem;
+        animation: rotate 3s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .podium-rank-1 .podium-avatar {
+        width: 120px;
+        height: 120px;
+        font-size: 3rem;
+        border:  5px solid #FFD700;
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+    }
+
+    .podium-rank-2 .podium-avatar {
+        border:  5px solid #C0C0C0;
+    }
+
+    .podium-rank-3 .podium-avatar {
+        border: 5px solid #CD7F32;
+    }
+
+    .podium-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 8px;
+    }
+
+    .podium-score {
+        font-size: 1.5rem;
+        font-weight:  900;
+        color: #FFD700;
+        margin-bottom: 15px;
+    }
+
+    .podium-platform {
+        background: white;
+        border-radius: 15px 15px 0 0;
+        padding: 20px;
+        box-shadow:  0 -5px 30px rgba(0,0,0,0.2);
+        text-align: center;
+        transition: all 0.3s ease;
+        animation: slideUp 0.8s ease-out backwards;
+    }
+
+    .podium-item:nth-child(1) .podium-platform { animation-delay: 0.6s; }
+    .podium-item:nth-child(2) .podium-platform { animation-delay: 0.4s; }
+    .podium-item:nth-child(3) .podium-platform { animation-delay: 0.8s; }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(100px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .podium-rank-1 .podium-platform {
+        height: 180px;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        color: white;
+    }
+
+    .podium-rank-2 .podium-platform {
+        height: 140px;
+        background: linear-gradient(135deg, #E8E8E8, #C0C0C0);
+    }
+
+    .podium-rank-3 .podium-platform {
+        height: 100px;
+        background: linear-gradient(135deg, #E6C8A0, #CD7F32);
+        color: white;
+    }
+
+    .platform-rank {
+        font-size: 3rem;
+        font-weight:  900;
+        line-height: 1;
+    }
+
+    /* ==================== LEADERBOARD TABLE ==================== */
+    .leaderboard-card {
+        background: white;
+        border-radius: 25px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        animation: fadeInUp 0.8s ease-out 0.6s backwards;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom:  25px;
+        padding-bottom: 20px;
+        border-bottom:  3px solid #f0f0f0;
+    }
+
+    .card-icon {
+        font-size: 2.5rem;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+        font-weight:  800;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color:  transparent;
+        background-clip:  text;
+    }
+
+    /* TABLO */
+    .leaderboard-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .leaderboard-table thead {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .leaderboard-table th {
+        padding: 18px 15px;
+        text-align: left;
+        font-weight: 800;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .leaderboard-table td {
+        padding: 18px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+    }
+
+    .leader-item {
+        transition: all 0.3s ease;
+        animation: slideInRight 0.5s ease-out backwards;
+    }
+
+    .leader-item:nth-child(1) { animation-delay: 0.1s; }
+    .leader-item:nth-child(2) { animation-delay: 0.15s; }
+    .leader-item:nth-child(3) { animation-delay: 0.2s; }
+    .leader-item:nth-child(4) { animation-delay: 0.25s; }
+    .leader-item:nth-child(5) { animation-delay: 0.3s; }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .leader-item:hover {
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        transform: translateX(10px);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+    }
+
+    .leader-item.current-user {
+        background: linear-gradient(135deg, #fff9e6, #ffe4b5);
+        border-left:  5px solid #FFD700;
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+
+    .rank-badge {
+        width: 45px;
+        height: 45px;
+        border-radius:  50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 1.2rem;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .leader-item:hover .rank-badge {
+        transform: scale(1.15) rotate(360deg);
+    }
+
+    .rank-1 {
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    .rank-2 {
+        background:  linear-gradient(135deg, #E8E8E8, #C0C0C0);
+        box-shadow: 0 5px 15px rgba(192, 192, 192, 0.4);
+    }
+
+    .rank-3 {
+        background: linear-gradient(135deg, #E6C8A0, #CD7F32);
+        box-shadow: 0 5px 15px rgba(205, 127, 50, 0.4);
+    }
+
+    .rank-other {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .leader-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius:  50%;
+        background: linear-gradient(135deg, #ffd89b, #19547b);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 1.3rem;
+        color: white;
+        transition: all 0.3s ease;
+        vertical-align: middle;
+        margin:  0 10px;
+    }
+
+    .leader-item:hover .leader-avatar {
+        transform: scale(1.1);
+    }
+
+    .leader-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .leader-subtitle {
+        font-size: 0.85rem;
+        color: #888;
+    }
+
+    .leader-score {
+        font-size: 1.3rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius:  15px;
+        font-size:  0.9rem;
+        font-weight:  700;
+        margin:  0 3px;
+    }
+
+    .stat-correct {
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+    }
+
+    .stat-wrong {
+        background: linear-gradient(135deg, #F44336, #e53935);
+        color: white;
+    }
+
+    .stat-accuracy {
+        background: linear-gradient(135deg, #2196F3, #1976d2);
+        color: white;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+        font-size: 1.1rem;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .podium-container {
+            height: auto;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .podium-item {
+            width:  100%;
+            max-width: 300px;
         }
 
-        .logo-img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-        }
-
-        .logo-text {
-            color: white;
-            font-size: 26px;
-            font-weight: 800;
-            letter-spacing: 1px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px 20px;
-            border-radius: 50px;
-            color: white;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .exit-btn {
-            background: rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .exit-btn:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .nav-menu {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            padding: 12px 20px;
-            flex-wrap: wrap;
-        }
-
-        .nav-item {
-            color: white;
-            text-decoration: none;
-            padding: 10px 25px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 15px;
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            color: white;
-        }
-
-        .nav-item.active {
-            background: white;
-            color: #7c5cdb;
-        }
-
-        .main-content {
-            padding: 20px;
-        }
-
-        .user-rank-container {
-            background: linear-gradient(135deg, #7c5cdb 0%, #a855f7 100%);
-            padding: 30px;
-            text-align: center;
-            color: white;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-            max-width: 1400px;
-            margin: 20px auto 30px auto;
-        }
-
-        .rank-title {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+        .podium-rank-1 .podium-platform,
+        .podium-rank-2 .podium-platform,
+        .podium-rank-3 .podium-platform {
+            height: auto;
+            min-height: 100px;
         }
 
         .rank-number {
-            font-size: 72px;
-            font-weight: 800;
-            line-height: 1;
-        }
-
-        .rank-label {
-            font-size: 18px;
-            margin-top: 10px;
-            opacity: 0.9;
+            font-size: 3.5rem;
         }
 
         .leaderboard-categories {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            justify-content: center;
-            flex-wrap: wrap;
-            max-width: 1400px;
-            margin: 0 auto 30px auto;
+            flex-direction: column;
         }
 
         .category-btn {
-            background: rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .category-btn:hover, .category-btn.active {
-            background: white;
-            color: #7c5cdb;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .leaderboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 25px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .leaderboard-card {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s;
-        }
-
-        .leaderboard-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .card-icon {
-            font-size: 32px;
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #7c5cdb;
-        }
-
-        .leader-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #f8f4ff 0%, #ffffff 100%);
-            border-radius: 15px;
-            transition: all 0.3s;
-        }
-
-        .leader-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 15px rgba(124, 92, 219, 0.15);
-        }
-
-        .rank-badge {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 18px;
-            color: white;
-            margin-right: 15px;
-        }
-
-        .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); }
-        .rank-2 { background: linear-gradient(135deg, #C0C0C0, #A8A8A8); }
-        .rank-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); }
-        .rank-other { background: linear-gradient(135deg, #7c5cdb, #a855f7); }
-
-        .leader-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-            color: white;
-            margin-right: 15px;
-        }
-
-        .leader-info {
-            flex: 1;
-        }
-
-        .leader-name {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .leader-subtitle {
-            font-size: 13px;
-            color: #888;
-            margin-top: 2px;
-        }
-
-        .leader-score {
-            font-size: 22px;
-            font-weight: 800;
-            color: #7c5cdb;
-            text-align: right;
-        }
-
-        .leader-score-subtitle {
-            font-size: 12px;
-            color: #888;
-            text-align: right;
-        }
-
-        .view-all-btn {
-            display: block;
             width: 100%;
-            padding: 12px;
-            margin-top: 15px;
-            background: linear-gradient(135deg, #7c5cdb 0%, #a855f7 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            text-align: center;
+            justify-content: center;
         }
 
-        .view-all-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(124, 92, 219, 0.3);
-            color: white;
+        .leaderboard-table {
+            font-size: 0.85rem;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 30px;
-            color: #999;
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 10px 8px;
         }
+    }
+</style>
+{% endblock %}
 
-        @media (max-width: 768px) {
-            .leaderboard-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .header-top {
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px 20px;
-            }
-
-            .nav-menu {
-                padding: 10px;
-            }
-
-            .nav-item {
-                padding: 8px 15px;
-                font-size: 13px;
-            }
-
-            .rank-number {
-                font-size: 48px;
-            }
-
-            .logo-text {
-                font-size: 20px;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <!-- HEADER -->
-    <div class="header">
-        <!-- Header Top - Logo ve Kullanıcı -->
-        <div class="header-top">
-            <div class="logo-container">
-                <img src="{% static 'images/kostebek_sag.png' %}" alt="Köstebek Logo" class="logo-img">
-                <span class="logo-text">KÖSTEBEK YKS</span>
-            </div>
-            <div class="user-info">
-                <div class="user-avatar">
-                    {{ request.user.username|slice:":1"|upper }}
-                </div>
-                <span>{{ request.user.username }}</span>
-            </div>
-            <a href="{% url 'profil' %}" class="exit-btn">Profil</a>
-        </div>
-
-        <!-- Navigation Menu -->
-        <div class="nav-menu">
-            <a href="{% url 'quiz_anasayfa' %}" class="nav-item">🏠 Ana Sayfa</a>
-            <a href="{% url 'liderlik' %}" class="nav-item active">🏆 Liderlik</a>
-            <a href="{% url 'karsilasma_sinav_tipi_secimi' %}" class="nav-item">⚔️ Karşılaşma</a>
-            <a href="{% url 'bul_bakalim_ders_secimi' %}" class="nav-item">💡 Bul Bakalım</a>
-            <a href="{% url 'tabu_anasayfa' %}" class="nav-item">🎭 Tabu</a>
-            <a href="{% url 'rozetler_view' %}" class="nav-item">🎖️ Rozetler</a>
-        </div>
+{% block content %}
+<div class="leaderboard-container">
+    
+    <!-- USER RANK -->
+    <div class="user-rank-container">
+        <div class="rank-icon">🏆</div>
+        <div class="rank-title">Senin Sıran</div>
+        <div class="rank-number">{{ kullanici_siralama }}</div>
+        <div class="rank-label">{{ kategori|title }} Puan:  <strong>{{ kullanici_puan }}</strong> | Toplam:  {{ toplam_kullanici }} Kullanıcı</div>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
+    <!-- PODIUM (Top 3) -->
+    {% if liderler|length >= 3 %}
+    <div class="podium-section">
+        <div class="podium-container">
+            <!-- 2. SIRA -->
+            <div class="podium-item podium-rank-2">
+                <div class="podium-avatar">
+                    {{ liderler.1.kullanici.username|slice:": 1"|upper }}
+                </div>
+                <div class="podium-name">{{ liderler.1.kullanici.username }}</div>
+                <div class="podium-score">
+                    {% if puan_alani == 'gunluk_puan' %}{{ liderler.1.gunluk_puan }}
+                    {% elif puan_alani == 'haftalik_puan' %}{{ liderler.1.haftalik_puan }}
+                    {% elif puan_alani == 'aylik_puan' %}{{ liderler.1.aylik_puan }}
+                    {% else %}{{ liderler.1.toplam_puan }}{% endif %} 🏆
+                </div>
+                <div class="podium-platform">
+                    <div class="platform-rank">2</div>
+                </div>
+            </div>
+
+            <!-- 1.SIRA -->
+            <div class="podium-item podium-rank-1">
+                <div class="podium-avatar">
+                    <div class="podium-crown">👑</div>
+                    {{ liderler.0.kullanici.username|slice:":1"|upper }}
+                </div>
+                <div class="podium-name">{{ liderler.0.kullanici.username }}</div>
+                <div class="podium-score">
+                    {% if puan_alani == 'gunluk_puan' %}{{ liderler.0.gunluk_puan }}
+                    {% elif puan_alani == 'haftalik_puan' %}{{ liderler.0.haftalik_puan }}
+                    {% elif puan_alani == 'aylik_puan' %}{{ liderler.0.aylik_puan }}
+                    {% else %}{{ liderler.0.toplam_puan }}{% endif %} 🏆
+                </div>
+                <div class="podium-platform">
+                    <div class="platform-rank">1</div>
+                </div>
+            </div>
+
+            <!-- 3.SIRA -->
+            <div class="podium-item podium-rank-3">
+                <div class="podium-avatar">
+                    {{ liderler.2.kullanici.username|slice:":1"|upper }}
+                </div>
+                <div class="podium-name">{{ liderler.2.kullanici.username }}</div>
+                <div class="podium-score">
+                    {% if puan_alani == 'gunluk_puan' %}{{ liderler.2.gunluk_puan }}
+                    {% elif puan_alani == 'haftalik_puan' %}{{ liderler.2.haftalik_puan }}
+                    {% elif puan_alani == 'aylik_puan' %}{{ liderler.2.aylik_puan }}
+                    {% else %}{{ liderler.2.toplam_puan }}{% endif %} 🏆
+                </div>
+                <div class="podium-platform">
+                    <div class="platform-rank">3</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- CATEGORIES -->
+    <div class="leaderboard-categories">
+        <a href="? kategori=gunluk" class="category-btn {% if kategori == 'gunluk' %}active{% endif %}">
+            <span>📅 Günlük</span>
+        </a>
+        <a href="?kategori=haftalik" class="category-btn {% if kategori == 'haftalik' %}active{% endif %}">
+            <span>📆 Haftalık</span>
+        </a>
+        <a href="?kategori=aylik" class="category-btn {% if kategori == 'aylik' %}active{% endif %}">
+            <span>📊 Aylık</span>
+        </a>
+        <a href="?kategori=tum_zamanlar" class="category-btn {% if kategori == 'tum_zamanlar' %}active{% endif %}">
+            <span>🌟 Tüm Zamanlar</span>
+        </a>
+    </div>
+
+    <!-- LEADERBOARD TABLE -->
+    <div class="leaderboard-card">
+        <div class="card-header">
+            <span class="card-icon">🏆</span>
+            <h3 class="card-title">{{ baslik }}</h3>
+        </div>
         
-        <!-- USER RANK -->
-        <div class="user-rank-container">
-            <div class="rank-title">
-                🏆 Senin Sıran
-            </div>
-            <div class="rank-number">{{ kullanici_sira }}.</div>
-            <div class="rank-label">Toplam Puan: {{ request.user.profil.toplam_puan }}</div>
-        </div>
-
-        <!-- CATEGORIES -->
-        <div class="leaderboard-categories">
-            <a href="{% url 'liderlik_genel' %}" class="category-btn">
-                ⭐ Genel Liderlik
-            </a>
-            <a href="{% url 'liderlik_oyun_modu' %}?mod=karsilasma" class="category-btn">
-                ⚔️ Karşılaşma
-            </a>
-            <a href="{% url 'liderlik_oyun_modu' %}?mod=bul_bakalim" class="category-btn">
-                💡 Bul Bakalım
-            </a>
-            <a href="{% url 'liderlik_ders' %}?ders=matematik" class="category-btn">
-                🔢 Dersler
-            </a>
-        </div>
-
-        <!-- LEADERBOARD GRID -->
-        <div class="leaderboard-grid">
-            
-            <!-- TOP 10 GENEL LİDERLER -->
-            <div class="leaderboard-card">
-                <div class="card-header">
-                    <span class="card-icon">🏆</span>
-                    <h3 class="card-title">Top 10 Genel Liderler</h3>
-                </div>
-                
-                {% for lider in genel_liderler %}
-                <div class="leader-item">
-                    <div class="rank-badge {% if forloop.counter == 1 %}rank-1{% elif forloop.counter == 2 %}rank-2{% elif forloop.counter == 3 %}rank-3{% else %}rank-other{% endif %}">
-                        {{ forloop.counter }}
-                    </div>
-                    <div class="leader-avatar">
-                        {{ lider.kullanici.username|slice:":1"|upper }}
-                    </div>
-                    <div class="leader-info">
-                        <div class="leader-name">{{ lider.kullanici.username }}</div>
-                        <div class="leader-subtitle">{{ lider.get_alan_display }}</div>
-                    </div>
-                    <div>
-                        <div class="leader-score">{{ lider.toplam_puan }} 🏆</div>
-                        <div class="leader-score-subtitle">{{ lider.genel_basari_orani|floatformat:1 }}% doğru</div>
-                    </div>
-                </div>
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px; text-align: center;">Sıra</th>
+                    <th>Kullanıcı</th>
+                    <th style="text-align: center;">Puan</th>
+                    <th style="text-align: center;">Doğru/Yanlış</th>
+                    <th style="text-align: center;">Başarı Oranı</th>
+                    <th style="text-align:  center;">Alan</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profil in liderler %}
+                <tr class="leader-item {% if profil.kullanici == request.user %}current-user{% endif %}">
+                    <td style="text-align: center;">
+                        <span class="rank-badge {% if forloop.counter == 1 %}rank-1{% elif forloop.counter == 2 %}rank-2{% elif forloop.counter == 3 %}rank-3{% else %}rank-other{% endif %}">
+                            {{ forloop.counter }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="leader-avatar">{{ profil.kullanici.username|slice:":1"|upper }}</span>
+                        <span class="leader-name">
+                            {{ profil.kullanici.username }}
+                            {% if profil.kullanici == request.user %}<span style="color: #FFD700;">👤</span>{% endif %}
+                        </span>
+                    </td>
+                    <td style="text-align: center;">
+                        <span class="leader-score">
+                            {% if puan_alani == 'gunluk_puan' %}{{ profil.gunluk_puan }}
+                            {% elif puan_alani == 'haftalik_puan' %}{{ profil.haftalik_puan }}
+                            {% elif puan_alani == 'aylik_puan' %}{{ profil.aylik_puan }}
+                            {% else %}{{ profil.toplam_puan }}{% endif %}
+                        </span>
+                    </td>
+                    <td style="text-align: center;">
+                        <span class="stat-badge stat-correct">
+                            ✓ {% if puan_alani == 'gunluk_puan' %}{{ profil.gunluk_dogru }}
+                            {% elif puan_alani == 'haftalik_puan' %}{{ profil.haftalik_dogru }}
+                            {% elif puan_alani == 'aylik_puan' %}{{ profil.aylik_dogru }}
+                            {% else %}{{ profil.toplam_dogru }}{% endif %}
+                        </span>
+                        <span class="stat-badge stat-wrong">
+                            ✗ {% if puan_alani == 'gunluk_puan' %}{{ profil.gunluk_yanlis }}
+                            {% elif puan_alani == 'haftalik_puan' %}{{ profil.haftalik_yanlis }}
+                            {% elif puan_alani == 'aylik_puan' %}{{ profil.aylik_yanlis }}
+                            {% else %}{{ profil.toplam_yanlis }}{% endif %}
+                        </span>
+                    </td>
+                    <td style="text-align: center;">
+                        <span class="stat-badge stat-accuracy">
+                            {% if puan_alani == 'gunluk_puan' %}
+                                {% if profil.gunluk_cozulen > 0 %}
+                                    {{ profil.gunluk_basari_orani|floatformat:1 }}%
+                                {% else %}
+                                    0.0%
+                                {% endif %}
+                            {% elif puan_alani == 'haftalik_puan' %}
+                                {% if profil.haftalik_cozulen > 0 %}
+                                    {{ profil.haftalik_basari_orani|floatformat:1 }}%
+                                {% else %}
+                                    0.0%
+                                {% endif %}
+                            {% elif puan_alani == 'aylik_puan' %}
+                                {% if profil.aylik_cozulen > 0 %}
+                                    {{ profil.aylik_basari_orani|floatformat:1 }}%
+                                {% else %}
+                                    0.0%
+                                {% endif %}
+                            {% else %}
+                                {% if profil.cozulen_soru_sayisi > 0 %}
+                                    {{ profil.genel_basari_orani|floatformat:1 }}%
+                                {% else %}
+                                    0.0%
+                                {% endif %}
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td style="text-align: center;">
+                        <span class="leader-subtitle">{{ profil.get_alan_display }}</span>
+                    </td>
+                </tr>
                 {% empty %}
-                <div class="empty-state">Henüz lider yok.</div>
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <div class="empty-icon">😴</div>
+                            <div>Henüz lider yok. İlk sen ol!  🚀</div>
+                        </div>
+                    </td>
+                </tr>
                 {% endfor %}
-                
-                <a href="{% url 'liderlik_genel' %}" class="view-all-btn">Tümünü Gör →</a>
-            </div>
-
-            <!-- BU HAFTANIN LİDERLERİ -->
-            <div class="leaderboard-card">
-                <div class="card-header">
-                    <span class="card-icon">📅</span>
-                    <h3 class="card-title">Bu Haftanın Liderleri</h3>
-                </div>
-                
-                {% for lider in haftalik_liderler %}
-                <div class="leader-item">
-                    <div class="rank-badge {% if forloop.counter == 1 %}rank-1{% elif forloop.counter == 2 %}rank-2{% elif forloop.counter == 3 %}rank-3{% else %}rank-other{% endif %}">
-                        {{ forloop.counter }}
-                    </div>
-                    <div class="leader-avatar">
-                        {{ lider.kullanici.username|slice:":1"|upper }}
-                    </div>
-                    <div class="leader-info">
-                        <div class="leader-name">{{ lider.kullanici.username }}</div>
-                        <div class="leader-subtitle">{{ lider.get_alan_display }}</div>
-                    </div>
-                    <div>
-                        <div class="leader-score">{{ lider.haftalik_puan }} 🌟</div>
-                        <div class="leader-score-subtitle">{{ lider.haftalik_basari_orani|floatformat:1 }}% doğru</div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="empty-state">Henüz lider yok.</div>
-                {% endfor %}
-                
-                <a href="{% url 'liderlik_genel' %}?tip=haftalik" class="view-all-btn">Tümünü Gör →</a>
-            </div>
-
-            <!-- KARŞILAŞMA LİDERLERİ -->
-            <div class="leaderboard-card">
-                <div class="card-header">
-                    <span class="card-icon">⚔️</span>
-                    <h3 class="card-title">Karşılaşma Liderleri</h3>
-                </div>
-                
-                {% for lider in karsilasma_liderler %}
-                <div class="leader-item">
-                    <div class="rank-badge {% if forloop.counter == 1 %}rank-1{% elif forloop.counter == 2 %}rank-2{% elif forloop.counter == 3 %}rank-3{% else %}rank-other{% endif %}">
-                        {{ forloop.counter }}
-                    </div>
-                    <div class="leader-avatar">
-                        {{ lider.profil.kullanici.username|slice:":1"|upper }}
-                    </div>
-                    <div class="leader-info">
-                        <div class="leader-name">{{ lider.profil.kullanici.username }}</div>
-                        <div class="leader-subtitle">{{ lider.oynanan_oyun_sayisi }} oyun</div>
-                    </div>
-                    <div>
-                        <div class="leader-score">{{ lider.toplam_puan }} 🎮</div>
-                        <div class="leader-score-subtitle">{{ lider.galibiyet_orani|floatformat:0 }}% galibiyet</div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="empty-state">Henüz lider yok.</div>
-                {% endfor %}
-                
-                <a href="{% url 'liderlik_oyun_modu' %}?mod=karsilasma" class="view-all-btn">Tümünü Gör →</a>
-            </div>
-
-            <!-- MATEMATİK LİDERLERİ -->
-            <div class="leaderboard-card">
-                <div class="card-header">
-                    <span class="card-icon">🔢</span>
-                    <h3 class="card-title">Matematik Liderleri</h3>
-                </div>
-                
-                {% for lider in matematik_liderler %}
-                <div class="leader-item">
-                    <div class="rank-badge {% if forloop.counter == 1 %}rank-1{% elif forloop.counter == 2 %}rank-2{% elif forloop.counter == 3 %}rank-3{% else %}rank-other{% endif %}">
-                        {{ forloop.counter }}
-                    </div>
-                    <div class="leader-avatar">
-                        {{ lider.profil.kullanici.username|slice:":1"|upper }}
-                    </div>
-                    <div class="leader-info">
-                        <div class="leader-name">{{ lider.profil.kullanici.username }}</div>
-                        <div class="leader-subtitle">{{ lider.cozulen_soru }} soru</div>
-                    </div>
-                    <div>
-                        <div class="leader-score">{{ lider.dogru_sayisi }} ✓</div>
-                        <div class="leader-score-subtitle">{{ lider.net|floatformat:1 }} net</div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="empty-state">Henüz lider yok.</div>
-                {% endfor %}
-                
-                <a href="{% url 'liderlik_ders' %}?ders=matematik" class="view-all-btn">Tümünü Gör →</a>
-            </div>
-
-        </div>
+            </tbody>
+        </table>
     </div>
+</div>
+{% endblock %}
 
-</body>
-</html>
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        showToast('🏆 Liderlik tablosuna hoş geldin!', 'info');
+        
+        {% if kullanici_siralama <= 10 %}
+        setTimeout(() => {
+            showToast('🌟 Harika! Top 10\'dasın!', 'success');
+        }, 1500);
+        {% endif %}
+    });
+</script>
+{% endblock %}
