@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SSS - Köstebek YKS{% endblock %}
+
+{% block content %}
+<div class="sss-container" style="max-width: 900px; margin: 50px auto; padding: 20px;">
+    <h1 style="color: white; font-size: 2.5rem; font-weight: 900; margin-bottom: 20px; text-align: center; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+        ❓ Sıkça Sorulan Sorular
+    </h1>
+
+    <div class="faq-list" style="display: grid; gap: 15px;">
+        <!-- SORU 1 -->
+        <div class="faq-item" style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+            <h3 style="color: #7B68EE; font-size: 1.3rem; font-weight: 800; margin-bottom: 10px;">
+                🎮 Köstebek YKS nedir?
+            </h3>
+            <p style="color:  #6c757d; line-height: 1.6;">
+                Köstebek YKS, oyunlaştırılmış eğitim sistemiyle YKS'ye hazırlanan öğrencilere eğlenceli ve etkili bir çalışma deneyimi sunan bir platformdur. Tabu, karşılaşma, bul bakalım gibi farklı oyun modlarıyla konuları pekiştirebilirsiniz.
+            </p>
+        </div>
+
+        <!-- SORU 2 -->
+        <div class="faq-item" style="background:  white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+            <h3 style="color: #7B68EE; font-size: 1.3rem; font-weight: 800; margin-bottom: 10px;">
+                💰 Platform ücretli mi?
+            </h3>
+            <p style="color: #6c757d; line-height: 1.6;">
+                Hayır!  Köstebek YKS tamamen ücretsizdir. Tüm oyun modlarına, sorulara ve özelliklere sınırsız erişebilirsiniz. 
+            </p>
+        </div>
+
+        <!-- SORU 3 -->
+        <div class="faq-item" style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+            <h3 style="color: #7B68EE; font-size: 1.3rem; font-weight: 800; margin-bottom: 10px;">
+                🏆 Rozetler nasıl kazanılır?
+            </h3>
+            <p style="color: #6c757d; line-height: 1.6;">
+                Belirli başarıları tamamlayarak rozetler kazanabilirsiniz. Örneğin, ilk soruyu çözdüğünüzde "İlk Adım" rozetini, 100 soru çözdüğünüzde "Yüzlük" rozetini kazanırsınız.  Rozetler sayfasından tüm rozetleri görebilirsiniz.
+            </p>
+        </div>
+
+        <!-- SORU 4 -->
+        <div class="faq-item" style="background:  white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+            <h3 style="color: #7B68EE; font-size: 1.3rem; font-weight: 800; margin-bottom: 10px;">
+                👥 Arkadaş ekleyemiyorum, ne yapmalıyım?
+            </h3>
+            <p style="color: #6c757d; line-height: 1.6;">
+                Arkadaş eklemek için "Arkadaşlar" sekmesinden "Arkadaş Ara" butonuna tıklayın.  Kullanıcı adını yazarak arama yapabilirsiniz. Eğer sorun yaşıyorsanız, iletişim sayfasından bize ulaşabilirsiniz.
+            </p>
+        </div>
+
+        <!-- SORU 5 -->
+        <div class="faq-item" style="background: white; border-radius: 15px; padding:  25px; box-shadow:  0 5px 20px rgba(0,0,0,0.1);">
+            <h3 style="color: #7B68EE; font-size: 1.3rem; font-weight: 800; margin-bottom: 10px;">
+                📊 İstatistiklerim nasıl hesaplanıyor?
+            </h3>
+            <p style="color:  #6c757d; line-height: 1.6;">
+                Her doğru cevap için puan kazanırsınız. Başarı oranınız, toplam doğru sayınızın toplam çözülen soruya oranıyla hesaplanır. Liderlik sıralaması ise toplam puanınıza göre belirlenir.
+            </p>
+        </div>
+
+        <!-- SORU 6 -->
+        <div class="faq-item" style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+            <h3 style="color: #7B68EE; font-size: 1.3rem; font-weight: 800; margin-bottom: 10px;">
+                🔒 Hesap güvenliği nasıl sağlanıyor?
+            </h3>
+            <p style="color:  #6c757d; line-height: 1.6;">
+                Tüm verileriniz şifrelenmiş olarak saklanır. Güçlü bir şifre seçmenizi ve kimseyle paylaşmamanızı öneririz. Şüpheli aktivite fark ederseniz hemen şifrenizi değiştirin.
+            </p>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+        <p style="color: white; font-size: 1.1rem;">
+            Sorunuz cevap bulamadınız mı? 
+            <a href="{% url 'iletisim' %}" style="color: #FFD700; font-weight: 700; text-decoration: none;">
+                Bize ulaşın!  →
+            </a>
+        </p>
+    </div>
+</div>
+{% endblock %}

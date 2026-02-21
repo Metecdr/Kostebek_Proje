@@ -1,136 +1,665 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Bul Bakalım - Sonuç{% endblock %}
+{% block title %}
+    {% if kazandi %}Kazandın!{% else %}Bir Sonraki Sefere!{% endif %} - Bul Bakalım
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px 0;
+    }
+
+    .result-container {
+        max-width: 1000px;
+        margin: 50px auto;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform:  translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* RESULT CARD */
+    .result-card {
+        background: white;
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+        animation: popIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes popIn {
+        0% {
+            opacity: 0;
+            transform:  scale(0.3) rotate(-15deg);
+        }
+        70% {
+            transform: scale(1.05) rotate(5deg);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+    }
+
+    .result-header {
+        padding: 50px 30px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .result-header.success {
+        background: linear-gradient(135deg, #10b981, #34d399);
+    }
+
+    .result-header.fail {
+        background: linear-gradient(135deg, #ef4444, #f87171);
+    }
+
+    .result-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    .result-icon {
+        font-size: 8rem;
+        margin-bottom:  20px;
+        animation: bounceScale 1.5s ease-in-out infinite;
+        display: inline-block;
+        filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
+    }
+
+    @keyframes bounceScale {
+        0%, 100% {
+            transform: scale(1) rotate(0deg);
+        }
+        25% {
+            transform: scale(1.2) rotate(-10deg);
+        }
+        50% {
+            transform: scale(1) rotate(0deg);
+        }
+        75% {
+            transform: scale(1.1) rotate(10deg);
+        }
+    }
+
+    .result-title {
+        font-size: 3.5rem;
+        font-weight: 900;
+        color: white;
+        margin-bottom: 15px;
+        text-shadow:  2px 2px 8px rgba(0,0,0,0.3);
+        animation: slideInDown 0.8s ease-out 0.3s backwards;
+    }
+
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .result-subtitle {
+        font-size: 1.5rem;
+        color: rgba(255,255,255,0.95);
+        font-weight: 600;
+        animation: fadeIn 0.8s ease-out 0.5s backwards;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* STATS GRID */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        padding: 40px;
+    }
+
+    .stat-box {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        padding: 30px;
+        border-radius:  20px;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        border: 3px solid transparent;
+        animation: fadeInUp 0.6s ease-out backwards;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-box:nth-child(1) { animation-delay: 0.1s; }
+    .stat-box:nth-child(2) { animation-delay: 0.2s; }
+    .stat-box:nth-child(3) { animation-delay: 0.3s; }
+    .stat-box:nth-child(4) { animation-delay: 0.4s; }
+
+    .stat-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+        transition: left 0.5s;
+    }
+
+    .stat-box:hover::before {
+        left:  100%;
+    }
+
+    .stat-box:hover {
+        transform: translateY(-10px) scale(1.05);
+        border-color: #667eea;
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+    }
+
+    .stat-value {
+        font-size: 3rem;
+        font-weight:  900;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color:  transparent;
+        background-clip:  text;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+        color: #6c757d;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* BUTTONS */
+    .action-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 0 40px 40px 40px;
+        animation: fadeInUp 0.6s ease-out 0.5s backwards;
+    }
+
+    .btn-custom {
+        padding: 18px 35px;
+        font-size: 1.2rem;
+        font-weight:  700;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-custom::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.4);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-custom:hover::before {
+        width: 400px;
+        height: 400px;
+    }
+
+    .btn-custom:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #6c757d, #495057);
+        color: white;
+    }
+
+    /* WRONG ANSWERS SECTION */
+    .wrong-section {
+        padding: 40px;
+        animation: fadeInUp 0.6s ease-out 0.6s backwards;
+    }
+
+    .toggle-wrong-btn {
+        width: 100%;
+        padding:  20px;
+        font-size: 1.3rem;
+        font-weight:  800;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .toggle-wrong-btn::before {
+        content: '';
+        position:  absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .toggle-wrong-btn:hover::before {
+        width: 400px;
+        height: 400px;
+    }
+
+    .toggle-wrong-btn:hover {
+        transform: scale(1.02);
+        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+    }
+
+    .wrong-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 25px;
+        box-shadow:  0 10px 30px rgba(0,0,0,0.1);
+        border: 3px solid #ef4444;
+        animation: slideInRight 0.5s ease-out backwards;
+    }
+
+    .wrong-card:nth-child(1) { animation-delay: 0.1s; }
+    .wrong-card:nth-child(2) { animation-delay: 0.2s; }
+    .wrong-card:nth-child(3) { animation-delay: 0.3s; }
+    .wrong-card:nth-child(4) { animation-delay: 0.4s; }
+    .wrong-card:nth-child(5) { animation-delay: 0.5s; }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .wrong-card-header {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        padding: 20px 25px;
+        font-size: 1.3rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .wrong-card-body {
+        padding: 30px;
+    }
+
+    .question-box, .answer-box {
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 15px;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .question-box {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-left: 5px solid #667eea;
+    }
+
+    .answer-box {
+        border:  2px solid;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .answer-box:hover {
+        transform: translateX(10px);
+    }
+
+    .answer-box.wrong-answer {
+        background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        border-color: #ef4444;
+    }
+
+    .answer-box.correct-answer {
+        background:  linear-gradient(135deg, #f0fdf4, #dcfce7);
+        border-color: #10b981;
+    }
+
+    .box-title {
+        font-weight: 800;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.1rem;
+    }
+
+    .box-content {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: #374151;
+    }
+
+    .no-wrong-alert {
+        background: linear-gradient(135deg, #10b981, #34d399);
+        color: white;
+        padding: 50px;
+        border-radius:  20px;
+        text-align: center;
+        box-shadow: 0 15px 40px rgba(16, 185, 129, 0.3);
+        animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .no-wrong-icon {
+        font-size: 6rem;
+        margin-bottom:  20px;
+        animation: bounceScale 1.5s ease-in-out infinite;
+    }
+
+    .no-wrong-title {
+        font-size:  2rem;
+        font-weight: 900;
+        margin:  0;
+    }
+
+    /* CONFETTI */
+    .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        z-index: 9999;
+        pointer-events: none;
+    }
+
+    @keyframes confettiFall {
+        to {
+            transform: translateY(100vh) rotate(720deg);
+            opacity: 0;
+        }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .result-icon {
+            font-size: 5rem;
+        }
+
+        .result-title {
+            font-size: 2.5rem;
+        }
+
+        .result-subtitle {
+            font-size: 1.2rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            padding: 30px 20px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+        }
+
+        .action-buttons {
+            grid-template-columns: 1fr;
+            padding: 0 20px 30px 20px;
+        }
+
+        .wrong-section {
+            padding: 30px 20px;
+        }
+
+        .wrong-card-body {
+            padding: 20px;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <!-- SONUÇ KARTI -->
-    <div class="card shadow-lg">
-        <div class="card-header {% if kazandi %}bg-success{% else %}bg-danger{% endif %} text-white text-center py-4">
-            <div class="display-1">
-                {% if kazandi %}
-                🎉
-                {% else %}
-                😢
-                {% endif %}
+<div class="result-container">
+    <div class="result-card">
+        <!-- HEADER -->
+        <div class="result-header {% if kazandi %}success{% else %}fail{% endif %}">
+            <div class="result-icon">
+                {% if kazandi %}🎉{% else %}😢{% endif %}
             </div>
-            <h2 class="mt-3">
+            <h1 class="result-title">
+                {% if kazandi %}TEBRİKLER! {% else %}BİR SONRAKİ SEFERE! {% endif %}
+            </h1>
+            <p class="result-subtitle">
                 {% if kazandi %}
-                TEBRİKLER!
+                    1 puan kazandınız! 🏆
                 {% else %}
-                BİR SONRAKI SEFERE!
-                {% endif %}
-            </h2>
-            <p class="lead mb-0">
-                {% if kazandi %}
-                1 puan kazandınız! 🏆
-                {% else %}
-                Maalesef puan kazanamadınız...
+                    Maalesef puan kazanamadınız...
                 {% endif %}
             </p>
         </div>
-        
-        <div class="card-body p-5">
-            <!-- SKOR TABLOSU -->
-            <div class="row text-center mb-5">
-                <div class="col-md-3">
-                    <div class="p-4 bg-light rounded">
-                        <h1 class="text-success mb-2">{{ oyun.dogru_sayisi }}</h1>
-                        <p class="text-muted mb-0">✅ Doğru</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="p-4 bg-light rounded">
-                        <h1 class="text-danger mb-2">{{ oyun.yanlis_sayisi }}</h1>
-                        <p class="text-muted mb-0">❌ Yanlış</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="p-4 bg-light rounded">
-                        <h1 class="text-primary mb-2">{% widthratio oyun.dogru_sayisi 5 100 %}%</h1>
-                        <p class="text-muted mb-0">📊 Başarı</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="p-4 bg-light rounded">
-                        <h1 class="text-warning mb-2">{{ oyun.toplam_puan }}</h1>
-                        <p class="text-muted mb-0">🏆 Puan</p>
-                    </div>
-                </div>
+
+        <!-- STATS GRID -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-value" id="correctCount">{{ oyun.dogru_sayisi }}</div>
+                <div class="stat-label">✅ Doğru</div>
             </div>
 
-            <!-- BUTONLAR -->
-            <div class="row mb-5">
-                <div class="col-md-6">
-                    <a href="{% url 'bul_bakalim_basla' %}" class="btn btn-primary btn-lg w-100">
-                        🔄 Tekrar Oyna
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="{% url 'profil' %}" class="btn btn-secondary btn-lg w-100">
-                        👤 Profilim
-                    </a>
-                </div>
+            <div class="stat-box">
+                <div class="stat-value" id="wrongCount">{{ oyun.yanlis_sayisi }}</div>
+                <div class="stat-label">❌ Yanlış</div>
             </div>
 
-<!-- YANLIŞLARI GÖSTER -->
-<div class="mt-5">
-    {% if yanlislar %}
-        <button class="btn btn-danger btn-lg w-100 mb-4" type="button" data-bs-toggle="collapse" data-bs-target="#yanlislarCollapse">
-            🔍 Yanlışlarımı Göster ({{ yanlislar|length }} adet)
-        </button>
-        
-        <div class="collapse show" id="yanlislarCollapse">
-            {% for sonuc in yanlislar %}
-            <div class="card mb-4 shadow-lg border-danger">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">❌ Yanlış Soru {{ forloop.counter }}</h5>
-                </div>
-                <div class="card-body">
-                    <!-- SORU METNİ -->
-                    <div class="p-3 mb-3 bg-light border rounded">
-                        <h6 class="text-primary mb-2"><strong>📝 SORU:</strong></h6>
-                        <p class="mb-0" style="font-size: 1.1rem; line-height: 1.6;">
-                            {{ sonuc.soru.metin }}
-                        </p>
-                    </div>
-
-                    <!-- SENİN CEVABIN -->
-                    <div class="p-3 mb-3 bg-danger bg-opacity-10 border border-danger rounded">
-                        <h6 class="text-danger mb-2"><strong>❌ SENİN CEVABIN:</strong></h6>
-                        <p class="mb-0" style="font-size: 1.05rem;">
-                            {% if sonuc.verilen_cevap %}
-                                {{ sonuc.verilen_cevap.metin }}
-                            {% else %}
-                                <em class="text-muted">(Cevap vermediniz - Süre bitti)</em>
-                            {% endif %}
-                        </p>
-                    </div>
-
-                    <!-- DOĞRU CEVAP -->
-                    <div class="p-3 bg-success bg-opacity-10 border border-success rounded">
-                        <h6 class="text-success mb-2"><strong>✅ DOĞRU CEVAP:</strong></h6>
-                        <p class="mb-0" style="font-size: 1.05rem;">
-                            {% if sonuc.dogru_cevap %}
-                                {{ sonuc.dogru_cevap.metin }}
-                            {% else %}
-                                <em class="text-muted">(Doğru cevap bulunamadı)</em>
-                            {% endif %}
-                        </p>
-                    </div>
-                </div>
+            <div class="stat-box">
+                <div class="stat-value" id="successRate">{% widthratio oyun.dogru_sayisi 5 100 %}%</div>
+                <div class="stat-label">📊 Başarı</div>
             </div>
-            {% endfor %}
+
+            <div class="stat-box">
+                <div class="stat-value" id="totalPoints">{{ oyun.toplam_puan }}</div>
+                <div class="stat-label">🏆 Puan</div>
+            </div>
         </div>
-    {% else %}
-        <div class="alert alert-success text-center shadow-lg">
-            <div class="display-1 mb-3">🎉</div>
-            <h3 class="mb-0">MÜKEMMEL! HİÇ YANLIŞ YAPMADINIZ!</h3>
+
+        <!-- BUTTONS -->
+        <div class="action-buttons">
+            <a href="{% url 'bul_bakalim_sinav_tipi_secimi' %}" class="btn btn-primary btn-custom">
+                <span style="position: relative; z-index: 1;">
+                    <i class="bi bi-arrow-repeat"></i> Tekrar Oyna
+                </span>
+            </a>
+            <a href="{% url 'profil' %}" class="btn btn-secondary btn-custom">
+                <span style="position: relative; z-index: 1;">
+                    <i class="bi bi-person-circle"></i> Profilim
+                </span>
+            </a>
         </div>
-    {% endif %}
-</div>
+
+        <!-- WRONG ANSWERS -->
+        <div class="wrong-section">
+            {% if yanlislar %}
+                <button class="toggle-wrong-btn" type="button" data-bs-toggle="collapse" data-bs-target="#wrongAnswers">
+                    <span style="position: relative; z-index: 1;">
+                        🔍 Yanlışlarımı Göster ({{ yanlislar|length }} adet)
+                    </span>
+                </button>
+
+                <div class="collapse show" id="wrongAnswers">
+                    {% for sonuc in yanlislar %}
+                    <div class="wrong-card">
+                        <div class="wrong-card-header">
+                            <i class="bi bi-x-circle-fill"></i>
+                            Yanlış Soru {{ forloop.counter }}
+                        </div>
+                        <div class="wrong-card-body">
+                            <!-- SORU -->
+                            <div class="question-box">
+                                <div class="box-title">
+                                    <i class="bi bi-journal-text"></i>
+                                    SORU: 
+                                </div>
+                                <div class="box-content">
+                                    {{ sonuc.soru.metin }}
+                                </div>
+                            </div>
+
+                            <!-- SENİN CEVABIN -->
+                            <div class="answer-box wrong-answer">
+                                <div class="box-title" style="color: #ef4444;">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    SENİN CEVABIN: 
+                                </div>
+                                <div class="box-content">
+                                    {% if sonuc.verilen_cevap %}
+                                        {{ sonuc.verilen_cevap.metin }}
+                                    {% else %}
+                                        <em style="color: #6c757d;">(Cevap vermediniz - Süre bitti)</em>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- DOĞRU CEVAP -->
+                            <div class="answer-box correct-answer">
+                                <div class="box-title" style="color:  #10b981;">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    DOĞRU CEVAP:
+                                </div>
+                                <div class="box-content">
+                                    {% if sonuc.dogru_cevap %}
+                                        {{ sonuc.dogru_cevap.metin }}
+                                    {% else %}
+                                        <em style="color: #6c757d;">(Doğru cevap bulunamadı)</em>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-wrong-alert">
+                    <div class="no-wrong-icon">🎉</div>
+                    <h3 class="no-wrong-title">MÜKEMMEL! HİÇ YANLIŞ YAPMADINIZ! </h3>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const kazandi = {{ kazandi|yesno:"true,false" }};
+        const yanlisYok = {% if not yanlislar %}true{% else %}false{% endif %};
+
+        // Sayaç animasyonları
+        animateValue(document.getElementById('correctCount'), 0, {{ oyun.dogru_sayisi }}, 1000);
+        animateValue(document.getElementById('wrongCount'), 0, {{ oyun.yanlis_sayisi }}, 1000);
+        animateValue(document.getElementById('successRate'), 0, {% widthratio oyun.dogru_sayisi 5 100 %}, 1000, '', '%');
+        animateValue(document.getElementById('totalPoints'), 0, {{ oyun.toplam_puan }}, 1000);
+
+        // Kazanma veya mükemmel performans durumunda confetti
+        if (kazandi || yanlisYok) {
+            setTimeout(() => {
+                createConfetti();
+                if (yanlisYok) {
+                    showToast('Mükemmel!  Hiç yanlış yapmadın!  🌟', 'success');
+                } else {
+                    showToast('Tebrikler! 1 puan kazandın! 🏆', 'success');
+                }
+            }, 500);
+        } else {
+            showToast('Üzülme! Yanlışlarını incele ve tekrar dene!  💪', 'info');
+        }
+    });
+
+    function animateValue(element, start, end, duration, prefix = '', suffix = '') {
+        let startTime = null;
+        const step = (timestamp) => {
+            if (! startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const value = Math.floor(progress * (end - start) + start);
+            element.textContent = prefix + value + suffix;
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    // Confetti Effect
+    function createConfetti() {
+        const colors = ['#FFD700', '#FFA500', '#FF6347', '#4CAF50', '#2196F3', '#9C27B0'];
+        const confettiCount = 120;
+
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = '-10px';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animation = `confettiFall ${Math.random() * 3 + 2}s linear forwards`;
+            confetti.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(confetti);
+
+            setTimeout(() => confetti.remove(), 6000);
+        }
+    }
+</script>
 {% endblock %}

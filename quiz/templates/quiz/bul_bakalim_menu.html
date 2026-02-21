@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<style>
+body {
+    background: #f7f7fa;
+}
+.page-container {
+    display: flex;
+    flex-direction: row;
+    min-height: 80vh;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+.sidebar {
+    width: 220px;
+    background: #b399e6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 30px;
+    border-radius: 0 30px 30px 0;
+    min-height: 600px;
+}
+.sidebar-menu {
+    width: 100%;
+    margin-bottom: 40px;
+}
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    font-size: 1.08rem;
+    color: #222;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 15px;
+    margin-bottom: 8px;
+    transition: background 0.1s;
+    font-weight: 600;
+}
+.sidebar-menu a:hover {
+    background: #d7c9f7;
+}
+.sidebar-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #7B68EE;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+}
+.bul-bakalim-box {
+    width: 180px;
+    height: 140px;
+    background: #e9e1fa;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    box-shadow: 0 3px 18px #7B68EE22;
+}
+.bulbakalim-icon {
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+    color: #7B68EE;
+}
+.bulbakalim-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #7B68EE;
+    font-family: 'Montserrat', sans-serif;
+}
+.main-content {
+    flex: 1;
+    background: #f7f7fa;
+    padding: 32px;
+}
+.reklam-bolumu {
+    background: #b3993b;
+    color: #fff;
+    border-radius: 15px;
+    font-size: 1.15rem;
+    padding: 25px 0;
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+}
+.baslik-bar {
+    background: #b399e6;
+    color: #222;
+    border-radius: 0 0 25px 25px;
+    font-size: 1.5rem;
+    padding: 18px 0 10px 40px;
+    font-weight: 700;
+    margin-bottom: 28px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.baslik-bar .platform-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #222;
+    margin-right: 40px;
+}
+.dersler-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 18px;
+}
+.ders-card {
+    background: #9f79e6;
+    border-radius: 38px;
+    padding: 28px 35px 30px 35px;
+    min-width: 280px;
+    box-shadow: 0 4px 30px #7B68EE22;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.ders-card-title {
+    font-size: 2.15rem;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    font-family: 'Montserrat', sans-serif;
+}
+.dersler-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 28px;
+    justify-content: center;
+    margin-bottom: 22px;
+}
+.ders-btn {
+    min-width: 115px;
+    min-height: 45px;
+    background: #e4e7fd;
+    border: none;
+    border-radius: 16px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #7B68EE;
+    margin: 0 8px 8px 0;
+    transition: background .13s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    text-decoration: none;
+}
+.ders-btn:hover {
+    background: #f9c53b;
+    color: #222;
+}
+.ders-btn.mat { background: #7ba7ee; color: #fff; }
+.ders-btn.fiz { background: #ee7b68; color: #fff; }
+.ders-btn.kim { background: #b3ee7b; color: #222; }
+.ders-btn.bio { background: #c98cf7; color: #fff; }
+.ders-btn.edeb { background: #b3a786; color: #222; }
+.ders-btn.tar { background: #f7bb68; color: #222; }
+.ders-btn.cog { background: #99d1f7; color: #222; }
+.ders-btn.fel { background: #f7e168; color: #222; }
+.ders-btn.karisik { background: linear-gradient(90deg,#f7d168,#e3c9f7); color: #222; }
+@media (max-width: 900px) {
+    .page-container { flex-direction: column; }
+    .sidebar { width: 100%; min-height: auto; border-radius: 0 0 30px 30px; }
+    .main-content { padding: 10px; }
+    .dersler-section { flex-direction: column; gap: 22px; }
+    .ders-card { min-width: 220px; padding: 20px 10px; }
+}
+</style>
+<div class="baslik-bar">
+    <span class="platform-title">Türkiye'nin Dijital Eğitim Platformu</span>
+    <span style="font-size:2rem;font-weight:900;">KöstebeK</span>
+</div>
+<div class="reklam-bolumu">
+    REKLAM BÖLÜMÜ
+</div>
+<div class="page-container">
+    <div class="sidebar">
+        <div class="sidebar-title">KOSTEBEK</div>
+        <div class="sidebar-menu">
+            <a href="#"><i class="bi bi-person-fill"></i> Profilim</a>
+            <a href="#"><i class="bi bi-bar-chart-fill"></i> Sıralamalar</a>
+            <a href="#"><i class="bi bi-question-circle"></i> Nasıl Oynanır</a>
+        </div>
+        <div class="bul-bakalim-box">
+            <span class="bulbakalim-icon">
+                <i class="bi bi-lightbulb-fill"></i>
+            </span>
+            <span class="bulbakalim-title">BUL BAKALIM</span>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="dersler-section">
+            <div class="ders-card">
+                <div class="ders-card-title">SAYISAL</div>
+                <div class="dersler-list">
+                    <a href="#" class="ders-btn mat"><i class="bi bi-rulers"></i> Matematik</a>
+                    <a href="#" class="ders-btn fiz"><i class="bi bi-activity"></i> Fizik</a>
+                    <a href="#" class="ders-btn kim"><i class="bi bi-flask"></i> Kimya</a>
+                    <a href="#" class="ders-btn bio"><i class="bi bi-egg-fried"></i> Biyoloji</a>
+                </div>
+                <a href="#" class="ders-btn karisik">Karışık</a>
+            </div>
+            <div class="ders-card">
+                <div class="ders-card-title">SÖZEL</div>
+                <div class="dersler-list">
+                    <a href="#" class="ders-btn edeb"><i class="bi bi-feather"></i> Edebiyat</a>
+                    <a href="#" class="ders-btn tar"><i class="bi bi-columns-gap"></i> Tarih</a>
+                    <a href="#" class="ders-btn cog"><i class="bi bi-globe"></i> Coğrafya</a>
+                    <a href="#" class="ders-btn fel"><i class="bi bi-braces"></i> Felsefe</a>
+                </div>
+                <a href="#" class="ders-btn karisik">Karışık</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

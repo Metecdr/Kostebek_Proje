@@ -3,94 +3,526 @@
 
 {% block title %}Oyun Modları - Köstebek YKS{% endblock %}
 
-{% block content %}
-<div class="container mt-5">
-    <div class="text-center mb-5">
-        <h1 class="display-4">🎮 Oyun Modları</h1>
-        <p class="lead">Eğlenerek öğren, yarışarak kazan!</p>
-    </div>
+{% block extra_css %}
+<style>
+    body {
+        background:  linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
 
-    <div class="row g-4">
+    .page-header {
+        text-align: center;
+        padding: 60px 0 40px;
+        animation: fadeInDown 0.8s ease-out;
+    }
+
+    .page-title {
+        font-size: 3. 5rem;
+        font-weight: 900;
+        color: white;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+        margin-bottom: 15px;
+        letter-spacing: -1px;
+    }
+
+    .page-subtitle {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform:  translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .game-modes-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+        margin-bottom: 60px;
+    }
+
+    .game-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px 30px;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .game-card:nth-child(1) { animation-delay: 0.1s; }
+    .game-card:nth-child(2) { animation-delay: 0.2s; }
+    .game-card:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .game-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left:  -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    .game-card:hover::before {
+        left: 100%;
+    }
+
+    .game-card:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .game-icon {
+        font-size: 5rem;
+        margin-bottom:  20px;
+        display: inline-block;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .game-card:hover .game-icon {
+        animation: spin 0.6s ease-in-out;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg) scale(1);
+        }
+        50% {
+            transform: rotate(180deg) scale(1.2);
+        }
+        100% {
+            transform: rotate(360deg) scale(1);
+        }
+    }
+
+    .game-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+
+    .game-description {
+        color: #7f8c8d;
+        font-size: 1rem;
+        margin-bottom: 25px;
+        line-height: 1.6;
+    }
+
+    .game-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 25px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .stat-item {
+        text-align:  center;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight:  800;
+        color: #667eea;
+        display: block;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: #95a5a6;
+        text-transform: uppercase;
+    }
+
+    .game-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-size:  1.1rem;
+        font-weight:  700;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        position: relative;
+        overflow:  hidden;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .game-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .game-btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .game-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.6);
+    }
+
+    .game-btn:active {
+        transform: translateY(-1px);
+    }
+
+    .stats-section {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow:  0 10px 40px rgba(0, 0, 0, 0.1);
+        animation: fadeInUp 0.8s ease-out 0.4s;
+        animation-fill-mode: both;
+    }
+
+    .stats-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .stats-header h4 {
+        font-size: 1.8rem;
+        font-weight:  800;
+        color: #2c3e50;
+        margin:  0;
+    }
+
+    .stats-icon {
+        font-size: 2rem;
+        color: #667eea;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 25px;
+        border-radius:  15px;
+        text-align: center;
+        transition: all 0.3s;
+        border: 2px solid transparent;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        border-color: #667eea;
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+    }
+
+    .stat-card-value {
+        font-size: 2. 5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    .stat-card-label {
+        color: #7f8c8d;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .badge-container {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+
+    .game-badge {
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        color: #2c3e50;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight:  700;
+        box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3);
+    }
+
+    .badge-new {
+        background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+        color: white;
+    }
+
+    .badge-hot {
+        background: linear-gradient(135deg, #ff9500, #ff5e3a);
+        color: white;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform:  scale(1);
+        }
+        50% {
+            transform:  scale(1.05);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2.5rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .game-modes-container {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .game-card {
+            padding: 30px 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">🎮 Oyun Modları</h1>
+    <p class="page-subtitle">Eğlenerek öğren, yarışarak kazan!</p>
+</div>
+
+<div class="container">
+    <div class="game-modes-container">
         <!-- KARŞILAŞMA MODU -->
-        <div class="col-md-6">
-            <div class="card shadow-lg h-100">
-                <div class="card-body text-center">
-                    <div class="display-1 mb-3">⚔️</div>
-                    <h3 class="card-title">Karşılaşma Modu</h3>
-                    <p class="card-text">
-                        Rakibinle 1v1 yarış! İlk doğru cevap verene bonus puan!
-                    </p>
-                    <a href="{% url 'karsilasma_rakip_bul' %}" class="btn btn-primary btn-lg">
-                        🎯 Rakip Bul
-                    </a>
+        <div class="game-card">
+            <div class="game-icon">⚔️</div>
+            <h3 class="game-title">Karşılaşma</h3>
+            <p class="game-description">
+                Rakibinle 1v1 yarış!  Test formatındaki sorulara kim daha çok doğru cevap verirse o kazanır.
+            </p>
+            
+            <div class="badge-container">
+                <span class="game-badge badge-hot">🔥 Popüler</span>
+                <span class="game-badge">⚡ Hızlı</span>
+            </div>
+
+            <div class="game-stats">
+                <div class="stat-item">
+                    <span class="stat-value">5</span>
+                    <span class="stat-label">Soru</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">⏱️</span>
+                    <span class="stat-label">Hızlı</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">+1</span>
+                    <span class="stat-label">Puan</span>
                 </div>
             </div>
+
+            <a href="{% url 'karsilasma_sinav_tipi_secimi' %}" class="game-btn">
+                <span style="position: relative; z-index: 1;">Rakip Bul →</span>
+            </a>
+        </div>
+
+        <!-- BUL BAKALIM MODU -->
+        <div class="game-card">
+            <div class="game-icon">💡</div>
+            <h3 class="game-title">Bul Bakalım</h3>
+            <p class="game-description">
+                5 adet çoktan seçmeli soruyu doğru cevaplayarak puan kazan. 3 veya daha fazla doğru = 1 puan! 
+            </p>
+            
+            <div class="badge-container">
+                <span class="game-badge badge-new">🆕 Yeni</span>
+                <span class="game-badge">🎯 Pratik</span>
+            </div>
+
+            <div class="game-stats">
+                <div class="stat-item">
+                    <span class="stat-value">5</span>
+                    <span class="stat-label">Soru</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">90s</span>
+                    <span class="stat-label">Süre</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">+1</span>
+                    <span class="stat-label">Puan</span>
+                </div>
+            </div>
+
+            <a href="{% url 'bul_bakalim_sinav_tipi_secimi' %}" class="game-btn">
+                <span style="position: relative; z-index: 1;">Başla →</span>
+            </a>
         </div>
 
         <!-- TABU OYUNU -->
-        <div class="col-md-6">
-            <div class="card shadow-lg h-100">
-                <div class="card-body text-center">
-                    <div class="display-1 mb-3">🎭</div>
-                    <h3 class="card-title">Tabu Oyunu</h3>
-                    <p class="card-text">
-                        Yasaklı kelimeleri kullanmadan anlat! Takım oyunu!
-                    </p>
-                    <a href="{% url 'tabu_lobi' %}" class="btn btn-success btn-lg">
-                        🎪 Oyuna Başla
-                    </a>
-                </div>
+        <div class="game-card">
+            <div class="game-icon">🎭</div>
+            <h3 class="game-title">Tabu</h3>
+            <p class="game-description">
+                Yasaklı kelimeleri kullanmadan kelimeyi anlat!  Takım oyunu ile arkadaşlarınla eğlen.
+            </p>
+            
+            <div class="badge-container">
+                <span class="game-badge">👥 Çok Oyunculu</span>
+                <span class="game-badge">🎉 Eğlenceli</span>
             </div>
-        </div>
-    </div>
 
-        <div class="col-md-6">
-            <div class="card shadow-lg h-100">
-                <div class="card-body text-center">
-                    <div class="display-1 mb-3">🎯</div>
-                    <h3 class="card-title">Bul Bakalım</h3>
-                     <p class="card-text">
-                        5 uzun soru, 90 saniye! 3 doğru = 1 puan kazan!
-                    </p>
-                    <a href="{% url 'bul_bakalim_sinav_tipi_secimi' %}" class="btn btn-warning btn-lg">
-                         🚀 Başla
-                   </a>
+            <div class="game-stats">
+                <div class="stat-item">
+                    <span class="stat-value">10</span>
+                    <span class="stat-label">Kelime</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">60s</span>
+                    <span class="stat-label">Tur</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">2v2</span>
+                    <span class="stat-label">Takım</span>
                 </div>
             </div>
+
+            <a href="{% url 'tabu_anasayfa' %}" class="game-btn">
+                <span style="position: relative; z-index: 1;">Oyna →</span>
+            </a>
         </div>
     </div>
 
     <!-- İSTATİSTİKLER -->
     {% if profil %}
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4>📊 İstatistiklerim</h4>
+    <div class="stats-section">
+        <div class="stats-header">
+            <span class="stats-icon">📊</span>
+            <h4>İstatistiklerim</h4>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-value" id="totalPoints">{{ profil.toplam_puan }}</div>
+                <div class="stat-card-label">Toplam Puan</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-value" id="weeklyPoints">{{ profil.haftalik_puan }}</div>
+                <div class="stat-card-label">Haftalık Puan</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-value" id="solvedQuestions">{{ profil.cozulen_soru_sayisi }}</div>
+                <div class="stat-card-label">Çözülen Soru</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-value" id="successRate">
+                    {% if profil.cozulen_soru_sayisi > 0 %}
+                        {{ profil.genel_basari_orani|floatformat:0 }}%
+                    {% else %}
+                        0%
+                    {% endif %}
                 </div>
-                <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-md-3">
-                            <h5>{{ profil.toplam_puan }}</h5>
-                            <p class="text-muted">Toplam Puan</p>
-                        </div>
-                        <div class="col-md-3">
-                            <h5>{{ profil.cozulen_soru_sayisi }}</h5>
-                            <p class="text-muted">Çözülen Soru</p>
-                        </div>
-                        <div class="col-md-3">
-                            <h5>{{ profil.genel_basari_orani }}%</h5>
-                            <p class="text-muted">Başarı Oranı</p>
-                        </div>
-                        <div class="col-md-3">
-                            <h5>{{ profil.rozetler.count }}</h5>
-                            <p class="text-muted">Rozet</p>
-                        </div>
-                    </div>
-                </div>
+                <div class="stat-card-label">Başarı Oranı</div>
             </div>
         </div>
     </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sayı animasyonları
+        {% if profil %}
+        animateCounter(document.getElementById('totalPoints'), 0, {{ profil.toplam_puan }}, 1500);
+        animateCounter(document. getElementById('weeklyPoints'), 0, {{ profil.haftalik_puan }}, 1500);
+        animateCounter(document.getElementById('solvedQuestions'), 0, {{ profil.cozulen_soru_sayisi }}, 1500);
+        
+        // Başarı oranı animasyonu
+        const successRateElement = document.getElementById('successRate');
+        const targetRate = {% if profil.cozulen_soru_sayisi > 0 %}{{ profil.genel_basari_orani|floatformat:0 }}{% else %}0{% endif %};
+        animateCounter(successRateElement, 0, targetRate, 1500);
+        
+        // Animasyon bitince % işareti ekle
+        setTimeout(() => {
+            successRateElement.textContent = targetRate + '%';
+        }, 1500);
+        {% endif %}
+
+        // Oyun kartlarına hover efekti ekle
+        const gameCards = document.querySelectorAll('.game-card');
+        gameCards.forEach(card => {
+            card. addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+
+        // Sayfa yüklendiğinde hoş geldin mesajı
+        {% if user.is_authenticated %}
+        setTimeout(() => {
+            showToast('Hoş geldin {{ user.username }}! Hangi oyunu oynamak istersin?', 'info', 'Merhaba!  👋');
+        }, 500);
+        {% endif %}
+    });
+</script>
 {% endblock %}

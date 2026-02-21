@@ -1,0 +1,331 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sınav Tipi Seçimi - Karşılaşma{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background:  linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+
+    .sinav-tipi-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* PAGE HEADER */
+    .page-header {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        border-radius: 25px;
+        padding: 50px 40px;
+        margin-bottom: 50px;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        animation: slideDown 0.8s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '⚔️';
+        position:  absolute;
+        font-size: 20rem;
+        opacity: 0.05;
+        top: -80px;
+        right: -80px;
+        animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-icon {
+        font-size: 5rem;
+        margin-bottom:  20px;
+        animation:  bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0) rotate(-10deg); }
+        50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    .page-title {
+        font-size: 3rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+    }
+
+    .page-subtitle {
+        font-size: 1.3rem;
+        color: #666;
+        font-weight: 600;
+    }
+
+    /* SINAV CARDS */
+    .sinav-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+        animation: fadeInUp 0.8s ease-out 0.3s backwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .sinav-card {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        border-radius: 25px;
+        padding: 50px 40px;
+        text-align: center;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        text-decoration: none;
+        display: block;
+    }
+
+    .sinav-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height:  6px;
+    }
+
+    .sinav-card.tyt::before {
+        background: linear-gradient(90deg, #4facfe, #00f2fe);
+    }
+
+    .sinav-card.ayt::before {
+        background:  linear-gradient(90deg, #f093fb, #f5576c);
+    }
+
+    .sinav-card:hover {
+        transform: translateY(-15px) scale(1.05);
+        box-shadow: 0 25px 70px rgba(0,0,0,0.3);
+    }
+
+    .sinav-icon {
+        font-size: 5rem;
+        margin-bottom:  25px;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+    }
+
+    .sinav-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin-bottom: 20px;
+    }
+
+    .sinav-card.tyt .sinav-title {
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .sinav-card.ayt .sinav-title {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        -webkit-background-clip:  text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .sinav-description {
+        font-size: 1.1rem;
+        color: #666;
+        font-weight: 600;
+        line-height: 1.8;
+        margin-bottom: 25px;
+    }
+
+    .sinav-badge {
+        display: inline-block;
+        padding: 10px 25px;
+        border-radius: 50px;
+        font-size:  0.9rem;
+        font-weight: 700;
+        margin:  5px;
+    }
+
+    .sinav-card.tyt .sinav-badge {
+        background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+        color: #006064;
+    }
+
+    .sinav-card.ayt .sinav-badge {
+        background:  linear-gradient(135deg, #fce4ec, #f8bbd0);
+        color: #880e4f;
+    }
+
+    /* BACK BUTTON */
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 35px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        color: #667eea;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-decoration: none;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .back-button::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .back-button:hover::before {
+        width: 400px;
+        height: 400px;
+    }
+
+    .back-button:hover {
+        color: white;
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+    }
+
+    .back-button span {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .sinav-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .sinav-card {
+            padding: 40px 30px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sinav-tipi-container">
+    
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div class="page-icon">⚔️</div>
+        <h1 class="page-title">Karşılaşma</h1>
+        <p class="page-subtitle">Hangi sınav tipinde yarışmak istersin?</p>
+    </div>
+
+    <!-- SINAV CARDS -->
+    <div class="sinav-grid">
+        
+        <!-- TYT CARD -->
+        <a href="{% url 'karsilasma_ders_secimi' %}?sinav_tipi=TYT" class="sinav-card tyt">
+            <div class="sinav-icon">📘</div>
+            <h2 class="sinav-title">TYT</h2>
+            <p class="sinav-description">
+                Temel Yeterlilik Testi<br>
+                Temel düzey sorularla rakibinle yarış
+            </p>
+            <div>
+                <span class="sinav-badge">Türkçe</span>
+                <span class="sinav-badge">Matematik</span>
+                <span class="sinav-badge">Fen</span>
+                <span class="sinav-badge">Sosyal</span>
+            </div>
+        </a>
+
+        <!-- AYT CARD -->
+        <a href="{% url 'karsilasma_ders_secimi' %}?sinav_tipi=AYT" class="sinav-card ayt">
+            <div class="sinav-icon">📕</div>
+            <h2 class="sinav-title">AYT</h2>
+            <p class="sinav-description">
+                Alan Yeterlilik Testi<br>
+                İleri düzey sorularla yeteneklerini göster
+            </p>
+            <div>
+                <span class="sinav-badge">Sayısal</span>
+                <span class="sinav-badge">Sözel</span>
+                <span class="sinav-badge">Eşit Ağırlık</span>
+            </div>
+        </a>
+
+    </div>
+
+    <!-- BACK BUTTON -->
+    <div style="text-align: center;">
+        <a href="{% url 'profil' %}" class="back-button">
+            <span><i class="bi bi-arrow-left-circle-fill"></i> Ana Sayfaya Dön</span>
+        </a>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        showToast('Karşılaşmaya hoş geldin!  ⚔️', 'info');
+    });
+</script>
+{% endblock %}

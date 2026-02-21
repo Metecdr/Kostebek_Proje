@@ -1,0 +1,57 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+db.sqlite3-shm
+db.sqlite3-wal
+
+# Environment
+.env
+.env.local
+.env.*.local
+venv/
+env/
+ENV/
+
+# Media files
+media/
+
+# Static files
+staticfiles/
+/static/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+debug.log
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+*.db
+
+*.log
+__pycache__/
+*.pyc
+*.pyo

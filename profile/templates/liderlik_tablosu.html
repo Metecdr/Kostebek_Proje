@@ -1,0 +1,120 @@
+{% load custom_filters %} 
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Köstebek - Liderlik Tablosu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-mor: #6A5ACD;
+            --accent-turuncu: #FF8C00;
+            --bg-krem: #FFFACD;
+        }
+        body { background-color: var(--bg-krem); }
+        .header-mor { background-color: var(--primary-mor); color: white; }
+        .btn-vurgu { background-color: var(--accent-turuncu); border-color: var(--accent-turuncu); color: white; }
+        .btn-vurgu:hover { background-color: #e57e00; border-color: #e57e00; }
+        .table-dark { background-color: var(--primary-mor) !important; color: white; }
+        .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: #f8f9fa; }
+    </style>
+</head>
+<body>
+
+<header class="header-mor py-3">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h1 class="h4 mb-0"><span class="fw-bold">KÖSTEBEK</span></h1>
+        <div>
+            <a href="{% url 'profil' %}" class="btn btn-outline-light me-2">Profilim</a>
+            <a href="{% url 'cikis' %}" class="btn btn-vurgu">Çıkış Yap</a>
+        </div>
+    </div>
+</header>
+
+<div class="container my-5">
+    <h1 class="text-center mb-4" style="color: var(--primary-mor);">👑 Köstebek Lider Arenası</h1>
+    <hr>
+
+    <div class="text-center mb-4">
+        <a href="{% url 'liderlik' %}?tip=toplam&alan={{ alan_filtresi }}" 
+           class="btn {% if sirala_tipi == 'toplam' or not sirala_tipi %}btn-vurgu{% else %}btn-outline-secondary{% endif %} me-3">
+            Genel Puan Sıralaması
+        </a>
+        <a href="{% url 'liderlik' %}?tip=haftalik&alan={{ alan_filtresi }}" 
+           class="btn {% if sirala_tipi == 'haftalik' %}btn-vurgu{% else %}btn-outline-secondary{% endif %}">
+            Haftalık Puan Sıralaması
+        </a>
+    </div>
+
+    <div class="text-center mb-4">
+        <a href="{% url 'liderlik' %}?tip={{ sirala_tipi }}&alan=genel" 
+           class="btn btn-sm {% if alan_filtresi == 'genel' %}btn-primary{% else %}btn-secondary{% endif %} me-1">
+            TÜM ALANLAR (Genel)
+        </a>
+        {% for kod, isim in alan_tercihleri %}
+        <a href="{% url 'liderlik' %}?tip={{ sirala_tipi }}&alan={{ kod }}" 
+           class="btn btn-sm {% if alan_filtresi == kod %}btn-primary{% else %}btn-secondary{% endif %}">
+            {{ isim }}
+        </a>
+        {% endfor %}
+    </div>
+
+
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <table class="table table-striped table-hover mt-4">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col"># Sıra</th>
+                        <th scope="col">Kullanıcı Adı</th>
+                        <th scope="col">Alan</th>
+                        <th scope="col">
+                            {% if sirala_tipi == 'haftalik' %}
+                                Haftalık Puan
+                            {% else %}
+                                Toplam Puan
+                            {% endif %}
+                        </th>
+                        <th scope="col">Başarı Oranı</th>
+                        <th scope="col">Unvanlar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lider in liderler %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ lider.kullanici.username }}</td>
+                        <td>{{ lider.get_alan_display }}</td>
+                        <td>
+                            {% if sirala_tipi == 'haftalik' %}
+                                {{ lider.haftalik_puan }}
+                            {% else %}
+                                {{ lider.toplam_puan }}
+                            {% endif %}
+                        </td>
+                        <td>{{ lider.basari_orani|floatformat:2 }}%</td>
+                        <td>
+                            {% for unvan in lider.unvanlar|split:"," %}
+                                <span class="badge bg-secondary">{{ unvan }}</span>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">Seçilen kriterlere göre liderlik tablosunda gösterilecek puan yok.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="mt-4 text-center">
+        <a href="{% url 'profil' %}" class="btn btn-lg btn-vurgu">Profile Geri Dön</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
