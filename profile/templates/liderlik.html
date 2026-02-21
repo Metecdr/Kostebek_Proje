@@ -1,329 +1,877 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Köstebek - Liderlik Tablosu</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    
-    <style>
-        :root {
-            --primary-mor: #6A5ACD;
-            --accent-turuncu: #FF8C00;
-            --bg-krem: #FFFACD;
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Liderlik Tablosu - Köstebek YKS{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2? family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .leaderboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* ==================== KATEGORİ TABS ==================== */
+    .leaderboard-categories {
+        display: flex;
+        gap: 15px;
+        margin-bottom:  30px;
+        justify-content: center;
+        flex-wrap: wrap;
+        animation: fadeIn 0.8s ease-out 0.5s backwards;
+    }
+
+    .category-btn {
+        background: rgba(255,255,255,0.9);
+        color: #667eea;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 50px;
+        font-size:  1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .category-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .category-btn:hover::before,
+    .category-btn.active::before {
+        width:  300px;
+        height: 300px;
+    }
+
+    .category-btn:hover,
+    .category-btn.active {
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .category-btn span {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ✅ SEVİYE BUTONU ÖZEL RENK */
+    .category-btn.seviye-btn.active {
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        color: white;
+    }
+
+    /* ==================== USER RANK SECTION ==================== */
+    .user-rank-container {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        padding: 40px;
+        text-align: center;
+        border-radius: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        animation: slideDown 0.8s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .user-rank-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102,126,234,0.2), transparent);
+        animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left:  100%; }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform:  translateY(-50px);
         }
-        
-        body {
-            background: linear-gradient(135deg, var(--bg-krem) 0%, #FFF8DC 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
-        
-        .header-mor {
-            background: linear-gradient(135deg, var(--primary-mor) 0%, #5a4abf 100%);
-            color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .rank-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    .rank-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color:  transparent;
+        background-clip:  text;
+        margin-bottom: 20px;
+    }
+
+    .rank-number {
+        font-size: 5rem;
+        font-weight:  900;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1;
+        margin-bottom: 10px;
+        animation: countUp 1.5s ease-out;
+    }
+
+    @keyframes countUp {
+        from {
+            opacity: 0;
+            transform: scale(0.5);
         }
-        
-        .liderlik-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
+        to {
+            opacity:  1;
+            transform: scale(1);
         }
-        
-        .liderlik-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .rank-label {
+        font-size: 1.2rem;
+        color: #666;
+        font-weight: 600;
+    }
+
+    /* ==================== PODIUM SECTION ==================== */
+    .podium-section {
+        margin-bottom: 40px;
+        animation: fadeInUp 0.8s ease-out 0.3s backwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
         }
-        
-        .lider-item {
-            display: flex;
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .podium-container {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 40px;
+        height: 400px;
+    }
+
+    .podium-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .podium-item:hover {
+        transform: translateY(-10px);
+    }
+
+    .podium-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius:  50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: white;
+        font-weight: 900;
+        margin-bottom: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        position: relative;
+        animation: scaleIn 0.6s ease-out backwards;
+    }
+
+    .podium-item:nth-child(1) .podium-avatar { animation-delay: 0.4s; }
+    .podium-item:nth-child(2) .podium-avatar { animation-delay: 0.2s; }
+    .podium-item:nth-child(3) .podium-avatar { animation-delay: 0.6s; }
+
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .podium-crown {
+        position: absolute;
+        top: -25px;
+        font-size: 2.5rem;
+        animation: rotate 3s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .podium-rank-1 .podium-avatar {
+        width: 120px;
+        height: 120px;
+        font-size: 3rem;
+        border:  5px solid #FFD700;
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+    }
+
+    .podium-rank-2 .podium-avatar {
+        border: 5px solid #C0C0C0;
+    }
+
+    .podium-rank-3 .podium-avatar {
+        border: 5px solid #CD7F32;
+    }
+
+    .podium-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 8px;
+    }
+
+    .podium-score {
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: #FFD700;
+        margin-bottom:  15px;
+    }
+
+    .podium-platform {
+        background: white;
+        border-radius: 15px 15px 0 0;
+        padding: 20px;
+        box-shadow:  0 -5px 30px rgba(0,0,0,0.2);
+        text-align: center;
+        transition: all 0.3s ease;
+        animation: slideUp 0.8s ease-out backwards;
+    }
+
+    .podium-item:nth-child(1) .podium-platform { animation-delay: 0.6s; }
+    .podium-item:nth-child(2) .podium-platform { animation-delay: 0.4s; }
+    .podium-item:nth-child(3) .podium-platform { animation-delay: 0.8s; }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(100px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .podium-rank-1 .podium-platform {
+        height: 180px;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        color: white;
+    }
+
+    .podium-rank-2 .podium-platform {
+        height: 140px;
+        background: linear-gradient(135deg, #E8E8E8, #C0C0C0);
+    }
+
+    .podium-rank-3 .podium-platform {
+        height: 100px;
+        background: linear-gradient(135deg, #E6C8A0, #CD7F32);
+        color: white;
+    }
+
+    .platform-rank {
+        font-size: 3rem;
+        font-weight:  900;
+        line-height: 1;
+    }
+
+    /* ==================== LEADERBOARD TABLE ==================== */
+    .leaderboard-card {
+        background: white;
+        border-radius: 25px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        animation: fadeInUp 0.8s ease-out 0.6s backwards;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom:  25px;
+        padding-bottom: 20px;
+        border-bottom:  3px solid #f0f0f0;
+    }
+
+    .card-icon {
+        font-size: 2.5rem;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+        font-weight:  800;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color:  transparent;
+        background-clip:  text;
+    }
+
+    /* TABLO */
+    .leaderboard-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .leaderboard-table thead {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .leaderboard-table th {
+        padding: 18px 15px;
+        text-align: left;
+        font-weight: 800;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .leaderboard-table td {
+        padding: 18px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+    }
+
+    .leader-item {
+        transition: all 0.3s ease;
+        animation: slideInRight 0.5s ease-out backwards;
+    }
+
+    .leader-item:nth-child(1) { animation-delay: 0.1s; }
+    .leader-item:nth-child(2) { animation-delay: 0.15s; }
+    .leader-item:nth-child(3) { animation-delay: 0.2s; }
+    .leader-item:nth-child(4) { animation-delay: 0.25s; }
+    .leader-item:nth-child(5) { animation-delay: 0.3s; }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .leader-item:hover {
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        transform: translateX(10px);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+    }
+
+    .leader-item.current-user {
+        background: linear-gradient(135deg, #fff9e6, #ffe4b5);
+        border-left: 5px solid #FFD700;
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+
+    .rank-badge {
+        width: 45px;
+        height: 45px;
+        border-radius:  50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 1.2rem;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .leader-item:hover .rank-badge {
+        transform: scale(1.15) rotate(360deg);
+    }
+
+    .rank-1 {
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    .rank-2 {
+        background:  linear-gradient(135deg, #E8E8E8, #C0C0C0);
+        box-shadow: 0 5px 15px rgba(192, 192, 192, 0.4);
+    }
+
+    .rank-3 {
+        background:  linear-gradient(135deg, #E6C8A0, #CD7F32);
+        box-shadow: 0 5px 15px rgba(205, 127, 50, 0.4);
+    }
+
+    .rank-other {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .leader-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius:  50%;
+        background: linear-gradient(135deg, #ffd89b, #19547b);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 1.3rem;
+        color: white;
+        transition: all 0.3s ease;
+        vertical-align: middle;
+        margin:  0 10px;
+    }
+
+    .leader-item:hover .leader-avatar {
+        transform: scale(1.1);
+    }
+
+    .leader-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .leader-subtitle {
+        font-size: 0.85rem;
+        color: #888;
+    }
+
+    .leader-score {
+        font-size: 1.3rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius:  15px;
+        font-size:  0.9rem;
+        font-weight:  700;
+        margin:  0 3px;
+    }
+
+    .stat-correct {
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+    }
+
+    .stat-wrong {
+        background: linear-gradient(135deg, #F44336, #e53935);
+        color: white;
+    }
+
+    .stat-accuracy {
+        background: linear-gradient(135deg, #2196F3, #1976d2);
+        color: white;
+    }
+
+    /* ✅ SEVİYE BADGE */
+    .stat-level {
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        color: white;
+        padding: 6px 14px;
+        border-radius:  12px;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3);
+    }
+
+    .stat-xp {
+        background: rgba(255, 215, 0, 0.1);
+        color: #FFA500;
+        padding: 5px 12px;
+        border-radius:  10px;
+        font-weight:  700;
+        border: 2px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+        font-size: 1.1rem;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .podium-container {
+            height: auto;
+            flex-direction: column;
             align-items: center;
-            padding: 15px;
-            margin-bottom: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            transition: all 0.3s ease;
         }
-        
-        .lider-item:hover {
-            background: #e9ecef;
-            transform: translateX(5px);
+
+        .podium-item {
+            width:  100%;
+            max-width: 300px;
         }
-        
-        .lider-sira {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
+
+        .podium-rank-1 .podium-platform,
+        .podium-rank-2 .podium-platform,
+        .podium-rank-3 .podium-platform {
+            height: auto;
+            min-height: 100px;
+        }
+
+        .rank-number {
+            font-size: 3.5rem;
+        }
+
+        .leaderboard-categories {
+            flex-direction: column;
+        }
+
+        .category-btn {
+            width: 100%;
             justify-content: center;
-            font-weight: bold;
-            color: white;
-            margin-right: 15px;
         }
-        
-        .sira-1 { background: linear-gradient(135deg, #FFD700, #FFA500); }
-        .sira-2 { background: linear-gradient(135deg, #C0C0C0, #A8A8A8); }
-        .sira-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); }
-        .sira-other { background: linear-gradient(135deg, var(--primary-mor), #5a4abf); }
-        
-        .lider-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 15px;
-            border: 3px solid white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .tab-button {
-            background: white;
-            border: 2px solid var(--primary-mor);
-            color: var(--primary-mor);
-            padding: 10px 20px;
-            border-radius: 10px;
-            margin: 5px;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-        }
-        
-        .tab-button:hover, .tab-button.active {
-            background: var(--primary-mor);
-            color: white;
-            transform: translateY(-2px);
-        }
-        
-        .kullanici-sira-card {
-            background: linear-gradient(135deg, var(--primary-mor), #5a4abf);
-            color: white;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-    </style>
-</head>
-<body>
 
-<!-- Header -->
-<header class="header-mor py-3 shadow-sm">
-    <div class="container d-flex justify-content-between align-items-center">
-        <h1 class="h4 mb-0">
-            <i class="bi bi-gem"></i> <span class="fw-bold">KÖSTEBEK YKS</span>
-        </h1>
-        <div>
-            <a href="{% url 'profil' %}" class="btn btn-outline-light me-2">
-                <i class="bi bi-person-circle"></i> Profilim
-            </a>
-            <a href="{% url 'cikis' %}" class="btn btn-outline-light">
-                <i class="bi bi-box-arrow-right"></i> Çıkış
-            </a>
+        .leaderboard-table {
+            font-size: 0.85rem;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 10px 8px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="leaderboard-container">
+    
+    <!-- USER RANK -->
+    <div class="user-rank-container">
+        <div class="rank-icon">🏆</div>
+        <div class="rank-title">Senin Sıran</div>
+        <div class="rank-number">{{ kullanici_siralama }}</div>
+        <div class="rank-label">
+            {{ kategori|title }} 
+            {% if kategori == 'seviye' %}
+                <strong>{{ kullanici_puan }}</strong>
+            {% else %}
+                Puan: <strong>{{ kullanici_puan }}</strong>
+            {% endif %}
+            | Toplam: {{ toplam_kullanici }} Kullanıcı
         </div>
     </div>
-</header>
 
-<!-- Main Content -->
-<div class="container my-5">
-    
-    <!-- Kullanıcı Sırası -->
-    <div class="kullanici-sira-card">
-        <h2 class="mb-3">
-            <i class="bi bi-trophy-fill"></i> Senin Sıran
-        </h2>
-        <h1 class="display-3 fw-bold">{{ kullanici_sira }}.</h1>
-        <p class="mb-0">Toplam Puan: <strong>{{ request.user.profil.toplam_puan }}</strong></p>
-    </div>
-    
-    <!-- Liderlik Kategorileri -->
-    <div class="text-center mb-4">
-        <h3 class="mb-3">Liderlik Kategorileri</h3>
-        <a href="{% url 'liderlik_genel' %}" class="tab-button">
-            <i class="bi bi-star-fill"></i> Genel Liderlik
+    <!-- CATEGORIES -->
+    <div class="leaderboard-categories">
+        <a href="? kategori=gunluk" class="category-btn {% if kategori == 'gunluk' %}active{% endif %}">
+            <span>📅 Günlük</span>
         </a>
-        <a href="{% url 'liderlik_oyun_modu' %}?mod=karsilasma" class="tab-button">
-            <i class="bi bi-controller"></i> Karşılaşma
+        <a href="?kategori=haftalik" class="category-btn {% if kategori == 'haftalik' %}active{% endif %}">
+            <span>📆 Haftalık</span>
         </a>
-        <a href="{% url 'liderlik_oyun_modu' %}?mod=bul_bakalim" class="tab-button">
-            <i class="bi bi-lightbulb-fill"></i> Bul Bakalım
+        <a href="?kategori=aylik" class="category-btn {% if kategori == 'aylik' %}active{% endif %}">
+            <span>📊 Aylık</span>
         </a>
-        <a href="{% url 'liderlik_ders' %}?ders=matematik" class="tab-button">
-            <i class="bi bi-calculator"></i> Dersler
+        <a href="?kategori=tum_zamanlar" class="category-btn {% if kategori == 'tum_zamanlar' %}active{% endif %}">
+            <span>🌟 Tüm Zamanlar</span>
+        </a>
+        <!-- ✅ YENİ SEVİYE FİLTRESİ -->
+        <a href="?kategori=seviye" class="category-btn seviye-btn {% if kategori == 'seviye' %}active{% endif %}">
+            <span>⭐ Seviye</span>
         </a>
     </div>
-    
-    <div class="row">
+
+    <!-- PODIUM (Top 3) -->
+    {% if liderler|length >= 3 %}
+    <div class="podium-section">
+        <div class="podium-container">
+            <!-- 2. SIRA -->
+            <div class="podium-item podium-rank-2">
+                <div class="podium-avatar">
+                    {{ liderler.1.kullanici.username|slice:": 1"|upper }}
+                </div>
+                <div class="podium-name">{{ liderler.1.kullanici.username }}</div>
+                <div class="podium-score">
+                    {% if puan_alani == 'gunluk_puan' %}{{ liderler.1.gunluk_puan }}
+                    {% elif puan_alani == 'haftalik_puan' %}{{ liderler.1.haftalik_puan }}
+                    {% elif puan_alani == 'aylik_puan' %}{{ liderler.1.aylik_puan }}
+                    {% elif puan_alani == 'seviye' %}Lv.{{ liderler.1.seviye }}
+                    {% else %}{{ liderler.1.toplam_puan }}{% endif %} 🏆
+                </div>
+                <div class="podium-platform">
+                    <div class="platform-rank">2</div>
+                </div>
+            </div>
+
+            <!-- 1.SIRA -->
+            <div class="podium-item podium-rank-1">
+                <div class="podium-avatar">
+                    <div class="podium-crown">👑</div>
+                    {{ liderler.0.kullanici.username|slice:":1"|upper }}
+                </div>
+                <div class="podium-name">{{ liderler.0.kullanici.username }}</div>
+                <div class="podium-score">
+                    {% if puan_alani == 'gunluk_puan' %}{{ liderler.0.gunluk_puan }}
+                    {% elif puan_alani == 'haftalik_puan' %}{{ liderler.0.haftalik_puan }}
+                    {% elif puan_alani == 'aylik_puan' %}{{ liderler.0.aylik_puan }}
+                    {% elif puan_alani == 'seviye' %}Lv.{{ liderler.0.seviye }}
+                    {% else %}{{ liderler.0.toplam_puan }}{% endif %} 🏆
+                </div>
+                <div class="podium-platform">
+                    <div class="platform-rank">1</div>
+                </div>
+            </div>
+
+            <!-- 3.SIRA -->
+            <div class="podium-item podium-rank-3">
+                <div class="podium-avatar">
+                    {{ liderler.2.kullanici.username|slice:":1"|upper }}
+                </div>
+                <div class="podium-name">{{ liderler.2.kullanici.username }}</div>
+                <div class="podium-score">
+                    {% if puan_alani == 'gunluk_puan' %}{{ liderler.2.gunluk_puan }}
+                    {% elif puan_alani == 'haftalik_puan' %}{{ liderler.2.haftalik_puan }}
+                    {% elif puan_alani == 'aylik_puan' %}{{ liderler.2.aylik_puan }}
+                    {% elif puan_alani == 'seviye' %}Lv.{{ liderler.2.seviye }}
+                    {% else %}{{ liderler.2.toplam_puan }}{% endif %} 🏆
+                </div>
+                <div class="podium-platform">
+                    <div class="platform-rank">3</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- LEADERBOARD TABLE -->
+    <div class="leaderboard-card">
+        <div class="card-header">
+            <span class="card-icon">🏆</span>
+            <h3 class="card-title">{{ baslik }}</h3>
+        </div>
         
-        <!-- Genel Liderler -->
-        <div class="col-md-6 mb-4">
-            <div class="liderlik-card">
-                <h4 class="mb-3">
-                    <i class="bi bi-trophy-fill text-warning"></i> 
-                    Top 10 Genel Liderler
-                </h4>
-                
-                {% for lider in genel_liderler %}
-                <div class="lider-item">
-                    <div class="lider-sira {% if forloop.counter == 1 %}sira-1{% elif forloop.counter == 2 %}sira-2{% elif forloop.counter == 3 %}sira-3{% else %}sira-other{% endif %}">
-                        {{ forloop.counter }}
-                    </div>
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px; text-align: center;">Sıra</th>
+                    <th>Kullanıcı</th>
                     
-                    {% if lider.profil_fotografi %}
-                        <img src="{{ lider.profil_fotografi.url }}" class="lider-avatar" alt="avatar">
+                    {% if kategori == 'seviye' %}
+                        <!-- ✅ SEVİYE FİLTRESİ BAŞLIKLARI -->
+                        <th style="text-align: center;"><i class="bi bi-star-fill"></i> Seviye</th>
+                        <th style="text-align: center;"><i class="bi bi-lightning-fill"></i> XP</th>
+                        <th style="text-align: center;"><i class="bi bi-trophy-fill"></i> Toplam Puan</th>
                     {% else %}
-                        <div class="lider-avatar bg-secondary d-flex align-items-center justify-content-center text-white">
-                            {{ lider.kullanici.username|slice:":1"|upper }}
-                        </div>
+                        <!-- ✅ NORMAL FİLTRE BAŞLIKLARI -->
+                        <th style="text-align: center;">Puan</th>
+                        <th style="text-align: center;"><i class="bi bi-star-fill"></i> Seviye</th>
+                        <th style="text-align: center;">Doğru/Yanlış</th>
                     {% endif %}
                     
-                    <div class="flex-grow-1">
-                        <strong>{{ lider.kullanici.username }}</strong>
-                        <div class="text-muted small">{{ lider.get_alan_display }}</div>
-                    </div>
+                    <th style="text-align: center;">Başarı Oranı</th>
+                    <th style="text-align:  center;">Alan</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profil in liderler %}
+                <tr class="leader-item {% if profil.kullanici == request.user %}current-user{% endif %}">
+                    <!-- SIRA -->
+                    <td style="text-align: center;">
+                        <span class="rank-badge {% if forloop.counter == 1 %}rank-1{% elif forloop.counter == 2 %}rank-2{% elif forloop.counter == 3 %}rank-3{% else %}rank-other{% endif %}">
+                            {{ forloop.counter }}
+                        </span>
+                    </td>
                     
-                    <div class="text-end">
-                        <div class="fw-bold text-primary">{{ lider.toplam_puan }} 🏆</div>
-                        <div class="text-muted small">{{ lider.genel_basari_orani }}% doğru</div>
-                    </div>
-                </div>
-                {% empty %}
-                <p class="text-muted">Henüz lider yok.</p>
-                {% endfor %}
-                
-                <div class="text-center mt-3">
-                    <a href="{% url 'liderlik_genel' %}" class="btn btn-outline-primary">
-                        Tümünü Gör <i class="bi bi-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Haftalık Liderler -->
-        <div class="col-md-6 mb-4">
-            <div class="liderlik-card">
-                <h4 class="mb-3">
-                    <i class="bi bi-calendar-week text-success"></i> 
-                    Bu Haftanın Liderleri
-                </h4>
-                
-                {% for lider in haftalik_liderler %}
-                <div class="lider-item">
-                    <div class="lider-sira {% if forloop.counter == 1 %}sira-1{% elif forloop.counter == 2 %}sira-2{% elif forloop.counter == 3 %}sira-3{% else %}sira-other{% endif %}">
-                        {{ forloop.counter }}
-                    </div>
+                    <!-- KULLANICI -->
+                    <td>
+                        <span class="leader-avatar">{{ profil.kullanici.username|slice:":1"|upper }}</span>
+                        <span class="leader-name">
+                            {{ profil.kullanici.username }}
+                            {% if profil.kullanici == request.user %}<span style="color: #FFD700;">👤</span>{% endif %}
+                        </span>
+                    </td>
                     
-                    {% if lider.profil_fotografi %}
-                        <img src="{{ lider.profil_fotografi.url }}" class="lider-avatar" alt="avatar">
+                    {% if kategori == 'seviye' %}
+                        <!-- ✅ SEVİYE FİLTRESİ KOLONLARI -->
+                        <td style="text-align: center;">
+                            <span class="stat-badge stat-level">
+                                <i class="bi bi-star-fill"></i> {{ profil.seviye }}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="stat-badge stat-xp">{{ profil.xp }} XP</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="leader-score">{{ profil.toplam_puan }}</span>
+                        </td>
                     {% else %}
-                        <div class="lider-avatar bg-secondary d-flex align-items-center justify-content-center text-white">
-                            {{ lider.kullanici.username|slice:":1"|upper }}
-                        </div>
+                        <!-- ✅ NORMAL FİLTRE KOLONLARI -->
+                        <td style="text-align: center;">
+                            <span class="leader-score">
+                                {% if puan_alani == 'gunluk_puan' %}{{ profil.gunluk_puan }}
+                                {% elif puan_alani == 'haftalik_puan' %}{{ profil.haftalik_puan }}
+                                {% elif puan_alani == 'aylik_puan' %}{{ profil.aylik_puan }}
+                                {% else %}{{ profil.toplam_puan }}{% endif %}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="stat-badge stat-level">Lv.{{ profil.seviye }}</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="stat-badge stat-correct">
+                                ✓ {% if puan_alani == 'gunluk_puan' %}{{ profil.gunluk_dogru }}
+                                {% elif puan_alani == 'haftalik_puan' %}{{ profil.haftalik_dogru }}
+                                {% elif puan_alani == 'aylik_puan' %}{{ profil.aylik_dogru }}
+                                {% else %}{{ profil.toplam_dogru }}{% endif %}
+                            </span>
+                            <span class="stat-badge stat-wrong">
+                                ✗ {% if puan_alani == 'gunluk_puan' %}{{ profil.gunluk_yanlis }}
+                                {% elif puan_alani == 'haftalik_puan' %}{{ profil.haftalik_yanlis }}
+                                {% elif puan_alani == 'aylik_puan' %}{{ profil.aylik_yanlis }}
+                                {% else %}{{ profil.toplam_yanlis }}{% endif %}
+                            </span>
+                        </td>
                     {% endif %}
                     
-                    <div class="flex-grow-1">
-                        <strong>{{ lider.kullanici.username }}</strong>
-                        <div class="text-muted small">{{ lider.get_alan_display }}</div>
-                    </div>
+                    <!-- BAŞARI ORANI -->
+                    <td style="text-align: center;">
+                        <span class="stat-badge stat-accuracy">
+                            {% if puan_alani == 'gunluk_puan' %}
+                                {% if profil.gunluk_cozulen > 0 %}
+                                    {{ profil.gunluk_basari_orani|floatformat:1 }}%
+                                {% else %}
+                                    0.0%
+                                {% endif %}
+                            {% elif puan_alani == 'haftalik_puan' %}
+                                {% if profil.haftalik_cozulen > 0 %}
+                                    {{ profil.haftalik_basari_orani|floatformat:1 }}%
+                                {% else %}
+                                    0.0%
+                                {% endif %}
+                            {% elif puan_alani == 'aylik_puan' %}
+                                {% if profil.aylik_cozulen > 0 %}
+                                    {{ profil.aylik_basari_orani|floatformat:1 }}%
+                                {% else %}
+                                    0.0%
+                                {% endif %}
+                            {% else %}
+                                {% if profil.cozulen_soru_sayisi > 0 %}
+                                    {{ profil.genel_basari_orani|floatformat:1 }}%
+                                {% else %}
+                                    0.0%
+                                {% endif %}
+                            {% endif %}
+                        </span>
+                    </td>
                     
-                    <div class="text-end">
-                        <div class="fw-bold text-success">{{ lider.haftalik_puan }} 🌟</div>
-                        <div class="text-muted small">{{ lider.haftalik_basari_orani }}% doğru</div>
-                    </div>
-                </div>
+                    <!-- ALAN -->
+                    <td style="text-align: center;">
+                        <span class="leader-subtitle">{{ profil.get_alan_display }}</span>
+                    </td>
+                </tr>
                 {% empty %}
-                <p class="text-muted">Henüz haftalık lider yok.</p>
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <div class="empty-icon">😴</div>
+                            <div>Henüz lider yok. İlk sen ol!  🚀</div>
+                        </div>
+                    </td>
+                </tr>
                 {% endfor %}
-                
-                <div class="text-center mt-3">
-                    <a href="{% url 'liderlik_genel' %}?tip=haftalik" class="btn btn-outline-success">
-                        Tümünü Gör <i class="bi bi-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Karşılaşma Liderleri -->
-        <div class="col-md-6 mb-4">
-            <div class="liderlik-card">
-                <h4 class="mb-3">
-                    <i class="bi bi-controller text-danger"></i> 
-                    Karşılaşma Liderleri
-                </h4>
-                
-                {% for lider in karsilasma_liderler %}
-                <div class="lider-item">
-                    <div class="lider-sira {% if forloop.counter == 1 %}sira-1{% elif forloop.counter == 2 %}sira-2{% elif forloop.counter == 3 %}sira-3{% else %}sira-other{% endif %}">
-                        {{ forloop.counter }}
-                    </div>
-                    
-                    <div class="flex-grow-1">
-                        <strong>{{ lider.profil.kullanici.username }}</strong>
-                        <div class="text-muted small">{{ lider.oynanan_oyun_sayisi }} oyun</div>
-                    </div>
-                    
-                    <div class="text-end">
-                        <div class="fw-bold text-danger">{{ lider.toplam_puan }} 🎮</div>
-                        <div class="text-muted small">%{{ lider.galibiyet_orani }} galibiyet</div>
-                    </div>
-                </div>
-                {% empty %}
-                <p class="text-muted">Henüz lider yok.</p>
-                {% endfor %}
-                
-                <div class="text-center mt-3">
-                    <a href="{% url 'liderlik_oyun_modu' %}?mod=karsilasma" class="btn btn-outline-danger">
-                        Tümünü Gör <i class="bi bi-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Matematik Liderleri -->
-        <div class="col-md-6 mb-4">
-            <div class="liderlik-card">
-                <h4 class="mb-3">
-                    <i class="bi bi-calculator text-info"></i> 
-                    Matematik Liderleri
-                </h4>
-                
-                {% for lider in matematik_liderler %}
-                <div class="lider-item">
-                    <div class="lider-sira {% if forloop.counter == 1 %}sira-1{% elif forloop.counter == 2 %}sira-2{% elif forloop.counter == 3 %}sira-3{% else %}sira-other{% endif %}">
-                        {{ forloop.counter }}
-                    </div>
-                    
-                    <div class="flex-grow-1">
-                        <strong>{{ lider.profil.kullanici.username }}</strong>
-                        <div class="text-muted small">{{ lider.cozulen_soru }} soru</div>
-                    </div>
-                    
-                    <div class="text-end">
-                        <div class="fw-bold text-info">{{ lider.dogru_sayisi }} ✓</div>
-                        <div class="text-muted small">{{ lider.net|floatformat:2 }} net</div>
-                    </div>
-                </div>
-                {% empty %}
-                <p class="text-muted">Henüz lider yok.</p>
-                {% endfor %}
-                
-                <div class="text-center mt-3">
-                    <a href="{% url 'liderlik_ders' %}?ders=matematik" class="btn btn-outline-info">
-                        Tümünü Gör <i class="bi bi-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        
+            </tbody>
+        </table>
     </div>
 </div>
+{% endblock %}
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        showToast('🏆 Liderlik tablosuna hoş geldin!', 'info');
+        
+        {% if kullanici_siralama <= 10 %}
+        setTimeout(() => {
+            showToast('🌟 Harika!  Top 10\'dasın! ', 'success');
+        }, 1500);
+        {% endif %}
+    });
+</script>
+{% endblock %}

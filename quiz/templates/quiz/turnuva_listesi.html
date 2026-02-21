@@ -1,0 +1,658 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}🏆 Turnuvalar - Köstebek YKS{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #667eea;
+        --danger: #f44336;
+        --success: #4caf50;
+        --warning: #ff9800;
+        --gold: #ffd700;
+        --text-primary: #333;
+        --text-secondary: #666;
+        --bg-card: white;
+        --bg-card-hover: #f8f9fa;
+    }
+
+    body.dark-mode {
+        --text-primary: #ffffff;
+        --text-secondary: #d0d0d0;
+        --bg-card: #1e1e2f;
+        --bg-card-hover: #2a2a3e;
+        --primary: #7c8ff5;
+    }
+
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    body.dark-mode {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 50px;
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header h1 {
+        font-size: 3rem;
+        font-weight: 900;
+        color: white;
+        margin: 0;
+        text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .page-header p {
+        color: rgba(255,255,255,0.9);
+        font-size: 1.2rem;
+        margin-top: 10px;
+    }
+
+    .debug-info {
+        background: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    body.dark-mode .debug-info {
+        background: #1e1e2f;
+        color: #e0e0e0;
+    }
+
+    .debug-info h3 {
+        color: #667eea;
+        margin-bottom: 10px;
+    }
+
+    body.dark-mode .debug-info h3 {
+        color: #a0a0ff;
+    }
+
+    .section {
+        margin-bottom: 50px;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title::before {
+        content: '';
+        width: 5px;
+        height: 30px;
+        background: linear-gradient(135deg, var(--gold), #ffa500);
+        border-radius: 10px;
+    }
+
+    .turnuva-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .turnuva-card {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    body.dark-mode .turnuva-card {
+        background: var(--bg-card);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        border: 1px solid #3a3a4e;
+    }
+
+    .turnuva-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .turnuva-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+    }
+
+    body.dark-mode .turnuva-card:hover {
+        box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+    }
+
+    .turnuva-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .turnuva-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    .turnuva-badge {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .badge-kayit-acik {
+        background: linear-gradient(135deg, #4caf50, #45a049);
+        color: white;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .badge-basladi, .badge-devam_ediyor {
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        color: white;
+    }
+
+    .badge-bitti {
+        background: linear-gradient(135deg, #9e9e9e, #757575);
+        color: white;
+    }
+
+    .badge-beklemede {
+        background: linear-gradient(135deg, #2196f3, #1976d2);
+        color: white;
+    }
+
+    .turnuva-info {
+        margin: 20px 0;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    .info-item i {
+        font-size: 1.2rem;
+        color: var(--primary);
+        width: 25px;
+        text-align: center;
+    }
+
+    .progress-section {
+        margin: 20px 0;
+    }
+
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    .progress-bar-container {
+        height: 12px;
+        background: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    body.dark-mode .progress-bar-container {
+        background: #2a2a3e;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        transition: width 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .progress-bar-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .turnuva-footer {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    body.dark-mode .btn-primary {
+        background: linear-gradient(135deg, #7c8ff5, #8e5fc2);
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        color: #333;
+    }
+
+    body.dark-mode .btn-secondary {
+        background: var(--bg-card-hover);
+        color: var(--text-primary);
+        border: 2px solid #3a3a4e;
+    }
+
+    .btn-secondary:hover {
+        background: linear-gradient(135deg, #e9ecef, #dee2e6);
+    }
+
+    body.dark-mode .btn-secondary:hover {
+        background: #3a3a4e;
+        border-color: var(--primary);
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #f44336, #e53935);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(244, 67, 54, 0.4);
+    }
+
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 20px;
+        color: white;
+    }
+
+    .empty-state i {
+        font-size: 5rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        font-size: 1rem;
+        opacity: 0.8;
+    }
+
+    .oduller {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px dashed #e9ecef;
+    }
+
+    body.dark-mode .oduller {
+        border-top-color: #3a3a4e;
+    }
+
+    .odul-item {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        background: linear-gradient(135deg, #fff9e6, #fff3cc);
+        border-radius: 10px;
+    }
+
+    body.dark-mode .odul-item {
+        background: linear-gradient(135deg, #2a2517, #1e1e0f);
+    }
+
+    .odul-icon {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+    }
+
+    .odul-xp {
+        font-weight: 800;
+        color: #f57c00;
+        font-size: 0.9rem;
+    }
+
+    body.dark-mode .odul-xp {
+        color: #ffa726;
+    }
+
+    @media (max-width: 768px) {
+        .page-header h1 {
+            font-size: 2rem;
+        }
+
+        .turnuva-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>🏆 Turnuvalar</h1>
+        <p>En iyi oyuncularla yarış ve ödülleri kazan!</p>
+    </div>
+
+    <!-- DEBUG BİLGİSİ (Sadece Admin) -->
+    {% if user.is_staff %}
+    <div class="debug-info">
+        <h3>🔍 DEBUG BİLGİSİ</h3>
+        <p>Kayıt Açık: {{ kayit_acik|length }} adet</p>
+        <p>Devam Eden: {{ devam_eden|length }} adet</p>
+        <p>Biten: {{ biten|length }} adet</p>
+        <p>Katıldığım: {{ katildigim|length }} adet</p>
+        
+        {% if kayit_acik %}
+            <h4>Kayıt Açık Turnuvalar:</h4>
+            <ul>
+            {% for t in kayit_acik %}
+                <li>{{ t.isim }} - {{ t.durum }} - {{ t.katilimci_sayisi }}/{{ t.max_katilimci }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- KAYIT AÇIK TURNUVALAR -->
+    {% if kayit_acik %}
+    <div class="section">
+        <h2 class="section-title">🔥 Kayıt Açık Turnuvalar</h2>
+        <div class="turnuva-grid">
+            {% for turnuva in kayit_acik %}
+            <div class="turnuva-card">
+                <div class="turnuva-header">
+                    <h3 class="turnuva-title">{{ turnuva.isim }}</h3>
+                    <span class="turnuva-badge badge-kayit-acik">✅ Kayıt Açık</span>
+                </div>
+
+                <div class="turnuva-info">
+                    <div class="info-item">
+                        <i class="bi bi-calendar-event"></i>
+                        <span>{{ turnuva.baslangic|date:"d M Y, H:i" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="bi bi-book"></i>
+                        <span>{{ turnuva.get_sinav_tipi_display }} - {{ turnuva.ders|title }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="bi bi-question-circle"></i>
+                        <span>{{ turnuva.toplam_soru }} Soru</span>
+                    </div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-label">
+                        <span>Katılımcılar</span>
+                        <span>{{ turnuva.katilimci_sayisi }}/{{ turnuva.max_katilimci }}</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: {% widthratio turnuva.katilimci_sayisi turnuva.max_katilimci 100 %}%"></div>
+                    </div>
+                </div>
+
+                <div class="oduller">
+                    <div class="odul-item">
+                        <div class="odul-icon">🥇</div>
+                        <div class="odul-xp">+{{ turnuva.odul_xp_1 }} XP</div>
+                    </div>
+                    <div class="odul-item">
+                        <div class="odul-icon">🥈</div>
+                        <div class="odul-xp">+{{ turnuva.odul_xp_2 }} XP</div>
+                    </div>
+                    <div class="odul-item">
+                        <div class="odul-icon">🥉</div>
+                        <div class="odul-xp">+{{ turnuva.odul_xp_3 }} XP</div>
+                    </div>
+                </div>
+
+                <div class="turnuva-footer">
+                    {% if user in turnuva.katilimcilar.all %}
+                    <a href="{% url 'turnuva_detay' turnuva.turnuva_id %}" class="btn btn-primary">
+                        <i class="bi bi-eye"></i> Detay
+                    </a>
+                    <a href="{% url 'turnuva_ayril' turnuva.turnuva_id %}" class="btn btn-danger">
+                        <i class="bi bi-box-arrow-right"></i> Ayrıl
+                    </a>
+                    {% else %}
+                    <a href="{% url 'turnuva_katil' turnuva.turnuva_id %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Katıl
+                    </a>
+                    <a href="{% url 'turnuva_detay' turnuva.turnuva_id %}" class="btn btn-secondary">
+                        <i class="bi bi-eye"></i> Detay
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- DEVAM EDEN TURNUVALAR -->
+    {% if devam_eden %}
+    <div class="section">
+        <h2 class="section-title">⚔️ Devam Eden Turnuvalar</h2>
+        <div class="turnuva-grid">
+            {% for turnuva in devam_eden %}
+            <div class="turnuva-card">
+                <div class="turnuva-header">
+                    <h3 class="turnuva-title">{{ turnuva.isim }}</h3>
+                    <span class="turnuva-badge badge-basladi">🔴 Canlı</span>
+                </div>
+
+                <div class="turnuva-info">
+                    <div class="info-item">
+                        <i class="bi bi-calendar-event"></i>
+                        <span>{{ turnuva.baslangic|date:"d M Y, H:i" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="bi bi-people"></i>
+                        <span>{{ turnuva.katilimci_sayisi }} Katılımcı</span>
+                    </div>
+                </div>
+
+                <div class="turnuva-footer">
+                    <a href="{% url 'turnuva_detay' turnuva.turnuva_id %}" class="btn btn-primary">
+                        <i class="bi bi-diagram-3"></i> Eşleşme Durumu
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- KATILDIĞIM TURNUVALAR -->
+    {% if katildigim %}
+    <div class="section">
+        <h2 class="section-title">⭐ Katıldığım Turnuvalar</h2>
+        <div class="turnuva-grid">
+            {% for turnuva in katildigim %}
+            <div class="turnuva-card">
+                <div class="turnuva-header">
+                    <h3 class="turnuva-title">{{ turnuva.isim }}</h3>
+                    <span class="turnuva-badge badge-{{ turnuva.durum }}">
+                        {% if turnuva.durum == 'kayit_acik' %}✅ Kayıt Açık
+                        {% elif turnuva.durum == 'basladi' or turnuva.durum == 'devam_ediyor' %}🔴 Canlı
+                        {% elif turnuva.durum == 'bitti' %}🏁 Bitti
+                        {% else %}⏳ Beklemede{% endif %}
+                    </span>
+                </div>
+
+                <div class="turnuva-info">
+                    <div class="info-item">
+                        <i class="bi bi-calendar-event"></i>
+                        <span>{{ turnuva.baslangic|date:"d M Y, H:i" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="bi bi-people"></i>
+                        <span>{{ turnuva.katilimci_sayisi }} Katılımcı</span>
+                    </div>
+                </div>
+
+                <div class="turnuva-footer">
+                    <a href="{% url 'turnuva_detay' turnuva.turnuva_id %}" class="btn btn-primary">
+                        <i class="bi bi-eye"></i> Detay
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- BİTEN TURNUVALAR -->
+    {% if biten %}
+    <div class="section">
+        <h2 class="section-title">🏁 Biten Turnuvalar</h2>
+        <div class="turnuva-grid">
+            {% for turnuva in biten %}
+            <div class="turnuva-card">
+                <div class="turnuva-header">
+                    <h3 class="turnuva-title">{{ turnuva.isim }}</h3>
+                    <span class="turnuva-badge badge-bitti">🏁 Bitti</span>
+                </div>
+
+                <div class="turnuva-info">
+                    {% if turnuva.birinci %}
+                    <div class="info-item">
+                        <i class="bi bi-trophy-fill" style="color: gold;"></i>
+                        <span>{{ turnuva.birinci.username }}</span>
+                    </div>
+                    {% endif %}
+                    {% if turnuva.ikinci %}
+                    <div class="info-item">
+                        <i class="bi bi-trophy-fill" style="color: silver;"></i>
+                        <span>{{ turnuva.ikinci.username }}</span>
+                    </div>
+                    {% endif %}
+                    {% if turnuva.ucuncu %}
+                    <div class="info-item">
+                        <i class="bi bi-trophy-fill" style="color: #cd7f32;"></i>
+                        <span>{{ turnuva.ucuncu.username }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="turnuva-footer">
+                    <a href="{% url 'turnuva_detay' turnuva.turnuva_id %}" class="btn btn-secondary">
+                        <i class="bi bi-clock-history"></i> Sonuçlar
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- BOŞ DURUM -->
+    {% if not kayit_acik and not devam_eden and not katildigim and not biten %}
+    <div class="empty-state">
+        <i class="bi bi-trophy"></i>
+        <h3>Henüz Turnuva Yok</h3>
+        <p>Yeni turnuvalar çok yakında!</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
