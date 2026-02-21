@@ -1,286 +1,491 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Köstebek - {{ sayfa_baslik }}</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    
-    <style>
-        :root {
-            --primary-mor: #6A5ACD;
-            --accent-turuncu: #FF8C00;
-            --bg-krem: #FFFACD;
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ sayfa_baslik }} - Köstebek YKS{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+
+    .leaderboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* PAGE HEADER */
+    .page-header {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        border-radius: 25px;
+        padding: 30px;
+        margin-bottom:  30px;
+        text-align: center;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        animation: slideDown 0.8s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform:  translateY(-50px);
         }
-        
-        body {
-            background: linear-gradient(135deg, var(--bg-krem) 0%, #FFF8DC 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
-        
-        .header-mor {
-            background: linear-gradient(135deg, var(--primary-mor) 0%, #5a4abf 100%);
-            color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    /* FILTERS */
+    .filter-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom:  30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        animation: fadeInUp 0.8s ease-out 0.2s backwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
         }
-        
-        .liderlik-table {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
-        
+    }
+
+    .filter-title {
+        font-size: 1.2rem;
+        font-weight:  800;
+        color: #333;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .filter-btn {
+        padding: 12px 25px;
+        border: 2px solid #e9ecef;
+        background: white;
+        color: #dc3545;
+        border-radius: 50px;
+        margin:  5px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .filter-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background:  linear-gradient(135deg, #dc3545, #c82333);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .filter-btn:hover::before,
+    .filter-btn.active::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        color: white;
+        border-color: #dc3545;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+    }
+
+    .filter-btn span {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* LEADERBOARD TABLE */
+    .leaderboard-table {
+        background: white;
+        border-radius: 25px;
+        overflow: hidden;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        animation: fadeInUp 0.8s ease-out 0.4s backwards;
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+        padding: 20px 25px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .table-header-sira {
+        width: 60px;
+        text-align: center;
+    }
+
+    .table-header-user {
+        flex: 1;
+    }
+
+    .table-header-stats {
+        width: 450px;
+        text-align: center;
+    }
+
+    .lider-row {
+        display: flex;
+        align-items: center;
+        padding: 20px 25px;
+        border-bottom: 2px solid #f0f0f0;
+        transition: all 0.3s ease;
+        animation: slideInRight 0.5s ease-out backwards;
+    }
+
+    .lider-row:nth-child(1) { animation-delay: 0.1s; }
+    .lider-row:nth-child(2) { animation-delay: 0.2s; }
+    .lider-row:nth-child(3) { animation-delay: 0.3s; }
+    .lider-row:nth-child(4) { animation-delay: 0.4s; }
+    .lider-row:nth-child(5) { animation-delay: 0.5s; }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .lider-row:hover {
+        background: linear-gradient(90deg, #fff5f5, #ffffff);
+        transform: translateX(10px);
+        box-shadow:  0 5px 20px rgba(220, 53, 69, 0.2);
+    }
+
+    .lider-row.me {
+        background: linear-gradient(90deg, #fff3e0, #ffe4b5);
+        border-left: 5px solid #FF8C00;
+        box-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
+    }
+
+    .lider-sira {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 1.5rem;
+        color: white;
+        margin-right: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .lider-row:hover.lider-sira {
+        transform: scale(1.15) rotate(360deg);
+    }
+
+    .sira-1 {
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+    }
+
+    .sira-2 {
+        background: linear-gradient(135deg, #E8E8E8, #C0C0C0);
+        box-shadow: 0 0 25px rgba(192, 192, 192, 0.6);
+    }
+
+    .sira-3 {
+        background: linear-gradient(135deg, #E6C8A0, #CD7F32);
+        box-shadow: 0 0 25px rgba(205, 127, 50, 0.6);
+    }
+
+    .sira-other {
+        background:  linear-gradient(135deg, #dc3545, #c82333);
+    }
+
+    .lider-info {
+        flex: 1;
+    }
+
+    .lider-name {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .lider-subtitle {
+        font-size: 0.9rem;
+        color: #888;
+    }
+
+    .me-badge {
+        background: linear-gradient(135deg, #FF8C00, #ff7700);
+        color: white;
+        padding: 4px 12px;
+        border-radius:  15px;
+        font-size:  0.8rem;
+        font-weight: 800;
+        margin-left: 10px;
+        box-shadow: 0 3px 10px rgba(255, 140, 0, 0.4);
+    }
+
+    .lider-stats {
+        width: 450px;
+        display: flex;
+        justify-content: space-around;
+        gap: 8px;
+    }
+
+    .stat-box {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        padding: 12px 15px;
+        border-radius:  12px;
+        text-align:  center;
+        min-width: 95px;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .stat-box:hover {
+        transform: translateY(-5px);
+        border-color: #dc3545;
+        box-shadow: 0 8px 20px rgba(220, 53, 69, 0.2);
+    }
+
+    .stat-value {
+        font-size: 1.4rem;
+        font-weight:  900;
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color:  transparent;
+        background-clip:  text;
+        margin-bottom: 3px;
+    }
+
+    .stat-label {
+        font-size: 0.7rem;
+        color: #888;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #888;
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        margin-bottom:  20px;
+        opacity: 0.3;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+
         .lider-row {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            border-bottom: 1px solid #f0f0f0;
-            transition: all 0.3s ease;
-        }
-        
-        .lider-row:hover {
-            background: #f8f9fa;
-            transform: translateX(5px);
-        }
-        
-        .lider-row.me {
-            background: linear-gradient(135deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.05));
-            border-left: 5px solid var(--accent-turuncu);
-        }
-        
-        .lider-sira {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            margin-right: 20px;
-            font-size: 1.2rem;
-        }
-        
-        .sira-1 { 
-            background: linear-gradient(135deg, #FFD700, #FFA500); 
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-        }
-        .sira-2 { 
-            background: linear-gradient(135deg, #C0C0C0, #A8A8A8); 
-            box-shadow: 0 0 20px rgba(192, 192, 192, 0.5);
-        }
-        .sira-3 { 
-            background: linear-gradient(135deg, #CD7F32, #8B4513); 
-            box-shadow: 0 0 20px rgba(205, 127, 50, 0.5);
-        }
-        .sira-other { 
-            background: linear-gradient(135deg, #dc3545, #c82333); 
-        }
-        
-        .filter-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .filter-btn {
-            padding: 10px 20px;
-            border: 2px solid var(--accent-turuncu);
-            background: white;
-            color: var(--accent-turuncu);
-            border-radius: 10px;
-            margin: 5px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .filter-btn:hover, .filter-btn.active {
-            background: var(--accent-turuncu);
-            color: white;
-            transform: translateY(-2px);
-        }
-        
-        .stat-box {
-            background: #f8f9fa;
-            padding: 10px 15px;
-            border-radius: 10px;
+            flex-direction: column;
             text-align: center;
-            margin: 5px;
-            display: inline-block;
+            gap: 15px;
         }
-        
-        .stat-box .label {
-            font-size: 0.8rem;
-            color: #6c757d;
-        }
-        
-        .stat-box .value {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--accent-turuncu);
-        }
-    </style>
-</head>
-<body>
 
-<!-- Header -->
-<header class="header-mor py-3 shadow-sm">
-    <div class="container d-flex justify-content-between align-items-center">
-        <h1 class="h4 mb-0">
-            <i class="bi bi-gem"></i> <span class="fw-bold">KÖSTEBEK YKS</span>
+        .lider-sira {
+            width: auto;
+            margin:  0;
+        }
+
+        .lider-info {
+            width: 100%;
+        }
+
+        .lider-stats {
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .table-header {
+            display: none;
+        }
+
+        .stat-box {
+            min-width: 80px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="leaderboard-container">
+    
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="bi bi-controller"></i> {{ sayfa_baslik }}
         </h1>
-        <div>
-            <a href="{% url 'liderlik' %}" class="btn btn-outline-light me-2">
-                <i class="bi bi-arrow-left"></i> Geri
-            </a>
-            <a href="{% url 'profil' %}" class="btn btn-outline-light me-2">
-                <i class="bi bi-person-circle"></i> Profilim
-            </a>
-            <a href="{% url 'cikis' %}" class="btn btn-outline-light">
-                <i class="bi bi-box-arrow-right"></i> Çıkış
-            </a>
-        </div>
     </div>
-</header>
 
-<!-- Main Content -->
-<div class="container my-5">
-    
-    <h2 class="text-center mb-4">
-        <i class="bi bi-controller text-danger"></i> {{ sayfa_baslik }}
-    </h2>
-    
-    <!-- Filtreler -->
+    <!-- FILTERS -->
     <div class="filter-card">
         <div class="row">
             <!-- Oyun Modu -->
             <div class="col-md-6 mb-3">
-                <label class="fw-bold mb-2">
-                    <i class="bi bi-joystick"></i> Oyun Modu
-                </label>
+                <div class="filter-title">
+                    <i class="bi bi-joystick"></i>
+                    Oyun Modu
+                </div>
                 <div>
-                    <a href="?mod=karsilasma&tip={{ sirala_tipi }}" 
-                       class="filter-btn {% if oyun_modu == 'karsilasma' %}active{% endif %}">
-                        🎮 Karşılaşma
+                    <a href="?mod=karsilasma&tip={{ sirala_tipi }}" class="filter-btn {% if oyun_modu == 'karsilasma' %}active{% endif %}">
+                        <span>🎮 Karşılaşma</span>
                     </a>
-                    <a href="?mod=bul_bakalim&tip={{ sirala_tipi }}" 
-                       class="filter-btn {% if oyun_modu == 'bul_bakalim' %}active{% endif %}">
-                        💡 Bul Bakalım
+                    <a href="?mod=bul_bakalim&tip={{ sirala_tipi }}" class="filter-btn {% if oyun_modu == 'bul_bakalim' %}active{% endif %}">
+                        <span>💡 Bul Bakalım</span>
                     </a>
                 </div>
             </div>
-            
+
             <!-- Sıralama Tipi -->
             <div class="col-md-6 mb-3">
-                <label class="fw-bold mb-2">
-                    <i class="bi bi-sort-down"></i> Sıralama
-                </label>
+                <div class="filter-title">
+                    <i class="bi bi-sort-down"></i>
+                    Sıralama
+                </div>
                 <div>
-                    <a href="?mod={{ oyun_modu }}&tip=toplam" 
-                       class="filter-btn {% if sirala_tipi == 'toplam' %}active{% endif %}">
-                        📊 Toplam
+                    <a href="?mod={{ oyun_modu }}&tip=toplam" class="filter-btn {% if sirala_tipi == 'toplam' %}active{% endif %}">
+                        <span>📊 Toplam</span>
                     </a>
-                    <a href="?mod={{ oyun_modu }}&tip=haftalik" 
-                       class="filter-btn {% if sirala_tipi == 'haftalik' %}active{% endif %}">
-                        📅 Haftalık
+                    <a href="?mod={{ oyun_modu }}&tip=haftalik" class="filter-btn {% if sirala_tipi == 'haftalik' %}active{% endif %}">
+                        <span>📅 Haftalık</span>
                     </a>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Liderlik Tablosu -->
-    <div class="liderlik-table">
-        
-        <!-- Tablo Başlığı -->
-        <div class="lider-row" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; font-weight: bold;">
-            <div class="lider-sira" style="background: rgba(255,255,255,0.2);">
-                #
-            </div>
-            <div style="flex: 1;">Oyuncu</div>
-            <div style="width: 400px; text-align: center;">Performans</div>
+
+    <!-- LEADERBOARD TABLE -->
+    <div class="leaderboard-table">
+        <!-- TABLE HEADER -->
+        <div class="table-header">
+            <div class="table-header-sira">#</div>
+            <div class="table-header-user">Oyuncu</div>
+            <div class="table-header-stats">Performans</div>
         </div>
-        
-        <!-- Liderler -->
+
+        <!-- LEADERS -->
         {% for lider in liderler %}
         <div class="lider-row {% if lider.profil.kullanici == request.user %}me{% endif %}">
-            
-            <!-- Sıra -->
+            <!-- RANK -->
             <div class="lider-sira {% if forloop.counter == 1 %}sira-1{% elif forloop.counter == 2 %}sira-2{% elif forloop.counter == 3 %}sira-3{% else %}sira-other{% endif %}">
                 {{ forloop.counter }}
             </div>
-            
-            <!-- Kullanıcı Bilgisi -->
-            <div style="flex: 1;">
-                <div class="fw-bold" style="font-size: 1.1rem;">
+
+            <!-- USER INFO -->
+            <div class="lider-info">
+                <div class="lider-name">
                     {{ lider.profil.kullanici.username }}
                     {% if lider.profil.kullanici == request.user %}
-                        <span class="badge bg-danger ms-2">SEN</span>
+                        <span class="me-badge">SEN</span>
                     {% endif %}
                 </div>
-                <div class="text-muted small">
-                    <i class="bi bi-trophy"></i> {{ lider.profil.unvanlar }}
+                <div class="lider-subtitle">
+                    <i class="bi bi-award-fill"></i> {{ lider.profil.unvanlar }}
                 </div>
             </div>
-            
-            <!-- İstatistikler -->
-            <div style="width: 400px; text-align: center;">
+
+            <!-- STATS -->
+            <div class="lider-stats">
                 {% if sirala_tipi == 'haftalik' %}
                     <div class="stat-box">
-                        <div class="label">Puan</div>
-                        <div class="value">🌟 {{ lider.haftalik_puan }}</div>
+                        <div class="stat-value">{{ lider.haftalik_puan }}</div>
+                        <div class="stat-label">🌟 Puan</div>
                     </div>
                     <div class="stat-box">
-                        <div class="label">Oyun</div>
-                        <div class="value">🎮 {{ lider.haftalik_oyun_sayisi }}</div>
+                        <div class="stat-value">{{ lider.haftalik_oyun_sayisi }}</div>
+                        <div class="stat-label">🎮 Oyun</div>
                     </div>
                     <div class="stat-box">
-                        <div class="label">Doğru</div>
-                        <div class="value">✓ {{ lider.haftalik_dogru }}</div>
+                        <div class="stat-value">{{ lider.haftalik_dogru }}</div>
+                        <div class="stat-label">✓ Doğru</div>
                     </div>
                 {% else %}
                     <div class="stat-box">
-                        <div class="label">Puan</div>
-                        <div class="value">🏆 {{ lider.toplam_puan }}</div>
+                        <div class="stat-value">{{ lider.toplam_puan }}</div>
+                        <div class="stat-label">🏆 Puan</div>
                     </div>
                     <div class="stat-box">
-                        <div class="label">Oyun</div>
-                        <div class="value">🎮 {{ lider.oynanan_oyun_sayisi }}</div>
+                        <div class="stat-value">{{ lider.oynanan_oyun_sayisi }}</div>
+                        <div class="stat-label">🎮 Oyun</div>
                     </div>
                     <div class="stat-box">
-                        <div class="label">Galibiyet</div>
-                        <div class="value">🏅 %{{ lider.galibiyet_orani|floatformat:1 }}</div>
+                        <div class="stat-value">{{ lider.galibiyet_orani|floatformat:0 }}%</div>
+                        <div class="stat-label">🏅 Galibiyet</div>
                     </div>
                     <div class="stat-box">
-                        <div class="label">Başarı</div>
-                        <div class="value">✓ %{{ lider.basari_orani|floatformat:1 }}</div>
+                        <div class="stat-value">{{ lider.basari_orani|floatformat:0 }}%</div>
+                        <div class="stat-label">✓ Başarı</div>
                     </div>
                 {% endif %}
             </div>
-            
         </div>
         {% empty %}
-        <div class="lider-row">
-            <div class="text-center w-100 py-5 text-muted">
-                <i class="bi bi-controller" style="font-size: 3rem;"></i>
-                <p class="mt-3">Henüz kimse bu oyun modunda oynamadı. İlk sen ol! 🚀</p>
-            </div>
+        <div class="empty-state">
+            <div class="empty-icon"><i class="bi bi-controller"></i></div>
+            <h3>Henüz Kimse Oynamadı</h3>
+            <p>Bu oyun modunda ilk sen ol!  🚀</p>
         </div>
         {% endfor %}
-        
     </div>
-    
+
 </div>
+{% endblock %}
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        showToast('Oyun modu liderliğine hoş geldin!  🎮', 'info');
+    });
+</script>
+{% endblock %}

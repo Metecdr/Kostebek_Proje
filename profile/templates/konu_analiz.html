@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<style>
+    .ders-section {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 8px 40px rgba(123,104,238,0.07);
+        margin-bottom: 32px;
+        padding: 30px;
+        animation: fadeIn 0.8s;
+    }
+    .ders-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #7B68EE;
+        margin-bottom: 15px;
+        text-shadow: 0px 2px 8px rgba(123,104,238,0.08);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .konu-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 10px;
+    }
+    .konu-table th {
+        background: #eee;
+        font-weight: 700;
+        color: #7B68EE;
+        padding: 12px;
+        text-align: center;
+        font-size: 1.05rem;
+    }
+    .konu-table td {
+        padding: 12px 10px;
+        text-align: center;
+        font-size: 1.05rem;
+        vertical-align: middle;
+        background: #fafaff;
+        border-bottom: 2px solid #f5f5f5;
+    }
+    .konu-table tr.good {
+        background: #e6ffe6 !important;
+    }
+    .konu-table tr.bad {
+        background: #ffe6e6 !important;
+    }
+    .konu-table tr.neutral {
+        background: #fffbe6 !important;
+    }
+    .konu-badge {
+        font-weight: 700;
+        font-size: 0.9rem;
+        border-radius: 20px;
+        padding: 4px 12px;
+        display: inline-block;
+        margin-left: 4px;
+    }
+    .konu-badge.good {
+        background: #4CAF50;
+        color: white;
+    }
+    .konu-badge.bad {
+        background: #F44336;
+        color: white;
+    }
+    .konu-badge.neutral {
+        background: #FF9800;
+        color: white;
+    }
+    .test-btn {
+        background: linear-gradient(90deg, #7B68EE, #FF8C00);
+        color: white;
+        border: none;
+        border-radius: 16px;
+        font-weight: 700;
+        padding: 8px 20px;
+        transition: all 0.18s;
+        cursor: pointer;
+        box-shadow: 0 3px 10px rgba(123,104,238,0.08);
+        font-size: 0.98rem;
+    }
+    .test-btn:hover {
+        background: linear-gradient(90deg, #FF8C00, #7B68EE);
+        color: #fff;
+        transform: scale(1.08);
+    }
+    @media (max-width: 900px) {
+        .ders-section { padding: 16px; }
+        .ders-title { font-size: 1.1rem; }
+        .konu-table th, .konu-table td { font-size: 0.92rem; padding: 7px; }
+        .test-btn { padding: 7px 10px; font-size: 0.9rem; }
+    }
+    .empty-row {
+        text-align: center;
+        color: #aaa;
+        font-size: 1.05rem;
+        padding: 25px 0;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px);}
+        to { opacity: 1; transform: translateY(0);}
+    }
+</style>
+<div class="container">
+    <h1 class="mb-4" style="color:#6A5ACD;font-weight:900;text-shadow:0 2px 8px #e9e1fa;">
+        <i class="bi bi-bar-chart-fill"></i> Konu Analizleri
+    </h1>
+    {% for ders_data in ders_konular_list %}
+    <div class="ders-section">
+        <div class="ders-title">
+            {% if ders_data.ders == "matematik" %}<i class="bi bi-calculator"></i>{% endif %}
+            {% if ders_data.ders == "fizik" %}<i class="bi bi-lightning"></i>{% endif %}
+            {% if ders_data.ders == "kimya" %}<i class="bi bi-droplet-half"></i>{% endif %}
+            {% if ders_data.ders == "biyoloji" %}<i class="bi bi-flower1"></i>{% endif %}
+            {% if ders_data.ders == "turkce" %}<i class="bi bi-book"></i>{% endif %}
+            {{ ders_data.ders|capfirst }}
+        </div>
+        <div style="overflow-x:auto;">
+        <table class="konu-table">
+            <tr>
+                <th>Konu</th>
+                <th>Doğru</th>
+                <th>Yanlış</th>
+                <th>Boş</th>
+                <th>Başarı %</th>
+                <th>Durum</th>
+                <th>Test Çöz</th>
+            </tr>
+            {% for ist in ders_data.konular %}
+            <tr
+                {% if ist.basari_orani >= 80 %}
+                    class="good"
+                {% elif ist.basari_orani < 50 %}
+                    class="bad"
+                {% else %}
+                    class="neutral"
+                {% endif %}
+            >
+                <td style="font-weight:700;">
+                    {{ ist.konu }}
+                    <span class="konu-badge
+                        {% if ist.basari_orani >= 80 %}good{% elif ist.basari_orani < 50 %}bad{% else %}neutral{% endif %}">
+                        <i class="
+                        {% if ist.basari_orani >= 80 %}bi bi-emoji-sunglasses
+                        {% elif ist.basari_orani < 50 %}bi bi-emoji-dizzy
+                        {% else %}bi bi-emoji-neutral
+                        {% endif %}
+                        "></i>
+                        {% if ist.basari_orani >= 80 %}Çok İyi
+                        {% elif ist.basari_orani < 50 %}Eksik
+                        {% else %}Orta
+                        {% endif %}
+                    </span>
+                </td>
+                <td>{{ ist.dogru_sayisi }}</td>
+                <td>{{ ist.yanlis_sayisi }}</td>
+                <td>{{ ist.bos_sayisi }}</td>
+                <td>
+                    <span style="font-weight:700;">
+                        {{ ist.basari_orani }}%
+                    </span>
+                </td>
+                <td>
+                    {% if ist.basari_orani >= 80 %}
+                        <span title="Başarı Durumu" style="color:#4CAF50;"><i class="bi bi-check2-circle"></i> Güçlü</span>
+                    {% elif ist.basari_orani < 50 %}
+                        <span title="Başarı Durumu" style="color:#F44336;"><i class="bi bi-exclamation-triangle"></i> Eksik</span>
+                    {% else %}
+                        <span title="Başarı Durumu" style="color:#FF9800;"><i class="bi bi-dash-circle"></i> Orta</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'konu_test_baslat' ders=ist.ders konu=ist.konu %}" class="test-btn">
+                        <i class="bi bi-pencil"></i> Test Başlat
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="empty-row">
+                    <i class="bi bi-emoji-frown"></i> Henüz bu ders için istatistik yok. Hadi ilk sorunu çöz!
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

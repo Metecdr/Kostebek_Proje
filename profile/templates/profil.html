@@ -11,13 +11,14 @@
         --accent-orange: #FF8C00;
         --success-green: #4CAF50;
         --danger-red: #F44336;
+        --gold:  #FFD700;
         --shadow-lg: 0 15px 40px rgba(0,0,0,0.2);
         --shadow-md: 0 10px 30px rgba(0,0,0,0.1);
     }
     
     body {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Poppins', 'Nunito', sans-serif;
         min-height: 100vh;
         padding: 20px 0;
     }
@@ -30,14 +31,8 @@
     }
     
     @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
     
     /* PROFILE HEADER */
@@ -52,48 +47,51 @@
         gap: 30px;
         flex-wrap: wrap;
         animation: slideUp 0.6s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(135deg, rgba(123, 104, 238, 0.1), transparent);
+        border-radius: 50%;
+        transform: translate(30%, -30%);
     }
     
     @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(40px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
     }
     
     .profile-photo-section {
         position: relative;
         animation: scaleIn 0.8s ease-out;
+        z-index: 1;
     }
     
     @keyframes scaleIn {
-        from {
-            opacity: 0;
-            transform: scale(0.8);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
     }
     
     .profile-photo {
         width: 150px;
         height: 150px;
-        border-radius: 50%;
+        border-radius:  50%;
         object-fit: cover;
         border: 5px solid var(--primary-purple);
-        box-shadow: 0 10px 30px rgba(123, 104, 238, 0.3);
-        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(123, 104, 238, 0.4);
+        transition: all 0.4s ease;
     }
     
     .profile-photo:hover {
-        transform: scale(1.05);
-        box-shadow: 0 15px 40px rgba(123, 104, 238, 0.5);
+        transform: scale(1.08) rotate(5deg);
+        box-shadow: 0 15px 50px rgba(123, 104, 238, 0.6);
     }
     
     .photo-upload-btn {
@@ -105,33 +103,46 @@
         border-radius: 50%;
         background: var(--accent-orange);
         color: white;
-        border: none;
+        border: 3px solid white;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.2rem;
         transition: all 0.3s ease;
-        box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
+        box-shadow: 0 5px 15px rgba(255, 140, 0, 0.5);
     }
     
     .photo-upload-btn:hover {
-        transform: scale(1.15);
-        box-shadow: 0 8px 20px rgba(255, 140, 0, 0.6);
+        transform: scale(1.2) rotate(15deg);
+        box-shadow:  0 8px 25px rgba(255, 140, 0, 0.7);
         background: #ff7700;
+    }
+
+    .photo-upload-btn:active {
+        transform: scale(0.95);
     }
     
     .profile-info {
-        flex: 1;
+        flex:  1;
         min-width: 300px;
+        z-index: 1;
     }
     
     .profile-name {
         font-size: 2.5rem;
         font-weight: 900;
-        color: var(--dark-purple);
+        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin-bottom: 10px;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        animation: fadeInLeft 0.6s ease-out 0.2s both;
+    }
+
+    @keyframes fadeInLeft {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
     }
     
     .profile-username {
@@ -139,13 +150,15 @@
         color: #6c757d;
         margin-bottom: 15px;
         font-weight: 600;
+        animation: fadeInLeft 0.6s ease-out 0.3s both;
     }
     
     .profile-badges {
         display: flex;
         gap: 10px;
-        flex-wrap: wrap;
-        margin-bottom: 20px;
+        flex-wrap:  wrap;
+        margin-bottom:  20px;
+        animation: fadeInLeft 0.6s ease-out 0.4s both;
     }
     
     .badge-item {
@@ -158,16 +171,47 @@
         gap: 5px;
         transition: all 0.3s ease;
         box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        animation: bounceIn 0.6s ease-out;
+        position: relative;
+    }
+
+    @keyframes bounceIn {
+        0% { opacity: 0; transform: scale(0.3); }
+        50% { transform: scale(1.05); }
+        100% { opacity: 1; transform: scale(1); }
     }
     
     .badge-item:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
     }
     
     .badge-level {
-        background: linear-gradient(135deg, #FFD700, #FFA500);
+        background: linear-gradient(135deg, var(--gold), #FFA500);
         color: white;
+        cursor: pointer;
+    }
+
+    .xp-tooltip {
+        position: absolute;
+        bottom: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.9);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size:  0.75rem;
+        white-space: nowrap;
+        opacity: 0;
+        transition: all 0.3s;
+        pointer-events: none;
+        z-index: 1000;
+    }
+
+    .badge-level:hover .xp-tooltip {
+        opacity: 1;
+        bottom: -40px;
     }
     
     .badge-area {
@@ -179,23 +223,125 @@
         background: linear-gradient(135deg, var(--success-green), #45a049);
         color: white;
     }
+
+    /* STREAK BADGE */
+    .badge-streak {
+        background: linear-gradient(135deg, #FF6B6B, #EE5A6F);
+        color: white;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
     
     .edit-profile-btn {
         padding: 12px 30px;
         background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
         color: white;
-        border: none;
-        border-radius: 25px;
+        border:  none;
+        border-radius:  25px;
         font-weight: 700;
         cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 5px 15px rgba(123, 104, 238, 0.3);
+        animation: fadeInLeft 0.6s ease-out 0.5s both;
+        position: relative;
+        overflow:  hidden;
+        margin-right: 10px;
+    }
+
+    .edit-profile-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background:  rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .edit-profile-btn:hover::before {
+        width: 300px;
+        height: 300px;
     }
     
     .edit-profile-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(123, 104, 238, 0.4);
-        background: linear-gradient(135deg, var(--dark-purple), var(--primary-purple));
+        transform:  translateY(-3px);
+        box-shadow:  0 10px 25px rgba(123, 104, 238, 0.5);
+    }
+
+    .edit-profile-btn:active {
+        transform: translateY(-1px);
+    }
+
+    /* ARKADAŞ AKSİYONU */
+    .arkadas-aksiyonu {
+        margin-top: 15px;
+        animation: fadeInLeft 0.6s ease-out 0.6s both;
+    }
+
+    .btn-arkadas {
+        width: 100%;
+        padding:  12px;
+        border: none;
+        border-radius: 12px;
+        font-weight:  700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-arkadas::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width:  0;
+        height: 0;
+        border-radius:  50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-arkadas:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn-arkadas.ekle {
+        background: linear-gradient(135deg, #4ECDC4, #44A08D);
+        color: white;
+        box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+    }
+
+    .btn-arkadas.ekle:hover {
+        transform: translateY(-2px);
+        box-shadow:  0 8px 20px rgba(78, 205, 196, 0.6);
+    }
+
+    .btn-arkadas.arkadas {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        border: 2px solid rgba(16, 185, 129, 0.3);
+        cursor: not-allowed;
+    }
+
+    .btn-arkadas.beklemede {
+        background: rgba(251, 191, 36, 0.2);
+        color: #fbbf24;
+        border:  2px solid rgba(251, 191, 36, 0.3);
+        cursor: not-allowed;
     }
     
     /* STATS GRID */
@@ -211,19 +357,38 @@
         border-radius: 20px;
         padding: 25px;
         box-shadow: var(--shadow-md);
-        transition: all 0.3s ease;
-        animation: slideUp 0.6s ease-out;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        animation:  slideUp 0.6s ease-out;
         animation-fill-mode: backwards;
+        position: relative;
+        overflow:  hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left:  -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(123, 104, 238, 0.1), transparent);
+        transition: left 0.5s;
+    }
+
+    .stat-card:hover::before {
+        left: 100%;
     }
     
     .stat-card:nth-child(1) { animation-delay: 0.1s; }
     .stat-card:nth-child(2) { animation-delay: 0.2s; }
     .stat-card:nth-child(3) { animation-delay: 0.3s; }
     .stat-card:nth-child(4) { animation-delay: 0.4s; }
+    .stat-card:nth-child(5) { animation-delay: 0.5s; }
+    .stat-card:nth-child(6) { animation-delay: 0.6s; }
     
     .stat-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        transform: translateY(-10px) scale(1.03);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.2);
     }
     
     .stat-icon {
@@ -235,35 +400,70 @@
         justify-content: center;
         font-size: 2rem;
         margin-bottom: 15px;
-        transition: transform 0.3s ease;
+        transition: transform 0.4s ease;
     }
     
     .stat-card:hover .stat-icon {
-        transform: scale(1.1) rotate(5deg);
+        transform: scale(1.15) rotate(10deg);
+        animation: wiggle 0.5s ease-in-out;
+    }
+
+    @keyframes wiggle {
+        0%, 100% { transform: scale(1.15) rotate(10deg); }
+        25% { transform: scale(1.15) rotate(-10deg); }
+        75% { transform: scale(1.15) rotate(10deg); }
     }
     
     .stat-icon.purple { 
         background: linear-gradient(135deg, #7B68EE, #6A5ACD); 
         color: white;
-        box-shadow: 0 5px 15px rgba(123, 104, 238, 0.3);
+        box-shadow: 0 5px 15px rgba(123, 104, 238, 0.4);
     }
     
     .stat-icon.orange { 
         background: linear-gradient(135deg, #FF8C00, #ff7700); 
         color: white;
-        box-shadow: 0 5px 15px rgba(255, 140, 0, 0.3);
+        box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
     }
     
     .stat-icon.green { 
         background: linear-gradient(135deg, #4CAF50, #45a049); 
         color: white;
-        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
     }
     
     .stat-icon.red { 
         background: linear-gradient(135deg, #F44336, #e53935); 
         color: white;
-        box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+        box-shadow:  0 5px 15px rgba(244, 67, 54, 0.4);
+    }
+
+    .stat-icon.gold {
+        background: linear-gradient(135deg, var(--gold), #FFA500);
+        color: white;
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    /* STREAK ICON */
+    .stat-icon.streak {
+        background: linear-gradient(135deg, #FF6B6B, #EE5A6F);
+        color: white;
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+    }
+
+    .stat-icon .bi-fire {
+        animation: fireFlicker 1.5s infinite;
+    }
+
+    @keyframes fireFlicker {
+        0%, 100% { 
+            transform: scale(1); 
+            filter: brightness(1);
+        }
+        50% { 
+            transform: scale(1.1); 
+            filter: brightness(1.3);
+        }
     }
     
     .stat-label {
@@ -278,8 +478,57 @@
     .stat-value {
         font-size: 2.5rem;
         font-weight: 900;
-        color: #333;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        background: linear-gradient(135deg, #333, #666);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* XP PROGRESS BAR */
+    .xp-progress-container {
+        margin-top: 15px;
+    }
+
+    .xp-bar-bg {
+        background: #e9ecef;
+        border-radius: 10px;
+        height: 12px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .xp-bar-fill {
+        background: linear-gradient(90deg, var(--gold), #FFA500);
+        height: 100%;
+        border-radius: 10px;
+        transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .xp-bar-fill::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom:  0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .xp-text {
+        color: #6c757d;
+        font-size: 0.8rem;
+        margin-top:  8px;
+        display: block;
+        text-align: center;
+        font-weight: 600;
     }
     
     /* PROGRESS SECTION */
@@ -290,7 +539,7 @@
         margin-bottom: 30px;
         box-shadow: var(--shadow-md);
         animation: slideUp 0.6s ease-out 0.2s;
-        animation-fill-mode: backwards;
+        animation-fill-mode:  backwards;
     }
     
     .section-title {
@@ -301,7 +550,6 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
     }
     
     .progress-item {
@@ -327,6 +575,12 @@
         font-weight: 800;
         color: var(--primary-purple);
         font-size: 1.2rem;
+        animation: countUp 1.5s ease-out;
+    }
+
+    @keyframes countUp {
+        from { opacity: 0; transform: scale(0.5); }
+        to { opacity: 1; transform: scale(1); }
     }
     
     .progress-bar-container {
@@ -341,7 +595,7 @@
     .progress-bar-fill {
         height: 100%;
         border-radius: 15px;
-        transition: width 1.5s ease;
+        transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
         padding-left: 15px;
@@ -355,22 +609,17 @@
     .progress-bar-fill::before {
         content: '';
         position: absolute;
-        top: 0;
+        top:  0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
         animation: shimmer 2s infinite;
-    }
-    
-    @keyframes shimmer {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
     }
     
     .progress-bar-fill.green {
         background: linear-gradient(90deg, #4CAF50, #45a049);
-        box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+        box-shadow: 0 3px 15px rgba(76, 175, 80, 0.4);
     }
     
     /* CHART SECTION */
@@ -378,7 +627,7 @@
         background: white;
         border-radius: 20px;
         padding: 30px;
-        margin-bottom: 30px;
+        margin-bottom:  30px;
         box-shadow: var(--shadow-md);
         animation: slideUp 0.6s ease-out 0.3s;
         animation-fill-mode: backwards;
@@ -404,13 +653,25 @@
         overflow: hidden;
         height: 280px;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode:  backwards;
+    }
+
+    .game-card-container:nth-child(1) { animation-delay: 0.1s; }
+    .game-card-container:nth-child(2) { animation-delay: 0.2s; }
+    .game-card-container:nth-child(3) { animation-delay: 0.3s; }
+    .game-card-container:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
     }
     
     .game-card-container:hover {
-        transform: translateY(-10px) scale(1.02);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        transform:  translateY(-15px) scale(1.03);
+        box-shadow: 0 25px 60px rgba(0,0,0,0.35);
     }
     
     .game-card-container img {
@@ -421,13 +682,13 @@
     }
     
     .game-card-container:hover img {
-        transform: scale(1.1);
+        transform:  scale(1.15);
     }
     
     .game-overlay {
         position: absolute;
         bottom: 0;
-        left: 0;
+        left:  0;
         right: 0;
         background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 70%, transparent 100%);
         padding: 30px 20px;
@@ -437,13 +698,19 @@
     
     .game-card-container:hover .game-overlay {
         background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 70%, transparent 100%);
+        padding: 35px 20px;
     }
     
     .game-title {
         font-size: 1.8rem;
-        font-weight: 900;
+        font-weight:  900;
         margin-bottom: 10px;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        transition: all 0.3s ease;
+    }
+
+    .game-card-container:hover .game-title {
+        transform: translateX(5px);
     }
     
     .games-section-title {
@@ -494,7 +761,7 @@
     }
     
     .form-control, .form-select {
-        border: 2px solid #e9ecef;
+        border:  2px solid #e9ecef;
         border-radius: 10px;
         padding: 12px;
         transition: all 0.3s ease;
@@ -527,12 +794,31 @@
         padding: 12px;
         font-weight: 700;
         transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-primary:hover::before {
+        width: 300px;
+        height: 300px;
     }
     
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(123, 104, 238, 0.4);
-        background: linear-gradient(135deg, var(--dark-purple), var(--primary-purple));
+        box-shadow:  0 5px 15px rgba(123, 104, 238, 0.4);
     }
     
     .btn-secondary {
@@ -543,32 +829,10 @@
     }
     
     .btn-secondary:hover {
-        transform: translateY(-2px);
+        transform:  translateY(-2px);
     }
     
-    /* TEST BUTTON */
-    .test-button {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        padding: 15px 30px;
-        background: linear-gradient(135deg, #FFD700, #FFA500);
-        border: none;
-        border-radius: 25px;
-        font-weight: 700;
-        cursor: pointer;
-        z-index: 1000;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        transition: all 0.3s ease;
-        color: white;
-        font-size: 1rem;
-    }
-    
-    .test-button:hover {
-        transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-    }
-    
+    /* RESPONSIVE */
     @media (max-width: 768px) {
         .profile-header {
             flex-direction: column;
@@ -591,19 +855,16 @@
         .profile-badges {
             justify-content: center;
         }
-        
-        .test-button {
-            bottom: 10px;
-            right: 10px;
-            padding: 12px 20px;
-            font-size: 0.9rem;
+
+        .btn-arkadas {
+            margin-top: 10px;
         }
     }
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 {% endblock %}
 
@@ -615,15 +876,18 @@
             {% if profil.profil_fotografi %}
                 <img src="{{ profil.profil_fotografi.url }}" alt="Profil Fotoğrafı" class="profile-photo">
             {% else %}
-                <img src="https://ui-avatars.com/api/?name={{ user.username }}&size=150&background=7B68EE&color=fff&bold=true&font-size=0.4" alt="Profil Fotoğrafı" class="profile-photo">
+                <img src="https://ui-avatars.com/api/? name={{ profil.kullanici.username }}&size=150&background=7B68EE&color=fff&bold=true&font-size=0.4" alt="Profil Fotoğrafı" class="profile-photo">
             {% endif %}
+            
+            {% if profil.kullanici == request.user %}
             <button class="photo-upload-btn" onclick="document.getElementById('photoInput').click()" title="Fotoğraf Değiştir">
                 <i class="bi bi-camera-fill"></i>
             </button>
             <form id="photoUploadForm" method="POST" action="{% url 'profil' %}" enctype="multipart/form-data" style="display: none;">
                 {% csrf_token %}
-                <input type="file" id="photoInput" name="profil_fotografi" accept="image/*" onchange="document.getElementById('photoUploadForm').submit()">
+                <input type="file" id="photoInput" name="profil_fotografi" accept="image/*" onchange="uploadPhoto()">
             </form>
+            {% endif %}
         </div>
         
         <div class="profile-info">
@@ -631,63 +895,144 @@
                 {% if profil.ad and profil.soyad %}
                     {{ profil.ad }} {{ profil.soyad }}
                 {% else %}
-                    {{ user.username }}
+                    {{ profil.kullanici.username }}
                 {% endif %}
             </h1>
             <p class="profile-username">
-                <i class="bi bi-at"></i>{{ user.username }}
+                <i class="bi bi-at"></i>{{ profil.kullanici.username }}
             </p>
             
             <div class="profile-badges">
+                <!-- SEVİYE BADGE -->
+                <span class="badge-item badge-level">
+                    <i class="bi bi-star-fill"></i> 
+                    Seviye {{ profil.seviye }} - {{ profil.seviye_unvani }}
+                    <div class="xp-tooltip">
+                        {{ profil.xp }} / {{ profil.sonraki_seviye_xp }} XP
+                    </div>
+                </span>
+                
+                <!-- SIRA BADGE -->
                 <span class="badge-item badge-rank">
                     <i class="bi bi-trophy-fill"></i> #{{ sira|default:"--" }} Sırada
                 </span>
+                
+                <!-- ALAN BADGE -->
                 <span class="badge-item badge-area">
                     <i class="bi bi-book-fill"></i> {{ profil.get_alan_display|default:"Alan Seçilmedi" }}
                 </span>
-                <span class="badge-item badge-level">
-                    <i class="bi bi-award-fill"></i> {{ profil.unvanlar|default:"Çaylak" }}
+
+                <!-- STREAK BADGE (3+ günse göster) -->
+                {% if profil.ardasik_gun_sayisi >= 3 %}
+                <span class="badge-item badge-streak">
+                    <i class="bi bi-fire"></i> {{ profil.ardasik_gun_sayisi }} Gün Streak! 
                 </span>
+                {% endif %}
             </div>
             
-            <button class="edit-profile-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                <i class="bi bi-pencil-fill"></i> Profili Düzenle
-            </button>
+            {% if profil.kullanici == request.user %}
+            <div>
+                <button class="edit-profile-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                    <span style="position: relative; z-index: 1;">
+                        <i class="bi bi-pencil-fill"></i> Profili Düzenle
+                    </span>
+                </button>
+                
+                <button class="btn btn-secondary" disabled style="opacity: 0.6; cursor: not-allowed; display: inline-block; padding: 12px 30px; border-radius: 25px; font-weight: 700;">
+                    <i class="bi bi-bar-chart"></i> Konu Analizleri (Yakında)
+                </button>
+            </div>
+            {% else %}
+            <!-- ARKADAŞ EKLEME BUTONU -->
+            <div class="arkadas-aksiyonu">
+                {% if arkadaslik_durumu == 'arkadas' %}
+                <button class="btn-arkadas arkadas" disabled>
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span style="position: relative; z-index: 1;">Arkadaşsınız</span>
+                </button>
+                {% elif arkadaslik_durumu == 'beklemede' %}
+                <button class="btn-arkadas beklemede" disabled>
+                    <i class="bi bi-clock-history"></i>
+                    <span style="position: relative; z-index: 1;">İstek Gönderildi</span>
+                </button>
+                {% else %}
+                <button class="btn-arkadas ekle" onclick="arkadasEkle({{ profil.kullanici.id }})">
+                    <i class="bi bi-person-plus-fill"></i>
+                    <span style="position: relative; z-index: 1;">Arkadaş Ekle</span>
+                </button>
+                {% endif %}
+            </div>
+            {% endif %}
         </div>
     </div>
     
     <!-- STATS GRID -->
     <div class="stats-grid">
+        <!-- 1.SEVİYE KARTI -->
+        <div class="stat-card">
+            <div class="stat-icon gold">
+                <i class="bi bi-star-fill"></i>
+            </div>
+            <div class="stat-label">Seviye</div>
+            <div class="stat-value">{{ profil.seviye }}</div>
+            <div class="xp-progress-container">
+                <div class="xp-bar-bg">
+                    <div class="xp-bar-fill" style="width: 0%" data-xp-width="{{ profil.xp_yuzdesi }}"></div>
+                </div>
+                <small class="xp-text">
+                    {{ profil.xp }} / {{ profil.sonraki_seviye_xp }} XP
+                </small>
+            </div>
+        </div>
+
+        <!-- 2.STREAK KARTI -->
+        <div class="stat-card">
+            <div class="stat-icon streak">
+                <i class="bi bi-fire"></i>
+            </div>
+            <div class="stat-label">Ardışık Gün</div>
+            <div class="stat-value">{{ profil.ardasik_gun_sayisi|default:0 }}</div>
+            <div style="margin-top: 10px;">
+                <small style="color: #6c757d; font-size:  0.8rem; display: block;">
+                    🏆 En uzun:  {{ profil.en_uzun_streak|default:0 }} gün
+                </small>
+            </div>
+        </div>
+
+        <!-- 3.TOPLAM PUAN -->
         <div class="stat-card">
             <div class="stat-icon purple">
                 <i class="bi bi-lightning-charge-fill"></i>
             </div>
             <div class="stat-label">Toplam Puan</div>
-            <div class="stat-value">{{ profil.toplam_puan|default:0 }}</div>
+            <div class="stat-value" id="totalPoints">{{ profil.toplam_puan|default:0 }}</div>
         </div>
         
+        <!-- 4.ÇÖZÜLEN SORU -->
         <div class="stat-card">
             <div class="stat-icon orange">
                 <i class="bi bi-journal-check"></i>
             </div>
             <div class="stat-label">Çözülen Soru</div>
-            <div class="stat-value">{{ profil.cozulen_soru_sayisi|default:0 }}</div>
+            <div class="stat-value" id="solvedQuestions">{{ profil.cozulen_soru_sayisi|default:0 }}</div>
         </div>
         
+        <!-- 5.DOĞRU SAYISI -->
         <div class="stat-card">
             <div class="stat-icon green">
                 <i class="bi bi-check-circle-fill"></i>
             </div>
             <div class="stat-label">Doğru Sayısı</div>
-            <div class="stat-value">{{ profil.toplam_dogru|default:0 }}</div>
+            <div class="stat-value" id="correctAnswers">{{ profil.toplam_dogru|default:0 }}</div>
         </div>
         
+        <!-- 6.YANLIŞ SAYISI -->
         <div class="stat-card">
             <div class="stat-icon red">
                 <i class="bi bi-x-circle-fill"></i>
             </div>
             <div class="stat-label">Yanlış Sayısı</div>
-            <div class="stat-value">{{ profil.toplam_yanlis|default:0 }}</div>
+            <div class="stat-value" id="wrongAnswers">{{ profil.toplam_yanlis|default:0 }}</div>
         </div>
     </div>
     
@@ -697,7 +1042,6 @@
             <i class="bi bi-graph-up-arrow"></i> İlerleme Durumu
         </h2>
         
-        <!-- Başarı Oranı -->
         <div class="progress-item">
             <div class="progress-header">
                 <span class="progress-label">
@@ -706,7 +1050,7 @@
                 <span class="progress-percentage">{{ basari_orani|default:0 }}%</span>
             </div>
             <div class="progress-bar-container">
-                <div class="progress-bar-fill green" style="width: {{ basari_orani|default:0 }}%">
+                <div class="progress-bar-fill green" style="width: 0%" data-width="{{ basari_orani|default:0 }}%">
                     {% if basari_orani > 20 %}{{ basari_orani }}%{% endif %}
                 </div>
             </div>
@@ -723,12 +1067,13 @@
         </div>
     </div>
     
+    {% if profil.kullanici == request.user %}
     <!-- GAMES SECTION -->
     <h2 class="games-section-title">
         <i class="bi bi-controller"></i> Bölümler
     </h2>
     <div class="games-grid">
-        <a href="{% url 'karsilasma_rakip_bul' %}" class="text-decoration-none">
+        <a href="{% url 'karsilasma_sinav_tipi_secimi' %}" class="text-decoration-none">
             <div class="game-card-container">
                 <img src="{% static 'images/karsilasma.png' %}" alt="Karşılaşma" onerror="this.src='https://via.placeholder.com/400x280/FF8C00/ffffff?text=KARŞILAŞMA'">
                 <div class="game-overlay">
@@ -760,16 +1105,18 @@
         
         <a href="{% url 'bul_bakalim_sinav_tipi_secimi' %}" class="text-decoration-none">
             <div class="game-card-container">
-                <img src="{% static 'images/bulbakalim.png' %}" alt="Liderlik" onerror="this.src='https://via.placeholder.com/400x280/4CAF50/ffffff?text=LİDERLİK'">
+                <img src="{% static 'images/bulbakalim.png' %}" alt="Bul Bakalım" onerror="this.src='https://via.placeholder.com/400x280/4CAF50/ffffff?text=BUL+BAKALIM'">
                 <div class="game-overlay">
                     <h3 class="game-title">💡 BUL BAKALIM</h3>
-                    <p class="mb-0">En iyilerle yarış, zirveye tırman!</p>
+                    <p class="mb-0">5 soru, 90 saniye!  Hemen başla!</p>
                 </div>
             </div>
         </a>
     </div>
+    {% endif %}
 </div>
 
+{% if profil.kullanici == request.user %}
 <!-- PROFİL DÜZENLEME MODALI -->
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -784,13 +1131,12 @@
                 <form method="POST" action="{% url 'profil_duzenle' %}">
                     {% csrf_token %}
                     
-                    <!-- Profil Fotoğrafı Önizleme -->
                     <div class="mb-4 text-center">
                         <div style="position: relative; display: inline-block;">
-                            {% if profil.profil_fotografi %}
-                                <img src="{{ profil.profil_fotografi.url }}" alt="Profil" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-purple);">
+                            {% if request.user.profil.profil_fotografi %}
+                                <img src="{{ request.user.profil.profil_fotografi.url }}" alt="Profil" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-purple);">
                             {% else %}
-                                <img src="https://ui-avatars.com/api/?name={{ user.username }}&size=120&background=7B68EE&color=fff&bold=true&font-size=0.4" alt="Profil" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-purple);">
+                                <img src="https://ui-avatars.com/api/?name={{ request.user.username }}&size=120&background=7B68EE&color=fff&bold=true&font-size=0.4" alt="Profil" style="width:  120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-purple);">
                             {% endif %}
                         </div>
                         <div class="mt-2">
@@ -800,50 +1146,47 @@
                         </div>
                     </div>
                     
-                    <!-- Ad -->
                     <div class="mb-3">
                         <label for="id_ad" class="form-label">
                             <i class="bi bi-person-fill"></i> Ad
                         </label>
-                        <input type="text" class="form-control" id="id_ad" name="ad" value="{{ profil.ad }}" placeholder="Adınız" maxlength="100">
+                        <input type="text" class="form-control" id="id_ad" name="ad" value="{{ request.user.profil.ad }}" placeholder="Adınız" maxlength="100">
                     </div>
                     
-                    <!-- Soyad -->
                     <div class="mb-3">
                         <label for="id_soyad" class="form-label">
                             <i class="bi bi-person-fill"></i> Soyad
                         </label>
-                        <input type="text" class="form-control" id="id_soyad" name="soyad" value="{{ profil.soyad }}" placeholder="Soyadınız" maxlength="100">
+                        <input type="text" class="form-control" id="id_soyad" name="soyad" value="{{ request.user.profil.soyad }}" placeholder="Soyadınız" maxlength="100">
                     </div>
                     
-                    <!-- Hedef Puan -->
                     <div class="mb-3">
                         <label for="id_hedef_puan" class="form-label">
                             <i class="bi bi-target"></i> Hedef Puan
                         </label>
-                        <input type="number" class="form-control" id="id_hedef_puan" name="hedef_puan" value="{{ profil.hedef_puan }}" placeholder="Hedef puanınız" min="0" max="1000">
+                        <input type="number" class="form-control" id="id_hedef_puan" name="hedef_puan" value="{{ request.user.profil.hedef_puan }}" placeholder="Hedef puanınız" min="0" max="1000">
                         <small class="text-muted">
                             <i class="bi bi-lightbulb"></i> YKS hedef puanınızı girin (0-1000 arası)
                         </small>
                     </div>
                     
-                    <!-- Alan -->
                     <div class="mb-3">
                         <label for="id_alan" class="form-label">
                             <i class="bi bi-book-fill"></i> Alan
                         </label>
                         <select class="form-select" id="id_alan" name="alan">
-                            <option value="sayisal" {% if profil.alan == 'sayisal' %}selected{% endif %}>Sayısal</option>
-                            <option value="esit_agirlik" {% if profil.alan == 'esit_agirlik' %}selected{% endif %}>Eşit Ağırlık</option>
-                            <option value="sozel" {% if profil.alan == 'sozel' %}selected{% endif %}>Sözel</option>
-                            <option value="dil" {% if profil.alan == 'dil' %}selected{% endif %}>Dil</option>
+                            <option value="sayisal" {% if request.user.profil.alan == 'sayisal' %}selected{% endif %}>Sayısal</option>
+                            <option value="esit_agirlik" {% if request.user.profil.alan == 'esit_agirlik' %}selected{% endif %}>Eşit Ağırlık</option>
+                            <option value="sozel" {% if request.user.profil.alan == 'sozel' %}selected{% endif %}>Sözel</option>
+                            <option value="dil" {% if request.user.profil.alan == 'dil' %}selected{% endif %}>Dil</option>
                         </select>
                     </div>
                     
-                    <!-- Butonlar -->
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary flex-fill">
-                            <i class="bi bi-check-circle-fill"></i> Kaydet
+                            <span style="position: relative; z-index: 1;">
+                                <i class="bi bi-check-circle-fill"></i> Kaydet
+                            </span>
                         </button>
                         <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal">
                             <i class="bi bi-x-circle-fill"></i> İptal
@@ -854,12 +1197,79 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block extra_js %}
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // Fotoğraf yükleme
+    function uploadPhoto() {
+        showLoading('Fotoğraf yükleniyor...');
+        document.getElementById('photoUploadForm').submit();
+    }
+
+    // Arkadaş ekle
+    function arkadasEkle(kullaniciId) {
+        if (!confirm('Bu kullanıcıya arkadaşlık isteği göndermek istiyor musun?')) return;
+        
+        showLoading('İstek gönderiliyor...');
+        
+        fetch(`/arkadaslik/gonder/${kullaniciId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            if (data.success) {
+                showToast(data.message, 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            hideLoading();
+            console.error('Hata:', error);
+            showToast('Bir hata oluştu! ', 'error');
+        });
+    }
+
+    // CSRF Token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // İstatistik sayaçları animate et
+    function animateValue(element, start, end, duration) {
+        let startTime = null;
+        const step = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const value = Math.floor(progress * (end - start) + start);
+            element.textContent = value;
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
     // İstatistik Grafiği
     const ctx = document.getElementById('statsChart').getContext('2d');
     const statsChart = new Chart(ctx, {
@@ -871,26 +1281,23 @@
                     {{ profil.toplam_dogru|default:0 }},
                     {{ profil.toplam_yanlis|default:0 }}
                 ],
-                backgroundColor: [
-                    '#4CAF50',
-                    '#F44336'
-                ],
+                backgroundColor: ['#4CAF50', '#F44336'],
                 borderWidth: 0,
-                borderRadius: 5,
-                spacing: 3
+                borderRadius: 8,
+                spacing: 5
             }]
         },
         options: {
-            responsive: true,
+            responsive:  true,
             maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'bottom',
-                    labels: {
+                    labels:  {
                         font: {
                             size: 16,
                             weight: 'bold',
-                            family: 'Nunito'
+                            family: 'Poppins'
                         },
                         padding: 20,
                         usePointStyle: true,
@@ -899,26 +1306,56 @@
                 },
                 tooltip: {
                     backgroundColor: 'rgba(0,0,0,0.8)',
-                    titleFont: { size: 16, family: 'Nunito', weight: 'bold' },
-                    bodyFont: { size: 14, family: 'Nunito' },
-                    padding: 12,
-                    cornerRadius: 8,
+                    titleFont: { size: 16, family: 'Poppins', weight: 'bold' },
+                    bodyFont: { size:  14, family: 'Poppins' },
+                    padding: 15,
+                    cornerRadius: 10,
                     displayColors: false
                 }
+            },
+            animation: {
+                animateRotate: true,
+                animateScale: true,
+                duration: 1500
             }
         }
     });
     
-    // İlerleme çubuğu animasyonu
+    // Sayfa yüklendiğinde animasyonlar
     window.addEventListener('load', function() {
+        // Progress bar animasyonu
         const progressBars = document.querySelectorAll('.progress-bar-fill');
         progressBars.forEach(bar => {
-            const width = bar.style.width;
-            bar.style.width = '0';
+            const targetWidth = bar.getAttribute('data-width');
             setTimeout(() => {
-                bar.style.width = width;
-            }, 200);
+                bar.style.width = targetWidth;
+            }, 300);
         });
+
+        // XP bar animasyonu
+        const xpBars = document.querySelectorAll('.xp-bar-fill');
+        xpBars.forEach(bar => {
+            const targetWidth = bar.getAttribute('data-xp-width');
+            setTimeout(() => {
+                bar.style.width = targetWidth + '%';
+            }, 500);
+        });
+
+        // Sayaç animasyonları
+        const totalPoints = document.getElementById('totalPoints');
+        const solvedQuestions = document.getElementById('solvedQuestions');
+        const correctAnswers = document.getElementById('correctAnswers');
+        const wrongAnswers = document.getElementById('wrongAnswers');
+
+        animateValue(totalPoints, 0, {{ profil.toplam_puan|default:0 }}, 1500);
+        animateValue(solvedQuestions, 0, {{ profil.cozulen_soru_sayisi|default:0 }}, 1500);
+        animateValue(correctAnswers, 0, {{ profil.toplam_dogru|default:0 }}, 1500);
+        animateValue(wrongAnswers, 0, {{ profil.toplam_yanlis|default:0 }}, 1500);
+
+        {% if profil.kullanici == request.user %}
+        // Hoş geldin mesajı
+        showToast('Hoş geldin {{ request.user.username }}!  🎉', 'success');
+        {% endif %}
     });
 </script>
 {% endblock %}

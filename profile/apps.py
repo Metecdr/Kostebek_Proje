@@ -1,12 +1,12 @@
-# profile/apps.py dosyasının içeriği
-
 from django.apps import AppConfig
+import os
+from profile import scheduler
 
 class ProfileConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'profile'
     
-    # BU METODU EKLEYİN:
     def ready(self):
-        # Uygulama hazır olduğunda sinyal dosyasını içeri aktar
-        import profile.signals
+        # Sadece ana process'te çalıştır (reload sırasında 2 kere çalışmasın)
+        if os.environ.get('RUN_MAIN') == 'true':
+            scheduler.start_scheduler()

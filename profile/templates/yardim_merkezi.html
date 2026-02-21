@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Yardım Merkezi - Köstebek YKS{% endblock %}
+
+{% block content %}
+<div class="help-container" style="max-width: 1000px; margin: 50px auto; padding: 20px;">
+    <h1 style="color: white; font-size: 2.5rem; font-weight: 900; margin-bottom: 20px; text-align: center; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+        🆘 Yardım Merkezi
+    </h1>
+
+    <div class="help-categories" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 40px;">
+        <!-- Kategori 1 -->
+        <a href="{% url 'sss' %}" class="help-card" style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 30px; border-radius: 20px; text-decoration: none; color: white; transition: all 0.3s;">
+            <i class="bi bi-question-circle-fill" style="font-size:  3rem; margin-bottom: 15px; display: block;"></i>
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 10px;">Sıkça Sorulan Sorular</h3>
+            <p style="opacity: 0.9;">En çok merak edilen soruların cevapları</p>
+        </a>
+
+        <!-- Kategori 2 -->
+        <a href="{% url 'iletisim' %}" class="help-card" style="background: linear-gradient(135deg, #4ECDC4, #44A08D); padding: 30px; border-radius: 20px; text-decoration: none; color:  white; transition: all 0.3s;">
+            <i class="bi bi-envelope-fill" style="font-size: 3rem; margin-bottom: 15px; display: block;"></i>
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 10px;">İletişim</h3>
+            <p style="opacity: 0.9;">Bize ulaşın, yardımcı olalım</p>
+        </a>
+
+        <!-- Kategori 3 -->
+        <a href="{% url 'gizlilik_politikasi' %}" class="help-card" style="background:  linear-gradient(135deg, #FF8C00, #ff7700); padding: 30px; border-radius: 20px; text-decoration: none; color:  white; transition: all 0.3s;">
+            <i class="bi bi-shield-check-fill" style="font-size: 3rem; margin-bottom: 15px; display: block;"></i>
+            <h3 style="font-size:  1.5rem; font-weight: 800; margin-bottom: 10px;">Gizlilik Politikası</h3>
+            <p style="opacity: 0.9;">Verileriniz güvende</p>
+        </a>
+    </div>
+</div>
+
+<style>
+    .help-card:hover {
+        transform: translateY(-10px);
+        box-shadow:  0 20px 40px rgba(0,0,0,0.3);
+    }
+</style>
+{% endblock %}

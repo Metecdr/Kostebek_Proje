@@ -1,0 +1,203 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabu - Bölüm Seç</title>
+    <link href="https://fonts.googleapis.com/css2? family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: linear-gradient(135deg, #f8f4ff 0%, #fff 100%);
+            border-radius: 30px;
+            padding: 60px 40px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 800;
+            color: #7c5cdb;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .bolum-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .bolum-btn {
+            background: white;
+            border: 3px solid #7c5cdb;
+            border-radius: 15px;
+            padding: 30px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .bolum-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(124, 92, 219, 0.3);
+        }
+
+        .bolum-btn input[type="radio"] {
+            display: none;
+        }
+
+        .bolum-btn input[type="radio"]:checked + label {
+            background: linear-gradient(135deg, #7c5cdb 0%, #a855f7 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+        }
+
+        .bolum-btn label {
+            font-size: 24px;
+            font-weight: 700;
+            color: #7c5cdb;
+            cursor: pointer;
+            display: block;
+            transition: all 0.3s;
+        }
+
+        .bolum-btn input[type="radio"]:checked + label {
+            color: white;
+        }
+
+        .basla-btn {
+            background: linear-gradient(135deg, #7c5cdb 0%, #a855f7 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(124, 92, 219, 0.4);
+            letter-spacing: 1px;
+        }
+
+        .basla-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(124, 92, 219, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .bolum-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+
+            .bolum-btn {
+                padding: 25px 15px;
+            }
+
+            .bolum-btn label {
+                font-size: 20px;
+            }
+
+            .container {
+                padding: 40px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="{% static 'images/kostebek_sag.png' %}" alt="Köstebek">
+        </div>
+        
+        <h1>🎭 TABU OYUNU</h1>
+        <p class="subtitle">Yasaklı kelimeleri kullanmadan kelimeyi anlat!  <br>Hangi bölüm soruları ile oynamak istersin?</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="bolum-buttons">
+                <div class="bolum-btn">
+                    <input type="radio" name="bolum" value="sayisal" id="sayisal" checked>
+                    <label for="sayisal">🔬 Sayısal</label>
+                </div>
+                
+                <div class="bolum-btn">
+                    <input type="radio" name="bolum" value="sozel" id="sozel">
+                    <label for="sozel">📚 Sözel</label>
+                </div>
+                
+                <div class="bolum-btn">
+                    <input type="radio" name="bolum" value="esit_agirlik" id="esit_agirlik">
+                    <label for="esit_agirlik">⚖️ Eşit Ağırlık</label>
+                </div>
+                
+                <div class="bolum-btn">
+                    <input type="radio" name="bolum" value="dil" id="dil">
+                    <label for="dil">🌍 Dil</label>
+                </div>
+            </div>
+            
+            <button type="submit" class="basla-btn">DEVAM ET →</button>
+        </form>
+    </div>
+
+    <script>
+        document.querySelectorAll('.bolum-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.bolum-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+    </script>
+</body>
+</html>

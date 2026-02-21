@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}İletişim - Köstebek YKS{% endblock %}
+
+{% block content %}
+<div class="support-container" style="max-width: 800px; margin: 50px auto; padding: 20px;">
+    <div class="support-card" style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+        <h1 style="color: #7B68EE; font-size: 2.5rem; font-weight: 900; margin-bottom: 20px; text-align: center;">
+            📞 İletişim
+        </h1>
+        <p style="text-align: center; color: #6c757d; font-size: 1.1rem; margin-bottom: 40px;">
+            Sorularınız, önerileriniz veya sorunlarınız için bize ulaşabilirsiniz! 
+        </p>
+
+        <div class="contact-methods" style="display: grid; gap: 20px;">
+            <div class="contact-item" style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 25px; border-radius: 15px; color: white;">
+                <i class="bi bi-envelope-fill" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                <h3 style="margin-bottom: 10px;">E-posta</h3>
+                <p style="font-size: 1.2rem; font-weight: 700; margin:  0;">
+                    <a href="mailto:destek@kostebekyks.com" style="color: white; text-decoration: none;">
+                        destek@kostebekyks.com
+                    </a>
+                </p>
+            </div>
+
+            <div class="contact-item" style="background: linear-gradient(135deg, #4ECDC4, #44A08D); padding: 25px; border-radius: 15px; color: white;">
+                <i class="bi bi-instagram" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                <h3 style="margin-bottom: 10px;">Instagram</h3>
+                <p style="font-size: 1.2rem; font-weight: 700; margin: 0;">
+                    <a href="https://instagram.com/kostebek_yks" target="_blank" style="color: white; text-decoration: none;">
+                        @kostebek_yks
+                    </a>
+                </p>
+            </div>
+
+            <div class="contact-item" style="background: linear-gradient(135deg, #FF8C00, #ff7700); padding: 25px; border-radius: 15px; color: white;">
+                <i class="bi bi-twitter-x" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                <h3 style="margin-bottom: 10px;">X (Twitter)</h3>
+                <p style="font-size: 1.2rem; font-weight: 700; margin:  0;">
+                    <a href="https://x.com/kostebek_yks" target="_blank" style="color: white; text-decoration: none;">
+                        @kostebek_yks
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; text-align: center;">
+            <p style="color: #6c757d;">
+                <i class="bi bi-clock"></i> Çalışma Saatleri:  Hafta içi 09:00 - 18:00
+            </p>
+            <p style="color: #6c757d;">
+                <i class="bi bi-reply-fill"></i> Ortalama yanıt süresi: 24 saat
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

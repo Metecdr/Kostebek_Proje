@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bildirimler - Köstebek{% endblock %}
+
+{% block content %}
+<div class="bildirimler-sayfa-container" style="max-width: 900px; margin: 50px auto; padding: 0 20px;">
+    
+    <!-- HEADER -->
+    <div class="sayfa-header" style="margin-bottom: 40px;">
+        <h1 style="color: white; font-size: 2.5rem; font-weight: 900; margin-bottom: 10px;">
+            🔔 Bildirimler
+        </h1>
+        <p style="color: rgba(255,255,255,0.7); font-size: 1.1rem;">
+            Tüm bildirimleriniz ve başarılarınız
+        </p>
+    </div>
+    
+    <!-- FİLTRELER -->
+    <div class="bildirim-filtreler" style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
+        <button class="filtre-btn active" data-tip="hepsi">Hepsi</button>
+        <button class="filtre-btn" data-tip="rozet">🏅 Rozetler</button>
+        <button class="filtre-btn" data-tip="liderlik">🏆 Liderlik</button>
+        <button class="filtre-btn" data-tip="basari">✨ Başarılar</button>
+        <button class="filtre-btn" data-tip="sistem">🔧 Sistem</button>
+    </div>
+    
+    <!-- BİLDİRİMLER -->
+    {% if bildirimler %}
+    <div class="bildirimler-tam-liste">
+        {% for bildirim in bildirimler %}
+        <div class="bildirim-tam-item {% if not bildirim.okundu_mu %}okunmamis{% endif %}" data-tip="{{ bildirim.tip }}">
+            <div class="bildirim-tam-icon" style="background: {{ bildirim.renk }}20;">
+                <span style="font-size: 3rem;">{{ bildirim.icon }}</span>
+            </div>
+            <div class="bildirim-tam-content">
+                <div class="bildirim-tam-baslik">{{ bildirim.baslik }}</div>
+                <div class="bildirim-tam-mesaj">{{ bildirim.mesaj }}</div>
+                <div class="bildirim-tam-tarih">
+                    📅 {{ bildirim.olusturma_tarihi|date:"d M Y, H:i" }}
+                </div>
+            </div>
+            {% if not bildirim.okundu_mu %}
+            <span class="yeni-badge">YENİ</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bildirim-bos-durum" style="text-align: center; padding: 100px 20px; background: rgba(255,255,255,0.05); border-radius: 20px;">
+        <div style="font-size: 6rem; margin-bottom: 20px;">🔕</div>
+        <h2 style="color: white; font-size: 2rem; margin-bottom: 15px;">Henüz Bildirim Yok</h2>
+        <p style="color: rgba(255,255,255,0.7); font-size: 1.2rem;">Sorular çözmeye başladığında bildirimler burada görünecek!  </p>
+    </div>
+    {% endif %}
+    
+</div>
+
+<style>
+    /* FİLTRE BUTONLARI */
+    .filtre-btn {
+        padding: 12px 25px;
+        border: 2px solid rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.1);
+        color: white;
+        border-radius: 25px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .filtre-btn:hover {
+        background: rgba(255,255,255,0.2);
+        transform: translateY(-2px);
+    }
+    
+    .filtre-btn.active {
+        background: linear-gradient(135deg, #4ECDC4, #44A08D);
+        border-color: #4ECDC4;
+    }
+    
+    /* TAM BİLDİRİM ITEM */
+    .bildirim-tam-item {
+        background: rgba(255,255,255,0.95);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom:  20px;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+        position: relative;
+    }
+    
+    [data-theme="dark"].bildirim-tam-item {
+        background:  #1e2749;
+        border:  1px solid #2d3454;
+    }
+    
+    .bildirim-tam-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .bildirim-tam-item.okunmamis {
+        border-left: 5px solid #4ECDC4;
+    }
+    
+    .bildirim-tam-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    
+    .bildirim-tam-content {
+        flex: 1;
+    }
+    
+    .bildirim-tam-baslik {
+        font-size: 1.4rem;
+        font-weight: 900;
+        color: #333;
+        margin-bottom: 8px;
+    }
+    
+    [data-theme="dark"] .bildirim-tam-baslik {
+        color: white;
+    }
+    
+    .bildirim-tam-mesaj {
+        font-size:  1.1rem;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 10px;
+    }
+    
+    [data-theme="dark"] .bildirim-tam-mesaj {
+        color: #a8b3cf;
+    }
+    
+    .bildirim-tam-tarih {
+        font-size:  0.9rem;
+        color: #999;
+        font-weight: 600;
+    }
+    
+    .yeni-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #FF6B6B, #FF5252);
+        color: white;
+        padding: 6px 15px;
+        border-radius:  20px;
+        font-size: 0.75rem;
+        font-weight:  800;
+        animation: pulse 2s infinite;
+    }
+</style>
+
+<script>
+    // Filtre sistemi
+    document.querySelectorAll('.filtre-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Aktif butonu güncelle
+            document.querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            const tip = this.dataset.tip;
+            
+            // Bildirimleri filtrele
+            document.querySelectorAll('.bildirim-tam-item').forEach(item => {
+                if (tip === 'hepsi' || item.dataset.tip === tip) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

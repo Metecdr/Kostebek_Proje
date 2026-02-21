@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gizlilik Politikası - Köstebek YKS{% endblock %}
+
+{% block content %}
+<div class="policy-container" style="max-width: 900px; margin: 50px auto; padding: 20px;">
+    <div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+        <h1 style="color: #7B68EE; font-size: 2.5rem; font-weight: 900; margin-bottom: 20px;">
+            🔒 Gizlilik Politikası
+        </h1>
+        <p style="color: #6c757d; margin-bottom: 30px;">Son güncelleme: 17 Aralık 2025</p>
+
+        <div class="policy-section" style="margin-bottom: 30px;">
+            <h2 style="color: #333; font-size: 1.5rem; font-weight: 800; margin-bottom: 15px;">1. Toplanan Bilgiler</h2>
+            <p style="color: #6c757d; line-height: 1.8;">
+                Köstebek YKS olarak, platformumuzu kullanırken aşağıdaki bilgileri toplarız:
+            </p>
+            <ul style="color: #6c757d; line-height: 1.8; margin-left: 20px;">
+                <li>Kullanıcı adı ve e-posta adresi</li>
+                <li>Profil fotoğrafı (opsiyonel)</li>
+                <li>Çözülen sorular ve istatistikler</li>
+                <li>Kazanılan rozetler ve puanlar</li>
+            </ul>
+        </div>
+
+        <div class="policy-section" style="margin-bottom:  30px;">
+            <h2 style="color: #333; font-size: 1.5rem; font-weight: 800; margin-bottom: 15px;">2. Bilgilerin Kullanımı</h2>
+            <p style="color: #6c757d; line-height: 1.8;">
+                Topladığımız bilgiler sadece platformun işlevselliğini sağlamak için kullanılır. Kişisel bilgileriniz üçüncü taraflarla paylaşılmaz. 
+            </p>
+        </div>
+
+        <div class="policy-section" style="margin-bottom: 30px;">
+            <h2 style="color: #333; font-size:  1.5rem; font-weight: 800; margin-bottom: 15px;">3. Veri Güvenliği</h2>
+            <p style="color: #6c757d; line-height: 1.8;">
+                Tüm verileriniz şifrelenmiş olarak saklanır ve güvenlik önlemleriyle korunur. 
+            </p>
+        </div>
+
+        <div class="policy-section" style="margin-bottom: 30px;">
+            <h2 style="color:  #333; font-size: 1.5rem; font-weight: 800; margin-bottom:  15px;">4. Çerezler (Cookies)</h2>
+            <p style="color: #6c757d; line-height: 1.8;">
+                Platformumuz, kullanıcı deneyimini iyileştirmek için çerezler kullanır. Oturum bilgilerinizi saklamak için gereklidir.
+            </p>
+        </div>
+
+        <div class="policy-section">
+            <h2 style="color: #333; font-size: 1.5rem; font-weight: 800; margin-bottom: 15px;">5. İletişim</h2>
+            <p style="color: #6c757d; line-height: 1.8;">
+                Gizlilik politikamız hakkında sorularınız için:  
+                <a href="{% url 'iletisim' %}" style="color: #7B68EE; font-weight: 700;">destek@kostebekyks.com</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

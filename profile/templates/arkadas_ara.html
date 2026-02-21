@@ -1,0 +1,672 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Arkadaş Ara - Köstebek YKS{% endblock %}
+
+{% block content %}
+<div class="arama-container" style="max-width: 900px; margin: 50px auto; padding: 0 20px;">
+    
+    <!-- HEADER -->
+    <div class="page-header" style="margin-bottom: 40px; text-align: center;">
+        <h1 style="color: white; font-size: 2.5rem; font-weight: 900; margin-bottom: 10px;">
+            🔍 Arkadaş Ara
+        </h1>
+        <p style="color: rgba(255,255,255,0.7); font-size: 1.1rem;">
+            Kullanıcı adı veya e-posta ile arkadaş bul
+        </p>
+    </div>
+
+    <!-- ARAMA FORMU -->
+    <div class="arama-card">
+        <form method="get" class="arama-form" id="aramaForm">
+            <div class="search-input-wrapper">
+                <i class="bi bi-search search-icon"></i>
+                <input 
+                    type="text" 
+                    name="q" 
+                    id="aramaInput"
+                    placeholder="Kullanıcı adı ile ara..."
+                    value="{{ query }}"
+                    class="search-input"
+                    autocomplete="off"
+                    autofocus
+                >
+                {% if query %}
+                <button type="button" class="clear-btn" onclick="temizle()">
+                    <i class="bi bi-x-circle-fill"></i>
+                </button>
+                {% endif %}
+            </div>
+            <button type="submit" class="search-btn">
+                <i class="bi bi-search"></i>
+                Ara
+            </button>
+        </form>
+
+        <!-- ARAMA İPUÇLARI -->
+        {% if not query %}
+        <div class="arama-ipucu">
+            <div class="ipucu-icon">💡</div>
+            <div class="ipucu-text">
+                <strong>İpucu:</strong> En az 2 karakter girmelisin. Kullanıcı adı ile ara.  Örnek: "ahmet", "mehmet123"
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ARAMA SONUÇLARI -->
+    {% if query %}
+    <div class="sonuclar-container">
+        <div class="sonuc-header">
+            <h2>
+                {% if sonuclar %}
+                    📋 {{ sonuclar|length }} sonuç bulundu
+                {% else %}
+                    😔 Sonuç bulunamadı
+                {% endif %}
+            </h2>
+            {% if query|length < 2 %}
+            <p class="uyari-text">⚠️ En az 2 karakter girmelisin!</p>
+            {% endif %}
+        </div>
+
+        {% if sonuclar %}
+        <div class="sonuclar-grid">
+            {% for kullanici in sonuclar %}
+            <div class="kullanici-card" id="kullanici-{{ kullanici.id }}">
+                <div class="kullanici-header">
+                    <div class="avatar-big">{{ kullanici.username|slice:": 1"|upper }}</div>
+                    <div class="kullanici-info">
+                        <h3>{{ kullanici.username }}</h3>
+                        {% comment %} 
+                        <p class="kullanici-email">{{ kullanici.email }}</p>
+                        {% endcomment %}
+                    </div>
+                </div>
+
+                <div class="kullanici-stats">
+                    <div class="stat-item">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                        <div class="stat-data">
+                            <span class="stat-value">{{ kullanici.profil.toplam_puan }}</span>
+                            <span class="stat-label">Puan</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <div class="stat-data">
+                            <span class="stat-value">{{ kullanici.profil.cozulen_soru }}</span>
+                            <span class="stat-label">Soru</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="bi bi-trophy-fill"></i>
+                        <div class="stat-data">
+                            <span class="stat-value">{{ kullanici.profil.rozet_sayisi }}</span>
+                            <span class="stat-label">Rozet</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kullanici-actions">
+                    {% if kullanici.arkadaslik_durumu == 'arkadas' %}
+                    <div class="durum-badge arkadas">
+                        <i class="bi bi-check-circle-fill"></i>
+                        Arkadaşsınız
+                    </div>
+                    <a href="{% url 'profil' %}?user={{ kullanici.username }}" class="btn-action secondary">
+                        <i class="bi bi-person"></i>
+                        Profili Gör
+                    </a>
+                    
+                    {% elif kullanici.arkadaslik_durumu == 'istek_gonderildi' %}
+                    <div class="durum-badge beklemede">
+                        <i class="bi bi-clock-history"></i>
+                        İstek Gönderildi
+                    </div>
+                    <a href="{% url 'profil' %}?user={{ kullanici.username }}" class="btn-action secondary">
+                        <i class="bi bi-person"></i>
+                        Profili Gör
+                    </a>
+                    
+                    {% elif kullanici.arkadaslik_durumu == 'istek_geldi' %}
+                    <div class="durum-badge gelen">
+                        <i class="bi bi-envelope-fill"></i>
+                        İstek Geldi
+                    </div>
+                    <a href="{% url 'arkadaslarim' %}" class="btn-action primary">
+                        <i class="bi bi-check-circle"></i>
+                        İstekleri Gör
+                    </a>
+                    
+                    {% else %}
+                    <button class="btn-action primary" onclick="istekGonder({{ kullanici.id }})">
+                        <i class="bi bi-person-plus-fill"></i>
+                        Arkadaş Ekle
+                    </button>
+                    <a href="{% url 'profil' %}?user={{ kullanici.username }}" class="btn-action secondary">
+                        <i class="bi bi-person"></i>
+                        Profili Gör
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% elif query|length >= 2 %}
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h3>Kullanıcı bulunamadı</h3>
+            <p>"{{ query }}" araması için sonuç yok</p>
+            <button class="btn-retry" onclick="temizle()">
+                <i class="bi bi-arrow-clockwise"></i>
+                Tekrar Dene
+            </button>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- GERİ DÖN -->
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{% url 'arkadaslarim' %}" class="btn-back">
+            <i class="bi bi-arrow-left-circle"></i>
+            Arkadaşlarıma Dön
+        </a>
+    </div>
+
+</div>
+
+<style>
+    /* ==================== ARAMA KARTI ==================== */
+    .arama-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 40px var(--card-shadow);
+        margin-bottom: 30px;
+    }
+
+    .arama-form {
+        display: flex;
+        gap: 15px;
+        margin-bottom:  20px;
+    }
+
+    .search-input-wrapper {
+        flex: 1;
+        position: relative;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.3rem;
+        color: var(--text-muted);
+        pointer-events: none;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 16px 20px 16px 55px;
+        border: 2px solid var(--input-border);
+        border-radius: 15px;
+        font-size:  1.1rem;
+        transition: all 0.3s;
+        background: var(--input-bg);
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #4ECDC4;
+        box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .clear-btn {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.3rem;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .clear-btn:hover {
+        color: #FF6B6B;
+        transform: translateY(-50%) scale(1.2);
+    }
+
+    .search-btn {
+        background: linear-gradient(135deg, #4ECDC4, #44A08D);
+        border: none;
+        color: white;
+        padding: 16px 35px;
+        border-radius: 15px;
+        font-size: 1.1rem;
+        font-weight: 800;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s;
+        box-shadow: 0 5px 20px rgba(78, 205, 196, 0.4);
+    }
+
+    .search-btn:hover {
+        transform: translateY(-3px);
+        box-shadow:  0 8px 25px rgba(78, 205, 196, 0.6);
+    }
+
+    /* ==================== İPUCU ==================== */
+    .arama-ipucu {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: rgba(78, 205, 196, 0.1);
+        padding: 15px 20px;
+        border-radius:  12px;
+        border-left: 4px solid #4ECDC4;
+    }
+
+    .ipucu-icon {
+        font-size:  2rem;
+        flex-shrink: 0;
+    }
+
+    .ipucu-text {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .ipucu-text strong {
+        color: var(--text-primary);
+        font-weight: 800;
+    }
+
+    /* ==================== SONUÇLAR ==================== */
+    .sonuclar-container {
+        animation: fadeIn 0.5s;
+    }
+
+    .sonuc-header {
+        margin-bottom: 25px;
+    }
+
+    .sonuc-header h2 {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+
+    .uyari-text {
+        color: #FF6B6B;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    .sonuclar-grid {
+        display: grid;
+        gap: 20px;
+    }
+
+    /* ==================== KULLANICI KARTI ==================== */
+    .kullanici-card {
+        background: var(--card-bg);
+        border: 2px solid var(--card-border);
+        border-radius: 20px;
+        padding: 25px;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .kullanici-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left:  0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #4ECDC4, #44A08D);
+        transform: scaleX(0);
+        transition: transform 0.3s;
+    }
+
+    .kullanici-card:hover {
+        transform: translateY(-5px);
+        box-shadow:  0 15px 40px var(--card-shadow);
+        border-color: #4ECDC4;
+    }
+
+    .kullanici-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .kullanici-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom:  20px;
+    }
+
+    .avatar-big {
+        width:  80px;
+        height:  80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 900;
+        color:  white;
+        flex-shrink: 0;
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .kullanici-info {
+        flex: 1;
+    }
+
+    .kullanici-info h3 {
+        font-size: 1.8rem;
+        font-weight:  900;
+        color: var(--text-primary);
+        margin: 0 0 5px 0;
+    }
+
+    .kullanici-email {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        margin:  0;
+    }
+
+    .kullanici-stats {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+        padding:  15px;
+        background: var(--bg-secondary);
+        border-radius: 12px;
+    }
+
+    .stat-item {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .stat-item i {
+        font-size:  2rem;
+        color: #4ECDC4;
+    }
+
+    .stat-data {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight:  900;
+        color: var(--text-primary);
+        line-height: 1;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    /* ==================== DURUM BADGE ==================== */
+    .durum-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius:  12px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 15px;
+    }
+
+    .durum-badge.arkadas {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        border: 2px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .durum-badge.beklemede {
+        background: rgba(251, 191, 36, 0.2);
+        color: #fbbf24;
+        border:  2px solid rgba(251, 191, 36, 0.3);
+    }
+
+    .durum-badge.gelen {
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+        border: 2px solid rgba(59, 130, 246, 0.3);
+    }
+
+    /* ==================== AKSIYONLAR ==================== */
+    .kullanici-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        flex: 1;
+        min-width: 150px;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+
+    .btn-action.primary {
+        background: linear-gradient(135deg, #4ECDC4, #44A08D);
+        color: white;
+        box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+    }
+
+    .btn-action.primary:hover {
+        transform: translateY(-2px);
+        box-shadow:  0 8px 20px rgba(78, 205, 196, 0.6);
+        color: white;
+    }
+
+    .btn-action.secondary {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 2px solid var(--card-border);
+    }
+
+    .btn-action.secondary:hover {
+        background: var(--card-border);
+        transform: translateY(-2px);
+    }
+
+    /* ==================== EMPTY STATE ==================== */
+    .empty-state {
+        text-align: center;
+        padding:  80px 20px;
+        background: var(--card-bg);
+        border-radius: 20px;
+        border: 2px dashed var(--card-border);
+    }
+
+    .empty-icon {
+        font-size: 6rem;
+        margin-bottom: 25px;
+        opacity: 0.4;
+    }
+
+    .empty-state h3 {
+        font-size: 1.8rem;
+        font-weight:  900;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        margin-bottom: 25px;
+    }
+
+    .btn-retry {
+        background:  linear-gradient(135deg, #667eea, #764ba2);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-retry:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    /* ==================== GERİ DÖN ==================== */
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 12px 25px;
+        border-radius:  12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .btn-back:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+        .arama-form {
+            flex-direction: column;
+        }
+
+        .search-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .kullanici-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .kullanici-stats {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .kullanici-actions {
+            flex-direction: column;
+        }
+
+        .btn-action {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    // Form temizle
+    function temizle() {
+        document.getElementById('aramaInput').value = '';
+        document.getElementById('aramaInput').focus();
+        window.location.href = '{% url "arkadas_ara" %}';
+    }
+
+    // Arkadaşlık isteği gönder
+    function istekGonder(kullaniciId) {
+        if (!confirm('Bu kullanıcıya arkadaşlık isteği göndermek istiyor musun?')) return;
+        
+        showLoading('İstek gönderiliyor...');
+        
+        fetch(`/arkadaslik/gonder/${kullaniciId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken':  getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            if (data.success) {
+                showToast(data.message, 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            hideLoading();
+            console.error('Hata:', error);
+            showToast('Bir hata oluştu! ', 'error');
+        });
+    }
+
+    // CSRF Token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Enter tuşu ile arama
+    document.getElementById('aramaInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('aramaForm').submit();
+        }
+    });
+</script>
+{% endblock %}
