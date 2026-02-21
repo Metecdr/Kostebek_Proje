@@ -1,0 +1,458 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tabu Lobi - Köstebek YKS{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    .lobi-container {
+        max-width: 700px;
+        margin: 80px auto 40px;
+        padding: 20px;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* HEADER */
+    .lobi-header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: slideDown 0.8s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform:  translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .lobi-icon {
+        font-size: 5rem;
+        margin-bottom: 20px;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0) rotate(-10deg);
+        }
+        50% {
+            transform: translateY(-20px) rotate(10deg);
+        }
+    }
+
+    .lobi-title {
+        font-size: 3rem;
+        font-weight: 900;
+        color: white;
+        margin-bottom: 15px;
+        text-shadow:  0 5px 20px rgba(0,0,0,0.3);
+        letter-spacing: 2px;
+    }
+
+    .lobi-subtitle {
+        font-size:  1.3rem;
+        color: rgba(255,255,255,0.95);
+        font-weight: 600;
+    }
+
+    /* MAIN CARD */
+    .lobi-card {
+        background: white;
+        border-radius: 30px;
+        padding: 50px 40px;
+        box-shadow:  0 20px 60px rgba(0,0,0,0.3);
+        position: relative;
+        overflow: hidden;
+        animation: scaleIn 0.6s ease-out 0.3s backwards;
+    }
+
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .lobi-card::before {
+        content: '🎭';
+        position: absolute;
+        font-size: 20rem;
+        opacity: 0.05;
+        top: -80px;
+        right: -80px;
+        animation: rotate 20s linear infinite;
+        pointer-events: none;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .card-title {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        margin-bottom: 40px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* TAKIM INPUT */
+    .takim-section {
+        margin-bottom: 30px;
+    }
+
+    .takim-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 12px;
+    }
+
+    .takim-input {
+        width: 100%;
+        padding:  18px 20px;
+        border: 3px solid #e9ecef;
+        border-radius: 15px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        background: #f8f9fa;
+    }
+
+    .takim-input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .takim-input::placeholder {
+        color: #adb5bd;
+    }
+
+    /* KÖSTEBEK IMAGES */
+    .kostebek-images {
+        display: flex;
+        justify-content: space-around;
+        margin:  30px 0;
+    }
+
+    .kostebek {
+        width: 80px;
+        height: 80px;
+        animation: wave 2s ease-in-out infinite;
+    }
+
+    .kostebek:nth-child(2) {
+        animation-delay:  0.5s;
+    }
+
+    @keyframes wave {
+        0%, 100% {
+            transform:  rotate(-15deg);
+        }
+        50% {
+            transform: rotate(15deg);
+        }
+    }
+
+    /* OYUNA BAŞLA BUTTON */
+    .basla-btn {
+        width: 100%;
+        padding:  20px;
+        background:  linear-gradient(135deg, #FF9800, #FF6B6B);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.5rem;
+        font-weight:  800;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(255, 152, 0, 0.4);
+        transition: all 0.3s;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+        margin-top: 30px;
+    }
+
+    .basla-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .basla-btn:hover::before {
+        width: 400px;
+        height: 400px;
+    }
+
+    .basla-btn:hover {
+        transform: translateY(-5px);
+        box-shadow:  0 15px 40px rgba(255, 152, 0, 0.6);
+    }
+
+    .basla-btn span {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* NASIL OYNANIR */
+    .info-section {
+        margin-top: 40px;
+        padding: 25px;
+        background: linear-gradient(135deg, #FFF9E6, #FFE4B5);
+        border-radius:  20px;
+        border-left: 5px solid #FFA500;
+    }
+
+    .info-title {
+        font-size: 1.3rem;
+        font-weight:  800;
+        color: #FF9800;
+        margin-bottom:  15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .info-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .info-list li {
+        padding: 12px 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #555;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid rgba(255, 152, 0, 0.2);
+    }
+
+    .info-list li:last-child {
+        border-bottom: none;
+    }
+
+    .info-list li::before {
+        content: '⚡';
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+
+    /* GERI DÖN BUTTON */
+    .geri-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 30px;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: all 0.3s;
+        margin-top: 20px;
+    }
+
+    .geri-btn:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateX(-5px);
+        color: white;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .lobi-container {
+            margin-top: 40px;
+            padding: 15px;
+        }
+
+        .lobi-title {
+            font-size: 2rem;
+        }
+
+        .lobi-card {
+            padding: 35px 25px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+        }
+
+        .kostebek {
+            width: 60px;
+            height: 60px;
+        }
+
+        .basla-btn {
+            font-size: 1.2rem;
+            padding: 18px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lobi-container">
+    
+    <!-- HEADER -->
+    <div class="lobi-header">
+        <div class="lobi-icon">🎭</div>
+        <h1 class="lobi-title">KÖSTEBEK TABU</h1>
+        <p class="lobi-subtitle">YKS Kelime Hazineni Geliştir!  📚</p>
+    </div>
+
+    <!-- MAIN CARD -->
+    <div class="lobi-card">
+        <h2 class="card-title">👥 Takım İsimlerini Girin</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- 1. TAKIM -->
+            <div class="takim-section">
+                <label class="takim-label">
+                    🚩 1.Takım
+                </label>
+                <input 
+                    type="text" 
+                    name="takim_a" 
+                    class="takim-input" 
+                    placeholder="Örn: Aslanlar"
+                    required
+                    maxlength="20"
+                >
+            </div>
+
+            <!-- 2.TAKIM -->
+            <div class="takim-section">
+                <label class="takim-label">
+                    🚩 2.Takım
+                </label>
+                <input 
+                    type="text" 
+                    name="takim_b" 
+                    class="takim-input" 
+                    placeholder="Örn: Kaplanlar"
+                    required
+                    maxlength="20"
+                >
+            </div>
+
+            <!-- KÖSTEBEK IMAGES -->
+            <div class="kostebek-images">
+                <img src="{% static 'images/kostebek_sag.png' %}" alt="Köstebek 1" class="kostebek">
+                <img src="{% static 'images/kostebek_sag.png' %}" alt="Köstebek 2" class="kostebek">
+            </div>
+
+            <!-- OYUNA BAŞLA BUTTON -->
+            <button type="submit" class="basla-btn">
+                <span>🎮 OYUNA BAŞLA</span>
+            </button>
+        </form>
+
+        <!-- NASIL OYNANIR -->
+        <div class="info-section">
+            <div class="info-title">
+                💡 Nasıl Oynanır?
+            </div>
+            <ul class="info-list">
+                <li>Ekranda bir kelime ve 5 yasaklı kelime görünür</li>
+                <li>Yasaklı kelimeleri kullanmadan ana kelimeyi anlat</li>
+                <li>Doğru tahmin:  +1 puan | Tabu: -1 puan</li>
+                <li>Turnuva başta takımlar arası geçiş yapılır</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- GERI DÖN -->
+    <div style="text-align: center;">
+        <a href="{% url 'tabu_bolum_sec' %}" class="geri-btn">
+            ← Geri Dön
+        </a>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        const form = document.querySelector('form');
+        const inputs = document.querySelectorAll('.takim-input');
+
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/[^a-zA-ZğüşıöçĞÜŞİÖÇ0-9\s]/g, '');
+            });
+        });
+
+        form.addEventListener('submit', function(e) {
+            const takim1 = inputs[0].value.trim();
+            const takim2 = inputs[1].value.trim();
+
+            if (takim1 === takim2) {
+                e.preventDefault();
+                if (typeof showToast === 'function') {
+                    showToast('Takım isimleri aynı olamaz!  🚫', 'error');
+                } else {
+                    alert('Takım isimleri aynı olamaz! ');
+                }
+                return false;
+            }
+
+            if (typeof showToast === 'function') {
+                showToast('Oyun başlatılıyor...🎮', 'success');
+            }
+        });
+    });
+</script>
+{% endblock %}

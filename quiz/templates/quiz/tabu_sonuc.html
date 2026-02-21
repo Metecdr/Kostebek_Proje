@@ -1,0 +1,538 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if kazanan == "Berabere" %}Berabere!{% else %}{{ kazanan }} Kazandı! {% endif %} - Tabu Oyunu
+{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+<style>
+    body {
+        background:  linear-gradient(135deg, #7B68EE 0%, #9e7bfa 100%);
+        font-family: 'Montserrat', 'Poppins', 'Nunito', sans-serif;
+        color: white;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* HEADER */
+    .sonuc-header {
+        max-width: 700px;
+        margin: 48px auto 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        justify-content: center;
+        animation: fadeInDown 0.8s ease-out;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .sonuc-header-logo {
+        height: 54px;
+        width: auto;
+        border-radius: 100px;
+        background: #fff;
+        box-shadow: 0 5px 20px rgba(123, 104, 238, 0.4);
+        padding: 6px;
+        animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0) rotate(0deg);
+        }
+        50% {
+            transform:  translateY(-15px) rotate(5deg);
+        }
+    }
+
+    .sonuc-header-title {
+        font-size:  2.3rem;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: 1.5px;
+        margin-bottom:  0;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    }
+
+    /* MAIN CARD */
+    .sonuc-main {
+        max-width: 700px;
+        margin: 30px auto 80px auto;
+        background: #fff;
+        border-radius: 30px;
+        box-shadow:  0 25px 80px rgba(123, 104, 238, 0.4);
+        padding: 60px 50px;
+        text-align: center;
+        animation: popIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sonuc-main::before {
+        content: '';
+        position:  absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 8px;
+        background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+
+    @keyframes popIn {
+        0% {
+            opacity: 0;
+            transform:  scale(0.3) rotate(-15deg);
+        }
+        70% {
+            transform: scale(1.05) rotate(5deg);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+    }
+
+    .result-icon {
+        font-size: 8rem;
+        margin-bottom: 20px;
+        animation: bounceRotate 1.5s ease-in-out infinite;
+        display: inline-block;
+        filter: drop-shadow(0 10px 30px rgba(0,0,0,0.2));
+    }
+
+    @keyframes bounceRotate {
+        0%, 100% {
+            transform: translateY(0) rotate(0deg) scale(1);
+        }
+        25% {
+            transform: translateY(-30px) rotate(-15deg) scale(1.15);
+        }
+        50% {
+            transform: translateY(0) rotate(0deg) scale(1);
+        }
+        75% {
+            transform: translateY(-15px) rotate(15deg) scale(1.08);
+        }
+    }
+
+    .sonuc-title {
+        font-size: 2.8rem;
+        font-weight:  900;
+        color: #7B68EE;
+        margin-bottom: 20px;
+        letter-spacing: 2px;
+        animation: slideInLeft 0.8s ease-out 0.3s backwards;
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .sonuc-kazanan {
+        font-size: 3.2rem;
+        font-weight:  900;
+        color: #49df7b;
+        margin-bottom: 25px;
+        letter-spacing:  2px;
+        text-shadow: 0 5px 20px rgba(73, 223, 123, 0.6);
+        animation: scaleIn 0.8s ease-out 0.5s backwards;
+    }
+
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        to {
+            opacity:  1;
+            transform: scale(1);
+        }
+    }
+
+    .sonuc-berabere {
+        color: #ec6f7b;
+        text-shadow: 0 5px 20px rgba(236, 111, 123, 0.6);
+    }
+
+    .sonuc-skorlar {
+        font-size: 1.4rem;
+        font-weight:  700;
+        color: #555;
+        margin-bottom: 30px;
+        animation: fadeIn 0.8s ease-out 0.7s backwards;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* SCORE BOX */
+    .sonuc-skorkutu {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 25px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 10px 30px rgba(123, 104, 238, 0.2);
+        padding: 30px 0;
+        margin-bottom: 35px;
+        animation: fadeInUp 0.8s ease-out 0.8s backwards;
+        position: relative;
+        overflow: hidden;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity:  0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .sonuc-skorkutu::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left:  -100%;
+        width: 100%;
+        height:  100%;
+        background: linear-gradient(90deg, transparent, rgba(123, 104, 238, 0.1), transparent);
+        animation: sweep 3s infinite;
+    }
+
+    @keyframes sweep {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    .sonuc-skorkutu-team {
+        flex: 1;
+        text-align: center;
+        font-size: 1.6rem;
+        font-weight:  900;
+        color: #7B68EE;
+        transition: all 0.3s ease;
+        padding: 10px;
+        border-radius: 15px;
+    }
+
+    .sonuc-skorkutu-team:hover {
+        transform: scale(1.08);
+        background: rgba(123, 104, 238, 0.1);
+    }
+
+    .sonuc-skorkutu-score {
+        font-size: 3rem;
+        font-weight:  900;
+        background: linear-gradient(135deg, #7B68EE, #9e7bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-top: 8px;
+    }
+
+    .winner-team {
+        position: relative;
+    }
+
+    .winner-team::before {
+        content: '🏆';
+        position:  absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 2rem;
+        animation: trophy 1s ease-in-out infinite;
+    }
+
+    @keyframes trophy {
+        0%, 100% {
+            transform:  translateX(-50%) translateY(0);
+        }
+        50% {
+            transform:  translateX(-50%) translateY(-10px);
+        }
+    }
+
+    /* BUTTON */
+    .btn-pill-custom {
+        padding: 18px 50px;
+        font-size:  1.4rem;
+        font-weight:  800;
+        border-radius: 50px;
+        border: none;
+        background: linear-gradient(90deg, #7B68EE, #9e7bfa);
+        color: #fff;
+        box-shadow: 0 10px 30px rgba(123, 104, 238, 0.4);
+        margin-top: 20px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.8s ease-out 1s backwards;
+    }
+
+    .btn-pill-custom::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background:  rgba(255,255,255,0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-pill-custom:hover::before {
+        width: 400px;
+        height: 400px;
+    }
+
+    .btn-pill-custom:hover {
+        background: linear-gradient(90deg, #49df7b, #7B68EE);
+        transform: translateY(-5px);
+        box-shadow:  0 15px 40px rgba(123, 104, 238, 0.6);
+    }
+
+    .btn-pill-custom:active {
+        transform: translateY(-2px);
+    }
+
+    /* CONFETTI */
+    .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        z-index: 9999;
+        pointer-events: none;
+    }
+
+    @keyframes confettiFall {
+        to {
+            transform: translateY(100vh) rotate(720deg);
+            opacity: 0;
+        }
+    }
+
+    /* FIREWORKS */
+    .firework {
+        position: fixed;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        z-index: 9999;
+        pointer-events: none;
+    }
+
+    @keyframes fireworkExplode {
+        0% {
+            transform: translate(0, 0);
+            opacity: 1;
+        }
+        100% {
+            transform: translate(var(--x), var(--y));
+            opacity: 0;
+        }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+        .sonuc-main {
+            padding: 40px 25px;
+            margin:  20px;
+        }
+
+        .sonuc-header {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .result-icon {
+            font-size: 5rem;
+        }
+
+        .sonuc-title {
+            font-size: 2rem;
+        }
+
+        .sonuc-kazanan {
+            font-size: 2.2rem;
+        }
+
+        .sonuc-skorkutu {
+            flex-direction: column;
+            gap: 20px;
+            padding: 25px;
+        }
+
+        .sonuc-skorkutu-team {
+            width: 100%;
+        }
+
+        .btn-pill-custom {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sonuc-header">
+    <img src="{% static 'kostebek_sol_png.png' %}" alt="Köstebek Logo" class="sonuc-header-logo" />
+    <span class="sonuc-header-title">Köstebek TABU</span>
+</div>
+
+<div class="sonuc-main">
+    {% if kazanan == "Berabere" %}
+        <div class="result-icon">🤝</div>
+        <div class="sonuc-title">OYUN BİTTİ! </div>
+        <div class="sonuc-kazanan sonuc-berabere">Berabere!</div>
+        <div class="sonuc-skorlar">İki takım da harika bir iş çıkardı!  🎉</div>
+    {% else %}
+        <div class="result-icon">🏆</div>
+        <div class="sonuc-title">OYUN BİTTİ!</div>
+        <div class="sonuc-kazanan">{{ kazanan }} Kazandı!  🎉</div>
+        <div class="sonuc-skorlar">Muhteşem bir zafer!  Tebrikler!  🎊</div>
+    {% endif %}
+
+    <div class="sonuc-skorkutu">
+        <div class="sonuc-skorkutu-team {% if kazanan == oyun.takim_a_adi %}winner-team{% endif %}">
+            {{ oyun.takim_a_adi }}
+            <div class="sonuc-skorkutu-score" id="teamAScore">{{ oyun.takim_a_skor }}</div>
+        </div>
+        <div class="sonuc-skorkutu-team {% if kazanan == oyun.takim_b_adi %}winner-team{% endif %}">
+            {{ oyun.takim_b_adi }}
+            <div class="sonuc-skorkutu-score" id="teamBScore">{{ oyun.takim_b_skor }}</div>
+        </div>
+    </div>
+
+    <a href="{% url 'tabu_anasayfa' %}" class="btn btn-pill-custom">
+        <span style="position: relative; z-index: 1;">
+            <i class="bi bi-arrow-repeat"></i> Yeni Oyun Başlat
+        </span>
+    </a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const kazanan = "{{ kazanan }}";
+        const berabere = kazanan === "Berabere";
+
+        // Sayaç animasyonları
+        animateValue(document.getElementById('teamAScore'), 0, {{ oyun.takim_a_skor }}, 1500);
+        animateValue(document.getElementById('teamBScore'), 0, {{ oyun.takim_b_skor }}, 1500);
+
+        // Confetti ve Fireworks
+        setTimeout(() => {
+            createConfetti();
+            createFireworks();
+            
+            if (berabere) {
+                showToast('İki takım da harika!  Berabere!  🤝', 'info');
+            } else {
+                showToast(`${kazanan} takımı kazandı!  Tebrikler! 🏆`, 'success');
+            }
+        }, 800);
+    });
+
+    function animateValue(element, start, end, duration) {
+        let startTime = null;
+        const step = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const value = Math.floor(progress * (end - start) + start);
+            element.textContent = value;
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    // Confetti Effect
+    function createConfetti() {
+        const colors = ['#FFD700', '#FFA500', '#FF6347', '#4CAF50', '#2196F3', '#9C27B0', '#7B68EE'];
+        const confettiCount = 150;
+
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = '-10px';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animation = `confettiFall ${Math.random() * 3 + 2}s linear forwards`;
+            confetti.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(confetti);
+
+            setTimeout(() => confetti.remove(), 6000);
+        }
+    }
+
+    // Fireworks Effect
+    function createFireworks() {
+        const colors = ['#FFD700', '#FFA500', '#FF6347', '#4CAF50', '#2196F3', '#7B68EE'];
+        
+        for (let i = 0; i < 4; i++) {
+            setTimeout(() => {
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight * 0.5;
+                
+                for (let j = 0; j < 35; j++) {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    firework.style.left = x + 'px';
+                    firework.style.top = y + 'px';
+                    firework.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    const angle = (Math.PI * 2 * j) / 35;
+                    const velocity = 100 + Math.random() * 100;
+                    const tx = Math.cos(angle) * velocity;
+                    const ty = Math.sin(angle) * velocity;
+                    
+                    firework.style.setProperty('--x', tx + 'px');
+                    firework.style.setProperty('--y', ty + 'px');
+                    firework.style.animation = 'fireworkExplode 1.2s ease-out forwards';
+                    
+                    document.body.appendChild(firework);
+                    setTimeout(() => firework.remove(), 1200);
+                }
+            }, i * 600);
+        }
+    }
+</script>
+{% endblock %}

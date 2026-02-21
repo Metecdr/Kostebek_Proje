@@ -9,7 +9,11 @@ from .models import (
     KarsilasmaOdasi, 
     KullaniciCevap,
     Rozet,
-    KullaniciRozet
+    KullaniciRozet,
+    Turnuva,
+    TurnuvaKatilim,
+    TurnuvaMaci
+
 )
 
 @admin.register(Konu)
@@ -21,8 +25,8 @@ class KonuAdmin(admin.ModelAdmin):
 
 @admin.register(Soru)
 class SoruAdmin(admin.ModelAdmin):
-    list_display = ['metin_kisaltma', 'konu', 'zorluk']
-    list_filter = ['zorluk', 'konu']
+    list_display = ['metin_kisaltma', 'ders', 'konu', 'bul_bakalimda_cikar']
+    list_filter = ['ders', 'konu', 'bul_bakalimda_cikar']
     search_fields = ['metin']
     list_per_page = 20
     
@@ -41,11 +45,16 @@ class CevapAdmin(admin.ModelAdmin):
         return obj.soru.metin[:30] + "..." if len(obj.soru.metin) > 30 else obj.soru.metin
     soru_kisaltma.short_description = 'Soru'
 
+class YasakliKelimeInline(admin.TabularInline):
+    model = YasakliKelime
+    extra = 5      # 5 kutucuk çıkar
+    max_num = 5    # En fazla 5 kutucuk olur
+    min_num = 5    # En az 5 kutucuk doldurulmalı (Django 3.1+)
+
 @admin.register(TabuKelime)
 class TabuKelimeAdmin(admin.ModelAdmin):
     list_display = ['kelime']
-    search_fields = ['kelime']
-    list_per_page = 50
+    inlines = [YasakliKelimeInline]
 
 @admin.register(YasakliKelime)
 class YasakliKelimeAdmin(admin.ModelAdmin):
@@ -117,3 +126,55 @@ class KullaniciRozetAdmin(admin.ModelAdmin):
     search_fields = ['kullanici__username', 'rozet__adi']
     readonly_fields = ['kazanma_tarihi']
     list_per_page = 50
+
+
+@admin.register(Turnuva)
+class TurnuvaAdmin(admin.ModelAdmin):
+    list_display = ['isim', 'sinav_tipi', 'durum', 'katilimci_sayisi_display', 'max_katilimci', 'kayit_baslangic', 'baslangic']
+    list_filter = ['durum', 'sinav_tipi', 'baslangic']
+    search_fields = ['isim', 'aciklama']
+    filter_horizontal = ['katilimcilar']
+    readonly_fields = ['turnuva_id', 'olusturma_tarihi', 'guncelleme_tarihi']
+    
+    def katilimci_sayisi_display(self, obj):
+        return f"{obj.katilimci_sayisi}/{obj.max_katilimci}"
+    katilimci_sayisi_display.short_description = 'Katılımcı'
+    
+    fieldsets = (
+        ('Temel Bilgiler', {
+            'fields': ('turnuva_id', 'isim', 'aciklama', 'sinav_tipi', 'ders')
+        }),
+        ('Tarih ve Saat', {
+            'fields': ('kayit_baslangic', 'kayit_bitis', 'baslangic', 'bitis')
+        }),
+        ('Ayarlar', {
+            'fields': ('toplam_soru', 'max_katilimci', 'durum')
+        }),
+        ('Ödüller', {
+            'fields': ('odul_xp_1', 'odul_xp_2', 'odul_xp_3')
+        }),
+        ('Katılımcılar', {
+            'fields': ('katilimcilar',)
+        }),
+        ('Kazananlar', {
+            'fields': ('birinci', 'ikinci', 'ucuncu')
+        }),
+        ('Zaman Damgaları', {
+            'fields': ('olusturma_tarihi', 'guncelleme_tarihi')
+        }),
+    )
+
+
+@admin.register(TurnuvaMaci)
+class TurnuvaMaciAdmin(admin.ModelAdmin):
+    list_display = ['turnuva', 'round', 'oyuncu1', 'oyuncu2', 'kazanan', 'tamamlandi', 'mac_tarihi']
+    list_filter = ['turnuva', 'round', 'tamamlandi']
+    search_fields = ['turnuva__isim', 'oyuncu1__username', 'oyuncu2__username']
+    readonly_fields = ['mac_id', 'olusturma_tarihi']
+
+
+@admin.register(TurnuvaKatilim)
+class TurnuvaKatilimAdmin(admin.ModelAdmin):
+    list_display = ['turnuva', 'kullanici', 'sira', 'katilim_tarihi', 'elendi']
+    list_filter = ['turnuva', 'elendi']
+    search_fields = ['turnuva__isim', 'kullanici__username']

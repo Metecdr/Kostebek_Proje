@@ -1,0 +1,234 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabu - Bölüm Seç | Köstebek YKS</title>
+    <style>
+        * {
+            margin: 0;
+            padding:  0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 60px 40px;
+            max-width:  700px;
+            width:  100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            width: 100px;
+            margin: 0 auto 30px;
+        }
+
+        .logo img {
+            width: 100%;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            background:  linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .bolum-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .bolum-option {
+            position: relative;
+        }
+
+        .bolum-option input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .bolum-option label {
+            display:  flex;
+            flex-direction:  column;
+            align-items:  center;
+            gap: 15px;
+            padding: 35px 20px;
+            border: 3px solid #e9ecef;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .bolum-option label:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .bolum-option input:checked + label {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .bolum-icon {
+            font-size: 3rem;
+        }
+
+        .bolum-name {
+            font-size:  1.3rem;
+            font-weight: 800;
+        }
+
+        .devam-btn {
+            padding: 20px 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .devam-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top:  20px;
+            color:  #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+        }
+
+        @media (max-width: 768px) {
+            .bolum-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 40px 25px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="logo">
+            <img src="{% static 'images/kostebek_sag.png' %}" alt="Köstebek">
+        </div>
+
+        <h1>🎭 TABU OYUNU</h1>
+        <p class="subtitle">
+            Yasaklı kelimeleri kullanmadan kelimeyi anlat! <br>
+            Hangi bölüm soruları ile oynamak istersin?
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="bolum-grid">
+                
+                <div class="bolum-option">
+                    <input type="radio" name="bolum" value="sayisal" id="sayisal" checked>
+                    <label for="sayisal">
+                        <span class="bolum-icon">🔬</span>
+                        <span class="bolum-name">Sayısal</span>
+                    </label>
+                </div>
+
+                <div class="bolum-option">
+                    <input type="radio" name="bolum" value="sozel" id="sozel">
+                    <label for="sozel">
+                        <span class="bolum-icon">📚</span>
+                        <span class="bolum-name">Sözel</span>
+                    </label>
+                </div>
+
+                <div class="bolum-option">
+                    <input type="radio" name="bolum" value="esit_agirlik" id="esit_agirlik">
+                    <label for="esit_agirlik">
+                        <span class="bolum-icon">⚖️</span>
+                        <span class="bolum-name">Eşit Ağırlık</span>
+                    </label>
+                </div>
+
+                <div class="bolum-option">
+                    <input type="radio" name="bolum" value="dil" id="dil">
+                    <label for="dil">
+                        <span class="bolum-icon">🌍</span>
+                        <span class="bolum-name">Dil</span>
+                    </label>
+                </div>
+
+            </div>
+
+            <button type="submit" class="devam-btn">
+                DEVAM ET →
+            </button>
+        </form>
+
+        <a href="{% url 'tabu_anasayfa' %}" class="back-link">
+            ← Geri Dön
+        </a>
+
+    </div>
+</body>
+</html>

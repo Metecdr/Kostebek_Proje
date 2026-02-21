@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Maç Bekleme Odası - {{ turnuva.isim }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .bekleme-container {
+        background: white;
+        border-radius: 25px;
+        padding: 60px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        text-align: center;
+        max-width: 600px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bekleme-icon {
+        font-size: 5rem;
+        margin-bottom: 20px;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .bekleme-title {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .bekleme-desc {
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+    }
+
+    .oyuncu-status {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .status-card {
+        padding: 20px;
+        border-radius: 15px;
+        border: 3px solid #e0e0e0;
+    }
+
+    .status-card.hazir {
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        border-color: #28a745;
+    }
+
+    .status-card.bekliyor {
+        background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+        border-color: #ffc107;
+    }
+
+    .status-card h3 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .status-card p {
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .countdown {
+        font-size: 3rem;
+        font-weight: 900;
+        color: #667eea;
+        margin-bottom: 20px;
+    }
+
+    .back-btn {
+        display: inline-block;
+        padding: 15px 30px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+</style>
+
+<script>
+    // ✅ 3 saniyede bir sayfayı yenile (her iki oyuncu hazır mı kontrol et)
+    setTimeout(function() {
+        location.reload();
+    }, 3000);
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="bekleme-container">
+    <div class="bekleme-icon">⏳</div>
+    <h1 class="bekleme-title">Maç Bekleme Odası</h1>
+    <p class="bekleme-desc">{{ turnuva.isim }} - Round {{ mac.round }}</p>
+
+    <div class="oyuncu-status">
+        <div class="status-card {% if ben_hazir %}hazir{% else %}bekliyor{% endif %}">
+            <h3>{{ user.username }}</h3>
+            <p>{% if ben_hazir %}✅ Hazır{% else %}⏳ Bekliyor{% endif %}</p>
+        </div>
+
+        <div class="status-card {% if rakip_hazir %}hazir{% else %}bekliyor{% endif %}">
+            <h3>
+                {% if user == mac.oyuncu1 %}
+                    {{ mac.oyuncu2.username }}
+                {% else %}
+                    {{ mac.oyuncu1.username }}
+                {% endif %}
+            </h3>
+            <p>{% if rakip_hazir %}✅ Hazır{% else %}⏳ Bekliyor{% endif %}</p>
+        </div>
+    </div>
+
+    {% if ben_hazir and rakip_hazir %}
+    <div class="countdown">3...</div>
+    <p style="color: #28a745; font-weight: 700; font-size: 1.2rem;">Maç başlıyor!</p>
+    {% else %}
+    <p style="color: #ff9800; font-weight: 700;">Rakibiniz bekleniyor...</p>
+    {% endif %}
+
+    <a href="{% url 'turnuva_detay' turnuva.turnuva_id %}" class="back-btn">
+        <i class="bi bi-arrow-left"></i> Turnuva Sayfası
+    </a>
+</div>
+{% endblock %}

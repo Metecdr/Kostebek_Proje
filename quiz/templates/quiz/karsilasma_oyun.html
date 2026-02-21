@@ -1,0 +1,1135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}⚔️ Karşılaşma - Köstebek YKS{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #667eea;
+        --danger: #f44336;
+        --success: #4caf50;
+        --warning: #ff9800;
+        --gold: #ffd700;
+    }
+
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+    }
+
+    .game-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .game-header {
+        background: white;
+        border-radius: 20px;
+        padding: 20px 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-50px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .player-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .player-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 3px solid var(--primary);
+        object-fit: cover;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .player-details h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #333;
+        font-weight: 800;
+    }
+
+    .player-level {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--gold), #ffa500);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-top: 3px;
+    }
+
+    .vs-divider {
+        font-size: 2rem;
+        font-weight: 900;
+        color: var(--danger);
+        animation: rotate 3s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .score-panel {
+        background: white;
+        border-radius: 25px;
+        padding: 35px 40px;
+        margin-bottom: 20px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        animation: fadeIn 0.6s ease-out 0.2s backwards;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .score-panel::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+        background-size: 200% 100%;
+        animation: gradientShift 3s ease infinite;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .score-grid {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 40px;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .score-item {
+        text-align: center;
+        position: relative;
+    }
+
+    .score-label {
+        font-size: 0.85rem;
+        color: #888;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 12px;
+    }
+
+    .score-value {
+        font-size: 3.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: countUp 0.5s ease-out;
+        line-height: 1;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    @keyframes countUp {
+        from { transform: scale(0.5); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes scoreUp {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.3); filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.8)); }
+        100% { transform: scale(1); }
+    }
+
+    .score-value.updated {
+        animation: scoreUp 0.6s ease-out;
+    }
+
+    .score-value::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #667eea, transparent);
+        border-radius: 10px;
+    }
+
+    .score-item:nth-child(2) {
+        padding: 0 20px;
+        border-left: 2px solid #e9ecef;
+        border-right: 2px solid #e9ecef;
+    }
+
+    .score-item:nth-child(2) .score-value {
+        font-size: 3rem;
+    }
+
+    .score-item:nth-child(2) small {
+        display: block;
+        margin-top: 8px;
+        color: #999;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .combo-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 700;
+        margin-top: 10px;
+        animation: bounce 0.6s;
+        font-size: 0.85rem;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .time-text {
+        text-align: center;
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .time-circle {
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+
+    .time-circle svg {
+        transform: rotate(-90deg);
+    }
+
+    .time-circle-bg {
+        fill: none;
+        stroke: #f0f0f0;
+        stroke-width: 8;
+    }
+
+    .time-circle-progress {
+        fill: none;
+        stroke: url(#timeGradient);
+        stroke-width: 8;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 1s linear;
+    }
+
+    .time-circle-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.8rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        transition: color 0.3s ease;
+    }
+
+    .time-label {
+        font-size: 1rem;
+        color: #888;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    .question-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        animation: slideUp 0.6s ease-out 0.4s backwards;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(50px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .question-number {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--primary), #764ba2);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 15px;
+        font-weight: 800;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+    }
+
+    .question-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+
+    .answers-grid {
+        display: grid;
+        gap: 15px;
+    }
+
+    .answer-btn {
+        padding: 20px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border: 3px solid transparent;
+        border-radius: 15px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: left;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .answer-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(102, 126, 234, 0.2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .answer-btn:hover::before {
+        width: 400px;
+        height: 400px;
+    }
+
+    .answer-btn:hover {
+        transform: translateX(10px);
+        border-color: var(--primary);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .answer-btn.correct {
+        background: linear-gradient(135deg, #4caf50, #45a049);
+        color: white;
+        border-color: var(--success);
+        animation: correctAnim 0.5s;
+    }
+
+    @keyframes correctAnim {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .answer-btn.wrong {
+        background: linear-gradient(135deg, #f44336, #e53935);
+        color: white;
+        border-color: var(--danger);
+        animation: wrongAnim 0.5s;
+    }
+
+    @keyframes wrongAnim {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+    }
+
+    .answer-btn.correct-answer-highlight {
+        border: 3px solid #4caf50 !important;
+        box-shadow: 0 0 25px rgba(76, 175, 80, 0.7) !important;
+        background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(69, 160, 73, 0.2)) !important;
+    }
+
+    .answer-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    .modal-content {
+        border-radius: 25px;
+        border: none;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, var(--primary), #764ba2);
+        color: white;
+        border: none;
+        padding: 30px;
+    }
+
+    .modal-title {
+        font-weight: 800;
+        font-size: 1.8rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .modal-body {
+        padding: 40px;
+    }
+
+    .waiting-animation {
+        text-align: center;
+        padding: 30px;
+    }
+
+    .waiting-icon {
+        font-size: 5rem;
+        margin-bottom: 20px;
+        animation: bounce 2s infinite;
+    }
+
+    .waiting-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .waiting-subtext {
+        font-size: 1rem;
+        color: #666;
+    }
+
+    .modern-round-transition {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 30px;
+        padding: 60px 40px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+    }
+
+    .modern-round-transition::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotateGlow 3s linear infinite;
+    }
+
+    @keyframes rotateGlow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .round-flash-icon {
+        font-size: 8rem;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 2;
+        animation: flashPulse 1s ease-in-out infinite;
+        filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+    }
+
+    @keyframes flashPulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.2); opacity: 0.8; }
+    }
+
+    .round-next-text {
+        font-size: 2rem;
+        font-weight: 900;
+        color: white;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 2;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        letter-spacing: 1px;
+    }
+
+    .round-loading-dots {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .round-loading-dots span {
+        width: 15px;
+        height: 15px;
+        background: white;
+        border-radius: 50%;
+        animation: dotBounce 1.4s ease-in-out infinite;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+    }
+
+    .round-loading-dots span:nth-child(1) { animation-delay: 0s; }
+    .round-loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .round-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes dotBounce {
+        0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+        40% { transform: scale(1.2); opacity: 1; }
+    }
+
+    .modal.show .modern-round-transition {
+        animation: modalZoomIn 0.4s ease-out;
+    }
+
+    @keyframes modalZoomIn {
+        from { transform: scale(0.7); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    .xp-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, var(--gold), #ffa500);
+        color: white;
+        padding: 20px 30px;
+        border-radius: 15px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+        z-index: 10000;
+        animation: slideInRight 0.5s ease-out, fadeOut 0.5s ease-out 2.5s forwards;
+        display: none;
+    }
+
+    @keyframes slideInRight {
+        from { transform: translateX(400px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+        to { opacity: 0; transform: translateX(400px); }
+    }
+
+    @media (max-width: 768px) {
+        .game-header {
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .score-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .score-item:nth-child(2) {
+            border-left: none;
+            border-right: none;
+            border-top: 2px solid #e9ecef;
+            border-bottom: 2px solid #e9ecef;
+            padding: 20px 0;
+        }
+
+        .question-card {
+            padding: 20px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+        }
+
+        .round-flash-icon {
+            font-size: 5rem;
+        }
+
+        .round-next-text {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="game-container">
+    <div class="game-header">
+        <div class="player-info">
+            <img src="{% if request.user.profil.profil_fotografi %}{{ request.user.profil.profil_fotografi.url }}{% else %}https://ui-avatars.com/api/?name={{ request.user.username }}&size=60&background=667eea&color=fff{% endif %}" 
+                 alt="Sen" class="player-avatar">
+            <div class="player-details">
+                <h3>{{ request.user.username }}</h3>
+                <span class="player-level">⭐ Lv.{{ request.user.profil.seviye }}</span>
+            </div>
+        </div>
+
+        <div class="vs-divider">⚔️</div>
+
+        <div class="player-info">
+            <div class="player-details" style="text-align: right;">
+                <h3 id="rakipUsername">{{ rakip_username }}</h3>
+                <span class="player-level">⭐ Lv.<span id="rakipLevel">{{ rakip_seviye }}</span></span>
+            </div>
+            <img src="https://ui-avatars.com/api/?name={{ rakip_username }}&size=60&background=f44336&color=fff" 
+                 alt="Rakip" class="player-avatar" id="rakipAvatar">
+        </div>
+    </div>
+
+    <div class="score-panel">
+        <div class="score-grid">
+            <div class="score-item">
+                <div class="score-label">Senin Puanın</div>
+                <div class="score-value" id="senScore" data-score="{% if is_oyuncu1 %}{{ oda.oyuncu1_skor }}{% else %}{{ oda.oyuncu2_skor }}{% endif %}">
+                    {% if is_oyuncu1 %}{{ oda.oyuncu1_skor }}{% else %}{{ oda.oyuncu2_skor }}{% endif %}
+                </div>
+                <div id="senCombo" data-combo="0"></div>
+            </div>
+
+            <div class="score-item">
+                <div class="score-label">Soru</div>
+                <div class="score-value" id="soruNo">{{ oda.aktif_soru_no }}</div>
+                <small>/ {{ oda.toplam_soru }}</small>
+            </div>
+
+            <div class="score-item">
+                <div class="score-label">Rakip Puanı</div>
+                <div class="score-value" id="rakipScore" data-score="{% if is_oyuncu1 %}{{ oda.oyuncu2_skor }}{% else %}{{ oda.oyuncu1_skor }}{% endif %}">
+                    {% if is_oyuncu1 %}{{ oda.oyuncu2_skor }}{% else %}{{ oda.oyuncu1_skor }}{% endif %}
+                </div>
+                <div id="rakipCombo"></div>
+            </div>
+        </div>
+
+        <div class="time-text">
+            <div class="time-circle">
+                <svg width="80" height="80">
+                    <defs>
+                        <linearGradient id="timeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#4caf50;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#ff9800;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#f44336;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="time-circle-bg" cx="40" cy="40" r="36"></circle>
+                    <circle class="time-circle-progress" id="timeCircle" cx="40" cy="40" r="36" 
+                            stroke-dasharray="226" stroke-dashoffset="0"></circle>
+                </svg>
+                <div class="time-circle-text" id="kalanSure">30</div>
+            </div>
+            <div class="time-label">Saniye</div>
+        </div>
+    </div>
+
+    <div class="question-card">
+        <div class="question-number">
+            <i class="bi bi-question-circle-fill"></i> SORU <span id="soruNoText">{{ oda.aktif_soru_no }}</span>
+        </div>
+        <div class="question-text" id="soruMetin" data-soru-id="{{ soru.id|default:'' }}" data-dogru-cevap-id="">
+            {% if soru %}{{ soru.metin }}{% else %}⏳ Soru yükleniyor...{% endif %}
+        </div>
+        <div class="answers-grid" id="cevaplar"></div>
+    </div>
+</div>
+
+<div class="modal fade" id="waitingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">⏳ Rakip Bekleniyor</h5>
+            </div>
+            <div class="modal-body">
+                <div class="waiting-animation">
+                    <div class="waiting-icon">🔍</div>
+                    <div class="waiting-text">Rakip Aranıyor...</div>
+                    <div class="waiting-subtext">Lütfen bekleyin, rakip bulunuyor.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="roundModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; background: transparent; box-shadow: none;">
+            <div class="modal-body" style="padding: 0;">
+                <div class="modern-round-transition">
+                    <div class="round-flash-icon" id="roundFlashIcon">⚡</div>
+                    <div class="round-next-text">Sonraki Soru Yükleniyor</div>
+                    <div class="round-loading-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="xp-notification" id="xpNotification">
+    <i class="bi bi-star-fill"></i> +<span id="xpAmount">0</span> XP Kazandın!
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const odaId = '{{ oda.oda_id }}';
+const isOyuncu1 = {{ is_oyuncu1|yesno:"true,false" }};
+const ilkCevaplar = {{ cevaplar_json|safe }};
+
+let pollingInterval = null;
+let timeLeft = 30;
+let timer = null;
+let cevapVerildi = false;
+let roundModalGosterildi = false;
+let warningShown = false;
+
+// *** SES SİSTEMİ TAMAMEN KALDIRILDI - ARTIK SOL ÜSTTE SES BUTONU YOK ***
+
+window.checkAnswer = async function(cevapId, btn) {
+    if (cevapVerildi) {
+        console.log('⚠️ Cevap zaten verildi!');
+        return;
+    }
+    
+    console.log('📤 Cevap gönderiliyor:', cevapId);
+    cevapVerildi = true;
+    clearInterval(timer);
+    
+    document.querySelectorAll('.answer-btn').forEach(b => {
+        b.disabled = true;
+        if (b !== btn) b.style.opacity = '0.5';
+    });
+    
+    try {
+        const response = await fetch(`/karsilasma/durum/${odaId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ cevap_id: cevapId })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ Cevap sonucu:', data);
+        
+        if (data.dogru_mu) {
+            btn.classList.add('correct');
+            showXPNotification(data.kazanilan_xp);
+        } else {
+            btn.classList.add('wrong');
+            showXPNotification(data.kazanilan_xp);
+        }
+        
+        if (data.seviye_atlandi) {
+            setTimeout(() => {
+                alert(`🎉 SEVİYE ATLADIN! Seviye ${data.yeni_seviye} - ${data.yeni_unvan}`);
+            }, 1000);
+        }
+        
+        setTimeout(() => loadGameState(), 100);
+        clearInterval(pollingInterval);
+        pollingInterval = setInterval(loadGameState, 200);
+        
+    } catch (error) {
+        console.error('❌ Cevap hatası:', error);
+        cevapVerildi = false;
+        document.querySelectorAll('.answer-btn').forEach(b => {
+            b.disabled = false;
+            b.style.opacity = '1';
+        });
+    }
+};
+
+async function autoSubmitAnswer() {
+    if (cevapVerildi) {
+        console.log('⚠️ Cevap zaten verildi, boş geçiş yapılmıyor.');
+        return;
+    }
+    
+    console.log('⏰ SÜRE DOLDU! Boş geçiliyor...');
+    cevapVerildi = true;
+    
+    document.querySelectorAll('.answer-btn').forEach(b => {
+        b.disabled = true;
+        b.style.opacity = '0.5';
+    });
+    
+    showCorrectAnswer();
+    
+    try {
+        const response = await fetch(`/karsilasma/durum/${odaId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ cevap_id: null })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ Boş geçildi:', data);
+        
+        if (data.kazanilan_xp && data.kazanilan_xp > 0) {
+            showXPNotification(data.kazanilan_xp);
+        }
+        
+        setTimeout(() => loadGameState(), 2000);
+        clearInterval(pollingInterval);
+        pollingInterval = setInterval(loadGameState, 200);
+        
+    } catch (error) {
+        console.error('❌ Boş geçiş hatası:', error);
+        cevapVerildi = false;
+    }
+}
+
+function showCorrectAnswer() {
+    const dogruCevapId = document.getElementById('soruMetin').getAttribute('data-dogru-cevap-id');
+    if (dogruCevapId) {
+        const correctBtn = document.querySelector(`[data-cevap-id="${dogruCevapId}"]`);
+        if (correctBtn) {
+            correctBtn.classList.add('correct-answer-highlight');
+            console.log('✅ Doğru cevap gösterildi:', dogruCevapId);
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🎮 Oyun başlıyor...');
+    
+    if (ilkCevaplar && ilkCevaplar.length > 0) {
+        renderAnswers(ilkCevaplar);
+    }
+    
+    {% if not oda.oyuncu2 %}
+    new bootstrap.Modal(document.getElementById('waitingModal')).show();
+    {% endif %}
+    
+    startTimer();
+    loadGameState();
+    pollingInterval = setInterval(loadGameState, 500);
+});
+
+function renderAnswers(cevaplar) {
+    const cevaplarDiv = document.getElementById('cevaplar');
+    if (!cevaplarDiv || !cevaplar || cevaplar.length === 0) {
+        console.warn('⚠️ Cevaplar render edilemedi!');
+        return;
+    }
+    
+    cevaplarDiv.innerHTML = '';
+    
+    cevaplar.forEach((cevap, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.setAttribute('data-cevap-id', cevap.id);
+        btn.setAttribute('data-dogru', cevap.dogru_mu || false);
+        btn.innerHTML = `<span style="position: relative; z-index: 1;"><strong>${String.fromCharCode(65 + index)}</strong>) ${cevap.metin}</span>`;
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.checkAnswer(cevap.id, this);
+        });
+        cevaplarDiv.appendChild(btn);
+        
+        if (cevap.dogru_mu) {
+            document.getElementById('soruMetin').setAttribute('data-dogru-cevap-id', cevap.id);
+        }
+    });
+    
+    console.log('✅ Cevaplar render edildi:', cevaplar.length);
+}
+
+function startTimer() {
+    timeLeft = 30;
+    warningShown = false;
+    updateTimer();
+    if (timer) clearInterval(timer);
+    timer = setInterval(updateTimer, 1000);
+    console.log('⏱️ Timer başlatıldı');
+}
+
+function updateTimer() {
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        console.log('⏰ Süre doldu!');
+        autoSubmitAnswer();
+        return;
+    }
+    
+    const kalanSureElement = document.getElementById('kalanSure');
+    const circle = document.getElementById('timeCircle');
+    const timeCircle = document.querySelector('.time-circle');
+    
+    kalanSureElement.textContent = timeLeft;
+    
+    const circumference = 2 * Math.PI * 36;
+    const offset = circumference - (timeLeft / 30) * circumference;
+    circle.style.strokeDashoffset = offset;
+    
+    if (timeLeft <= 10) {
+        circle.style.stroke = '#f44336';
+        kalanSureElement.style.color = '#f44336';
+        
+        if (timeLeft <= 5) {
+            timeCircle.style.animation = 'shake 0.5s infinite';
+            
+            if (!warningShown) {
+                warningShown = true;
+                console.log('⚠️ SON 5 SANİYE!');
+            }
+        }
+    } else {
+        circle.style.stroke = 'url(#timeGradient)';
+        kalanSureElement.style.color = '';
+        timeCircle.style.animation = '';
+    }
+    
+    timeLeft--;
+}
+
+async function loadGameState() {
+    try {
+        const response = await fetch(`/karsilasma/durum/${odaId}/`, {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        updateScores(data);
+        
+        const mevcutSoruId = document.getElementById('soruMetin').getAttribute('data-soru-id');
+        const yeniSoruId = data.soru_id ? String(data.soru_id) : '';
+        
+        if (yeniSoruId && yeniSoruId !== mevcutSoruId) {
+            console.log('🆕 YENİ SORU! ID:', yeniSoruId);
+            updateQuestion(data);
+            startTimer();
+            roundModalGosterildi = false;
+        }
+        
+        if (data.oyuncu2_adi) {
+            const waitingModal = bootstrap.Modal.getInstance(document.getElementById('waitingModal'));
+            if (waitingModal) waitingModal.hide();
+            document.getElementById('rakipUsername').textContent = data.oyuncu2_adi;
+        }
+        
+        if (data.oyuncu1_cevapladi && data.oyuncu2_cevapladi && !roundModalGosterildi) {
+            console.log('✅ HER İKİ OYUNCU CEVAPLADI!');
+            roundModalGosterildi = true;
+            showRoundTransition(data);
+        }
+        
+        if (!data.round_bekleme && cevapVerildi) {
+            clearInterval(pollingInterval);
+            pollingInterval = setInterval(loadGameState, 500);
+        }
+        
+        if (data.oyun_durumu === 'bitti') {
+            console.log('🏁 Oyun bitti!');
+            clearInterval(pollingInterval);
+            setTimeout(() => {
+                window.location.href = `/karsilasma/sonuc/${odaId}/`;
+            }, 2000);
+        }
+        
+    } catch (error) {
+        console.error('❌ Durum yükleme hatası:', error);
+    }
+}
+
+function updateScores(data) {
+    const senScore = isOyuncu1 ? data.oyuncu1_skor : data.oyuncu2_skor;
+    const rakipScore = isOyuncu1 ? data.oyuncu2_skor : data.oyuncu1_skor;
+    const senCombo = isOyuncu1 ? data.oyuncu1_combo : data.oyuncu2_combo;
+    const rakipCombo = isOyuncu1 ? data.oyuncu2_combo : data.oyuncu1_combo;
+    
+    const senScoreElement = document.getElementById('senScore');
+    const rakipScoreElement = document.getElementById('rakipScore');
+    
+    const previousSenScore = parseInt(senScoreElement.dataset.score || '0');
+    const previousRakipScore = parseInt(rakipScoreElement.dataset.score || '0');
+    
+    if (senScore !== previousSenScore) {
+        senScoreElement.classList.remove('updated');
+        void senScoreElement.offsetWidth;
+        senScoreElement.classList.add('updated');
+        senScoreElement.dataset.score = senScore;
+    }
+    
+    if (rakipScore !== previousRakipScore) {
+        rakipScoreElement.classList.remove('updated');
+        void rakipScoreElement.offsetWidth;
+        rakipScoreElement.classList.add('updated');
+        rakipScoreElement.dataset.score = rakipScore;
+    }
+    
+    senScoreElement.textContent = senScore;
+    rakipScoreElement.textContent = rakipScore;
+    
+    if (senCombo >= 2) {
+        const comboBadge = `<span class="combo-badge">🔥 ${senCombo}x COMBO!</span>`;
+        document.getElementById('senCombo').innerHTML = comboBadge;
+        document.getElementById('senCombo').dataset.combo = senCombo;
+    } else {
+        document.getElementById('senCombo').innerHTML = '';
+        document.getElementById('senCombo').dataset.combo = '0';
+    }
+    
+    if (rakipCombo >= 2) {
+        document.getElementById('rakipCombo').innerHTML = `<span class="combo-badge">🔥 ${rakipCombo}x COMBO!</span>`;
+    } else {
+        document.getElementById('rakipCombo').innerHTML = '';
+    }
+    
+    document.getElementById('soruNo').textContent = data.aktif_soru_no;
+    document.getElementById('soruNoText').textContent = data.aktif_soru_no;
+}
+
+function updateQuestion(data) {
+    const soruMetinDiv = document.getElementById('soruMetin');
+    soruMetinDiv.textContent = data.soru || 'Soru yükleniyor...';
+    soruMetinDiv.setAttribute('data-soru-id', data.soru_id || '');
+    soruMetinDiv.setAttribute('data-dogru-cevap-id', '');
+    
+    if (data.cevaplar && data.cevaplar.length > 0) {
+        renderAnswers(data.cevaplar);
+    }
+    
+    cevapVerildi = false;
+    
+    const roundModal = bootstrap.Modal.getInstance(document.getElementById('roundModal'));
+    if (roundModal) roundModal.hide();
+}
+
+function showRoundTransition(data) {
+    console.log('⚡ MODAL GÖSTER (5 SANİYE)!');
+    
+    const kalanSure = 5;
+    const senScore = isOyuncu1 ? data.oyuncu1_skor : data.oyuncu2_skor;
+    const rakipScore = isOyuncu1 ? data.oyuncu2_skor : data.oyuncu1_skor;
+    
+    const roundFlashIcon = document.getElementById('roundFlashIcon');
+    
+    if (senScore > rakipScore) {
+        roundFlashIcon.textContent = '🏆';
+    } else if (rakipScore > senScore) {
+        roundFlashIcon.textContent = '💪';
+    } else {
+        roundFlashIcon.textContent = '🤝';
+    }
+    
+    const roundModalElement = document.getElementById('roundModal');
+    let roundModal = bootstrap.Modal.getInstance(roundModalElement);
+    
+    if (!roundModal) {
+        roundModal = new bootstrap.Modal(roundModalElement, {
+            backdrop: 'static',
+            keyboard: false
+        });
+    }
+    
+    roundModal.show();
+    console.log('✅ MODAL AÇILDI! 5 saniye bekleyecek...');
+    
+    setTimeout(() => {
+        console.log('⏰ MODAL KAPANIYOR (5 saniye sonra)');
+        roundModal.hide();
+        cevapVerildi = false;
+        loadGameState();
+    }, kalanSure * 1000);
+}
+
+function showXPNotification(xp) {
+    const notification = document.getElementById('xpNotification');
+    document.getElementById('xpAmount').textContent = xp;
+    notification.style.display = 'block';
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+window.addEventListener('beforeunload', () => {
+    if (pollingInterval) clearInterval(pollingInterval);
+    if (timer) clearInterval(timer);
+});
+
+console.log('✅ Oyun hazır! Sol üstte ses butonu YOK artık.');
+</script>
+{% endblock %}

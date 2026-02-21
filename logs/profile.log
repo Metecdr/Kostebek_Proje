@@ -1,0 +1,900 @@
+[DEBUG] 2025-11-29 15:44:08 profile.views views.rozetler_view:564 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-11-29 15:44:08 profile.views views.rozetler_view:647 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-11-29 15:44:30 profile.views views.cikis_view:147 - Cache temizlendi: Kullanýcý=admin
+[INFO] 2025-11-29 15:44:30 profile.views views.cikis_view:153 - Kullanýcý çýkýþ yaptý: admin
+[INFO] 2025-11-29 15:44:47 profile.views views.kayit_view:84 - Kullanýcý kaydý (profil mevcut): kostebek
+[INFO] 2025-11-29 15:44:47 profile.views views.profil_view:182 - Yeni rozetler kazanýldý: Kullanýcý=kostebek, Sayý=3
+[DEBUG] 2025-11-29 16:12:12 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-11-29 16:12:12 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-11-29 16:13:13 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-11-29 16:13:13 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-11-29 16:13:20 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-11-29 16:13:20 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-11-29 16:13:27 profile.views views.liderlik_oyun_modu_view:382 - Oyun modu liderlik cache'den alýnamadý: Mod=karsilasma, Tip=toplam
+[DEBUG] 2025-11-29 16:15:52 profile.views views.liderlik_oyun_modu_view:382 - Oyun modu liderlik cache'den alýnamadý: Mod=karsilasma, Tip=toplam
+[DEBUG] 2025-11-29 16:16:11 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=kostebek
+[DEBUG] 2025-11-29 16:16:11 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=kostebek
+[DEBUG] 2025-11-29 16:16:26 profile.views views.konu_analiz_view:460 - Konu analizi cache'den alýnamadý: Kullanýcý=kostebek
+[DEBUG] 2025-11-29 16:55:57 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-11-29 16:55:57 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-11-29 16:56:04 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=kostebek
+[DEBUG] 2025-11-29 16:56:04 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=kostebek
+[INFO] 2025-11-29 17:08:27 profile.views views.giris_view:109 - Baþarýlý giriþ: kostebek
+[INFO] 2025-11-29 17:14:51 profile.views views.giris_view:109 - Baþarýlý giriþ: admin
+[INFO] 2025-11-29 17:42:39 profile.views views.giris_view:109 - Baþarýlý giriþ: kostebek
+[DEBUG] 2025-11-29 17:43:39 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=kostebek
+[DEBUG] 2025-11-29 17:43:39 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=kostebek
+[INFO] 2025-11-29 17:52:34 profile.views views.giris_view:109 - Baþarýlý giriþ: admin
+[DEBUG] 2025-11-29 17:55:26 profile.views views.cikis_view:138 - Cache temizlendi: Kullanýcý=admin
+[INFO] 2025-11-29 17:55:26 profile.views views.cikis_view:146 - Kullanýcý çýkýþ yaptý: admin
+[INFO] 2025-11-29 17:55:31 profile.views views.giris_view:109 - Baþarýlý giriþ: kostebek
+[DEBUG] 2025-11-29 18:28:51 profile.views views.cikis_view:138 - Cache temizlendi: Kullanýcý=admin
+[INFO] 2025-11-29 18:28:51 profile.views views.cikis_view:146 - Kullanýcý çýkýþ yaptý: admin
+[INFO] 2025-11-29 18:28:56 profile.views views.giris_view:109 - Baþarýlý giriþ: kostebek
+[INFO] 2025-12-07 12:53:23 profile.views views.giris_view:109 - Baþarýlý giriþ: admin
+[INFO] 2025-12-07 12:58:14 profile.views views.giris_view:109 - Baþarýlý giriþ: mete
+[INFO] 2025-12-07 12:58:15 profile.views views.profil_view:174 - Yeni rozetler kazanýldý: Kullanýcý=mete, Sayý=1
+[INFO] 2025-12-07 13:20:13 profile.views views.giris_view:109 - Baþarýlý giriþ: admin
+[DEBUG] 2025-12-07 13:24:40 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-12-07 13:24:40 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-12-07 13:24:51 profile.views views.liderlik_oyun_modu_view:382 - Oyun modu liderlik cache'den alýnamadý: Mod=karsilasma, Tip=toplam
+[DEBUG] 2025-12-07 13:34:01 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-07 13:34:01 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=admin
+[WARNING] 2025-12-13 18:32:55 profile.views views.giris_view:113 - Baþarýsýz giriþ denemesi: mete
+[INFO] 2025-12-13 18:33:02 profile.views views.giris_view:109 - Baþarýlý giriþ: admin
+[DEBUG] 2025-12-13 18:35:39 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-13 18:35:39 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-13 18:36:04 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-12-13 18:36:04 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-12-13 18:52:22 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-12-13 18:52:22 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-12-13 19:32:30 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-12-13 19:32:30 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-12-13 19:53:45 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-12-13 19:53:45 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-12-13 19:54:19 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-13 19:54:19 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-14 13:13:26 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-12-14 13:13:26 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-12-14 13:16:50 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-12-14 13:16:50 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-12-14 13:21:29 profile.views views.liderlik_oyun_modu_view:382 - Oyun modu liderlik cache'den alýnamadý: Mod=karsilasma, Tip=toplam
+[DEBUG] 2025-12-14 13:21:30 profile.views views.liderlik_oyun_modu_view:382 - Oyun modu liderlik cache'den alýnamadý: Mod=karsilasma, Tip=haftalik
+[DEBUG] 2025-12-14 13:21:31 profile.views views.liderlik_oyun_modu_view:382 - Oyun modu liderlik cache'den alýnamadý: Mod=bul_bakalim, Tip=haftalik
+[DEBUG] 2025-12-14 13:21:35 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-14 13:21:35 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-14 13:21:48 profile.views views.konu_analiz_view:460 - Konu analizi cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-14 13:41:27 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-12-14 13:41:27 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-12-14 13:41:34 profile.views views.liderlik_oyun_modu_view:382 - Oyun modu liderlik cache'den alýnamadý: Mod=karsilasma, Tip=toplam
+[DEBUG] 2025-12-14 13:42:02 profile.views views.liderlik_oyun_modu_view:382 - Oyun modu liderlik cache'den alýnamadý: Mod=bul_bakalim, Tip=toplam
+[DEBUG] 2025-12-14 13:42:04 profile.views views.liderlik_oyun_modu_view:382 - Oyun modu liderlik cache'den alýnamadý: Mod=karsilasma, Tip=haftalik
+[DEBUG] 2025-12-14 13:42:17 profile.views views.liderlik_ders_view:410 - Ders liderlik cache'den alýnamadý: Ders=matematik, Sýralama=dogru
+[DEBUG] 2025-12-14 13:42:19 profile.views views.liderlik_ders_view:410 - Ders liderlik cache'den alýnamadý: Ders=fizik, Sýralama=dogru
+[DEBUG] 2025-12-14 13:42:22 profile.views views.liderlik_ders_view:410 - Ders liderlik cache'den alýnamadý: Ders=biyoloji, Sýralama=dogru
+[DEBUG] 2025-12-14 13:42:33 profile.views views.liderlik_genel_view:348 - Genel liderlik cache'den alýnamadý: Tip=toplam, Alan=genel
+[DEBUG] 2025-12-14 13:42:43 profile.views views.liderlik_genel_view:348 - Genel liderlik cache'den alýnamadý: Tip=toplam, Alan=sayisal
+[DEBUG] 2025-12-14 13:42:44 profile.views views.liderlik_genel_view:348 - Genel liderlik cache'den alýnamadý: Tip=toplam, Alan=sozel
+[DEBUG] 2025-12-14 13:42:45 profile.views views.liderlik_genel_view:348 - Genel liderlik cache'den alýnamadý: Tip=toplam, Alan=esit_agirlik
+[DEBUG] 2025-12-14 13:42:45 profile.views views.liderlik_genel_view:348 - Genel liderlik cache'den alýnamadý: Tip=toplam, Alan=dil
+[DEBUG] 2025-12-14 13:46:40 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-14 13:46:40 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-14 13:52:46 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-12-14 13:52:46 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-12-14 13:53:11 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-14 13:53:11 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-14 14:37:35 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-12-14 14:37:35 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[INFO] 2025-12-14 14:49:17 profile.views views.giris_view:109 - Baþarýlý giriþ: admin
+[DEBUG] 2025-12-14 14:50:35 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-14 14:50:35 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-14 14:50:42 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-12-14 14:50:42 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-12-14 14:50:48 profile.views views.liderlik_genel_view:348 - Genel liderlik cache'den alýnamadý: Tip=toplam, Alan=genel
+[DEBUG] 2025-12-14 14:50:52 profile.views views.liderlik_genel_view:348 - Genel liderlik cache'den alýnamadý: Tip=haftalik, Alan=genel
+[DEBUG] 2025-12-14 14:50:57 profile.views views.liderlik_oyun_modu_view:382 - Oyun modu liderlik cache'den alýnamadý: Mod=karsilasma, Tip=toplam
+[INFO] 2025-12-15 17:05:24 profile.views views.giris_view:109 - Baþarýlý giriþ: admin
+[INFO] 2025-12-15 17:18:14 profile.views views.giris_view:109 - Baþarýlý giriþ: admin
+[DEBUG] 2025-12-15 18:15:02 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-12-15 18:15:03 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-12-15 18:32:25 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-15 18:32:25 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-15 18:44:36 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-15 18:44:36 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-15 19:07:54 profile.views views.rozetler_view:490 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-15 19:07:54 profile.views views.rozetler_view:527 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-15 19:07:57 profile.views views.liderlik_view:292 - Liderlik verileri cache'den alýnamadý, veritabanýndan çekiliyor
+[DEBUG] 2025-12-15 19:07:57 profile.views views.liderlik_view:307 - Liderlik verileri cache'lendi
+[DEBUG] 2025-12-15 19:38:03 profile.views views.rozetler_view:556 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-15 19:38:03 profile.views views.rozetler_view:593 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-15 19:38:05 profile.views views.liderlik_view:307 - Liderlik cache'den alýnamadý:  Kategori=haftalik
+[DEBUG] 2025-12-15 19:38:14 profile.views views.liderlik_view:307 - Liderlik cache'den alýnamadý:  Kategori=aylik
+[DEBUG] 2025-12-15 19:38:36 profile.views views.liderlik_view:307 - Liderlik cache'den alýnamadý:  Kategori=tum_zamanlar
+[DEBUG] 2025-12-15 19:38:39 profile.views views.liderlik_oyun_modu_view:448 - Oyun modu liderlik cache'den alýnamadý: Mod=karsilasma, Tip=toplam
+[DEBUG] 2025-12-15 19:43:27 profile.views views.liderlik_view:307 - Liderlik cache'den alýnamadý:  Kategori=haftalik
+[DEBUG] 2025-12-15 19:52:32 profile.views views.liderlik_view:307 - Liderlik cache'den alýnamadý:  Kategori=haftalik
+[DEBUG] 2025-12-15 19:52:53 profile.views views.liderlik_view:307 - Liderlik cache'den alýnamadý:  Kategori=haftalik
+[DEBUG] 2025-12-15 19:55:38 profile.views views.liderlik_view:307 - Liderlik cache'den alýnamadý:  Kategori=haftalik
+[INFO] 2025-12-15 20:08:36 profile.management.commands.reset_liderlik reset_liderlik.handle:87 - Liderlik reset tamamlandý:  Tip=tum, Güncellenen=0
+[INFO] 2025-12-15 20:23:29 profile.scheduler scheduler.start_scheduler:42 - Liderlik zamanlayýcý baþlatýldý!
+[DEBUG] 2025-12-15 20:58:39 profile.views views.rozetler_view:556 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-15 20:58:39 profile.views views.rozetler_view:593 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-15 21:02:43 profile.views views.rozetler_view:556 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-15 21:02:43 profile.views views.rozetler_view:593 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-15 21:02:54 profile.views views.cikis_view:138 - Cache temizlendi: Kullanýcý=admin
+[INFO] 2025-12-15 21:02:54 profile.views views.cikis_view:146 - Kullanýcý çýkýþ yaptý: admin
+[INFO] 2025-12-15 21:03:06 profile.views views.kayit_view:64 - Yeni kullanýcý kaydý: emre123, Rozet sayýsý: 3
+[DEBUG] 2025-12-15 21:03:07 profile.views views.rozetler_view:556 - Rozetler cache'den alýnamadý: Kullanýcý=emre123
+[DEBUG] 2025-12-15 21:03:07 profile.views views.rozetler_view:593 - Rozetler cache'lendi: Kullanýcý=emre123
+[DEBUG] 2025-12-16 13:21:43 profile.views views.cikis_view:140 - Cache temizlendi: Kullanýcý=emre123
+[INFO] 2025-12-16 13:21:43 profile.views views.cikis_view:148 - Kullanýcý çýkýþ yaptý: emre123
+[INFO] 2025-12-16 13:21:48 profile.views views.giris_view:111 - Baþarýlý giriþ: admin
+[DEBUG] 2025-12-16 13:27:06 profile.views views.cikis_view:140 - Cache temizlendi: Kullanýcý=admin
+[INFO] 2025-12-16 13:27:06 profile.views views.cikis_view:148 - Kullanýcý çýkýþ yaptý: admin
+[INFO] 2025-12-16 14:22:31 profile.views views.giris_view:117 - Baþarýlý giriþ: admin
+[INFO] 2025-12-17 19:18:27 profile.views views.giris_view:117 - Baþarýlý giriþ: admin
+[DEBUG] 2025-12-17 19:18:40 profile.views views.liderlik_view:371 - Liderlik cache'den alýnamadý:  Kategori=haftalik
+[DEBUG] 2025-12-17 19:19:20 profile.views views.rozetler_view:620 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-17 19:19:20 profile.views views.rozetler_view:657 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-17 21:10:33 profile.views views.rozetler_view:620 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-17 21:10:33 profile.views views.rozetler_view:657 - Rozetler cache'lendi: Kullanýcý=admin
+[DEBUG] 2025-12-17 22:24:45 profile.views views.cikis_view:146 - Cache temizlendi: Kullanýcý=admin
+[INFO] 2025-12-17 22:24:45 profile.views views.cikis_view:154 - Kullanýcý çýkýþ yaptý: admin
+[WARNING] 2025-12-17 22:26:02 profile.views views.kayit_view:42 - Kayýt denemesi: Eksik alan - Kullanýcý: dulsiken55
+[WARNING] 2025-12-17 22:26:30 profile.views views.kayit_view:42 - Kayýt denemesi: Eksik alan - Kullanýcý: dulsiken55
+[WARNING] 2025-12-17 22:26:44 profile.views views.giris_view:121 - Baþarýsýz giriþ denemesi: dulsiken55
+[WARNING] 2025-12-17 22:26:52 profile.views views.giris_view:121 - Baþarýsýz giriþ denemesi: dulsiken55
+[INFO] 2025-12-17 22:26:57 profile.views views.giris_view:117 - Baþarýlý giriþ: admin
+[INFO] 2025-12-20 00:05:00 profile.management.commands.reset_liderlik reset_liderlik.handle:61 - Liderlik reset:  7 profil
+[WARNING] 2025-12-31 22:05:42 profile.views views.kayit_view:43 - Kayýt denemesi: Eksik alan - Kullanýcý: memetaksungur
+[WARNING] 2025-12-31 22:05:56 profile.views views.giris_view:122 - Baþarýsýz giriþ denemesi: memetaksungur
+[WARNING] 2025-12-31 22:06:02 profile.views views.giris_view:122 - Baþarýsýz giriþ denemesi: admin
+[INFO] 2025-12-31 22:06:08 profile.views views.giris_view:118 - Baþarýlý giriþ: admin
+[ERROR] 2025-12-31 22:07:09 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2025-12-31 22:07:09 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_basari_orani'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 20, in rozet_kontrol_yap
+    yeni_rozetler.extend(soru_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 143, in soru_rozet_kontrol
+    if profil.genel_basari_orani >= 70 and profil.cozulen_soru_sayisi >= 30:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_basari_orani'
+[ERROR] 2025-12-31 22:07:11 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2025-12-31 22:07:11 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_basari_orani'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 20, in rozet_kontrol_yap
+    yeni_rozetler.extend(soru_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 143, in soru_rozet_kontrol
+    if profil.genel_basari_orani >= 70 and profil.cozulen_soru_sayisi >= 30:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_basari_orani'
+[ERROR] 2025-12-31 22:08:25 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2025-12-31 22:08:25 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_basari_orani'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 20, in rozet_kontrol_yap
+    yeni_rozetler.extend(soru_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 143, in soru_rozet_kontrol
+    if profil.genel_basari_orani >= 70 and profil.cozulen_soru_sayisi >= 30:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_basari_orani'
+[ERROR] 2025-12-31 22:08:25 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2025-12-31 22:08:25 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_basari_orani'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 20, in rozet_kontrol_yap
+    yeni_rozetler.extend(soru_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 143, in soru_rozet_kontrol
+    if profil.genel_basari_orani >= 70 and profil.cozulen_soru_sayisi >= 30:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_basari_orani'
+[ERROR] 2025-12-31 22:08:35 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2025-12-31 22:08:35 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_basari_orani'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 20, in rozet_kontrol_yap
+    yeni_rozetler.extend(soru_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 143, in soru_rozet_kontrol
+    if profil.genel_basari_orani >= 70 and profil.cozulen_soru_sayisi >= 30:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_basari_orani'
+[DEBUG] 2025-12-31 22:09:23 profile.views views.rozetler_view:677 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2025-12-31 22:09:23 profile.views views.rozetler_view:714 - Rozetler cache'lendi: Kullanýcý=admin
+[INFO] 2025-12-31 22:09:49 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2025-12-31 22:09:53 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2025-12-31 22:09:58 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2025-12-31 22:10:03 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2025-12-31 22:10:06 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2025-12-31 22:10:09 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +25 XP - Sebep: Bul Bakalým tamamlandý
+[DEBUG] 2025-12-31 22:10:54 profile.views views.liderlik_view:404 - Liderlik cache'den alýnamadý:  Kategori=haftalik
+[ERROR] 2025-12-31 22:10:54 profile.views views.liderlik_view:502 - Kullanýcý sýralama hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'haftalik_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 484, in liderlik_view
+    kullanici_siralama = profil.haftalik_siralama
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'haftalik_siralama'
+[ERROR] 2025-12-31 22:11:13 profile.views views.liderlik_view:502 - Kullanýcý sýralama hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'haftalik_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 484, in liderlik_view
+    kullanici_siralama = profil.haftalik_siralama
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'haftalik_siralama'
+[ERROR] 2025-12-31 22:11:50 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2025-12-31 22:11:50 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_basari_orani'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 20, in rozet_kontrol_yap
+    yeni_rozetler.extend(soru_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 143, in soru_rozet_kontrol
+    if profil.genel_basari_orani >= 70 and profil.cozulen_soru_sayisi >= 30:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_basari_orani'
+[INFO] 2026-01-19 02:32:17 profile.views views.giris_view:118 - Baþarýlý giriþ: admin
+[ERROR] 2026-01-19 02:32:18 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2026-01-19 02:32:18 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_basari_orani'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 20, in rozet_kontrol_yap
+    yeni_rozetler.extend(soru_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 143, in soru_rozet_kontrol
+    if profil.genel_basari_orani >= 70 and profil.cozulen_soru_sayisi >= 30:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_basari_orani'
+[DEBUG] 2026-01-19 02:37:17 profile.views views.rozetler_view:677 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2026-01-19 02:37:18 profile.views views.rozetler_view:714 - Rozetler cache'lendi: Kullanýcý=admin
+[WARNING] 2026-01-19 03:14:38 profile.views views.giris_view:122 - Baþarýsýz giriþ denemesi: mete
+[INFO] 2026-01-25 21:21:28 profile.views views.giris_view:118 - Baþarýlý giriþ: admin
+[ERROR] 2026-01-25 21:21:28 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2026-01-25 21:21:28 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 29, in rozet_kontrol_yap
+    yeni_rozetler.extend(liderlik_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 265, in liderlik_rozet_kontrol
+    sira = profil.genel_siralama
+           ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_siralama'
+[INFO] 2026-02-02 22:56:11 profile.views views.giris_view:118 - Baþarýlý giriþ: admin
+[ERROR] 2026-02-02 22:56:11 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2026-02-02 22:56:11 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 29, in rozet_kontrol_yap
+    yeni_rozetler.extend(liderlik_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 265, in liderlik_rozet_kontrol
+    sira = profil.genel_siralama
+           ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_siralama'
+[DEBUG] 2026-02-02 22:56:14 profile.views views.liderlik_view:404 - Liderlik cache'den alýnamadý:  Kategori=haftalik
+[ERROR] 2026-02-02 22:56:14 profile.views views.liderlik_view:502 - Kullanýcý sýralama hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'haftalik_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 484, in liderlik_view
+    kullanici_siralama = profil.haftalik_siralama
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'haftalik_siralama'
+[ERROR] 2026-02-02 22:56:14 profile.views views.liderlik_view:502 - Kullanýcý sýralama hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'haftalik_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 484, in liderlik_view
+    kullanici_siralama = profil.haftalik_siralama
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'haftalik_siralama'
+[WARNING] 2026-02-02 22:58:18 profile.views views.giris_view:122 - Baþarýsýz giriþ denemesi: mete
+[WARNING] 2026-02-02 22:58:57 profile.views views.giris_view:122 - Baþarýsýz giriþ denemesi: mete
+[WARNING] 2026-02-02 22:59:04 profile.views views.giris_view:122 - Baþarýsýz giriþ denemesi: met
+[WARNING] 2026-02-02 22:59:12 profile.views views.giris_view:122 - Baþarýsýz giriþ denemesi: kostebek
+[INFO] 2026-02-02 22:59:30 profile.views views.giris_view:118 - Baþarýlý giriþ: metehan
+[ERROR] 2026-02-02 22:59:30 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2026-02-02 22:59:30 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=metehan, Hata='OgrenciProfili' object has no attribute 'genel_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 29, in rozet_kontrol_yap
+    yeni_rozetler.extend(liderlik_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 265, in liderlik_rozet_kontrol
+    sira = profil.genel_siralama
+           ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_siralama'
+[INFO] 2026-02-03 17:35:59 profile.views views.giris_view:118 - Baþarýlý giriþ: admin
+[ERROR] 2026-02-03 17:35:59 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2026-02-03 17:35:59 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 29, in rozet_kontrol_yap
+    yeni_rozetler.extend(liderlik_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 265, in liderlik_rozet_kontrol
+    sira = profil.genel_siralama
+           ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_siralama'
+[DEBUG] 2026-02-03 17:36:02 profile.views views.liderlik_view:404 - Liderlik cache'den alýnamadý:  Kategori=haftalik
+[ERROR] 2026-02-03 17:36:02 profile.views views.liderlik_view:502 - Kullanýcý sýralama hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'haftalik_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 484, in liderlik_view
+    kullanici_siralama = profil.haftalik_siralama
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'haftalik_siralama'
+[DEBUG] 2026-02-03 17:36:06 profile.views views.rozetler_view:677 - Rozetler cache'den alýnamadý: Kullanýcý=admin
+[DEBUG] 2026-02-03 17:36:06 profile.views views.rozetler_view:714 - Rozetler cache'lendi: Kullanýcý=admin
+[ERROR] 2026-02-03 17:37:08 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2026-02-03 17:37:08 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=metehan, Hata='OgrenciProfili' object has no attribute 'genel_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 29, in rozet_kontrol_yap
+    yeni_rozetler.extend(liderlik_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 265, in liderlik_rozet_kontrol
+    sira = profil.genel_siralama
+           ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_siralama'
+[INFO] 2026-02-03 18:26:53 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 18:26:56 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 18:32:40 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 18:32:44 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 18:32:49 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 18:32:51 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 18:32:57 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 18:32:59 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 18:33:20 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 18:33:23 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 18:33:28 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-03 18:33:29 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-03 20:05:27 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-03 20:05:36 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-03 20:59:26 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 20:59:29 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 20:59:39 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 20:59:43 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 20:59:50 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 20:59:52 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 21:14:57 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 21:14:58 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 21:15:01 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 21:15:03 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 21:15:06 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-03 21:15:06 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-03 21:15:35 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 21:15:40 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 21:15:45 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 21:15:50 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 21:15:52 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 21:15:53 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 21:16:06 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 21:16:10 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 21:16:14 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 21:16:16 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 21:16:20 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-03 21:16:20 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-03 21:16:21 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-03 21:16:22 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-03 21:17:26 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 21:17:28 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-03 22:02:36 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-03 22:02:38 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 21:20:55 profile.views views.giris_view:118 - Baþarýlý giriþ: admin
+[ERROR] 2026-02-16 21:20:55 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2026-02-16 21:20:55 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 29, in rozet_kontrol_yap
+    yeni_rozetler.extend(liderlik_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 265, in liderlik_rozet_kontrol
+    sira = profil.genel_siralama
+           ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_siralama'
+[WARNING] 2026-02-16 21:24:55 profile.views views.giris_view:122 - Baþarýsýz giriþ denemesi: mete
+[INFO] 2026-02-16 21:25:23 profile.views views.giris_view:118 - Baþarýlý giriþ: metehan
+[ERROR] 2026-02-16 21:25:23 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2026-02-16 21:25:23 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=metehan, Hata='OgrenciProfili' object has no attribute 'genel_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 29, in rozet_kontrol_yap
+    yeni_rozetler.extend(liderlik_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 265, in liderlik_rozet_kontrol
+    sira = profil.genel_siralama
+           ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_siralama'
+[INFO] 2026-02-16 21:25:37 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 21:25:39 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 21:25:44 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 21:25:45 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 21:25:49 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 21:25:50 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 21:36:49 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 21:36:51 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 21:36:55 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 21:36:57 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 21:37:04 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-16 21:37:16 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-16 21:47:51 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 21:47:54 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 21:47:58 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 21:47:59 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:09:40 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:09:41 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:09:44 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:09:46 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 22:09:50 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:09:52 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 22:09:56 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-16 22:10:13 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-16 22:10:14 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-16 22:10:15 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-16 22:10:15 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-16 22:10:16 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-16 22:33:25 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 22:33:27 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 22:34:01 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:34:02 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:39:11 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:39:13 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:48:06 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:48:09 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 22:48:16 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 22:48:17 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:48:25 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-16 22:48:27 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-16 22:48:27 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-16 22:53:59 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:54:26 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 22:54:34 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:55:03 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-16 22:55:42 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 23:09:46 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 23:20:53 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-16 23:23:17 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: metehan +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-16 23:23:23 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-17 00:05:00 profile.management.commands.reset_liderlik reset_liderlik.handle:61 - Liderlik reset:  7 profil
+[ERROR] 2026-02-18 23:38:02 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2026-02-18 23:38:02 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 29, in rozet_kontrol_yap
+    yeni_rozetler.extend(liderlik_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 265, in liderlik_rozet_kontrol
+    sira = profil.genel_siralama
+           ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_siralama'
+[ERROR] 2026-02-18 23:42:56 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2026-02-18 23:42:56 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 29, in rozet_kontrol_yap
+    yeni_rozetler.extend(liderlik_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 265, in liderlik_rozet_kontrol
+    sira = profil.genel_siralama
+           ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_siralama'
+[ERROR] 2026-02-18 23:42:58 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2026-02-18 23:42:58 profile.views views.profil_view:245 - Rozet kontrol hatasý:  Kullanýcý=admin, Hata='OgrenciProfili' object has no attribute 'genel_siralama'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 234, in profil_view
+    yeni_rozetler = rozet_kontrol_yap(profil)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 29, in rozet_kontrol_yap
+    yeni_rozetler.extend(liderlik_rozet_kontrol(profil))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\rozet_kontrol.py", line 265, in liderlik_rozet_kontrol
+    sira = profil.genel_siralama
+           ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'genel_siralama'
+[INFO] 2026-02-19 00:05:00 profile.management.commands.reset_liderlik reset_liderlik.handle:61 - Liderlik reset:  7 profil
+[ERROR] 2026-02-19 01:21:59 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[INFO] 2026-02-19 14:52:31 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: admin +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-19 15:32:14 profile.views views.giris_view:118 - Baþarýlý giriþ: admin
+[ERROR] 2026-02-19 15:32:14 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[DEBUG] 2026-02-19 15:32:54 profile.views views.cikis_view:147 - Cache temizlendi: Kullanýcý=admin
+[INFO] 2026-02-19 15:32:54 profile.views views.cikis_view:155 - Kullanýcý çýkýþ yaptý: admin
+[INFO] 2026-02-19 15:33:04 profile.views views.giris_view:118 - Baþarýlý giriþ: test_user5
+[INFO] 2026-02-19 15:33:04 profile.views views.profil_view:185 - Yeni profil oluþturuldu: Kullanýcý=test_user5
+[ERROR] 2026-02-19 15:33:04 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[INFO] 2026-02-19 15:33:04 profile.views views.profil_view:240 - Yeni rozetler kazanýldý: Kullanýcý=test_user5, Sayý=3
+[INFO] 2026-02-19 15:34:58 profile.views views.giris_view:118 - Baþarýlý giriþ: test_user2
+[INFO] 2026-02-19 15:34:58 profile.views views.profil_view:185 - Yeni profil oluþturuldu: Kullanýcý=test_user2
+[ERROR] 2026-02-19 15:34:58 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[INFO] 2026-02-19 15:34:58 profile.views views.profil_view:240 - Yeni rozetler kazanýldý: Kullanýcý=test_user2, Sayý=3
+[DEBUG] 2026-02-19 15:36:06 profile.views views.cikis_view:147 - Cache temizlendi: Kullanýcý=admin
+[INFO] 2026-02-19 15:36:06 profile.views views.cikis_view:155 - Kullanýcý çýkýþ yaptý: admin
+[INFO] 2026-02-19 15:36:14 profile.views views.giris_view:118 - Baþarýlý giriþ: test_user5
+[ERROR] 2026-02-19 15:36:14 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[INFO] 2026-02-19 15:37:51 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user5 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-19 15:37:54 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user2 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-19 15:38:06 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user2 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-19 15:38:14 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user5 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-19 15:38:36 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user5 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-19 15:38:38 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user2 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-19 15:39:16 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user2 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-19 15:39:24 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user5 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-19 15:39:43 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user5 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-19 15:39:49 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user2 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-19 15:39:58 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user2 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-19 15:40:01 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user5 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-19 15:40:11 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user5 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-19 15:40:14 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user2 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-19 15:40:21 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user2 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-19 15:40:23 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user5 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-19 15:40:37 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user5 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-19 15:40:39 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user2 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-19 15:40:49 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user5 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-19 15:41:14 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user2 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-19 15:41:54 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user2 +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-19 15:42:00 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user5 +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-20 20:27:02 profile.views views.giris_view:118 - Baþarýlý giriþ: test_user3
+[INFO] 2026-02-20 20:27:02 profile.views views.profil_view:185 - Yeni profil oluþturuldu: Kullanýcý=test_user3
+[ERROR] 2026-02-20 20:27:02 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[INFO] 2026-02-20 20:27:03 profile.views views.profil_view:240 - Yeni rozetler kazanýldý: Kullanýcý=test_user3, Sayý=3
+[DEBUG] 2026-02-20 20:39:19 profile.views views.cikis_view:147 - Cache temizlendi: Kullanýcý=test_user3
+[INFO] 2026-02-20 20:39:19 profile.views views.cikis_view:155 - Kullanýcý çýkýþ yaptý: test_user3
+[INFO] 2026-02-20 20:39:26 profile.views views.giris_view:118 - Baþarýlý giriþ: test_user1
+[INFO] 2026-02-20 20:39:27 profile.views views.profil_view:185 - Yeni profil oluþturuldu: Kullanýcý=test_user1
+[ERROR] 2026-02-20 20:39:27 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[INFO] 2026-02-20 20:39:28 profile.views views.profil_view:240 - Yeni rozetler kazanýldý: Kullanýcý=test_user1, Sayý=2
+[INFO] 2026-02-20 20:41:42 profile.views views.giris_view:118 - Baþarýlý giriþ: test_user2
+[ERROR] 2026-02-20 20:41:42 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[DEBUG] 2026-02-20 20:42:37 profile.views views.cikis_view:147 - Cache temizlendi: Kullanýcý=test_user2
+[INFO] 2026-02-20 20:42:38 profile.views views.cikis_view:155 - Kullanýcý çýkýþ yaptý: test_user2
+[INFO] 2026-02-20 20:42:48 profile.views views.giris_view:118 - Baþarýlý giriþ: test_user4
+[INFO] 2026-02-20 20:42:48 profile.views views.profil_view:185 - Yeni profil oluþturuldu: Kullanýcý=test_user4
+[ERROR] 2026-02-20 20:42:48 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[INFO] 2026-02-20 20:42:48 profile.views views.profil_view:240 - Yeni rozetler kazanýldý: Kullanýcý=test_user4, Sayý=2
+[INFO] 2026-02-20 20:44:04 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[ERROR] 2026-02-20 20:44:04 profile.xp_helper xp_helper.xp_ekle:39 - XP ekleme hatasý: test_user4, Hata: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\backends\utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 328, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: database is locked
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\quiz\helpers.py", line 111, in update_stats_with_combo
+    profil.save()
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\base.py", line 814, in save
+    self.save_base(
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\base.py", line 877, in save_base
+    updated = self._save_table(
+              ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\base.py", line 990, in _save_table
+    updated = self._do_update(
+              ^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\base.py", line 1054, in _do_update
+    return filtered._update(values) > 0
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\query.py", line 1231, in _update
+    return query.get_compiler(self.db).execute_sql(CURSOR)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1984, in execute_sql
+    cursor = super().execute_sql(result_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\backends\utils.py", line 102, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\backends\utils.py", line 67, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\backends\utils.py", line 80, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    with self.db.wrap_database_errors:
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\backends\utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 328, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: database is locked
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\xp_helper.py", line 21, in xp_ekle
+    sonuc = profil.xp_ekle(miktar)
+            ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\models.py", line 233, in xp_ekle
+    self.save()
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\base.py", line 814, in save
+    self.save_base(
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\base.py", line 877, in save_base
+    updated = self._save_table(
+              ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\base.py", line 990, in _save_table
+    updated = self._do_update(
+              ^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\base.py", line 1054, in _do_update
+    return filtered._update(values) > 0
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\query.py", line 1231, in _update
+    return query.get_compiler(self.db).execute_sql(CURSOR)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1984, in execute_sql
+    cursor = super().execute_sql(result_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\backends\utils.py", line 102, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\backends\utils.py", line 67, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\backends\utils.py", line 80, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\backends\utils.py", line 83, in _execute
+    self.db.validate_no_broken_transaction()
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\venv\Lib\site-packages\django\db\backends\base\base.py", line 531, in validate_no_broken_transaction
+    raise TransactionManagementError(
+django.db.transaction.TransactionManagementError: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+[INFO] 2026-02-20 20:45:37 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-20 20:45:51 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-20 20:45:51 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-20 20:46:06 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-20 20:46:08 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-20 20:46:26 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-20 20:46:56 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-20 20:47:00 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-20 20:47:09 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-20 20:47:10 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-20 20:47:11 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-20 20:47:12 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-20 20:47:12 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +30 XP - Sebep: Karþýlaþma kazanýldý
+[ERROR] 2026-02-20 22:22:59 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2026-02-21 13:13:43 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[ERROR] 2026-02-21 13:13:45 profile.views views.profil_view:224 - Günlük giriþ bonus hatasý: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\Köstebek_Projesi\profile\views.py", line 197, in profil_view
+    giris_bilgi = profil.gunluk_giris_kontrol()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'OgrenciProfili' object has no attribute 'gunluk_giris_kontrol'
+[INFO] 2026-02-21 13:15:02 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:15:04 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:15:17 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:15:20 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:44:53 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:45:12 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:47:45 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:48:08 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:48:14 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:48:21 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-21 13:48:22 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-21 13:49:55 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-21 13:54:25 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:54:32 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:54:43 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:54:49 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-21 13:54:52 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:55:26 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-21 13:55:28 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 13:56:06 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-21 13:56:07 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-21 13:56:15 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-21 13:56:15 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-21 13:56:15 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-21 14:14:45 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:14:51 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:15:08 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:15:14 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:15:20 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-21 14:15:22 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-21 14:15:28 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-21 14:15:30 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:15:36 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:15:39 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:15:53 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-21 14:20:40 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-21 14:20:51 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:20:54 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:21:01 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:21:04 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:21:11 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:21:13 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:21:20 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-21 14:21:21 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:21:28 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +1 XP - Sebep: Soru çözüldü (Yanlýþ)
+[INFO] 2026-02-21 14:21:29 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:21:36 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Karþýlaþma kaybetti
+[INFO] 2026-02-21 14:21:38 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-21 14:26:58 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:27:04 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:27:06 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:27:13 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:27:14 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:27:21 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:27:24 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +5 XP - Sebep: Soru çözüldü (Doðru)
+[INFO] 2026-02-21 14:27:32 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user1 +30 XP - Sebep: Karþýlaþma kazanýldý
+[INFO] 2026-02-21 14:27:32 profile.xp_helper xp_helper.xp_ekle:35 - XP eklendi: test_user4 +5 XP - Sebep: Karþýlaþma kaybetti

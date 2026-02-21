@@ -1,0 +1,783 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tabu Oyunu - Köstebek YKS{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+<style>
+    body {
+        background: linear-gradient(135deg, #9e7bfa 0%, #764ba2 100%);
+        font-family: 'Montserrat', 'Poppins', 'Nunito', sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* HEADER */
+    .tabu-header {
+        max-width: 1200px;
+        margin: 48px auto 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 20px;
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .tabu-header-logo {
+        height: 44px;
+        width: auto;
+        margin-right: 14px;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .tabu-header-title {
+        font-size: 2.2rem;
+        font-weight:  900;
+        color: #fff;
+        letter-spacing: 1px;
+        margin-bottom: 0;
+        margin-right: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .tabu-header-sure {
+        margin-left: auto;
+        padding: 11px 20px;
+        background: #6a4adf;
+        color: #fff;
+        border-radius: 32px;
+        font-size:  1.15rem;
+        font-weight:  700;
+        box-shadow: 0 4px 20px rgba(123, 104, 238, 0.4);
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s;
+    }
+
+    .tabu-header-sure:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 30px rgba(123, 104, 238, 0.6);
+    }
+
+    .timer-warning {
+        animation: pulse 1s infinite;
+        background: #f59e0b ! important;
+    }
+
+    .timer-danger {
+        animation:  pulse 0.5s infinite;
+        background: #ef4444 !important;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform:  scale(1);
+        }
+        50% {
+            transform:  scale(1.08);
+        }
+    }
+
+    /* MAIN LAYOUT */
+    .tabu-main {
+        max-width: 1200px;
+        margin:  0 auto;
+        display: flex;
+        flex-direction: row;
+        gap: 38px;
+        padding: 28px 20px 48px 20px;
+    }
+
+    /* LEFT PANEL */
+    .tabu-left {
+        width: 320px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 28px;
+        animation: fadeInLeft 0.6s ease-out 0.2s both;
+    }
+
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .tabu-kelime-box {
+        width:  100%;
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 10px 40px rgba(123, 104, 238, 0.3);
+        padding: 28px 0 20px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: all 0.3s;
+    }
+
+    .tabu-kelime-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 50px rgba(123, 104, 238, 0.4);
+    }
+
+    .tabu-kelime-title {
+        font-size: 1.13rem;
+        font-weight:  800;
+        color: #6a4adf;
+        margin-bottom: 11px;
+        letter-spacing: 0.5px;
+    }
+
+    .tabu-kelime {
+        font-size: 2.4rem;
+        font-weight:  900;
+        color: #222;
+        letter-spacing: 1.2px;
+        margin-bottom:  10px;
+        margin-top: 7px;
+        animation: scaleIn 0.5s ease-out;
+    }
+
+    @keyframes scaleIn {
+        from {
+            transform: scale(0.5);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .tabu-yasakli-box {
+        width: 100%;
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 10px 40px rgba(123, 104, 238, 0.3);
+        padding: 25px 24px;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s;
+    }
+
+    .tabu-yasakli-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 50px rgba(123, 104, 238, 0.4);
+    }
+
+    .tabu-yasakli-title {
+        font-size: 1.10rem;
+        font-weight:  800;
+        color: #6a4adf;
+        margin-bottom: 11px;
+        letter-spacing: 0.5px;
+    }
+
+    .tabu-yasakli-list {
+        padding: 0;
+        margin: 0;
+        list-style: disc inside;
+    }
+
+    .tabu-yasakli-list li {
+        font-size: 1.25rem;
+        font-weight:  700;
+        color: #333;
+        margin-bottom: 6px;
+        margin-left: 10px;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* CENTER PANEL */
+    .tabu-center {
+        flex: 1;
+        display:  flex;
+        flex-direction:  column;
+        align-items: center;
+        gap: 20px;
+        justify-content: center;
+        animation: fadeInUp 0.6s ease-out 0.3s both;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .tabu-title {
+        font-size: 3rem;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: 2px;
+        margin-bottom: 14px;
+        text-align:  center;
+        text-shadow:  0 5px 20px rgba(106, 74, 223, 0.6);
+    }
+
+    .tabu-tahmin-box {
+        background: white;
+        border-radius: 30px;
+        box-shadow:  0 15px 50px rgba(123, 104, 238, 0.3);
+        min-height: 180px;
+        width: 99%;
+        max-width: 440px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 30px 26px 30px;
+        transition: all 0.3s;
+    }
+
+    .tabu-tahmin-box:hover {
+        transform: scale(1.02);
+        box-shadow: 0 20px 60px rgba(123, 104, 238, 0.4);
+    }
+
+    .tabu-tahmin-title {
+        font-size: 1.15rem;
+        font-weight:  800;
+        color: #6a4adf;
+        margin-bottom: 18px;
+        text-align: center;
+    }
+
+    .tabu-tahmin-metin {
+        font-size:  2.5rem;
+        font-weight:  900;
+        color: #222;
+        letter-spacing: 1px;
+        margin-bottom: 0;
+    }
+
+    .tabu-buttons {
+        display: flex;
+        gap: 18px;
+        margin-top: 28px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .tabu-btn {
+        background: linear-gradient(90deg, #f7d168, #e3c9f7);
+        color: #222;
+        font-weight: 800;
+        font-size: 1.11rem;
+        padding: 14px 38px;
+        border:  none;
+        border-radius:  55px;
+        box-shadow: 0 5px 20px rgba(123, 104, 238, 0.3);
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .tabu-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .tabu-btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .tabu-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 10px 30px rgba(106, 74, 223, 0.5);
+    }
+
+    .tabu-btn:active {
+        transform: scale(0.95);
+    }
+
+    .tabu-btn.tabu {
+        background: linear-gradient(90deg, #ec6f7b, #b399e6);
+        color: #fff;
+    }
+
+    .tabu-btn.dogru {
+        background: linear-gradient(90deg, #7ba7ee, #b399e6);
+        color: #fff;
+    }
+
+    .tabu-btn.pas {
+        background: linear-gradient(90deg, #f7e168, #b399e6);
+        color: #333;
+    }
+
+    /* RIGHT PANEL */
+    .tabu-right {
+        width:  240px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        justify-content: flex-start;
+        animation: fadeInRight 0.6s ease-out 0.4s both;
+    }
+
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .tabu-score-box {
+        width: 100%;
+        background:  #6a4adf;
+        border-radius: 25px;
+        box-shadow: 0 10px 40px rgba(123, 104, 238, 0.4);
+        padding: 28px 18px 22px 18px;
+        min-height: 90px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #fff;
+        transition:  all 0.3s;
+    }
+
+    .tabu-score-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 50px rgba(123, 104, 238, 0.6);
+    }
+
+    .tabu-score-title {
+        font-size: 1.15rem;
+        font-weight:  700;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+
+    .tabu-score-value {
+        font-size: 2.2rem;
+        font-weight:  900;
+        margin-bottom: 0;
+        letter-spacing: 1px;
+        transition: all 0.3s;
+    }
+
+    .tabu-score-value.score-update {
+        animation: scoreUp 0.5s ease-out;
+    }
+
+    @keyframes scoreUp {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.3);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    /* ARA EKRAN */
+    .tabu-araekran {
+        max-width: 600px;
+        margin: 60px auto 0 auto;
+        background: white;
+        border-radius: 28px;
+        box-shadow:  0 15px 50px rgba(123, 104, 238, 0.3);
+        padding: 48px 42px;
+        text-align: center;
+        animation: bounceIn 0.6s ease-out;
+    }
+
+    @keyframes bounceIn {
+        0% {
+            opacity: 0;
+            transform:  scale(0.3);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .tabu-araekran-title {
+        font-size:  2.1rem;
+        font-weight:  900;
+        color: #7B68EE;
+        margin-bottom: 24px;
+    }
+
+    .tabu-araekran-text {
+        font-size: 1.7rem;
+        font-weight:  800;
+        color: #6a4adf;
+        margin-bottom: 18px;
+    }
+
+    .tabu-araekran-btn {
+        margin-top: 18px;
+        padding: 14px 38px;
+        font-size: 1.3rem;
+        font-weight:  800;
+        border-radius: 55px;
+        background: linear-gradient(90deg, #7ba7ee, #b399e6);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 5px 20px rgba(123, 104, 238, 0.4);
+        transition: all 0.3s;
+    }
+
+    .tabu-araekran-btn:hover {
+        background: linear-gradient(90deg, #49df7b, #7B68EE);
+        transform:  scale(1.1);
+        box-shadow: 0 10px 30px rgba(123, 104, 238, 0.6);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1050px) {
+        .tabu-header,
+        .tabu-main {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tabu-left,
+        .tabu-right {
+            width: 85vw;
+        }
+
+        .tabu-center {
+            width: 85vw;
+        }
+
+        .tabu-tahmin-box {
+            max-width: 100%;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .tabu-header,
+        .tabu-main {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .tabu-left,
+        .tabu-right {
+            width: 95vw;
+        }
+
+        .tabu-center {
+            width: 95vw;
+        }
+
+        .tabu-tahmin-box {
+            padding: 20px 15px;
+        }
+
+        .tabu-header-title {
+            font-size: 1.5rem;
+        }
+
+        .tabu-title {
+            font-size: 2.1rem;
+        }
+
+        .tabu-buttons {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .tabu-btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tabu-header">
+    <img src="{% static 'kostebek_sol_png.png' %}" alt="Köstebek Logo" class="tabu-header-logo" />
+    <span class="tabu-header-title">Köstebek</span>
+    <div class="tabu-header-sure" id="timer-box">
+        Süre: <span id="zaman">{{ SURE }}</span>s
+        <span style="margin-left: 12px;font-size: 1rem;color:#fff;font-weight:800;">
+            Soru: <span id="soruSayisi">1</span>/{{ MAX_KELIME }}
+        </span>
+    </div>
+</div>
+
+{% if ara_ekran %}
+<div class="tabu-araekran">
+    <div class="tabu-araekran-title">🎭 Sıradaki Tur</div>
+    <div class="tabu-araekran-text">Sıra <b>{{ takim_adi }}</b> takımında! </div>
+    <div class="tabu-araekran-text" style="font-size:1.2rem;color:#333;">
+        60 saniyede <b>{{ MAX_KELIME }} kelime</b> çözmeye çalışın!  
+    </div>
+    <button class="tabu-araekran-btn" onclick="baslatTur()">Turu Başlat!  🚀</button>
+</div>
+{% else %}
+<div class="tabu-main">
+    <!-- SOL KUTU -->
+    <div class="tabu-left">
+        <div class="tabu-kelime-box">
+            <div class="tabu-kelime-title">🎯 Kelime</div>
+            <div class="tabu-kelime">{{ kelime.kelime }}</div>
+        </div>
+        <div class="tabu-yasakli-box">
+            <div class="tabu-yasakli-title">🚫 Yasaklı Kelimeler</div>
+            <ul class="tabu-yasakli-list">
+                {% for yasakli in yasaklilar|slice:": 5" %}
+                    <li>{{ yasakli.yasakli_kelime }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- ORTA KUTU -->
+    <div class="tabu-center">
+        <div class="tabu-title">🎭 TABU</div>
+        <div class="tabu-tahmin-box">
+            <div class="tabu-tahmin-title">Tahminler</div>
+            <div class="tabu-tahmin-metin" id="ana-kelime">{{ kelime.kelime }}</div>
+            <div class="tabu-buttons">
+                <button onclick="turGuncelle('dogru')" class="tabu-btn dogru">
+                    <span style="position:  relative; z-index: 1;">✅ DOĞRU</span>
+                </button>
+                <button onclick="turGuncelle('pas')" class="tabu-btn pas">
+                    <span style="position: relative; z-index:  1;">⏭️ PAS</span>
+                </button>
+                <button onclick="turGuncelle('tabu')" class="tabu-btn tabu">
+                    <span style="position: relative; z-index: 1;">❌ TABU</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SAĞ KUTU -->
+    <div class="tabu-right">
+        <div class="tabu-score-box">
+            <div class="tabu-score-title">{{ oyun.takim_a_adi }}</div>
+            <div class="tabu-score-value" id="takim-a-skor">{{ oyun.takim_a_skor }}</div>
+        </div>
+        <div class="tabu-score-box">
+            <div class="tabu-score-title">{{ oyun.takim_b_adi }}</div>
+            <div class="tabu-score-value" id="takim-b-skor">{{ oyun.takim_b_skor }}</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const TABU_MAX_KELIME = {{ MAX_KELIME }};
+const TABU_SURE = {{ SURE }};
+let saniye = TABU_SURE;
+let sayac = null;
+let kelimeSayisi = 1;
+let turAktif = false;
+
+function baslatTur() {
+    fetch(window.location.pathname, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+    })
+    .then(response => response.json())
+    .then(() => {
+        window.location.reload();
+    });
+}
+
+{% if ara_ekran %}
+document.addEventListener('DOMContentLoaded', () => {
+    turAktif = false;
+});
+{% else %}
+function zamanlayici() {
+    saniye--;
+    const zamanEl = document.getElementById('zaman');
+    const timerBox = document.getElementById('timer-box');
+    zamanEl.innerText = saniye;
+
+    if (saniye <= 30 && saniye > 10) {
+        timerBox.classList.add('timer-warning');
+        timerBox.classList.remove('timer-danger');
+    } else if (saniye <= 10) {
+        timerBox.classList.add('timer-danger');
+        timerBox.classList.remove('timer-warning');
+    }
+
+    if (saniye <= 0) {
+        clearInterval(sayac);
+        if (typeof showToast === 'function') showToast('Süre doldu!', 'warning');
+        turuBitir();
+    }
+}
+
+function turuBaslat() {
+    saniye = TABU_SURE;
+    kelimeSayisi = 1;
+    document.getElementById('zaman').innerText = saniye;
+    document.getElementById('soruSayisi').innerText = kelimeSayisi;
+    if (sayac) clearInterval(sayac);
+    turAktif = true;
+    sayac = setInterval(zamanlayici, 1000);
+    if (typeof showToast === 'function') showToast('Tur başladı!  İyi şanslar!  🎭', 'success');
+}
+
+function turGuncelle(action) {
+    if (!turAktif) return;
+
+    fetch("{% url 'tabu_tur_guncelle' oyun.id %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+            action: action,
+            mevcut_kelime_id: {{ kelime.id }}
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.tur_bitti_kelime_yok) {
+            turuBitir();
+        } else {
+            kelimeSayisi++;
+            let gosterilecekSoru = kelimeSayisi;
+            if (gosterilecekSoru > TABU_MAX_KELIME) gosterilecekSoru = TABU_MAX_KELIME;
+            document.getElementById('soruSayisi').innerText = gosterilecekSoru;
+            document.getElementById('ana-kelime').innerText = data.kelime;
+            document.querySelector('.tabu-kelime').innerText = data.kelime;
+
+            const skorA = document.getElementById('takim-a-skor');
+            const skorB = document.getElementById('takim-b-skor');
+
+            if (skorA.innerText !== data.takim_a_skor.toString()) {
+                skorA.innerText = data.takim_a_skor;
+                skorA.classList.add('score-update');
+                setTimeout(() => skorA.classList.remove('score-update'), 500);
+            }
+
+            if (skorB.innerText !== data.takim_b_skor.toString()) {
+                skorB.innerText = data.takim_b_skor;
+                skorB.classList.add('score-update');
+                setTimeout(() => skorB.classList.remove('score-update'), 500);
+            }
+
+            if (data.yasaklilar) {
+                let yasakliList = "";
+                data.yasaklilar.slice(0, 5).forEach(function(yasakli) {
+                    yasakliList += "<li>" + yasakli + "</li>";
+                });
+                const yasakliUl = document.querySelector('.tabu-yasakli-list');
+                if (yasakliUl) yasakliUl.innerHTML = yasakliList;
+            }
+
+            if (typeof showToast === 'function') {
+                if (action === 'dogru') {
+                    showToast('Doğru!  +1 Puan!  🎉', 'success');
+                } else if (action === 'tabu') {
+                    showToast('Tabu! -1 Puan! ❌', 'error');
+                } else if (action === 'pas') {
+                    showToast('Pas geçildi! ⏭️', 'info');
+                }
+            }
+
+            if (kelimeSayisi >= TABU_MAX_KELIME) {
+                setTimeout(turuBitir, 400);
+            }
+        }
+    })
+    .catch(error => {
+        if (typeof showToast === 'function') showToast('Bir hata oluştu!', 'error');
+        console.error('Hata:', error);
+    });
+}
+
+function turuBitir() {
+    turAktif = false;
+    clearInterval(sayac);
+    kelimeSayisi = 1;
+
+    fetch("{% url 'tabu_tur_degistir' oyun.id %}", {
+        method: 'POST',
+        headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (typeof showToast === 'function') showToast('Tur bitti! ', 'info');
+        setTimeout(() => {
+            window.location.href = data.redirect_url;
+        }, 1000);
+    })
+    .catch(error => {
+        if (typeof showToast === 'function') showToast('Bir hata oluştu!', 'error');
+        console.error('Hata:', error);
+    });
+}
+
+window.onload = turuBaslat;
+{% endif %}
+</script>
+{% endblock %}
