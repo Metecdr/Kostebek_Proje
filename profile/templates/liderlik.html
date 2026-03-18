@@ -4,13 +4,17 @@
 {% block title %}Liderlik Tablosu - Köstebek YKS{% endblock %}
 
 {% block extra_css %}
-<link href="https://fonts.googleapis.com/css2? family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
     body {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
         padding: 0;
         font-family: 'Poppins', sans-serif;
+    }
+
+    [data-theme="dark"] body {
+        background: linear-gradient(135deg, #1a1a3e 0%, #0f0f2e 100%) !important;
     }
 
     .leaderboard-container {
@@ -29,7 +33,7 @@
     .leaderboard-categories {
         display: flex;
         gap: 15px;
-        margin-bottom:  30px;
+        margin-bottom: 30px;
         justify-content: center;
         flex-wrap: wrap;
         animation: fadeIn 0.8s ease-out 0.5s backwards;
@@ -41,7 +45,7 @@
         padding: 12px 25px;
         border: none;
         border-radius: 50px;
-        font-size:  1rem;
+        font-size: 1rem;
         font-weight: 700;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -54,13 +58,17 @@
         overflow: hidden;
     }
 
+    [data-theme="dark"] .category-btn {
+        background: rgba(30, 39, 73, 0.9) !important;
+        color: #a78bfa !important;
+        border: 1px solid #2d3454;
+    }
+
     .category-btn::before {
         content: '';
         position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
+        top: 50%; left: 50%;
+        width: 0; height: 0;
         border-radius: 50%;
         background: linear-gradient(135deg, #667eea, #764ba2);
         transform: translate(-50%, -50%);
@@ -69,15 +77,16 @@
 
     .category-btn:hover::before,
     .category-btn.active::before {
-        width:  300px;
+        width: 300px;
         height: 300px;
     }
 
     .category-btn:hover,
     .category-btn.active {
-        color: white;
+        color: white !important;
         transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+        text-decoration: none;
     }
 
     .category-btn span {
@@ -85,10 +94,9 @@
         z-index: 1;
     }
 
-    /* ✅ SEVİYE BUTONU ÖZEL RENK */
     .category-btn.seviye-btn.active {
         background: linear-gradient(135deg, #FFD700, #FFA500);
-        color: white;
+        color: white !important;
     }
 
     /* ==================== USER RANK SECTION ==================== */
@@ -104,31 +112,29 @@
         overflow: hidden;
     }
 
+    [data-theme="dark"] .user-rank-container {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.7);
+    }
+
     .user-rank-container::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
         background: linear-gradient(90deg, transparent, rgba(102,126,234,0.2), transparent);
         animation: shimmer 3s infinite;
     }
 
     @keyframes shimmer {
         0% { left: -100%; }
-        100% { left:  100%; }
+        100% { left: 100%; }
     }
 
     @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform:  translateY(-50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(-50px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .rank-icon {
@@ -147,14 +153,21 @@
         font-weight: 800;
         background: linear-gradient(135deg, #667eea, #764ba2);
         -webkit-background-clip: text;
-        -webkit-text-fill-color:  transparent;
-        background-clip:  text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin-bottom: 20px;
+    }
+
+    [data-theme="dark"] .rank-title {
+        background: linear-gradient(135deg, #a78bfa, #60a5fa) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
     }
 
     .rank-number {
         font-size: 5rem;
-        font-weight:  900;
+        font-weight: 900;
         background: linear-gradient(135deg, #FFD700, #FFA500);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -165,20 +178,18 @@
     }
 
     @keyframes countUp {
-        from {
-            opacity: 0;
-            transform: scale(0.5);
-        }
-        to {
-            opacity:  1;
-            transform: scale(1);
-        }
+        from { opacity: 0; transform: scale(0.5); }
+        to { opacity: 1; transform: scale(1); }
     }
 
     .rank-label {
         font-size: 1.2rem;
         color: #666;
         font-weight: 600;
+    }
+
+    [data-theme="dark"] .rank-label {
+        color: #a8b3cf !important;
     }
 
     /* ==================== PODIUM SECTION ==================== */
@@ -188,14 +199,8 @@
     }
 
     @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(40px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .podium-container {
@@ -215,14 +220,12 @@
         cursor: pointer;
     }
 
-    .podium-item:hover {
-        transform: translateY(-10px);
-    }
+    .podium-item:hover { transform: translateY(-10px); }
 
     .podium-avatar {
         width: 100px;
         height: 100px;
-        border-radius:  50%;
+        border-radius: 50%;
         background: linear-gradient(135deg, #667eea, #764ba2);
         display: flex;
         align-items: center;
@@ -241,14 +244,8 @@
     .podium-item:nth-child(3) .podium-avatar { animation-delay: 0.6s; }
 
     @keyframes scaleIn {
-        from {
-            opacity: 0;
-            transform: scale(0);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
+        from { opacity: 0; transform: scale(0); }
+        to { opacity: 1; transform: scale(1); }
     }
 
     .podium-crown {
@@ -267,8 +264,8 @@
         width: 120px;
         height: 120px;
         font-size: 3rem;
-        border:  5px solid #FFD700;
-        box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+        border: 5px solid #FFD700;
+        box-shadow: 0 0 30px rgba(255,215,0,0.6);
     }
 
     .podium-rank-2 .podium-avatar {
@@ -284,20 +281,22 @@
         font-weight: 700;
         color: white;
         margin-bottom: 8px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     .podium-score {
         font-size: 1.5rem;
         font-weight: 900;
         color: #FFD700;
-        margin-bottom:  15px;
+        margin-bottom: 15px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     .podium-platform {
         background: white;
         border-radius: 15px 15px 0 0;
         padding: 20px;
-        box-shadow:  0 -5px 30px rgba(0,0,0,0.2);
+        box-shadow: 0 -5px 30px rgba(0,0,0,0.2);
         text-align: center;
         transition: all 0.3s ease;
         animation: slideUp 0.8s ease-out backwards;
@@ -308,14 +307,8 @@
     .podium-item:nth-child(3) .podium-platform { animation-delay: 0.8s; }
 
     @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(100px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(100px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .podium-rank-1 .podium-platform {
@@ -329,6 +322,11 @@
         background: linear-gradient(135deg, #E8E8E8, #C0C0C0);
     }
 
+    [data-theme="dark"] .podium-rank-2 .podium-platform {
+        background: linear-gradient(135deg, #4a4a5e, #3a3a4e) !important;
+        color: white !important;
+    }
+
     .podium-rank-3 .podium-platform {
         height: 100px;
         background: linear-gradient(135deg, #E6C8A0, #CD7F32);
@@ -337,7 +335,7 @@
 
     .platform-rank {
         font-size: 3rem;
-        font-weight:  900;
+        font-weight: 900;
         line-height: 1;
     }
 
@@ -350,13 +348,23 @@
         animation: fadeInUp 0.8s ease-out 0.6s backwards;
     }
 
+    [data-theme="dark"] .leaderboard-card {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+    }
+
     .card-header {
         display: flex;
         align-items: center;
         gap: 12px;
-        margin-bottom:  25px;
+        margin-bottom: 25px;
         padding-bottom: 20px;
-        border-bottom:  3px solid #f0f0f0;
+        border-bottom: 3px solid #f0f0f0;
+    }
+
+    [data-theme="dark"] .card-header {
+        border-bottom-color: #2d3454 !important;
     }
 
     .card-icon {
@@ -371,11 +379,18 @@
 
     .card-title {
         font-size: 1.8rem;
-        font-weight:  800;
+        font-weight: 800;
         background: linear-gradient(135deg, #667eea, #764ba2);
         -webkit-background-clip: text;
-        -webkit-text-fill-color:  transparent;
-        background-clip:  text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    [data-theme="dark"] .card-title {
+        background: linear-gradient(135deg, #a78bfa, #60a5fa) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
     }
 
     /* TABLO */
@@ -389,6 +404,10 @@
         color: white;
     }
 
+    [data-theme="dark"] .leaderboard-table thead {
+        background: linear-gradient(135deg, #4c3d8f, #5b3d8f) !important;
+    }
+
     .leaderboard-table th {
         padding: 18px 15px;
         text-align: left;
@@ -396,12 +415,18 @@
         font-size: 1rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        color: white !important;
     }
 
     .leaderboard-table td {
         padding: 18px 15px;
         border-bottom: 1px solid #f0f0f0;
         transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .leaderboard-table td {
+        border-bottom-color: #2d3454 !important;
+        color: #e5e7eb !important;
     }
 
     .leader-item {
@@ -416,32 +441,37 @@
     .leader-item:nth-child(5) { animation-delay: 0.3s; }
 
     @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(-30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
     }
 
     .leader-item:hover {
         background: linear-gradient(135deg, #f8f9fa, #ffffff);
         transform: translateX(10px);
-        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        box-shadow: 0 5px 20px rgba(102,126,234,0.2);
+    }
+
+    [data-theme="dark"] .leader-item:hover {
+        background: linear-gradient(135deg, #2d3454, #1e2749) !important;
+        box-shadow: 0 5px 20px rgba(139,92,246,0.3) !important;
     }
 
     .leader-item.current-user {
         background: linear-gradient(135deg, #fff9e6, #ffe4b5);
         border-left: 5px solid #FFD700;
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        box-shadow: 0 0 20px rgba(255,215,0,0.3);
+    }
+
+    [data-theme="dark"] .leader-item.current-user {
+        background: linear-gradient(135deg, #2a2517, #1e1a0f) !important;
+        border-left-color: #FFD700 !important;
+        box-shadow: 0 0 20px rgba(255,215,0,0.2) !important;
     }
 
     .rank-badge {
         width: 45px;
         height: 45px;
-        border-radius:  50%;
+        border-radius: 50%;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -457,28 +487,28 @@
 
     .rank-1 {
         background: linear-gradient(135deg, #FFD700, #FFA500);
-        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        box-shadow: 0 5px 15px rgba(255,215,0,0.4);
     }
 
     .rank-2 {
-        background:  linear-gradient(135deg, #E8E8E8, #C0C0C0);
-        box-shadow: 0 5px 15px rgba(192, 192, 192, 0.4);
+        background: linear-gradient(135deg, #E8E8E8, #C0C0C0);
+        box-shadow: 0 5px 15px rgba(192,192,192,0.4);
     }
 
     .rank-3 {
-        background:  linear-gradient(135deg, #E6C8A0, #CD7F32);
-        box-shadow: 0 5px 15px rgba(205, 127, 50, 0.4);
+        background: linear-gradient(135deg, #E6C8A0, #CD7F32);
+        box-shadow: 0 5px 15px rgba(205,127,50,0.4);
     }
 
     .rank-other {
         background: linear-gradient(135deg, #667eea, #764ba2);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 5px 15px rgba(102,126,234,0.4);
     }
 
     .leader-avatar {
         width: 50px;
         height: 50px;
-        border-radius:  50%;
+        border-radius: 50%;
         background: linear-gradient(135deg, #ffd89b, #19547b);
         display: inline-flex;
         align-items: center;
@@ -488,12 +518,10 @@
         color: white;
         transition: all 0.3s ease;
         vertical-align: middle;
-        margin:  0 10px;
+        margin: 0 10px;
     }
 
-    .leader-item:hover .leader-avatar {
-        transform: scale(1.1);
-    }
+    .leader-item:hover .leader-avatar { transform: scale(1.1); }
 
     .leader-name {
         font-size: 1.1rem;
@@ -501,9 +529,17 @@
         color: #333;
     }
 
+    [data-theme="dark"] .leader-name {
+        color: #e5e7eb !important;
+    }
+
     .leader-subtitle {
         font-size: 0.85rem;
         color: #888;
+    }
+
+    [data-theme="dark"] .leader-subtitle {
+        color: #a8b3cf !important;
     }
 
     .leader-score {
@@ -515,13 +551,20 @@
         background-clip: text;
     }
 
+    [data-theme="dark"] .leader-score {
+        background: linear-gradient(135deg, #a78bfa, #60a5fa) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+    }
+
     .stat-badge {
         display: inline-block;
         padding: 5px 12px;
-        border-radius:  15px;
-        font-size:  0.9rem;
-        font-weight:  700;
-        margin:  0 3px;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin: 0 3px;
     }
 
     .stat-correct {
@@ -539,26 +582,31 @@
         color: white;
     }
 
-    /* ✅ SEVİYE BADGE */
     .stat-level {
         background: linear-gradient(135deg, #FFD700, #FFA500);
         color: white;
         padding: 6px 14px;
-        border-radius:  12px;
+        border-radius: 12px;
         font-weight: 800;
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3);
+        box-shadow: 0 3px 10px rgba(255,215,0,0.3);
     }
 
     .stat-xp {
-        background: rgba(255, 215, 0, 0.1);
+        background: rgba(255,215,0,0.1);
         color: #FFA500;
         padding: 5px 12px;
-        border-radius:  10px;
-        font-weight:  700;
-        border: 2px solid rgba(255, 215, 0, 0.3);
+        border-radius: 10px;
+        font-weight: 700;
+        border: 2px solid rgba(255,215,0,0.3);
+    }
+
+    [data-theme="dark"] .stat-xp {
+        background: rgba(255,215,0,0.15) !important;
+        color: #FFD700 !important;
+        border-color: rgba(255,215,0,0.4) !important;
     }
 
     .empty-state {
@@ -566,6 +614,10 @@
         padding: 40px;
         color: #999;
         font-size: 1.1rem;
+    }
+
+    [data-theme="dark"] .empty-state {
+        color: #a8b3cf !important;
     }
 
     .empty-icon {
@@ -583,7 +635,7 @@
         }
 
         .podium-item {
-            width:  100%;
+            width: 100%;
             max-width: 300px;
         }
 
@@ -594,22 +646,16 @@
             min-height: 100px;
         }
 
-        .rank-number {
-            font-size: 3.5rem;
-        }
+        .rank-number { font-size: 3.5rem; }
 
-        .leaderboard-categories {
-            flex-direction: column;
-        }
+        .leaderboard-categories { flex-direction: column; }
 
         .category-btn {
             width: 100%;
             justify-content: center;
         }
 
-        .leaderboard-table {
-            font-size: 0.85rem;
-        }
+        .leaderboard-table { font-size: 0.85rem; }
 
         .leaderboard-table th,
         .leaderboard-table td {
@@ -621,14 +667,14 @@
 
 {% block content %}
 <div class="leaderboard-container">
-    
+
     <!-- USER RANK -->
     <div class="user-rank-container">
         <div class="rank-icon">🏆</div>
         <div class="rank-title">Senin Sıran</div>
         <div class="rank-number">{{ kullanici_siralama }}</div>
         <div class="rank-label">
-            {{ kategori|title }} 
+            {{ kategori|title }}
             {% if kategori == 'seviye' %}
                 <strong>{{ kullanici_puan }}</strong>
             {% else %}
@@ -640,7 +686,7 @@
 
     <!-- CATEGORIES -->
     <div class="leaderboard-categories">
-        <a href="? kategori=gunluk" class="category-btn {% if kategori == 'gunluk' %}active{% endif %}">
+        <a href="?kategori=gunluk" class="category-btn {% if kategori == 'gunluk' %}active{% endif %}">
             <span>📅 Günlük</span>
         </a>
         <a href="?kategori=haftalik" class="category-btn {% if kategori == 'haftalik' %}active{% endif %}">
@@ -652,7 +698,6 @@
         <a href="?kategori=tum_zamanlar" class="category-btn {% if kategori == 'tum_zamanlar' %}active{% endif %}">
             <span>🌟 Tüm Zamanlar</span>
         </a>
-        <!-- ✅ YENİ SEVİYE FİLTRESİ -->
         <a href="?kategori=seviye" class="category-btn seviye-btn {% if kategori == 'seviye' %}active{% endif %}">
             <span>⭐ Seviye</span>
         </a>
@@ -665,7 +710,7 @@
             <!-- 2. SIRA -->
             <div class="podium-item podium-rank-2">
                 <div class="podium-avatar">
-                    {{ liderler.1.kullanici.username|slice:": 1"|upper }}
+                    {{ liderler.1.kullanici.username|slice:":1"|upper }}
                 </div>
                 <div class="podium-name">{{ liderler.1.kullanici.username }}</div>
                 <div class="podium-score">
@@ -680,7 +725,7 @@
                 </div>
             </div>
 
-            <!-- 1.SIRA -->
+            <!-- 1. SIRA -->
             <div class="podium-item podium-rank-1">
                 <div class="podium-avatar">
                     <div class="podium-crown">👑</div>
@@ -699,7 +744,7 @@
                 </div>
             </div>
 
-            <!-- 3.SIRA -->
+            <!-- 3. SIRA -->
             <div class="podium-item podium-rank-3">
                 <div class="podium-avatar">
                     {{ liderler.2.kullanici.username|slice:":1"|upper }}
@@ -726,27 +771,23 @@
             <span class="card-icon">🏆</span>
             <h3 class="card-title">{{ baslik }}</h3>
         </div>
-        
+
         <table class="leaderboard-table">
             <thead>
                 <tr>
                     <th style="width: 80px; text-align: center;">Sıra</th>
                     <th>Kullanıcı</th>
-                    
                     {% if kategori == 'seviye' %}
-                        <!-- ✅ SEVİYE FİLTRESİ BAŞLIKLARI -->
                         <th style="text-align: center;"><i class="bi bi-star-fill"></i> Seviye</th>
                         <th style="text-align: center;"><i class="bi bi-lightning-fill"></i> XP</th>
                         <th style="text-align: center;"><i class="bi bi-trophy-fill"></i> Toplam Puan</th>
                     {% else %}
-                        <!-- ✅ NORMAL FİLTRE BAŞLIKLARI -->
                         <th style="text-align: center;">Puan</th>
                         <th style="text-align: center;"><i class="bi bi-star-fill"></i> Seviye</th>
                         <th style="text-align: center;">Doğru/Yanlış</th>
                     {% endif %}
-                    
                     <th style="text-align: center;">Başarı Oranı</th>
-                    <th style="text-align:  center;">Alan</th>
+                    <th style="text-align: center;">Alan</th>
                 </tr>
             </thead>
             <tbody>
@@ -758,7 +799,7 @@
                             {{ forloop.counter }}
                         </span>
                     </td>
-                    
+
                     <!-- KULLANICI -->
                     <td>
                         <span class="leader-avatar">{{ profil.kullanici.username|slice:":1"|upper }}</span>
@@ -767,9 +808,8 @@
                             {% if profil.kullanici == request.user %}<span style="color: #FFD700;">👤</span>{% endif %}
                         </span>
                     </td>
-                    
+
                     {% if kategori == 'seviye' %}
-                        <!-- ✅ SEVİYE FİLTRESİ KOLONLARI -->
                         <td style="text-align: center;">
                             <span class="stat-badge stat-level">
                                 <i class="bi bi-star-fill"></i> {{ profil.seviye }}
@@ -782,7 +822,6 @@
                             <span class="leader-score">{{ profil.toplam_puan }}</span>
                         </td>
                     {% else %}
-                        <!-- ✅ NORMAL FİLTRE KOLONLARI -->
                         <td style="text-align: center;">
                             <span class="leader-score">
                                 {% if puan_alani == 'gunluk_puan' %}{{ profil.gunluk_puan }}
@@ -809,38 +848,22 @@
                             </span>
                         </td>
                     {% endif %}
-                    
+
                     <!-- BAŞARI ORANI -->
                     <td style="text-align: center;">
                         <span class="stat-badge stat-accuracy">
                             {% if puan_alani == 'gunluk_puan' %}
-                                {% if profil.gunluk_cozulen > 0 %}
-                                    {{ profil.gunluk_basari_orani|floatformat:1 }}%
-                                {% else %}
-                                    0.0%
-                                {% endif %}
+                                {% if profil.gunluk_cozulen > 0 %}{{ profil.gunluk_basari_orani|floatformat:1 }}%{% else %}0.0%{% endif %}
                             {% elif puan_alani == 'haftalik_puan' %}
-                                {% if profil.haftalik_cozulen > 0 %}
-                                    {{ profil.haftalik_basari_orani|floatformat:1 }}%
-                                {% else %}
-                                    0.0%
-                                {% endif %}
+                                {% if profil.haftalik_cozulen > 0 %}{{ profil.haftalik_basari_orani|floatformat:1 }}%{% else %}0.0%{% endif %}
                             {% elif puan_alani == 'aylik_puan' %}
-                                {% if profil.aylik_cozulen > 0 %}
-                                    {{ profil.aylik_basari_orani|floatformat:1 }}%
-                                {% else %}
-                                    0.0%
-                                {% endif %}
+                                {% if profil.aylik_cozulen > 0 %}{{ profil.aylik_basari_orani|floatformat:1 }}%{% else %}0.0%{% endif %}
                             {% else %}
-                                {% if profil.cozulen_soru_sayisi > 0 %}
-                                    {{ profil.genel_basari_orani|floatformat:1 }}%
-                                {% else %}
-                                    0.0%
-                                {% endif %}
+                                {% if profil.cozulen_soru_sayisi > 0 %}{{ profil.genel_basari_orani|floatformat:1 }}%{% else %}0.0%{% endif %}
                             {% endif %}
                         </span>
                     </td>
-                    
+
                     <!-- ALAN -->
                     <td style="text-align: center;">
                         <span class="leader-subtitle">{{ profil.get_alan_display }}</span>
@@ -851,7 +874,7 @@
                     <td colspan="7">
                         <div class="empty-state">
                             <div class="empty-icon">😴</div>
-                            <div>Henüz lider yok. İlk sen ol!  🚀</div>
+                            <div>Henüz lider yok. İlk sen ol! 🚀</div>
                         </div>
                     </td>
                 </tr>
@@ -866,10 +889,10 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         showToast('🏆 Liderlik tablosuna hoş geldin!', 'info');
-        
+
         {% if kullanici_siralama <= 10 %}
         setTimeout(() => {
-            showToast('🌟 Harika!  Top 10\'dasın! ', 'success');
+            showToast('🌟 Harika! Top 10\'dasın!', 'success');
         }, 1500);
         {% endif %}
     });

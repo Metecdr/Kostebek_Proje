@@ -1,0 +1,629 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mağaza - Köstebek YKS{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ==================== GENEL ==================== */
+    .magaza-container { max-width: 1100px; margin: 40px auto; padding: 0 20px 60px; }
+
+    /* ==================== ANIMASYONLAR ==================== */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInLeft {
+        from { opacity: 0; transform: translateX(-30px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50%       { transform: scale(1.05); }
+    }
+    @keyframes shimmer {
+        0%   { background-position: -200% center; }
+        100% { background-position: 200% center; }
+    }
+    @keyframes floatUp {
+        0%   { opacity: 0; transform: translateY(40px) scale(0.95); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes glowPulse {
+        0%, 100% { box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+        50%       { box-shadow: 0 0 30px rgba(255,215,0,0.7); }
+    }
+    @keyframes rotateIn {
+        from { opacity: 0; transform: rotate(-10deg) scale(0.8); }
+        to   { opacity: 1; transform: rotate(0deg) scale(1); }
+    }
+    @keyframes slideInModal {
+        from { opacity: 0; transform: scale(0.7) translateY(30px); }
+        to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes badgePop {
+        0%   { transform: scale(0); }
+        70%  { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+
+    .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .animate-on-scroll.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* ==================== HEADER ==================== */
+    .magaza-header {
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 30px 35px;
+        margin-bottom: 40px;
+        border: 1px solid rgba(255,255,255,0.15);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        animation: fadeInUp 0.6s ease-out both;
+        position: relative;
+        overflow: hidden;
+    }
+    .magaza-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at 30% 50%, rgba(102,126,234,0.1) 0%, transparent 60%);
+        pointer-events: none;
+    }
+    .magaza-header h1 {
+        color: white;
+        font-size: 2.2rem;
+        font-weight: 900;
+        margin: 0;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .magaza-header p { color: rgba(255,255,255,0.7); margin: 6px 0 0; font-size: 1rem; }
+
+    .puan-goster {
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        color: #1a1a2e;
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-weight: 900;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        animation: glowPulse 2.5s infinite;
+        cursor: default;
+    }
+
+    .envanter-btn {
+        background: rgba(255,255,255,0.12);
+        border: 2px solid rgba(255,255,255,0.25);
+        color: white;
+        padding: 12px 22px;
+        border-radius: 25px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+    .envanter-btn:hover {
+        background: rgba(255,255,255,0.22);
+        border-color: rgba(255,255,255,0.5);
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    /* ==================== KATEGORİ BAŞLIĞI ==================== */
+    .kategori-baslik {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 900;
+        margin: 45px 0 22px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: fadeInLeft 0.5s ease-out both;
+    }
+    .kategori-baslik::after {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: linear-gradient(90deg, rgba(255,255,255,0.3), transparent);
+        margin-left: 5px;
+        border-radius: 2px;
+    }
+
+    /* ==================== ÜRÜN GRID ==================== */
+    .urun-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+        gap: 22px;
+    }
+
+    /* ==================== ÜRÜN KARTI ==================== */
+    .urun-kart {
+        background: white;
+        border-radius: 22px;
+        padding: 28px 22px;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        border: 3px solid transparent;
+        cursor: default;
+    }
+    .urun-kart::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+        transform-origin: left;
+    }
+    .urun-kart:hover::before { transform: scaleX(1); }
+    .urun-kart:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    }
+    .urun-kart.sahip {
+        border-color: #10b981;
+        background: linear-gradient(145deg, #fff, #f0fffb);
+    }
+    .urun-kart.sahip::before { background: linear-gradient(135deg, #10b981, #059669); transform: scaleX(1); }
+    .urun-kart.yetersiz-puan { opacity: 0.65; }
+    .urun-kart.yetersiz-puan:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+
+    /* İkon animasyonu */
+    .urun-icon {
+        font-size: 3.8rem;
+        margin-bottom: 14px;
+        display: block;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+    }
+    .urun-kart:hover .urun-icon { transform: scale(1.2) rotate(5deg); }
+
+    .urun-isim {
+        font-size: 1.15rem;
+        font-weight: 900;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+    }
+    .urun-aciklama {
+        font-size: 0.83rem;
+        color: #6b7280;
+        margin-bottom: 16px;
+        line-height: 1.6;
+        min-height: 40px;
+    }
+
+    /* UNVAN ÖNİZLEME */
+    .unvan-onizleme {
+        display: inline-block;
+        padding: 5px 16px;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        margin-bottom: 14px;
+        color: white;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        transition: transform 0.3s;
+    }
+    .urun-kart:hover .unvan-onizleme { transform: scale(1.08); }
+
+    /* ÇERÇEVE ÖNİZLEME */
+    .cerceve-onizleme {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        margin: 0 auto 14px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.9rem;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .urun-kart:hover .cerceve-onizleme { transform: scale(1.15); }
+
+    /* TEMA ÖNİZLEME */
+    .tema-onizleme {
+        height: 55px;
+        border-radius: 14px;
+        margin-bottom: 14px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    .urun-kart:hover .tema-onizleme {
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    }
+
+    /* FİYAT BADGE */
+    .fiyat-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        color: #1a1a2e;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-weight: 900;
+        font-size: 0.92rem;
+        margin-bottom: 15px;
+        box-shadow: 0 3px 10px rgba(255,165,0,0.3);
+    }
+
+    /* BUTON */
+    .satin-al-btn {
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: 14px;
+        font-weight: 800;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+    .satin-al-btn::after {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 0; height: 0;
+        background: rgba(255,255,255,0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.4s, height 0.4s;
+    }
+    .satin-al-btn:active::after { width: 200px; height: 200px; }
+
+    .satin-al-btn.normal {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102,126,234,0.35);
+    }
+    .satin-al-btn.normal:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102,126,234,0.5);
+    }
+    .satin-al-btn.sahip-btn {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        cursor: default;
+        box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+    }
+    .satin-al-btn.yetersiz-btn {
+        background: #e5e7eb;
+        color: #9ca3af;
+        cursor: not-allowed;
+    }
+
+    /* SAHİP ROZETİ */
+    .sahip-rozet {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        animation: badgePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        box-shadow: 0 3px 8px rgba(16,185,129,0.4);
+    }
+
+    /* DARK MODE */
+    [data-theme="dark"] .urun-kart { background: linear-gradient(145deg,#1e2749,#181f3a) !important; border-color: #2d3454 !important; }
+    [data-theme="dark"] .urun-kart.sahip { border-color: #10b981 !important; background: linear-gradient(145deg,#1a2d40,#151b35) !important; }
+    [data-theme="dark"] .urun-isim { color: #fff !important; -webkit-text-fill-color: #fff !important; background: none !important; }
+    [data-theme="dark"] .urun-aciklama { color: #9ca8c5 !important; }
+    [data-theme="dark"] .satin-al-btn.yetersiz-btn { background: #2d3454 !important; color: #6b7280 !important; }
+
+    /* MODAL */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.65);
+        z-index: 99999;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(8px);
+    }
+    .modal-kart {
+        background: white;
+        border-radius: 28px;
+        padding: 40px 35px;
+        max-width: 420px;
+        width: 92%;
+        text-align: center;
+        animation: slideInModal 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        position: relative;
+        overflow: hidden;
+    }
+    .modal-kart::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 5px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+    .modal-icon { font-size: 4.5rem; margin-bottom: 16px; animation: rotateIn 0.4s ease both 0.1s; display: block; }
+    .modal-isim { font-size: 1.45rem; font-weight: 900; color: #1a1a2e; margin-bottom: 8px; }
+    .modal-fiyat { color: #667eea; font-weight: 800; font-size: 1.1rem; margin-bottom: 6px; }
+    .modal-aciklama { color: #6b7280; font-size: 0.88rem; margin-bottom: 28px; }
+    .modal-butonlar { display: flex; gap: 12px; }
+    .modal-iptal {
+        flex: 1; padding: 13px;
+        border: 2px solid #e5e7eb;
+        background: white;
+        border-radius: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.95rem;
+    }
+    .modal-iptal:hover { border-color: #9ca3af; background: #f9fafb; }
+    .modal-onayla {
+        flex: 1; padding: 13px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.95rem;
+        box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+    }
+    .modal-onayla:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.5); }
+    .modal-onayla:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+    [data-theme="dark"] .modal-kart { background: linear-gradient(145deg,#1e2749,#151b35) !important; border: 2px solid #2d3454 !important; }
+    [data-theme="dark"] .modal-isim { color: #fff !important; -webkit-text-fill-color: #fff !important; background: none !important; }
+    [data-theme="dark"] .modal-aciklama { color: #9ca8c5 !important; }
+    [data-theme="dark"] .modal-iptal { background: #1e2749 !important; border-color: #2d3454 !important; color: white !important; }
+
+    /* RESPONSIVE */
+    @media(max-width:768px) {
+        .urun-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+        .magaza-header { flex-direction: column; text-align: center; }
+        .magaza-header h1 { font-size: 1.7rem; }
+    }
+    @media(max-width:480px) {
+        .urun-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="magaza-container">
+
+    <!-- HEADER -->
+    <div class="magaza-header">
+        <div>
+            <h1>🛒 Mağaza</h1>
+            <p>Puanlarınla özel ürünler satın al ve profilini kişiselleştir!</p>
+        </div>
+        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+            <div class="puan-goster">💰 <span id="puanGoster">{{ toplam_puan }}</span> Puan</div>
+            <a href="{% url 'envanter' %}" class="envanter-btn">🎒 Envanterim</a>
+        </div>
+    </div>
+
+    <!-- UNVANLAR -->
+    <div class="kategori-baslik animate-on-scroll">👑 Unvanlar</div>
+    <div class="urun-grid">
+        {% for urun in unvanlar %}
+        <div class="urun-kart animate-on-scroll {% if urun.id in sahip_olunan_ids %}sahip{% elif toplam_puan < urun.fiyat %}yetersiz-puan{% endif %}"
+             id="urun-{{ urun.id }}"
+             style="animation-delay: {{ forloop.counter0 }}00ms;">
+            {% if urun.id in sahip_olunan_ids %}
+            <span class="sahip-rozet">✓ Sahipsin</span>
+            {% endif %}
+            <span class="urun-icon">{{ urun.icon }}</span>
+            <div class="urun-isim">{{ urun.isim }}</div>
+            <div class="urun-aciklama">{{ urun.aciklama }}</div>
+            {% if urun.unvan_metni %}
+            <div><span class="unvan-onizleme" style="background:{{ urun.unvan_renk }};">{{ urun.unvan_metni }}</span></div>
+            {% endif %}
+            <div><span class="fiyat-badge">💰 {{ urun.fiyat }} Puan</span></div>
+            {% if urun.id in sahip_olunan_ids %}
+            <button class="satin-al-btn sahip-btn">✅ Satın Alındı</button>
+            {% elif toplam_puan >= urun.fiyat %}
+            <button class="satin-al-btn normal" onclick="satinAl({{ urun.id }}, '{{ urun.isim }}', {{ urun.fiyat }}, '{{ urun.icon }}')">🛒 Satın Al</button>
+            {% else %}
+            <button class="satin-al-btn yetersiz-btn">🔒 Yetersiz Puan</button>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- ÇERÇEVELER -->
+    <div class="kategori-baslik animate-on-scroll">🖼️ Profil Çerçeveleri</div>
+    <div class="urun-grid">
+        {% for urun in cerceveler %}
+        <div class="urun-kart animate-on-scroll {% if urun.id in sahip_olunan_ids %}sahip{% elif toplam_puan < urun.fiyat %}yetersiz-puan{% endif %}"
+             id="urun-{{ urun.id }}"
+             style="animation-delay: {{ forloop.counter0 }}00ms;">
+            {% if urun.id in sahip_olunan_ids %}
+            <span class="sahip-rozet">✓ Sahipsin</span>
+            {% endif %}
+            <div class="cerceve-onizleme" style="{{ urun.cerceve_css }}">👤</div>
+            <div class="urun-isim">{{ urun.isim }}</div>
+            <div class="urun-aciklama">{{ urun.aciklama }}</div>
+            <div><span class="fiyat-badge">💰 {{ urun.fiyat }} Puan</span></div>
+            {% if urun.id in sahip_olunan_ids %}
+            <button class="satin-al-btn sahip-btn">✅ Satın Alındı</button>
+            {% elif toplam_puan >= urun.fiyat %}
+            <button class="satin-al-btn normal" onclick="satinAl({{ urun.id }}, '{{ urun.isim }}', {{ urun.fiyat }}, '{{ urun.icon }}')">🛒 Satın Al</button>
+            {% else %}
+            <button class="satin-al-btn yetersiz-btn">🔒 Yetersiz Puan</button>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- TEMALAR -->
+    <div class="kategori-baslik animate-on-scroll">🎨 Temalar</div>
+    <div class="urun-grid">
+        {% for urun in temalar %}
+        <div class="urun-kart animate-on-scroll {% if urun.id in sahip_olunan_ids %}sahip{% elif toplam_puan < urun.fiyat %}yetersiz-puan{% endif %}"
+             id="urun-{{ urun.id }}"
+             style="animation-delay: {{ forloop.counter0 }}00ms;">
+            {% if urun.id in sahip_olunan_ids %}
+            <span class="sahip-rozet">✓ Sahipsin</span>
+            {% endif %}
+            <div class="tema-onizleme" style="background:linear-gradient(135deg,{{ urun.tema_primary }},{{ urun.tema_secondary }});"></div>
+            <div class="urun-isim">{{ urun.icon }} {{ urun.isim }}</div>
+            <div class="urun-aciklama">{{ urun.aciklama }}</div>
+            <div><span class="fiyat-badge">💰 {{ urun.fiyat }} Puan</span></div>
+            {% if urun.id in sahip_olunan_ids %}
+            <button class="satin-al-btn sahip-btn">✅ Satın Alındı</button>
+            {% elif toplam_puan >= urun.fiyat %}
+            <button class="satin-al-btn normal" onclick="satinAl({{ urun.id }}, '{{ urun.isim }}', {{ urun.fiyat }}, '{{ urun.icon }}')">🛒 Satın Al</button>
+            {% else %}
+            <button class="satin-al-btn yetersiz-btn">🔒 Yetersiz Puan</button>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<!-- ONAY MODALİ -->
+<div class="modal-overlay" id="satinAlModal">
+    <div class="modal-kart">
+        <span class="modal-icon" id="modalIcon">🎁</span>
+        <div class="modal-isim" id="modalIsim"></div>
+        <div class="modal-fiyat" id="modalFiyat"></div>
+        <div class="modal-aciklama">Bu ürünü satın almak istediğinizden emin misiniz?</div>
+        <div class="modal-butonlar">
+            <button class="modal-iptal" onclick="modalKapat()">❌ İptal</button>
+            <button class="modal-onayla" id="onayBtn">✅ Onayla</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ==================== SCROLL ANİMASYONU ====================
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                }, entry.target.dataset.delay || 0);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach((el, i) => {
+        el.dataset.delay = (i % 4) * 80;
+        observer.observe(el);
+    });
+
+    // ==================== SATIN AL MODALİ ====================
+    function satinAl(urunId, urunIsim, fiyat, icon) {
+        document.getElementById('modalIcon').textContent = icon || '🎁';
+        document.getElementById('modalIsim').textContent = urunIsim;
+        document.getElementById('modalFiyat').textContent = `💰 ${fiyat} Puan`;
+
+        const btn = document.getElementById('onayBtn');
+        btn.textContent = '✅ Onayla';
+        btn.disabled = false;
+        btn.onclick = () => satinAlOnayla(urunId, fiyat);
+
+        const modal = document.getElementById('satinAlModal');
+        modal.style.display = 'flex';
+    }
+
+    function modalKapat() {
+        document.getElementById('satinAlModal').style.display = 'none';
+    }
+
+    function satinAlOnayla(urunId, fiyat) {
+        const btn = document.getElementById('onayBtn');
+        btn.textContent = '⏳ İşleniyor...';
+        btn.disabled = true;
+
+        fetch(`/magaza/satin-al/${urunId}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            modalKapat();
+            if (data.success) {
+                showToast(data.message, 'success');
+
+                const kart = document.getElementById(`urun-${urunId}`);
+                const buton = kart.querySelector('.satin-al-btn');
+                buton.textContent = '✅ Satın Alındı';
+                buton.className = 'satin-al-btn sahip-btn';
+                buton.onclick = null;
+                kart.classList.add('sahip');
+                kart.classList.remove('yetersiz-puan');
+
+                if (!kart.querySelector('.sahip-rozet')) {
+                    const rozet = document.createElement('span');
+                    rozet.className = 'sahip-rozet';
+                    rozet.textContent = '✓ Sahipsin';
+                    kart.appendChild(rozet);
+                }
+
+                // Navbar ve sayfa puanını güncelle
+                document.getElementById('puanGoster').textContent = data.kalan_puan;
+                const navPuan = document.getElementById('navPuan');
+                if (navPuan) navPuan.textContent = data.kalan_puan;
+                document.querySelector('.puan-goster').innerHTML = `💰 <span id="puanGoster">${data.kalan_puan}</span> Puan`;
+
+            } else {
+                showToast(data.message, 'error');
+            }
+        })
+        .catch(() => {
+            modalKapat();
+            showToast('Bir hata oluştu!', 'error');
+        });
+    }
+
+    document.getElementById('satinAlModal').addEventListener('click', function(e) {
+        if (e.target === this) modalKapat();
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            document.cookie.split(';').forEach(c => {
+                c = c.trim();
+                if (c.startsWith(name + '=')) cookieValue = decodeURIComponent(c.slice(name.length + 1));
+            });
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

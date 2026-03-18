@@ -6,7 +6,9 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-key')
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY .env dosyasında tanımlanmamış!")
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 if DEBUG:
@@ -23,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'profile',
     'quiz',
+    'magaza',
     'utils',
 ]
 
@@ -34,6 +37,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    # ✅ BU SATIRI EKLE - app adını değiştir!
+    'profile.middleware.SonAktifMiddleware',  # ← profile yerine kendi app adın
 ]
 
 ROOT_URLCONF = 'kostebek_ana.urls'

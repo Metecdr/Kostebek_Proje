@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="arkadaslar-container" style="max-width: 1200px; margin: 50px auto; padding: 0 20px;">
-    
+
     <!-- HEADER -->
     <div class="page-header" style="margin-bottom: 40px;">
         <h1 style="color: white; font-size: 2.5rem; font-weight: 900; margin-bottom: 10px;">
@@ -19,19 +19,16 @@
     <!-- HIZLI AKSİYONLAR -->
     <div class="quick-actions" style="display: flex; gap: 15px; margin-bottom: 40px; flex-wrap: wrap;">
         <a href="{% url 'arkadas_ara' %}" class="action-btn">
-            <i class="bi bi-search"></i>
-            Arkadaş Ara
+            <i class="bi bi-search"></i> Arkadaş Ara
         </a>
         <button class="action-btn" onclick="toggleSection('istekler')">
-            <i class="bi bi-clock-history"></i>
-            Bekleyen İstekler
+            <i class="bi bi-clock-history"></i> Bekleyen İstekler
             {% if bekleyen_istekler.count > 0 %}
             <span class="badge-count">{{ bekleyen_istekler.count }}</span>
             {% endif %}
         </button>
         <button class="action-btn" onclick="toggleSection('gonderilen')">
-            <i class="bi bi-send"></i>
-            Gönderilen İstekler
+            <i class="bi bi-send"></i> Gönderilen İstekler
             {% if gonderilen_istekler.count > 0 %}
             <span class="badge-count">{{ gonderilen_istekler.count }}</span>
             {% endif %}
@@ -39,12 +36,11 @@
     </div>
 
     <!-- BEKLEYEN İSTEKLER -->
-    <div id="istekler-section" class="section-card" style="display: none; margin-bottom: 30px;">
+    <div id="istekler-section" class="section-card" style="display:none; margin-bottom: 30px;">
         <div class="section-header">
             <h2>⏳ Bekleyen İstekler</h2>
             <button class="close-btn" onclick="toggleSection('istekler')">✕</button>
         </div>
-        
         {% if bekleyen_istekler %}
         <div class="istekler-grid">
             {% for istek in bekleyen_istekler %}
@@ -59,12 +55,10 @@
                 </div>
                 <div class="istek-actions">
                     <button class="btn-kabul" onclick="istekKabulEt({{ istek.id }})">
-                        <i class="bi bi-check-circle-fill"></i>
-                        Kabul Et
+                        <i class="bi bi-check-circle-fill"></i> Kabul Et
                     </button>
                     <button class="btn-reddet" onclick="istekReddet({{ istek.id }})">
-                        <i class="bi bi-x-circle-fill"></i>
-                        Reddet
+                        <i class="bi bi-x-circle-fill"></i> Reddet
                     </button>
                 </div>
             </div>
@@ -79,12 +73,11 @@
     </div>
 
     <!-- GÖNDERİLEN İSTEKLER -->
-    <div id="gonderilen-section" class="section-card" style="display: none; margin-bottom: 30px;">
+    <div id="gonderilen-section" class="section-card" style="display:none; margin-bottom: 30px;">
         <div class="section-header">
             <h2>📤 Gönderilen İstekler</h2>
             <button class="close-btn" onclick="toggleSection('gonderilen')">✕</button>
         </div>
-        
         {% if gonderilen_istekler %}
         <div class="gonderilen-grid">
             {% for istek in gonderilen_istekler %}
@@ -112,14 +105,31 @@
     <div class="section-card">
         <div class="section-header">
             <h2>✨ Arkadaşlarım ({{ arkadaslar|length }})</h2>
+            <!-- ✅ ONLINE SAYACI -->
+            <div class="online-sayac">
+                <span class="online-nokta-kucuk"></span>
+                <span id="onlineSayisi">0</span> çevrimiçi
+            </div>
         </div>
-        
+
         {% if arkadaslar %}
         <div class="arkadaslar-grid">
             {% for arkadas in arkadaslar %}
             <div class="arkadas-card" id="arkadas-{{ arkadas.id }}">
+
+                <!-- AVATAR + ONLINE DOT -->
                 <div class="arkadas-header">
-                    <div class="avatar-circle-big">{{ arkadas.username|slice:":1"|upper }}</div>
+                    <div style="position:relative;display:inline-block;">
+                        {% if arkadas.profil.profil_fotografi %}
+                            <img src="{{ arkadas.profil.profil_fotografi.url }}"
+                                 class="avatar-circle-big avatar-img" alt="Profil">
+                        {% else %}
+                            <div class="avatar-circle-big">{{ arkadas.username|slice:":1"|upper }}</div>
+                        {% endif %}
+                        <!-- ✅ ONLINE NOKTA -->
+                        <div class="online-dot" id="dot-{{ arkadas.id }}"
+                             data-son-aktif="{{ arkadas.profil.son_aktif|date:'c' }}"></div>
+                    </div>
                     <div class="dropdown">
                         <button class="dropdown-toggle">⋮</button>
                         <div class="dropdown-menu">
@@ -129,25 +139,58 @@
                         </div>
                     </div>
                 </div>
-                
+
+                <!-- BİLGİLER -->
                 <div class="arkadas-info">
-                    <h3>{{ arkadas.username }}</h3>
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
+                        <h3 style="margin:0;">{{ arkadas.username }}</h3>
+                        <!-- ✅ ONLINE BADGE -->
+                        <span class="online-badge" id="badge-{{ arkadas.id }}"
+                              data-son-aktif="{{ arkadas.profil.son_aktif|date:'c' }}">
+                        </span>
+                    </div>
+
+                    <!-- ✅ SON AKTİF -->
+                    <div class="son-aktif-bilgi" id="aktif-{{ arkadas.id }}"
+                         data-son-aktif="{{ arkadas.profil.son_aktif|date:'c' }}">
+                        <i class="bi bi-clock"></i>
+                        <span>Hesaplanıyor...</span>
+                    </div>
+
+                    <!-- ✅ EN ÇOK OYNANAN OYUN -->
+                    {% with en_cok=arkadas.profil.oyunmoduistatistik_set.all|dictsortreversed:"toplam_oyun"|first %}
+                    {% if en_cok %}
+                    <div class="en-cok-oyun">
+                        🎮 En çok:
+                        <strong>
+                            {% if en_cok.oyun_modu == 'karsilasma' %}⚔️ Karşılaşma
+                            {% elif en_cok.oyun_modu == 'tabu' %}🎴 Tabu
+                            {% elif en_cok.oyun_modu == 'bul_bakalim' %}💡 Bul Bakalım
+                            {% else %}🎮 {{ en_cok.oyun_modu }}{% endif %}
+                        </strong>
+                        <span style="opacity:0.7;">({{ en_cok.toplam_oyun }}x)</span>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+
+                    <!-- STATS -->
                     <div class="arkadas-stats">
                         <div class="stat-mini">
-                            <i class="bi bi-lightning-charge-fill"></i>
+                            <i class="bi bi-lightning-charge-fill" style="color:#f59e0b;"></i>
                             <span>{{ arkadas.profil.toplam_puan }}</span>
                         </div>
                         <div class="stat-mini">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>{{ arkadas.profil.cozulen_soru }}</span>
+                            <i class="bi bi-journal-check" style="color:#667eea;"></i>
+                            <span>{{ arkadas.profil.cozulen_soru_sayisi }}</span>
                         </div>
                         <div class="stat-mini">
-                            <i class="bi bi-trophy-fill"></i>
-                            <span>{{ arkadas.profil.rozet_sayisi }}</span>
+                            <i class="bi bi-fire" style="color:#ef4444;"></i>
+                            <span>{{ arkadas.profil.ardasik_gun_sayisi }} gün</span>
                         </div>
                     </div>
                 </div>
 
+                <!-- BADGE -->
                 <div class="arkadas-badges">
                     {% if arkadas.profil.toplam_puan > request.user.profil.toplam_puan %}
                     <span class="badge-mini success">🔥 Senden İyi</span>
@@ -170,8 +213,7 @@
             <h3>Henüz arkadaşın yok</h3>
             <p>Arkadaş ekleyerek birlikte yarışmaya başla!</p>
             <a href="{% url 'arkadas_ara' %}" class="btn-primary-big">
-                <i class="bi bi-search"></i>
-                Arkadaş Ara
+                <i class="bi bi-search"></i> Arkadaş Ara
             </a>
         </div>
         {% endif %}
@@ -180,599 +222,248 @@
 </div>
 
 <style>
-    /* ==================== GENEL ==================== */
-    .action-btn {
-        background: rgba(255, 255, 255, 0.1);
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 12px;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        transition: all 0.3s;
-        text-decoration: none;
-        position: relative;
-    }
-
-    .action-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .badge-count {
-        background:  #FF6B6B;
-        color: white;
-        padding: 2px 8px;
-        border-radius:  10px;
-        font-size:  0.8rem;
-        font-weight: 800;
-    }
-
-    /* ==================== SECTİON CARD ==================== */
-    .section-card {
-        background: var(--card-bg);
-        border-radius: 20px;
-        padding: 30px;
-        box-shadow: 0 10px 40px var(--card-shadow);
-        animation: fadeIn 0.5s;
-    }
-
-    .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 25px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid var(--card-border);
-    }
-
-    .section-header h2 {
-        font-size: 1.8rem;
-        font-weight: 900;
-        color: var(--text-primary);
-        margin: 0;
-    }
-
-    .close-btn {
-        background: rgba(255, 107, 107, 0.1);
-        border: none;
-        color: #FF6B6B;
-        width: 35px;
-        height: 35px;
-        border-radius:  50%;
-        font-size: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .close-btn:hover {
-        background: #FF6B6B;
-        color: white;
-        transform: rotate(90deg);
-    }
-
-    /* ==================== İSTEKLER ==================== */
-    .istekler-grid {
-        display:  grid;
-        gap: 15px;
-    }
-
-    .istek-card {
-        background: var(--bg-secondary);
-        border: 2px solid var(--card-border);
-        border-radius: 15px;
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        transition: all 0.3s;
-    }
-
-    .istek-card:hover {
-        transform: translateX(5px);
-        border-color: #4ECDC4;
-    }
-
-    .istek-avatar {
-        flex-shrink: 0;
-    }
-
-    .avatar-circle {
-        width: 60px;
-        height: 60px;
-        border-radius:  50%;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.8rem;
-        font-weight:  900;
-        color: white;
-    }
-
-    .istek-info {
-        flex: 1;
-    }
-
-    .istek-info h3 {
-        font-size: 1.3rem;
-        font-weight: 800;
-        color: var(--text-primary);
-        margin: 0 0 5px 0;
-    }
-
-    .istek-info p {
-        color: var(--text-secondary);
-        margin: 0 0 3px 0;
-        font-weight: 600;
-    }
-
-    .istek-info small {
-        color: var(--text-muted);
-        font-size:  0.85rem;
-    }
-
-    .istek-actions {
-        display: flex;
-        gap: 10px;
-        flex-shrink: 0;
-    }
-
-    .btn-kabul {
-        background: linear-gradient(135deg, #10b981, #059669);
-        border: none;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 10px;
-        font-weight: 700;
-        cursor:  pointer;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        transition: all 0.3s;
-        font-size: 0.9rem;
-    }
-
-    .btn-kabul:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
-    }
-
-    .btn-reddet {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-        border: none;
-        color: white;
-        padding:  10px 20px;
-        border-radius: 10px;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        transition: all 0.3s;
-        font-size: 0.9rem;
-    }
-
-    .btn-reddet:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
-    }
-
-    /* ==================== GÖNDERİLEN ==================== */
-    .gonderilen-grid {
-        display:  grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 15px;
-    }
-
-    .gonderilen-card {
-        background: var(--bg-secondary);
-        border: 2px solid var(--card-border);
-        border-radius: 15px;
-        padding: 20px;
-        text-align: center;
-    }
-
-    .bekliyor-badge {
-        background: rgba(255, 193, 7, 0.2);
-        color: #ffc107;
-        padding: 4px 12px;
-        border-radius:  20px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        display: inline-block;
-        margin-top: 8px;
-    }
-
-    /* ==================== ARKADAŞLAR ==================== */
-    .arkadaslar-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 25px;
-    }
-
-    .arkadas-card {
-        background: var(--card-bg);
-        border: 2px solid var(--card-border);
-        border-radius:  20px;
-        padding: 25px;
-        transition: all 0.3s;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .arkadas-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left:  0;
-        right: 0;
-        height: 5px;
-        background: linear-gradient(90deg, #4ECDC4, #44A08D);
-        transform: scaleX(0);
-        transition: transform 0.3s;
-    }
-
-    .arkadas-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px var(--card-shadow);
-        border-color: #4ECDC4;
-    }
-
-    .arkadas-card:hover::before {
-        transform: scaleX(1);
-    }
-
-    .arkadas-header {
-        display: flex;
-        justify-content: space-between;
-        align-items:  flex-start;
-        margin-bottom: 20px;
-    }
-
-    .avatar-circle-big {
-        width: 80px;
-        height: 80px;
-        border-radius:  50%;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.5rem;
-        font-weight: 900;
-        color:  white;
-        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-    }
-
-    .dropdown {
-        position: relative;
-    }
-
-    .dropdown-toggle {
-        background: var(--bg-secondary);
-        border: none;
-        color: var(--text-primary);
-        width: 35px;
-        height: 35px;
-        border-radius:  50%;
-        font-size: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .dropdown-toggle:hover {
-        background:  var(--card-border);
-        transform: rotate(90deg);
-    }
-
-    .dropdown-menu {
-        display: none;
-        position: absolute;
-        top: 40px;
-        right: 0;
-        background:  var(--card-bg);
-        border: 2px solid var(--card-border);
-        border-radius: 12px;
-        padding: 8px;
-        min-width: 180px;
-        box-shadow:  0 10px 30px var(--card-shadow);
-        z-index: 100;
-    }
-
-    .dropdown:hover .dropdown-menu {
-        display: block;
-    }
-
-    .dropdown-menu a {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 15px;
-        color: var(--text-primary);
-        text-decoration: none;
-        border-radius: 8px;
-        transition: all 0.3s;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-
-    .dropdown-menu a:hover {
-        background: var(--bg-secondary);
-    }
-
-    .dropdown-menu a.danger {
-        color: #FF6B6B;
-    }
-
-    .dropdown-menu a.danger:hover {
-        background:  rgba(255, 107, 107, 0.1);
-    }
-
-    .arkadas-info h3 {
-        font-size: 1.5rem;
-        font-weight:  900;
-        color: var(--text-primary);
-        margin: 0 0 15px 0;
-    }
-
-    .arkadas-stats {
-        display: flex;
-        gap: 15px;
-        margin-bottom: 15px;
-    }
-
-    .stat-mini {
-        display:  flex;
-        align-items:  center;
-        gap: 6px;
-        background: var(--bg-secondary);
-        padding: 8px 12px;
-        border-radius: 10px;
-        font-weight: 700;
-        color: var(--text-primary);
-    }
-
-    .stat-mini i {
-        font-size: 1.1rem;
-        color: #4ECDC4;
-    }
-
-    .arkadas-badges {
-        margin-bottom: 15px;
-    }
-
-    .badge-mini {
-        display: inline-block;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size:  0.85rem;
-        font-weight:  700;
-    }
-
-    .badge-mini.success {
-        background: rgba(16, 185, 129, 0.2);
-        color: #10b981;
-    }
-
-    .badge-mini.warning {
-        background: rgba(251, 146, 60, 0.2);
-        color: #fb923c;
-    }
-
-    .badge-mini.info {
-        background: rgba(59, 130, 246, 0.2);
-        color: #3b82f6;
-    }
-
-    .btn-profil {
-        display: block;
-        width: 100%;
-        padding: 12px;
-        background: linear-gradient(135deg, #4ECDC4, #44A08D);
-        border: none;
-        border-radius: 12px;
-        color: white;
-        font-weight: 700;
-        text-align: center;
-        text-decoration: none;
-        transition: all 0.3s;
-    }
-
-    .btn-profil:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
-        color: white;
-    }
-
-    /* ==================== EMPTY STATE ==================== */
-    .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-    }
-
-    .empty-icon {
-        font-size: 5rem;
-        margin-bottom: 20px;
-        opacity: 0.5;
-    }
-
-    .empty-state p {
-        color: var(--text-muted);
-        font-size: 1.1rem;
-    }
-
-    .empty-state-big {
-        text-align:  center;
-        padding: 100px 20px;
-    }
-
-    .empty-icon-big {
-        font-size: 8rem;
-        margin-bottom:  30px;
-        opacity: 0.4;
-    }
-
-    .empty-state-big h3 {
-        font-size: 2rem;
-        font-weight: 900;
-        color: var(--text-primary);
-        margin-bottom: 15px;
-    }
-
-    .empty-state-big p {
-        color: var(--text-secondary);
-        font-size: 1.2rem;
-        margin-bottom: 30px;
-    }
-
-    .btn-primary-big {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        padding: 15px 35px;
-        border-radius:  15px;
-        font-weight:  800;
-        font-size: 1.1rem;
-        text-decoration: none;
-        transition: all 0.3s;
-        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-    }
-
-    .btn-primary-big:hover {
-        transform: translateY(-3px);
-        box-shadow:  0 15px 40px rgba(102, 126, 234, 0.6);
-        color: white;
-    }
-
-    /* ==================== RESPONSIVE ==================== */
-    @media (max-width: 768px) {
-        .arkadaslar-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .gonderilen-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .istek-card {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .istek-actions {
-            width: 100%;
-            flex-direction: column;
-        }
-
-        .btn-kabul, .btn-reddet {
-            width: 100%;
-            justify-content: center;
-        }
+    /* GENEL */
+    .action-btn { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; padding: 12px 24px; border-radius: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.3s; text-decoration: none; position: relative; }
+    .action-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); color: white; }
+    .badge-count { background: #FF6B6B; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; font-weight: 800; }
+    .section-card { background: var(--card-bg); border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px var(--card-shadow); animation: fadeIn 0.5s; margin-bottom: 30px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid var(--card-border); }
+    .section-header h2 { font-size: 1.8rem; font-weight: 900; color: var(--text-primary); margin: 0; }
+    .close-btn { background: rgba(255,107,107,0.1); border: none; color: #FF6B6B; width: 35px; height: 35px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; transition: all 0.3s; }
+    .close-btn:hover { background: #FF6B6B; color: white; transform: rotate(90deg); }
+
+    /* ✅ ONLINE SAYAC */
+    .online-sayac { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; font-weight: 700; color: #10b981; }
+    .online-nokta-kucuk { width: 10px; height: 10px; border-radius: 50%; background: #10b981; animation: pulse-green 2s infinite; display: inline-block; }
+    @keyframes pulse-green { 0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4);} 50%{box-shadow:0 0 0 6px rgba(16,185,129,0);} }
+
+    /* ✅ ONLINE DOT */
+    .online-dot { position: absolute; bottom: 4px; right: 4px; width: 16px; height: 16px; border-radius: 50%; border: 3px solid var(--card-bg, white); background: #6b7280; transition: background 0.3s; }
+
+    /* ✅ ONLINE BADGE */
+    .online-badge { padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; display: inline-block; min-width: 60px; text-align: center; }
+    .online-badge.cevrimici  { background: rgba(16,185,129,0.15); color: #10b981; }
+    .online-badge.az-once    { background: rgba(245,158,11,0.15);  color: #f59e0b; }
+    .online-badge.cevrimdisi { background: rgba(107,114,128,0.15); color: #6b7280; }
+
+    /* ✅ SON AKTİF */
+    .son-aktif-bilgi { font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px; margin-bottom: 8px; }
+
+    /* ✅ EN ÇOK OYUN */
+    .en-cok-oyun { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 10px; padding: 6px 10px; background: var(--bg-secondary); border-radius: 8px; border-left: 3px solid #f59e0b; }
+
+    /* ARKADAŞ KARTI */
+    .arkadaslar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 25px; }
+    .arkadas-card { background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 20px; padding: 25px; transition: all 0.3s; position: relative; overflow: hidden; }
+    .arkadas-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, #4ECDC4, #44A08D); transform: scaleX(0); transition: transform 0.3s; }
+    .arkadas-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px var(--card-shadow); border-color: #4ECDC4; }
+    .arkadas-card:hover::before { transform: scaleX(1); }
+    .arkadas-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+    .avatar-circle-big { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 900; color: white; box-shadow: 0 5px 20px rgba(102,126,234,0.4); }
+    .avatar-img { object-fit: cover; border: 4px solid #667eea; }
+    .arkadas-info h3 { font-size: 1.4rem; font-weight: 900; color: var(--text-primary); margin: 0 0 6px 0; }
+    .arkadas-stats { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+    .stat-mini { display: flex; align-items: center; gap: 6px; background: var(--bg-secondary); padding: 6px 10px; border-radius: 10px; font-weight: 700; color: var(--text-primary); font-size: 0.85rem; }
+    .arkadas-badges { margin-bottom: 15px; }
+    .badge-mini { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; }
+    .badge-mini.success { background: rgba(16,185,129,0.2); color: #10b981; }
+    .badge-mini.warning { background: rgba(251,146,60,0.2); color: #fb923c; }
+    .badge-mini.info    { background: rgba(59,130,246,0.2); color: #3b82f6; }
+    .btn-profil { display: block; width: 100%; padding: 12px; background: linear-gradient(135deg, #4ECDC4, #44A08D); border: none; border-radius: 12px; color: white !important; -webkit-text-fill-color: white !important; font-weight: 700; text-align: center; text-decoration: none; transition: all 0.3s; }
+    .btn-profil:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(78,205,196,0.4); }
+
+    /* DROPDOWN */
+    .dropdown { position: relative; }
+    .dropdown-toggle { background: var(--bg-secondary); border: none; color: var(--text-primary); width: 35px; height: 35px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; transition: all 0.3s; }
+    .dropdown-toggle:hover { background: var(--card-border); transform: rotate(90deg); }
+    .dropdown-menu { display: none; position: absolute; top: 40px; right: 0; background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 12px; padding: 8px; min-width: 180px; box-shadow: 0 10px 30px var(--card-shadow); z-index: 100; }
+    .dropdown:hover .dropdown-menu { display: block; }
+    .dropdown-menu a { display: flex; align-items: center; gap: 10px; padding: 10px 15px; color: var(--text-primary); text-decoration: none; border-radius: 8px; transition: all 0.3s; font-weight: 600; font-size: 0.9rem; }
+    .dropdown-menu a:hover { background: var(--bg-secondary); }
+    .dropdown-menu a.danger { color: #FF6B6B; }
+    .dropdown-menu a.danger:hover { background: rgba(255,107,107,0.1); }
+
+    /* İSTEK KARTLARI */
+    .istekler-grid { display: grid; gap: 15px; }
+    .istek-card { background: var(--bg-secondary); border: 2px solid var(--card-border); border-radius: 15px; padding: 20px; display: flex; align-items: center; gap: 20px; transition: all 0.3s; }
+    .istek-card:hover { transform: translateX(5px); border-color: #4ECDC4; }
+    .avatar-circle { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 900; color: white; flex-shrink: 0; }
+    .istek-info { flex: 1; }
+    .istek-info h3 { font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin: 0 0 5px 0; }
+    .istek-info p { color: var(--text-secondary); margin: 0 0 3px 0; font-weight: 600; font-size: 0.9rem; }
+    .istek-info small { color: var(--text-muted); font-size: 0.82rem; }
+    .istek-actions { display: flex; gap: 10px; flex-shrink: 0; }
+    .btn-kabul { background: linear-gradient(135deg, #10b981, #059669); border: none; color: white; padding: 10px 18px; border-radius: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.3s; font-size: 0.88rem; }
+    .btn-kabul:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(16,185,129,0.4); }
+    .btn-reddet { background: linear-gradient(135deg, #ef4444, #dc2626); border: none; color: white; padding: 10px 18px; border-radius: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.3s; font-size: 0.88rem; }
+    .btn-reddet:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(239,68,68,0.4); }
+    .gonderilen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap: 15px; }
+    .gonderilen-card { background: var(--bg-secondary); border: 2px solid var(--card-border); border-radius: 15px; padding: 20px; text-align: center; }
+    .bekliyor-badge { background: rgba(255,193,7,0.2); color: #ffc107; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-block; margin-top: 8px; }
+
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-icon { font-size: 5rem; margin-bottom: 20px; opacity: 0.5; }
+    .empty-state p { color: var(--text-muted); font-size: 1.1rem; }
+    .empty-state-big { text-align: center; padding: 100px 20px; }
+    .empty-icon-big { font-size: 8rem; margin-bottom: 30px; opacity: 0.4; }
+    .empty-state-big h3 { font-size: 2rem; font-weight: 900; color: var(--text-primary); margin-bottom: 15px; }
+    .empty-state-big p { color: var(--text-secondary); font-size: 1.2rem; margin-bottom: 30px; }
+    .btn-primary-big { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px 35px; border-radius: 15px; font-weight: 800; font-size: 1.1rem; text-decoration: none; transition: all 0.3s; box-shadow: 0 10px 30px rgba(102,126,234,0.4); }
+    .btn-primary-big:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(102,126,234,0.6); color: white; }
+
+    /* DARK MODE */
+    [data-theme="dark"] .section-card { background: linear-gradient(145deg,#1a1f3a,#151929) !important; border: 2px solid #2d3454 !important; }
+    [data-theme="dark"] .section-header { border-bottom-color: #2d3454 !important; }
+    [data-theme="dark"] .section-header h2 { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; background: none !important; }
+    [data-theme="dark"] .arkadas-card { background: linear-gradient(145deg,#1e2749,#151b35) !important; border-color: #2d3454 !important; }
+    [data-theme="dark"] .arkadas-info h3 { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; background: none !important; }
+    [data-theme="dark"] .stat-mini { background: #1a1f3a !important; color: #ffffff !important; }
+    [data-theme="dark"] .en-cok-oyun { background: #1e2749 !important; color: #a8b3cf !important; }
+    [data-theme="dark"] .son-aktif-bilgi { color: #a8b3cf !important; }
+    [data-theme="dark"] .online-dot { border-color: #1a1f3a !important; }
+    [data-theme="dark"] .istek-card { background: #1e2749 !important; border-color: #2d3454 !important; }
+    [data-theme="dark"] .istek-info h3 { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; background: none !important; }
+    [data-theme="dark"] .istek-info p { color: #a8b3cf !important; }
+    [data-theme="dark"] .gonderilen-card { background: #1e2749 !important; border-color: #2d3454 !important; }
+    [data-theme="dark"] .dropdown-toggle { background: #2d3454 !important; color: #ffffff !important; }
+    [data-theme="dark"] .dropdown-menu { background: linear-gradient(145deg,#1e2749,#151b35) !important; border-color: #2d3454 !important; }
+    [data-theme="dark"] .dropdown-menu a { color: #e5e7eb !important; }
+    [data-theme="dark"] .dropdown-menu a:hover { background: #2d3454 !important; }
+    [data-theme="dark"] .action-btn { background: rgba(255,255,255,0.08) !important; border-color: rgba(255,255,255,0.15) !important; color: #ffffff !important; }
+    [data-theme="dark"] .action-btn:hover { background: rgba(255,255,255,0.15) !important; }
+    [data-theme="dark"] .online-sayac { color: #10b981 !important; }
+
+    @media(max-width:768px) {
+        .arkadaslar-grid { grid-template-columns: 1fr; }
+        .gonderilen-grid { grid-template-columns: 1fr; }
+        .istek-card { flex-direction: column; text-align: center; }
+        .istek-actions { width: 100%; flex-direction: column; }
+        .btn-kabul, .btn-reddet { width: 100%; justify-content: center; }
     }
 </style>
 
 <script>
-    // Section göster/gizle
+    // ✅ ONLINE DURUM HESAPLAMA
+    function sonAktifHesapla() {
+        let onlineSayisi = 0;
+
+        document.querySelectorAll('.online-dot[data-son-aktif]').forEach(dot => {
+            const sonAktifStr = dot.getAttribute('data-son-aktif');
+            const id = dot.id.replace('dot-', '');
+            const badge = document.getElementById(`badge-${id}`);
+            const aktifEl = document.getElementById(`aktif-${id}`);
+
+            if (!sonAktifStr) {
+                if (badge) { badge.textContent = '⚫ Bilinmiyor'; badge.className = 'online-badge cevrimdisi'; }
+                if (aktifEl) aktifEl.querySelector('span').textContent = 'Bilgi yok';
+                dot.style.background = '#6b7280';
+                return;
+            }
+
+            const sonAktif = new Date(sonAktifStr);
+            const simdi = new Date();
+            const farkMs = simdi - sonAktif;
+            const farkDk = Math.floor(farkMs / 60000);
+            const farkSaat = Math.floor(farkDk / 60);
+            const farkGun = Math.floor(farkSaat / 24);
+
+            if (farkDk < 5) {
+                // 🟢 ÇEVRİMİÇİ
+                onlineSayisi++;
+                dot.style.background = '#10b981';
+                dot.style.animation = 'pulse-green 2s infinite';
+                if (badge) { badge.textContent = '🟢 Çevrimiçi'; badge.className = 'online-badge cevrimici'; }
+                if (aktifEl) aktifEl.querySelector('span').textContent = 'Şu an çevrimiçi';
+
+            } else if (farkDk < 60) {
+                // 🟡 AZ ÖNCE
+                dot.style.background = '#f59e0b';
+                if (badge) { badge.textContent = `🟡 ${farkDk} dk önce`; badge.className = 'online-badge az-once'; }
+                if (aktifEl) aktifEl.querySelector('span').textContent = `${farkDk} dakika önce aktifti`;
+
+            } else if (farkSaat < 24) {
+                // ⚫ BUGÜN
+                dot.style.background = '#6b7280';
+                if (badge) { badge.textContent = `⚫ ${farkSaat} sa önce`; badge.className = 'online-badge cevrimdisi'; }
+                if (aktifEl) aktifEl.querySelector('span').textContent = `${farkSaat} saat önce aktifti`;
+
+            } else {
+                // ⚫ UZUN SÜRE YOK
+                dot.style.background = '#6b7280';
+                if (badge) { badge.textContent = `⚫ ${farkGun} gün önce`; badge.className = 'online-badge cevrimdisi'; }
+                if (aktifEl) aktifEl.querySelector('span').textContent = `${farkGun} gün önce aktifti`;
+            }
+        });
+
+        // Online sayacı güncelle
+        const sayacEl = document.getElementById('onlineSayisi');
+        if (sayacEl) sayacEl.textContent = onlineSayisi;
+    }
+
     function toggleSection(section) {
         const element = document.getElementById(`${section}-section`);
         if (element.style.display === 'none') {
             element.style.display = 'block';
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
             element.style.display = 'none';
         }
     }
 
-    // İsteği kabul et
     function istekKabulEt(istekId) {
-        if (! confirm('Bu arkadaşlık isteğini kabul etmek istiyor musun?')) return;
-        
+        if (!confirm('Bu arkadaşlık isteğini kabul etmek istiyor musun?')) return;
         fetch(`/arkadaslik/kabul/${istekId}/`, {
             method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json'
-            }
+            headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' }
         })
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
             if (data.success) {
                 showToast(data.message, 'success');
                 document.getElementById(`istek-${istekId}`).remove();
                 setTimeout(() => location.reload(), 1500);
-            } else {
-                showToast(data.message, 'error');
-            }
+            } else { showToast(data.message, 'error'); }
         })
-        .catch(error => {
-            console.error('Hata:', error);
-            showToast('Bir hata oluştu! ', 'error');
-        });
+        .catch(() => showToast('Bir hata oluştu!', 'error'));
     }
 
-    // İsteği reddet
     function istekReddet(istekId) {
         if (!confirm('Bu arkadaşlık isteğini reddetmek istiyor musun?')) return;
-        
         fetch(`/arkadaslik/reddet/${istekId}/`, {
             method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json'
-            }
+            headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' }
         })
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
             if (data.success) {
                 showToast(data.message, 'info');
                 document.getElementById(`istek-${istekId}`).remove();
-            } else {
-                showToast(data.message, 'error');
-            }
+            } else { showToast(data.message, 'error'); }
         })
-        .catch(error => {
-            console.error('Hata:', error);
-            showToast('Bir hata oluştu!', 'error');
-        });
+        .catch(() => showToast('Bir hata oluştu!', 'error'));
     }
 
-    // Arkadaşı çıkar
     function arkadasCikar(kullaniciId) {
         if (!confirm('Bu kişiyi arkadaşlıktan çıkarmak istiyor musun?')) return;
-        
         fetch(`/arkadas/cikar/${kullaniciId}/`, {
             method: 'POST',
-            headers:  {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json'
-            }
+            headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' }
         })
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
             if (data.success) {
                 showToast(data.message, 'success');
                 document.getElementById(`arkadas-${kullaniciId}`).remove();
-            } else {
-                showToast(data.message, 'error');
-            }
+            } else { showToast(data.message, 'error'); }
         })
-        .catch(error => {
-            console.error('Hata:', error);
-            showToast('Bir hata oluştu!', 'error');
-        });
+        .catch(() => showToast('Bir hata oluştu!', 'error'));
     }
 
-    // Karsilastir (TODO: Gelecekte eklenecek)
     function karsilastir(kullaniciId) {
-        showToast('Karşılaştırma özelliği yakında eklenecek!', 'info');
+        showToast('⚔️ Karşılaştırma özelliği yakında!', 'info');
     }
 
-    // CSRF Token
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -787,5 +478,9 @@
         }
         return cookieValue;
     }
+
+    // ✅ Sayfa yüklenince çalıştır ve her dakika güncelle
+    document.addEventListener('DOMContentLoaded', sonAktifHesapla);
+    setInterval(sonAktifHesapla, 60000);
 </script>
 {% endblock %}

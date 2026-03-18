@@ -1,187 +1,393 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Bildirimler - Köstebek{% endblock %}
+{% block title %}Bildirimler - Köstebek YKS{% endblock %}
 
-{% block content %}
-<div class="bildirimler-sayfa-container" style="max-width: 900px; margin: 50px auto; padding: 0 20px;">
-    
-    <!-- HEADER -->
-    <div class="sayfa-header" style="margin-bottom: 40px;">
-        <h1 style="color: white; font-size: 2.5rem; font-weight: 900; margin-bottom: 10px;">
-            🔔 Bildirimler
-        </h1>
-        <p style="color: rgba(255,255,255,0.7); font-size: 1.1rem;">
-            Tüm bildirimleriniz ve başarılarınız
-        </p>
-    </div>
-    
-    <!-- FİLTRELER -->
-    <div class="bildirim-filtreler" style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
-        <button class="filtre-btn active" data-tip="hepsi">Hepsi</button>
-        <button class="filtre-btn" data-tip="rozet">🏅 Rozetler</button>
-        <button class="filtre-btn" data-tip="liderlik">🏆 Liderlik</button>
-        <button class="filtre-btn" data-tip="basari">✨ Başarılar</button>
-        <button class="filtre-btn" data-tip="sistem">🔧 Sistem</button>
-    </div>
-    
-    <!-- BİLDİRİMLER -->
-    {% if bildirimler %}
-    <div class="bildirimler-tam-liste">
-        {% for bildirim in bildirimler %}
-        <div class="bildirim-tam-item {% if not bildirim.okundu_mu %}okunmamis{% endif %}" data-tip="{{ bildirim.tip }}">
-            <div class="bildirim-tam-icon" style="background: {{ bildirim.renk }}20;">
-                <span style="font-size: 3rem;">{{ bildirim.icon }}</span>
-            </div>
-            <div class="bildirim-tam-content">
-                <div class="bildirim-tam-baslik">{{ bildirim.baslik }}</div>
-                <div class="bildirim-tam-mesaj">{{ bildirim.mesaj }}</div>
-                <div class="bildirim-tam-tarih">
-                    📅 {{ bildirim.olusturma_tarihi|date:"d M Y, H:i" }}
-                </div>
-            </div>
-            {% if not bildirim.okundu_mu %}
-            <span class="yeni-badge">YENİ</span>
-            {% endif %}
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="bildirim-bos-durum" style="text-align: center; padding: 100px 20px; background: rgba(255,255,255,0.05); border-radius: 20px;">
-        <div style="font-size: 6rem; margin-bottom: 20px;">🔕</div>
-        <h2 style="color: white; font-size: 2rem; margin-bottom: 15px;">Henüz Bildirim Yok</h2>
-        <p style="color: rgba(255,255,255,0.7); font-size: 1.2rem;">Sorular çözmeye başladığında bildirimler burada görünecek!  </p>
-    </div>
-    {% endif %}
-    
-</div>
-
+{% block extra_css %}
 <style>
-    /* FİLTRE BUTONLARI */
+    body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+    .bildirimler-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+
+    /* HEADER */
+    .bildirim-header-card {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        border: 1px solid rgba(255,255,255,0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .bildirim-header-card h1 { color: white; font-size: 2rem; font-weight: 900; margin: 0; }
+    .bildirim-header-card p { color: rgba(255,255,255,0.8); margin: 5px 0 0 0; }
+    .okunmamis-sayac {
+        background: linear-gradient(135deg, #FF6B6B, #FF5252);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 0.9rem;
+        animation: pulse-badge 2s infinite;
+    }
+    @keyframes pulse-badge { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+
+    /* FİLTRELER */
+    .filtreler-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .filtreler-group { display: flex; gap: 10px; flex-wrap: wrap; }
     .filtre-btn {
-        padding: 12px 25px;
-        border: 2px solid rgba(255,255,255,0.2);
+        padding: 10px 20px;
+        border: 2px solid rgba(255,255,255,0.25);
         background: rgba(255,255,255,0.1);
         color: white;
         border-radius: 25px;
         font-weight: 700;
         cursor: pointer;
         transition: all 0.3s;
+        font-size: 0.88rem;
     }
-    
-    .filtre-btn:hover {
-        background: rgba(255,255,255,0.2);
-        transform: translateY(-2px);
+    .filtre-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+    .filtre-btn.active { background: linear-gradient(135deg, #4ECDC4, #44A08D); border-color: #4ECDC4; box-shadow: 0 4px 15px rgba(78,205,196,0.4); }
+
+    .tumu-okundu-btn {
+        padding: 10px 20px;
+        background: rgba(255,255,255,0.15);
+        border: 2px solid rgba(255,255,255,0.3);
+        color: white;
+        border-radius: 25px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.88rem;
     }
-    
-    .filtre-btn.active {
-        background: linear-gradient(135deg, #4ECDC4, #44A08D);
-        border-color: #4ECDC4;
-    }
-    
-    /* TAM BİLDİRİM ITEM */
-    .bildirim-tam-item {
-        background: rgba(255,255,255,0.95);
-        border-radius: 20px;
-        padding: 25px;
-        margin-bottom:  20px;
+    .tumu-okundu-btn:hover { background: rgba(255,255,255,0.25); }
+
+    /* BİLDİRİM KARTI */
+    .bildirim-kart {
+        background: white;
+        border-radius: 18px;
+        padding: 20px 25px;
+        margin-bottom: 15px;
         display: flex;
-        gap: 20px;
+        gap: 18px;
         align-items: center;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
         transition: all 0.3s;
         position: relative;
+        border-left: 5px solid #e9ecef;
+        animation: slideInCard 0.4s ease-out;
     }
-    
-    [data-theme="dark"].bildirim-tam-item {
-        background:  #1e2749;
-        border:  1px solid #2d3454;
-    }
-    
-    .bildirim-tam-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    
-    .bildirim-tam-item.okunmamis {
-        border-left: 5px solid #4ECDC4;
-    }
-    
-    .bildirim-tam-icon {
-        width: 80px;
-        height: 80px;
+    @keyframes slideInCard { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+    .bildirim-kart:hover { transform: translateY(-4px); box-shadow: 0 12px 35px rgba(0,0,0,0.15); }
+    .bildirim-kart.okunmamis { border-left-color: #4ECDC4; background: linear-gradient(135deg, #fff, #f0fffe); }
+
+    /* TİP RENKLERİ */
+    .bildirim-kart[data-tip="rozet"]        { border-left-color: #FFD700; }
+    .bildirim-kart[data-tip="liderlik"]     { border-left-color: #FF6B6B; }
+    .bildirim-kart[data-tip="seviye"]       { border-left-color: #4ECDC4; }
+    .bildirim-kart[data-tip="basari"]       { border-left-color: #10b981; }
+    .bildirim-kart[data-tip="arkadas"]      { border-left-color: #667eea; }
+    .bildirim-kart[data-tip="meydan_okuma"] { border-left-color: #ef4444; }
+    .bildirim-kart[data-tip="streak"]       { border-left-color: #f59e0b; }
+    .bildirim-kart[data-tip="xp"]           { border-left-color: #10b981; }
+    .bildirim-kart[data-tip="gorev"]        { border-left-color: #8b5cf6; }
+    .bildirim-kart[data-tip="sistem"]       { border-left-color: #6b7280; }
+
+    .bildirim-icon-wrap {
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
+        font-size: 1.8rem;
+        flex-shrink: 0;
+        background: rgba(102,126,234,0.1);
+    }
+    .bildirim-content { flex: 1; min-width: 0; }
+    .bildirim-baslik-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+    .bildirim-baslik { font-size: 1.05rem; font-weight: 800; color: #1a1a2e; }
+    .bildirim-sure { font-size: 0.78rem; color: #9ca3af; font-weight: 600; white-space: nowrap; }
+    .bildirim-mesaj { font-size: 0.9rem; color: #6b7280; line-height: 1.5; margin-bottom: 8px; }
+    .bildirim-alt-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+    .tip-badge {
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        display: inline-block;
+    }
+    .yeni-nokta {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #4ECDC4;
+        flex-shrink: 0;
+        animation: pulse-dot 2s infinite;
+        align-self: center;
+    }
+    @keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 0 rgba(78,205,196,0.4);} 50%{box-shadow:0 0 0 6px rgba(78,205,196,0);} }
+
+    /* AKSIYONLAR */
+    .bildirim-aksiyonlar {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
         flex-shrink: 0;
     }
-    
-    .bildirim-tam-content {
-        flex: 1;
+    .btn-okundu {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(78,205,196,0.1);
+        color: #4ECDC4;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-    
-    .bildirim-tam-baslik {
-        font-size: 1.4rem;
-        font-weight: 900;
-        color: #333;
-        margin-bottom: 8px;
+    .btn-okundu:hover { background: #4ECDC4; color: white; transform: scale(1.1); }
+    .btn-sil {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(239,68,68,0.1);
+        color: #ef4444;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-    
-    [data-theme="dark"] .bildirim-tam-baslik {
-        color: white;
+    .btn-sil:hover { background: #ef4444; color: white; transform: scale(1.1); }
+
+    /* BOŞ DURUM */
+    .bos-durum {
+        text-align: center;
+        padding: 80px 20px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 20px;
+        border: 2px dashed rgba(255,255,255,0.2);
     }
-    
-    .bildirim-tam-mesaj {
-        font-size:  1.1rem;
-        color: #666;
-        line-height: 1.6;
-        margin-bottom: 10px;
-    }
-    
-    [data-theme="dark"] .bildirim-tam-mesaj {
-        color: #a8b3cf;
-    }
-    
-    .bildirim-tam-tarih {
-        font-size:  0.9rem;
-        color: #999;
-        font-weight: 600;
-    }
-    
-    .yeni-badge {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #FF6B6B, #FF5252);
-        color: white;
-        padding: 6px 15px;
-        border-radius:  20px;
-        font-size: 0.75rem;
-        font-weight:  800;
-        animation: pulse 2s infinite;
+    .bos-durum-icon { font-size: 5rem; margin-bottom: 20px; opacity: 0.6; }
+    .bos-durum h2 { color: white; font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; }
+    .bos-durum p { color: rgba(255,255,255,0.7); font-size: 1.1rem; }
+
+    /* DARK MODE */
+    [data-theme="dark"] .bildirim-kart { background: linear-gradient(145deg,#1e2749,#151b35) !important; border-color: #2d3454 !important; }
+    [data-theme="dark"] .bildirim-kart.okunmamis { background: linear-gradient(135deg,#1e2749,#162038) !important; }
+    [data-theme="dark"] .bildirim-baslik { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; background: none !important; }
+    [data-theme="dark"] .bildirim-mesaj { color: #a8b3cf !important; }
+    [data-theme="dark"] .bildirim-sure { color: #6b7280 !important; }
+    [data-theme="dark"] .bildirim-kart[data-tip="rozet"]        { border-left-color: #FFD700 !important; }
+    [data-theme="dark"] .bildirim-kart[data-tip="liderlik"]     { border-left-color: #FF6B6B !important; }
+    [data-theme="dark"] .bildirim-kart[data-tip="seviye"]       { border-left-color: #4ECDC4 !important; }
+    [data-theme="dark"] .bildirim-kart[data-tip="arkadas"]      { border-left-color: #667eea !important; }
+    [data-theme="dark"] .bildirim-kart[data-tip="meydan_okuma"] { border-left-color: #ef4444 !important; }
+    [data-theme="dark"] .bildirim-kart[data-tip="streak"]       { border-left-color: #f59e0b !important; }
+    [data-theme="dark"] .bildirim-kart[data-tip="xp"]           { border-left-color: #10b981 !important; }
+    [data-theme="dark"] .bildirim-kart[data-tip="gorev"]        { border-left-color: #8b5cf6 !important; }
+    [data-theme="dark"] .bildirim-icon-wrap { background: rgba(102,126,234,0.15) !important; }
+
+    @media(max-width:768px) {
+        .bildirim-kart { flex-wrap: wrap; padding: 15px; }
+        .bildirim-aksiyonlar { flex-direction: row; }
+        .filtreler-bar { flex-direction: column; align-items: flex-start; }
     }
 </style>
+{% endblock %}
 
+{% block content %}
+<div class="bildirimler-container">
+
+    <!-- HEADER -->
+    <div class="bildirim-header-card">
+        <div>
+            <h1>🔔 Bildirimler</h1>
+            <p>Tüm aktiviteleriniz ve bildirimleriniz</p>
+        </div>
+        {% if okunmamis_sayisi > 0 %}
+        <span class="okunmamis-sayac">{{ okunmamis_sayisi }} okunmamış</span>
+        {% endif %}
+    </div>
+
+    <!-- FİLTRELER -->
+    <div class="filtreler-bar">
+        <div class="filtreler-group">
+            <button class="filtre-btn active" data-tip="hepsi">📋 Hepsi</button>
+            <button class="filtre-btn" data-tip="arkadas">👥 Arkadaş</button>
+            <button class="filtre-btn" data-tip="meydan_okuma">⚔️ Meydan</button>
+            <button class="filtre-btn" data-tip="rozet">🏅 Rozet</button>
+            <button class="filtre-btn" data-tip="seviye">⭐ Seviye</button>
+            <button class="filtre-btn" data-tip="xp">✨ XP</button>
+            <button class="filtre-btn" data-tip="gorev">🎯 Görev</button>
+            <button class="filtre-btn" data-tip="sistem">🔧 Sistem</button>
+        </div>
+        {% if okunmamis_sayisi > 0 %}
+        <button class="tumu-okundu-btn" onclick="tumunuOkunduYap()">✅ Tümünü Okundu Yap</button>
+        {% endif %}
+    </div>
+
+    <!-- BİLDİRİMLER -->
+    {% if bildirimler %}
+    <div id="bildirimListesi">
+        {% for b in bildirimler %}
+        <div class="bildirim-kart {% if not b.okundu_mu %}okunmamis{% endif %}"
+             data-tip="{{ b.tip }}"
+             id="bildirim-{{ b.id }}">
+
+            <!-- İKON -->
+            <div class="bildirim-icon-wrap" style="background:{{ b.renk }}18;">
+                <span>{{ b.icon }}</span>
+            </div>
+
+            <!-- İÇERİK -->
+            <div class="bildirim-content">
+                <div class="bildirim-baslik-row">
+                    <span class="bildirim-baslik">{{ b.baslik }}</span>
+                    <span class="bildirim-sure">{{ b.olusturma_tarihi|timesince }} önce</span>
+                </div>
+                <div class="bildirim-mesaj">{{ b.mesaj }}</div>
+                <div class="bildirim-alt-row">
+                    <span class="tip-badge" style="background:{{ b.renk }}18;color:{{ b.renk }};">
+                        {{ b.get_tip_display }}
+                    </span>
+                    {% if not b.okundu_mu %}
+                    <span class="yeni-nokta"></span>
+                    <span style="font-size:0.75rem;color:#4ECDC4;font-weight:700;">YENİ</span>
+                    {% endif %}
+                    {% if b.link %}
+                    <a href="{{ b.link }}" style="font-size:0.78rem;color:#667eea;font-weight:700;text-decoration:none;">
+                        Görüntüle →
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- AKSIYONLAR -->
+            <div class="bildirim-aksiyonlar">
+                {% if not b.okundu_mu %}
+                <button class="btn-okundu" onclick="okunduYap({{ b.id }})" title="Okundu işaretle">✓</button>
+                {% endif %}
+                <button class="btn-sil" onclick="bildirimiSil({{ b.id }})" title="Sil">✕</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bos-durum">
+        <div class="bos-durum-icon">🔕</div>
+        <h2>Bildirim Yok</h2>
+        <p>Henüz bildirim bulunmuyor. Çalışmaya başla, bildirimler gelsin! 🚀</p>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
-    // Filtre sistemi
+    // FİLTRE
     document.querySelectorAll('.filtre-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            // Aktif butonu güncelle
             document.querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
-            
             const tip = this.dataset.tip;
-            
-            // Bildirimleri filtrele
-            document.querySelectorAll('.bildirim-tam-item').forEach(item => {
-                if (tip === 'hepsi' || item.dataset.tip === tip) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
+            document.querySelectorAll('.bildirim-kart').forEach(kart => {
+                kart.style.display = (tip === 'hepsi' || kart.dataset.tip === tip) ? 'flex' : 'none';
             });
         });
     });
+
+    // OKUNDU YAP
+    function okunduYap(id) {
+        fetch(`/profil/bildirimler/${id}/okundu/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const kart = document.getElementById(`bildirim-${id}`);
+                kart.classList.remove('okunmamis');
+                const btn = kart.querySelector('.btn-okundu');
+                if (btn) btn.remove();
+                const dot = kart.querySelector('.yeni-nokta');
+                if (dot) dot.nextSibling && dot.nextSibling.remove(), dot.remove();
+                showToast('✅ Okundu işaretlendi!', 'success');
+            }
+        });
+    }
+
+    // SİL
+    function bildirimiSil(id) {
+        const kart = document.getElementById(`bildirim-${id}`);
+        kart.style.transition = 'all 0.3s';
+        kart.style.opacity = '0';
+        kart.style.transform = 'translateX(50px)';
+
+        fetch(`/profil/bildirimler/${id}/sil/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                setTimeout(() => kart.remove(), 300);
+                showToast('🗑️ Bildirim silindi!', 'info');
+            }
+        });
+    }
+
+    // TÜMÜNÜ OKUNDU
+    function tumunuOkunduYap() {
+        fetch('/profil/bildirimler/hepsini-okundu-yap/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                document.querySelectorAll('.bildirim-kart').forEach(k => {
+                    k.classList.remove('okunmamis');
+                    const btn = k.querySelector('.btn-okundu');
+                    if (btn) btn.remove();
+                });
+                showToast('✅ Tümü okundu!', 'success');
+                setTimeout(() => location.reload(), 1500);
+            }
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 </script>
 {% endblock %}

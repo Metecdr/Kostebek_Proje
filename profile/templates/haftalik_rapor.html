@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Haftalık Rapor - Köstebek YKS{% endblock %}
+
+{% block extra_css %}
+<style>
+    body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+    .rapor-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+
+    /* STAT KARTLARI */
+    .rapor-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .rapor-stat-kart { background: white; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: all 0.3s ease; }
+    .rapor-stat-kart:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+    .rapor-stat-icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .rapor-stat-value { font-size: 2rem; font-weight: 900; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .rapor-stat-label { color: #6c757d; font-weight: 600; font-size: 0.85rem; margin-top: 5px; }
+    .degisim-pozitif { color: #10b981; font-size: 0.8rem; font-weight: 700; margin-top: 5px; }
+    .degisim-negatif { color: #ef4444; font-size: 0.8rem; font-weight: 700; margin-top: 5px; }
+
+    /* GÜNLÜK AKTİVİTE */
+    .aktivite-kart { background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .kart-baslik { font-size: 1.4rem; font-weight: 800; color: #333; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+    .gunler-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+    .gun-kart { border-radius: 15px; padding: 15px 8px; text-align: center; transition: all 0.3s ease; border: 2px solid #e9ecef; }
+    .gun-kart.aktif { border-color: #667eea; background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1)); }
+    .gun-kart.bugun { border-color: #667eea; background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+    .gun-kart.bugun .gun-isim { color: white !important; }
+    .gun-kart.bugun .gun-soru { color: white !important; }
+    .gun-kart.bugun .gun-xp { color: rgba(255,255,255,0.8) !important; }
+    .gun-isim { font-weight: 800; font-size: 0.9rem; color: #333; margin-bottom: 8px; }
+    .gun-soru { font-size: 1.5rem; font-weight: 900; color: #667eea; }
+    .gun-xp { font-size: 0.75rem; color: #6c757d; margin-top: 5px; font-weight: 600; }
+    .gun-bar-bg { background: #e9ecef; border-radius: 5px; height: 6px; margin-top: 8px; overflow: hidden; }
+    .gun-bar-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 1s ease; }
+    .gun-kart.bugun .gun-bar-bg { background: rgba(255,255,255,0.3); }
+    .gun-kart.bugun .gun-bar-fill { background: rgba(255,255,255,0.9); }
+
+    /* KARŞILAŞTIRMA */
+    .karsilastirma-kart { background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .karsilastirma-row { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding: 15px; border-radius: 12px; background: #f8f9ff; }
+    .karsilastirma-icon { width: 45px; height: 45px; border-radius: 12px; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+    .karsilastirma-bilgi { flex: 1; }
+    .karsilastirma-baslik { font-weight: 700; color: #333; font-size: 0.95rem; }
+    .karsilastirma-deger { color: #6c757d; font-size: 0.85rem; margin-top: 3px; }
+    .karsilastirma-badge { padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; }
+    .badge-yukari { background: rgba(16,185,129,0.15); color: #10b981; }
+    .badge-asagi  { background: rgba(239,68,68,0.15);  color: #ef4444; }
+    .badge-esit   { background: rgba(107,114,128,0.15);color: #6b7280; }
+
+    /* EN ÇOK DERS */
+    .ders-kart { background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .ders-item { display: flex; align-items: center; gap: 15px; padding: 12px; border-radius: 12px; background: #f8f9ff; }
+    .ders-icon { font-size: 2rem; }
+    .ders-bilgi { flex: 1; }
+    .ders-isim { font-weight: 700; color: #333; }
+    .ders-soru { color: #6c757d; font-size: 0.85rem; }
+
+    /* BOŞ DURUM */
+    .bos-durum { text-align: center; padding: 60px 20px; color: #6c757d; }
+    .bos-durum-icon { font-size: 4rem; margin-bottom: 15px; opacity: 0.5; }
+
+    /* DARK MODE */
+    [data-theme="dark"] .rapor-stat-kart,
+    [data-theme="dark"] .aktivite-kart,
+    [data-theme="dark"] .karsilastirma-kart,
+    [data-theme="dark"] .ders-kart { background: linear-gradient(145deg, #1a1f3a, #151929) !important; border: 2px solid #2d3454 !important; }
+    [data-theme="dark"] .kart-baslik { color: #ffffff !important; }
+    [data-theme="dark"] .rapor-stat-label { color: #a8b3cf !important; }
+    [data-theme="dark"] .gun-kart { border-color: #2d3454 !important; background: #1e2749 !important; }
+    [data-theme="dark"] .gun-kart.aktif { border-color: #667eea !important; background: rgba(102,126,234,0.2) !important; }
+    [data-theme="dark"] .gun-kart.bugun { background: linear-gradient(135deg, #667eea, #764ba2) !important; }
+    [data-theme="dark"] .gun-isim { color: #e5e7eb !important; }
+    [data-theme="dark"] .gun-bar-bg { background: #2d3454 !important; }
+    [data-theme="dark"] .karsilastirma-row { background: #1e2749 !important; }
+    [data-theme="dark"] .karsilastirma-baslik { color: #ffffff !important; }
+    [data-theme="dark"] .karsilastirma-deger { color: #a8b3cf !important; }
+    [data-theme="dark"] .ders-item { background: #1e2749 !important; }
+    [data-theme="dark"] .ders-isim { color: #ffffff !important; }
+    [data-theme="dark"] .ders-soru { color: #a8b3cf !important; }
+
+    @media (max-width: 768px) {
+        .rapor-stats { grid-template-columns: repeat(2, 1fr); }
+        .gunler-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="rapor-container">
+
+    <!-- BAŞLIK -->
+    <div style="text-align:center; margin-bottom:30px;">
+        <h1 style="color:white; font-size:2.5rem; font-weight:900; text-shadow:2px 2px 4px rgba(0,0,0,0.3);">
+            📊 Haftalık Rapor
+        </h1>
+        <p style="color:rgba(255,255,255,0.8); font-size:1.1rem;">
+            {{ hafta_basi|date:"d M" }} - {{ hafta_sonu|date:"d M Y" }}
+        </p>
+    </div>
+
+    <!-- İSTATİSTİK KARTLARI -->
+    <div class="rapor-stats">
+        <div class="rapor-stat-kart">
+            <div class="rapor-stat-icon">📝</div>
+            <div class="rapor-stat-value">{{ toplam_soru }}</div>
+            <div class="rapor-stat-label">Çözülen Soru</div>
+            {% if soru_degisim > 0 %}
+            <div class="degisim-pozitif">▲ %{{ soru_degisim }} geçen haftaya göre</div>
+            {% elif soru_degisim < 0 %}
+            <div class="degisim-negatif">▼ %{{ soru_degisim|slice:"1:" }} geçen haftaya göre</div>
+            {% endif %}
+        </div>
+        <div class="rapor-stat-kart">
+            <div class="rapor-stat-icon">✅</div>
+            <div class="rapor-stat-value">{{ toplam_dogru }}</div>
+            <div class="rapor-stat-label">Doğru Cevap</div>
+        </div>
+        <div class="rapor-stat-kart">
+            <div class="rapor-stat-icon">❌</div>
+            <div class="rapor-stat-value">{{ toplam_yanlis }}</div>
+            <div class="rapor-stat-label">Yanlış Cevap</div>
+        </div>
+        <div class="rapor-stat-kart">
+            <div class="rapor-stat-icon">🎯</div>
+            <div class="rapor-stat-value">%{{ basari_orani }}</div>
+            <div class="rapor-stat-label">Başarı Oranı</div>
+        </div>
+        <div class="rapor-stat-kart">
+            <div class="rapor-stat-icon">⭐</div>
+            <div class="rapor-stat-value">{{ toplam_xp }}</div>
+            <div class="rapor-stat-label">Kazanılan XP</div>
+            {% if xp_degisim > 0 %}
+            <div class="degisim-pozitif">▲ %{{ xp_degisim }} geçen haftaya göre</div>
+            {% elif xp_degisim < 0 %}
+            <div class="degisim-negatif">▼ %{{ xp_degisim|slice:"1:" }} geçen haftaya göre</div>
+            {% endif %}
+        </div>
+        <div class="rapor-stat-kart">
+            <div class="rapor-stat-icon">🔥</div>
+            <div class="rapor-stat-value">{{ aktif_gun }}/7</div>
+            <div class="rapor-stat-label">Aktif Gün</div>
+        </div>
+    </div>
+
+    <!-- GÜNLÜK AKTİVİTE -->
+    <div class="aktivite-kart">
+        <h2 class="kart-baslik">📅 Bu Haftaki Aktivite</h2>
+        {% if gunler %}
+        {% with max_soru=gunler.0.soru %}
+        <div class="gunler-grid">
+            {% for gun in gunler %}
+            <div class="gun-kart {% if gun.bugun %}bugun{% elif gun.soru > 0 %}aktif{% endif %}">
+                <div class="gun-isim">{{ gun.isim }}</div>
+                <div class="gun-soru">{{ gun.soru }}</div>
+                <div class="gun-xp">+{{ gun.xp }} XP</div>
+                <div class="gun-bar-bg">
+                    <div class="gun-bar-fill" style="width:{% if toplam_soru > 0 and gun.soru > 0 %}{% widthratio gun.soru toplam_soru 100 %}{% else %}0{% endif %}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endwith %}
+        {% else %}
+        <div class="bos-durum">
+            <div class="bos-durum-icon">📅</div>
+            <p>Bu hafta henüz veri yok!</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- GEÇEN HAFTA KARŞILAŞTIRMA -->
+    <div class="karsilastirma-kart">
+        <h2 class="kart-baslik">📈 Geçen Hafta Karşılaştırması</h2>
+
+        <div class="karsilastirma-row">
+            <div class="karsilastirma-icon">📝</div>
+            <div class="karsilastirma-bilgi">
+                <div class="karsilastirma-baslik">Soru Sayısı</div>
+                <div class="karsilastirma-deger">Bu hafta: {{ toplam_soru }} | Geçen hafta: {{ gecen_hafta_soru }}</div>
+            </div>
+            <span class="karsilastirma-badge {% if soru_degisim > 0 %}badge-yukari{% elif soru_degisim < 0 %}badge-asagi{% else %}badge-esit{% endif %}">
+                {% if soru_degisim > 0 %}▲ %{{ soru_degisim }}{% elif soru_degisim < 0 %}▼ %{{ soru_degisim|slice:"1:" }}{% else %}= Aynı{% endif %}
+            </span>
+        </div>
+
+        <div class="karsilastirma-row">
+            <div class="karsilastirma-icon">⭐</div>
+            <div class="karsilastirma-bilgi">
+                <div class="karsilastirma-baslik">Kazanılan XP</div>
+                <div class="karsilastirma-deger">Bu hafta: {{ toplam_xp }} XP | Geçen hafta: {{ gecen_hafta_xp }} XP</div>
+            </div>
+            <span class="karsilastirma-badge {% if xp_degisim > 0 %}badge-yukari{% elif xp_degisim < 0 %}badge-asagi{% else %}badge-esit{% endif %}">
+                {% if xp_degisim > 0 %}▲ %{{ xp_degisim }}{% elif xp_degisim < 0 %}▼ %{{ xp_degisim|slice:"1:" }}{% else %}= Aynı{% endif %}
+            </span>
+        </div>
+    </div>
+
+    <!-- EN ÇOK ÇALIŞILAN DERS -->
+    {% if en_cok_ders %}
+    <div class="ders-kart">
+        <h2 class="kart-baslik">📚 Bu Hafta En Çok Çalışılan Ders</h2>
+        <div class="ders-item">
+            <div class="ders-icon">
+                {% if en_cok_ders.ders == 'matematik' %}🔢
+                {% elif en_cok_ders.ders == 'fizik' %}⚛️
+                {% elif en_cok_ders.ders == 'kimya' %}🧪
+                {% elif en_cok_ders.ders == 'biyoloji' %}🧬
+                {% elif en_cok_ders.ders == 'turkce' %}📖
+                {% elif en_cok_ders.ders == 'tarih' %}🏛️
+                {% elif en_cok_ders.ders == 'cografya' %}🌍
+                {% elif en_cok_ders.ders == 'felsefe' %}💭
+                {% else %}📚{% endif %}
+            </div>
+            <div class="ders-bilgi">
+                <div class="ders-isim">{{ en_cok_ders.get_ders_display }}</div>
+                <div class="ders-soru">{{ en_cok_ders.haftalik_cozulen }} soru çözüldü · %{{ en_cok_ders.haftalik_basari_orani }} başarı</div>
+            </div>
+            <span style="font-size:2rem;">🏆</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- GERİ DÖN -->
+    <div style="text-align:center; margin-bottom:30px;">
+        <a href="{% url 'profil' %}" style="background:rgba(255,255,255,0.2);color:white;padding:12px 30px;border-radius:12px;text-decoration:none;font-weight:700;border:2px solid rgba(255,255,255,0.3);">
+            ← Profile Dön
+        </a>
+    </div>
+
+</div>
+{% endblock %}

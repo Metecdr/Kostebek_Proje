@@ -14,6 +14,7 @@ db.sqlite3-wal
 .env.local
 .env.*.local
 venv/
+.venv/
 env/
 ENV/
 
