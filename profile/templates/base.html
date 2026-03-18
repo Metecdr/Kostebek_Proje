@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="tr" data-theme="light">
+<html lang="tr" data-theme="light" style="visibility:hidden">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,6 +18,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <title>{% block title %}Köstebek YKS - Eğlenerek Öğren{% endblock %}</title>
+
+    <!-- Flash önleme -->
+    <script>
+        (function() {
+            var savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.documentElement.style.visibility = 'visible';
+        })();
+    </script>
     
     <style>
         :root {
@@ -106,8 +115,8 @@
         /* ==================== SES BUTONU ==================== */
         .sound-btn {
             position: fixed;
-            top: 80px;
-            right: 20px;
+            bottom: 90px;
+            left: 20px;
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -649,10 +658,58 @@
             color: #ffffff !important;
         }
 
+        /* ==================== DROPDOWN MENU ==================== */
+        .dropdown-menu {
+            border: none !important;
+            border-radius: 16px !important;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2) !important;
+            padding: 8px !important;
+            min-width: 220px !important;
+            animation: dropdownFadeIn 0.2s ease-out !important;
+        }
+
+        @keyframes dropdownFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-item {
+            border-radius: 10px !important;
+            padding: 10px 15px !important;
+            font-weight: 600 !important;
+            font-size: 0.92rem !important;
+            transition: all 0.2s ease !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            color: #333 !important;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.12)) !important;
+            color: #667eea !important;
+            transform: translateX(4px) !important;
+        }
+
+        .dropdown-item.text-danger:hover {
+            background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(220,38,38,0.12)) !important;
+            color: #ef4444 !important;
+        }
+
+        .dropdown-divider {
+            margin: 6px 8px !important;
+            border-color: #e9ecef !important;
+        }
+
+        .user-badge.dropdown-toggle::after {
+            margin-left: 6px !important;
+        }
+
+        /* DARK MODE DROPDOWN */
         [data-theme="dark"] .dropdown-menu {
-            background: #1a1f3a !important;
+            background: linear-gradient(145deg, #1e2749, #151b35) !important;
             border: 2px solid #2d3454 !important;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.7) !important;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7) !important;
         }
 
         [data-theme="dark"] .dropdown-item {
@@ -660,8 +717,21 @@
         }
 
         [data-theme="dark"] .dropdown-item:hover {
-            background: linear-gradient(145deg, #2d3454, #1e2749) !important;
-            color: #ffffff !important;
+            background: linear-gradient(135deg, rgba(167,139,250,0.15), rgba(96,165,250,0.15)) !important;
+            color: #a78bfa !important;
+        }
+
+        [data-theme="dark"] .dropdown-item.text-danger {
+            color: #f87171 !important;
+        }
+
+        [data-theme="dark"] .dropdown-item.text-danger:hover {
+            background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(220,38,38,0.15)) !important;
+            color: #ef4444 !important;
+        }
+
+        [data-theme="dark"] .dropdown-divider {
+            border-color: #2d3454 !important;
         }
 
         [data-theme="dark"] ::-webkit-scrollbar {
@@ -1204,8 +1274,8 @@
         /* ==================== DARK MODE TOGGLE ==================== */
         .theme-toggle {
             position: fixed;
-            top: 140px;
-            right: 20px;
+            bottom: 30px;
+            left: 20px;
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -1511,8 +1581,8 @@
                 width: 45px;
                 height: 45px;
                 font-size: 1.3rem;
-                right: 15px;
-                top: 75px;
+                left: 15px;
+                bottom: 85px;
             }
             
             .footer-content {
@@ -1582,6 +1652,91 @@
         .social-link:nth-child(2):hover {
             background: #000000;
         }
+
+                /* ==================== PUAN NAV BADGE ==================== */
+        .puan-nav-badge {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #1a1a2e !important;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 0.88rem;
+            text-decoration: none !important;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(255,215,0,0.3);
+            white-space: nowrap;
+        }
+
+        .puan-nav-badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255,215,0,0.5);
+            color: #1a1a2e !important;
+        }
+
+                /* ==================== MAĞAZA NAV ==================== */
+        .magaza-nav-link {
+            background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,165,0,0.15)) !important;
+            border: 1px solid rgba(255,215,0,0.3) !important;
+            border-radius: 10px !important;
+            color: #FFD700 !important;
+            font-weight: 800 !important;
+        }
+
+        .magaza-nav-link:hover {
+            background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,165,0,0.25)) !important;
+            color: #FFD700 !important;
+            transform: translateY(-2px) !important;
+        }
+
+        /* ==================== PUAN NAV BADGE ==================== */
+        .puan-nav-badge {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #1a1a2e !important;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 0.88rem;
+            text-decoration: none !important;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(255,215,0,0.3);
+            white-space: nowrap;
+        }
+
+        .puan-nav-badge:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,215,0,0.5);
+            color: #1a1a2e !important;
+        }
+
+        [data-theme="dark"] .puan-nav-badge {
+            box-shadow: 0 3px 10px rgba(255,215,0,0.2);
+        }
+
+        [data-theme="dark"] .bg-white,
+        [data-theme="dark"] .bg-light { background-color: #1a1f3a !important; color: #ffffff !important; }
+        [data-theme="dark"] .card-body { background-color: #1a1f3a !important; color: #ffffff !important; }
+        [data-theme="dark"] .card-header { background-color: #151b35 !important; border-bottom: 1px solid #2d3454 !important; color: #ffffff !important; }
+        [data-theme="dark"] .card-footer { background-color: #151b35 !important; border-top: 1px solid #2d3454 !important; color: #ffffff !important; }
+        [data-theme="dark"] .form-control, [data-theme="dark"] .form-select { background: #1a1f3a !important; border: 2px solid #2d3454 !important; color: #ffffff !important; }
+        [data-theme="dark"] .form-control:focus, [data-theme="dark"] .form-select:focus { border-color: #8b5cf6 !important; background: #1e2749 !important; }
+        [data-theme="dark"] .form-control::placeholder { color: #6b7280 !important; }
+        [data-theme="dark"] .text-dark, [data-theme="dark"] .text-black { color: #ffffff !important; }
+        [data-theme="dark"] .btn-outline-secondary { border-color: #2d3454 !important; color: #a8b3cf !important; }
+        [data-theme="dark"] .btn-outline-secondary:hover { background: #2d3454 !important; color: #ffffff !important; }
+        [data-theme="dark"] .dropdown-divider { border-color: #2d3454 !important; }
+        [data-theme="dark"] [style*="background-color: white"],
+        [data-theme="dark"] [style*="background-color: #fff"],
+        [data-theme="dark"] [style*="background-color: #ffffff"],
+        [data-theme="dark"] [style*="background-color:#fff"],
+        [data-theme="dark"] [style*="background-color:#ffffff"],
+        [data-theme="dark"] [style*="background: #ffffff"],
+        [data-theme="dark"] [style*="background:#ffffff"] { background: linear-gradient(145deg, #1a1f3a, #151929) !important; color: #ffffff !important; border: 2px solid #2d3454 !important; }
     </style>
     
     {% block extra_css %}{% endblock %}
@@ -1607,7 +1762,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'profil' %}">
+            <a class="navbar-brand" href="{% url 'quiz_anasayfa' %}">
                 <i class="bi bi-gem"></i> Köstebek YKS
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -1615,17 +1770,89 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'profil' %}"><i class="bi bi-house-fill"></i> Ana Sayfa</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{% url 'liderlik' %}"><i class="bi bi-trophy-fill"></i> Liderlik</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'tabu_anasayfa' %}"><i class="bi bi-controller"></i> Tabu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'karsilasma_sinav_tipi_secimi' %}"><i class="bi bi-lightning-charge-fill"></i> Karşılaşma</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'bul_bakalim_sinav_tipi_secimi' %}"><i class="bi bi-lightbulb"></i> Bul Bakalım</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'rozetler_view' %}"><i class="bi bi-award-fill"></i> Rozetler</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'arkadaslarim' %}"><i class="bi bi-people-fill"></i> Arkadaşlar</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'turnuva_listesi' %}"><i class="bi bi-megaphone-fill"></i> Turnuvalar</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'quiz_anasayfa' %}">
+                            <i class="bi bi-house-fill"></i> Ana Sayfa
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'liderlik' %}">
+                            <i class="bi bi-trophy-fill"></i> Liderlik
+                        </a>
+                    </li>
+
+                    <!-- ✅ OYUNLAR DROPDOWN -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="oyunlarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-controller"></i> Oyunlar
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="oyunlarDropdown">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'karsilasma_sinav_tipi_secimi' %}">
+                                    <i class="bi bi-lightning-charge-fill text-warning"></i> Karşılaşma
+                                    <span class="ms-1" style="font-size:0.72rem;background:#FF6B6B;color:white;padding:2px 7px;border-radius:10px;font-weight:800;">1v1</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'bul_bakalim_sinav_tipi_secimi' %}">
+                                    <i class="bi bi-lightbulb text-info"></i> Bul Bakalım
+                                    <span class="ms-1" style="font-size:0.72rem;background:#4ECDC4;color:white;padding:2px 7px;border-radius:10px;font-weight:800;">Yeni</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'tabu_anasayfa' %}">
+                                    <i class="bi bi-chat-square-text text-success"></i> Tabu
+                                    <span class="ms-1" style="font-size:0.72rem;background:#667eea;color:white;padding:2px 7px;border-radius:10px;font-weight:800;">2v2</span>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'turnuva_listesi' %}">
+                                    <i class="bi bi-megaphone-fill text-danger"></i> Turnuvalar
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'rozetler_view' %}">
+                            <i class="bi bi-award-fill"></i> Rozetler
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'arkadaslarim' %}">
+                            <i class="bi bi-people-fill"></i> Arkadaşlar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'gunluk_gorevler' %}">
+                            <i class="bi bi-list-check"></i> Görevler
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'calisma_takvimi' %}">
+                            <i class="bi bi-calendar3"></i> Takvim
+                        </a>
+                    </li>
+
+                    <!-- ✅ MAĞAZA -->
+                    <li class="nav-item">
+                        <a class="nav-link magaza-nav-link" href="{% url 'magaza' %}">
+                            <i class="bi bi-shop"></i> Mağaza
+                        </a>
+                    </li>
                 </ul>
-                <ul class="navbar-nav ms-auto">
+
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
                     {% if user.is_authenticated %}
+                        <!-- PUAN GÖSTERGESİ -->
+                        <li class="nav-item">
+                            <a href="{% url 'magaza' %}" class="puan-nav-badge" title="Puanlarım">
+                                💰 <span id="navPuan">{{ user.profil.toplam_puan|default:0 }}</span>
+                            </a>
+                        </li>
+
+                        <!-- BİLDİRİM -->
                         <li class="nav-item">
                             <div class="bildirim-container">
                                 <button class="bildirim-btn" id="bildirimBtn">
@@ -1635,7 +1862,6 @@
                                     </svg>
                                     <span class="bildirim-badge" id="bildirimBadge" style="display: none;">0</span>
                                 </button>
-                                
                                 <div class="bildirim-dropdown" id="bildirimDropdown" style="display: none;">
                                     <div class="bildirim-header">
                                         <h3>🔔 Bildirimler</h3>
@@ -1650,16 +1876,42 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="nav-item">
-                            <span class="nav-link user-badge">
+
+                        <!-- KULLANICI DROPDOWN -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle user-badge" href="#" id="profilDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-person-circle"></i> {{ user.username }}
-                            </span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'cikis' %}">
-                                <i class="bi bi-box-arrow-right"></i> Çıkış
                             </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profilDropdown">
+                                <li><a class="dropdown-item" href="{% url 'profil' %}">
+                                    <i class="bi bi-person-fill"></i> Profilim
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'magaza' %}">
+                                    <i class="bi bi-shop text-warning"></i> Mağaza
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'envanter' %}">
+                                    <i class="bi bi-bag-fill text-info"></i> Envanterim
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'xp_gecmisi' %}">
+                                    <i class="bi bi-star-fill text-warning"></i> XP Geçmişi
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'haftalik_rapor' %}">
+                                    <i class="bi bi-bar-chart-fill text-info"></i> Haftalık Rapor
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'gunluk_gorevler' %}">
+                                    <i class="bi bi-list-check text-warning"></i> Günlük Görevler
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'calisma_takvimi' %}">
+                                    <i class="bi bi-calendar3 text-success"></i> Çalışma Takvimi
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{% url 'cikis' %}">
+                                    <i class="bi bi-box-arrow-right"></i> Çıkış
+                                </a></li>
+                            </ul>
                         </li>
+
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'giris' %}"><i class="bi bi-box-arrow-in-right"></i> Giriş</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'kayit' %}"><i class="bi bi-person-plus-fill"></i> Kayıt Ol</a></li>
@@ -1705,6 +1957,8 @@
                         <li><a href="{% url 'profil' %}"><i class="bi bi-chevron-right"></i> Ana Sayfa</a></li>
                         <li><a href="{% url 'liderlik' %}"><i class="bi bi-chevron-right"></i> Liderlik Tablosu</a></li>
                         <li><a href="{% url 'rozetler_view' %}"><i class="bi bi-chevron-right"></i> Rozetler</a></li>
+                        <li><a href="{% url 'gunluk_gorevler' %}"><i class="bi bi-chevron-right"></i> Günlük Görevler</a></li>
+                        <li><a href="{% url 'calisma_takvimi' %}"><i class="bi bi-chevron-right"></i> Çalışma Takvimi</a></li>
                         <li><a href="#"><i class="bi bi-chevron-right"></i> Hakkımızda</a></li>
                     </ul>
                 </div>
@@ -1950,7 +2204,8 @@
 
         function bildirimleriYukle() {
             const bildirimListe = document.getElementById('bildirimListe');
-            
+            bildirimListe.innerHTML = '<div class="bildirim-yukleniyor">⏳ Yükleniyor...</div>';
+
             fetch('/profil/bildirimler/json/')
                 .then(response => response.json())
                 .then(data => {
@@ -1958,32 +2213,60 @@
                         bildirimListe.innerHTML = `
                             <div class="bildirim-bos">
                                 <div class="bildirim-bos-icon">🔕</div>
-                                <p>Henüz bildirim yok</p>
-                            </div>
-                        `;
+                                <p>Yeni bildirim yok</p>
+                            </div>`;
                         return;
                     }
-                    
+
                     let html = '';
-                    data.bildirimler.forEach(bildirim => {
+                    data.bildirimler.forEach(b => {
                         html += `
-                            <div class="bildirim-item okunmamis" onclick="bildirimOkundu(${bildirim.id})" data-bildirim-id="${bildirim.id}">
-                                <div class="bildirim-icon">${bildirim.icon}</div>
-                                <div class="bildirim-content">
-                                    <div class="bildirim-baslik">${bildirim.baslik}</div>
-                                    <div class="bildirim-mesaj">${bildirim.mesaj}</div>
-                                    <div class="bildirim-tarih">${bildirim.tarih}</div>
-                                </div>
+                        <div class="bildirim-item okunmamis" id="bitem-${b.id}">
+                            <div class="bildirim-icon" style="font-size:2rem;">${b.icon}</div>
+                            <div class="bildirim-content" onclick="bildirimTikla(${b.id}, '${b.link}')" style="cursor:pointer;flex:1;">
+                                <div class="bildirim-baslik">${b.baslik}</div>
+                                <div class="bildirim-mesaj">${b.mesaj}</div>
+                                <div class="bildirim-tarih">${b.sure}</div>
                             </div>
-                        `;
+                            <button onclick="bildirimSilDropdown(${b.id})" style="background:none;border:none;color:#FF6B6B;font-size:1.2rem;cursor:pointer;padding:4px;border-radius:50%;transition:all 0.3s;" title="Sil">✕</button>
+                        </div>`;
                     });
-                    
+
                     bildirimListe.innerHTML = html;
                 })
-                .catch(error => {
-                    console.error('Bildirim yükleme hatası:', error);
-                    bildirimListe.innerHTML = `<div class="bildirim-bos"><p>❌ Bildirimler yüklenemedi</p></div>`;
+                .catch(() => {
+                    bildirimListe.innerHTML = `<div class="bildirim-bos"><p>❌ Yüklenemedi</p></div>`;
                 });
+        }
+
+        function bildirimTikla(id, link) {
+            fetch(`/profil/bildirimler/${id}/okundu/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            }).then(() => {
+                const item = document.getElementById(`bitem-${id}`);
+                if (item) item.classList.remove('okunmamis');
+                if (link) window.location.href = link;
+                bildirimleriKontrolEt();
+            });
+        }
+
+        function bildirimSilDropdown(id) {
+            fetch(`/profil/bildirimler/${id}/sil/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    const item = document.getElementById(`bitem-${id}`);
+                    if (item) {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateX(30px)';
+                        item.style.transition = 'all 0.3s';
+                        setTimeout(() => item.remove(), 300);
+                    }
+                    bildirimleriKontrolEt();
+                }
+            });
         }
 
         function bildirimOkundu(bildirimId) {

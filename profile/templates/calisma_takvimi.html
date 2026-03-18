@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}📅 Çalışma Takvimi{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px 0;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .takvim-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* HEADER */
+    .takvim-header {
+        background: white;
+        border-radius: 25px;
+        padding: 35px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    [data-theme="dark"] .takvim-header {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header-title {
+        font-size: 2.2rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 5px;
+    }
+
+    /* STATS GRID */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .stat-kart {
+        background: white;
+        border-radius: 20px;
+        padding: 22px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        transition: transform 0.3s ease;
+        animation: fadeInUp 0.5s ease-out both;
+    }
+
+    [data-theme="dark"] .stat-kart {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+    }
+
+    .stat-kart:hover { transform: translateY(-5px); }
+    .stat-kart:nth-child(1) { animation-delay: 0.1s; }
+    .stat-kart:nth-child(2) { animation-delay: 0.2s; }
+    .stat-kart:nth-child(3) { animation-delay: 0.3s; }
+    .stat-kart:nth-child(4) { animation-delay: 0.4s; }
+    .stat-kart:nth-child(5) { animation-delay: 0.5s; }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stat-kart-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .stat-kart-value {
+        font-size: 2.2rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1;
+        margin-bottom: 5px;
+    }
+
+    .stat-kart-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        font-weight: 600;
+    }
+
+    [data-theme="dark"] .stat-kart-label { color: #a8b3cf !important; }
+
+    /* STREAK */
+    .streak-kart {
+        background: linear-gradient(135deg, #FF6B6B, #EE5A6F);
+        color: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(255,107,107,0.3);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+
+    .streak-icon {
+        font-size: 4rem;
+        animation: fireFlicker 1.5s infinite;
+    }
+
+    @keyframes fireFlicker {
+        0%, 100% { transform: scale(1); filter: brightness(1); }
+        50% { transform: scale(1.1); filter: brightness(1.3); }
+    }
+
+    .streak-bilgi h3 {
+        font-size: 1.8rem;
+        font-weight: 900;
+        margin: 0 0 5px 0;
+    }
+
+    .streak-bilgi p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+
+    /* TAKVİM - GitHub Contribution Grafiği */
+    .takvim-section {
+        background: white;
+        border-radius: 25px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        margin-bottom: 25px;
+        animation: fadeInUp 0.6s ease-out 0.3s both;
+        overflow-x: auto;
+    }
+
+    [data-theme="dark"] .takvim-section {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+    }
+
+    .takvim-baslik {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    [data-theme="dark"] .takvim-baslik { color: #e5e7eb !important; }
+
+    .contribution-grid {
+        display: flex;
+        gap: 4px;
+        min-width: max-content;
+    }
+
+    .contribution-hafta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .contribution-gun {
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        position: relative;
+    }
+
+    .contribution-gun:hover {
+        transform: scale(1.4);
+        z-index: 10;
+    }
+
+    /* Aktivite seviyeleri */
+    .seviye-0 { background: #e9ecef; }
+    .seviye-1 { background: #c6e6b3; }
+    .seviye-2 { background: #7bc67a; }
+    .seviye-3 { background: #3da85f; }
+    .seviye-4 { background: #196d2e; }
+
+    [data-theme="dark"] .seviye-0 { background: #2d3454; }
+    [data-theme="dark"] .seviye-1 { background: #0d4429; }
+    [data-theme="dark"] .seviye-2 { background: #006d32; }
+    [data-theme="dark"] .seviye-3 { background: #26a641; }
+    [data-theme="dark"] .seviye-4 { background: #39d353; }
+
+    /* Tooltip */
+    .contribution-gun[data-tooltip]:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 120%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.85);
+        color: white;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        z-index: 100;
+        pointer-events: none;
+    }
+
+    /* Renk açıklaması */
+    .renk-aciklama {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 15px;
+        font-size: 0.8rem;
+        color: #6c757d;
+        justify-content: flex-end;
+    }
+
+    [data-theme="dark"] .renk-aciklama { color: #a8b3cf !important; }
+
+    .renk-ornek {
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .header-title { font-size: 1.6rem; }
+        .streak-kart { flex-direction: column; text-align: center; }
+        .contribution-gun { width: 11px; height: 11px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="takvim-container">
+
+    <!-- HEADER -->
+    <div class="takvim-header">
+        <h1 class="header-title">📅 Çalışma Takvimi</h1>
+        <p style="color: #6c757d; margin: 0; font-size: 1rem;">
+            Son 84 günlük çalışma geçmişin
+        </p>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+        <div class="stat-kart">
+            <div class="stat-kart-icon">📚</div>
+            <div class="stat-kart-value">{{ haftalik_soru }}</div>
+            <div class="stat-kart-label">Bu Hafta Soru</div>
+        </div>
+        <div class="stat-kart">
+            <div class="stat-kart-icon">⭐</div>
+            <div class="stat-kart-value">{{ haftalik_xp }}</div>
+            <div class="stat-kart-label">Bu Hafta XP</div>
+        </div>
+        <div class="stat-kart">
+            <div class="stat-kart-icon">📅</div>
+            <div class="stat-kart-value">{{ aylik_soru }}</div>
+            <div class="stat-kart-label">Bu Ay Soru</div>
+        </div>
+        <div class="stat-kart">
+            <div class="stat-kart-icon">💎</div>
+            <div class="stat-kart-value">{{ aylik_xp }}</div>
+            <div class="stat-kart-label">Bu Ay XP</div>
+        </div>
+        <div class="stat-kart">
+            <div class="stat-kart-icon">🟢</div>
+            <div class="stat-kart-value">{{ toplam_aktif_gun }}</div>
+            <div class="stat-kart-label">Aktif Gün (84 gün)</div>
+        </div>
+    </div>
+
+    <!-- STREAK -->
+    <div class="streak-kart">
+        <div class="streak-icon">🔥</div>
+        <div class="streak-bilgi">
+            <h3>{{ streak }} Günlük Seri!</h3>
+            <p>En uzun seriniz: <strong>{{ en_uzun_streak }} gün</strong></p>
+        </div>
+    </div>
+
+    <!-- TAKVİM -->
+    <div class="takvim-section">
+        <div class="takvim-baslik">
+            📊 Aktivite Grafiği
+            <span style="font-size: 0.9rem; color: #6c757d; font-weight: 600;">
+                (Son 84 gün)
+            </span>
+        </div>
+
+        <div class="contribution-grid">
+            {% for hafta in haftalar %}
+            <div class="contribution-hafta">
+                {% for gun in hafta %}
+                <div class="contribution-gun seviye-{{ gun.seviye }}"
+                     data-tooltip="{{ gun.tarih_str }}: {{ gun.cozulen }} soru">
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Renk Açıklaması -->
+        <div class="renk-aciklama">
+            <span>Az</span>
+            <div class="renk-ornek seviye-0"></div>
+            <div class="renk-ornek seviye-1"></div>
+            <div class="renk-ornek seviye-2"></div>
+            <div class="renk-ornek seviye-3"></div>
+            <div class="renk-ornek seviye-4"></div>
+            <span>Çok</span>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    showToast('📅 Çalışma takvimine hoş geldin!', 'info');
+});
+</script>
+{% endblock %}

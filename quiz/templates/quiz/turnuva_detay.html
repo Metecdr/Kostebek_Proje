@@ -17,12 +17,6 @@
         --bg-card-hover: #f8f9fa;
     }
 
-    body.dark-mode {
-        --text-primary: #ffffff;
-        --text-secondary: #d0d0d0;
-        --bg-card: #1e1e2f;
-        --bg-card-hover: #2a2a3e;
-    }
 
     body {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -30,9 +24,6 @@
         font-family: 'Poppins', sans-serif;
     }
 
-    body.dark-mode {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    }
 
     .container {
         max-width: 1600px;
@@ -181,9 +172,6 @@
         transition: all 0.3s ease;
     }
 
-    body.dark-mode .odul-card {
-        background: linear-gradient(135deg, #2a2517, #1e1e0f);
-    }
 
     .odul-card:nth-child(1) {
         border-color: gold;
@@ -220,9 +208,6 @@
         color: #f57c00;
     }
 
-    body.dark-mode .odul-xp {
-        color: #ffa726;
-    }
 
     .odul-winner {
         margin-top: 10px;
@@ -363,10 +348,6 @@
         font-weight: 800;
     }
 
-    body.dark-mode .match-player.winner {
-        background: linear-gradient(135deg, #1a4d2e, #0f3d1f);
-        border-color: #4caf50;
-    }
 
     .match-player.loser {
         opacity: 0.6;
@@ -381,10 +362,6 @@
         font-size: 1.3rem;
         font-weight: 900;
         color: #667eea;
-    }
-
-    body.dark-mode .player-score {
-        color: #a0a0ff;
     }
 
     .match-vs {
@@ -404,12 +381,6 @@
         padding: 12px;
     }
 
-    body.dark-mode .match-bye {
-        background: linear-gradient(135deg, #2a2517, #1e1e0f);
-        border-color: #ffb74d;
-        color: #ffa726;
-    }
-
     .match-pending {
         background: linear-gradient(135deg, #e3f2fd, #bbdefb);
         border: 2px dashed #2196f3;
@@ -419,11 +390,6 @@
         padding: 12px;
     }
 
-    body.dark-mode .match-pending {
-        background: linear-gradient(135deg, #1a2a3e, #0f1a2e);
-        border-color: #64b5f6;
-        color: #90caf9;
-    }
 
     .match-action-btn {
         display: block;
@@ -453,9 +419,6 @@
         background: linear-gradient(135deg, #ff9800, #f57c00);
     }
 
-    body.dark-mode .match-action-btn {
-        background: linear-gradient(135deg, #7c8ff5, #8e5fc2);
-    }
 
     .match-waiting {
         margin-top: 15px;
@@ -467,10 +430,6 @@
         font-weight: 700;
     }
 
-    body.dark-mode .match-waiting {
-        background: #2a2a3e;
-        color: #666;
-    }
 
     .siralama-section {
         background: var(--bg-card);
@@ -554,27 +513,18 @@
         border-left: 5px solid #FFD700;
     }
 
-    body.dark-mode .first-place {
-        background: linear-gradient(135deg, #2a2517, #1e1e0f) !important;
-    }
 
     .second-place {
         background: linear-gradient(135deg, #F5F5F5, #E8E8E8) !important;
         border-left: 5px solid #C0C0C0;
     }
 
-    body.dark-mode .second-place {
-        background: linear-gradient(135deg, #2a2a2e, #1e1e1e) !important;
-    }
 
     .third-place {
         background: linear-gradient(135deg, #FFF0E6, #FFE0CC) !important;
         border-left: 5px solid #CD7F32;
     }
 
-    body.dark-mode .third-place {
-        background: linear-gradient(135deg, #2a1e17, #1e140f) !important;
-    }
 
     .oyuncu-info {
         display: flex;
@@ -690,71 +640,6 @@
         color: var(--text-primary);
     }
 
-    body.dark-mode .header-title h1 {
-        color: white !important;
-    }
-
-    body.dark-mode .header-title p {
-        color: rgba(255,255,255,0.8) !important;
-    }
-
-    body.dark-mode .bracket-title {
-        color: white !important;
-    }
-
-    body.dark-mode .oyuncu-name {
-        color: white !important;
-    }
-
-    body.dark-mode .siralama-table td {
-        color: white !important;
-    }
-
-    body.dark-mode .sira-number {
-        background: #3a3a4e !important;
-        color: white !important;
-    }
-
-    body.dark-mode .info-content p {
-        color: white !important;
-    }
-
-    body.dark-mode .odul-winner {
-        color: white !important;
-    }
-
-    body.dark-mode .odul-title {
-        color: white !important;
-    }
-
-    body.dark-mode .siralama-table thead {
-        background: linear-gradient(135deg, #7c8ff5, #8e5fc2) !important;
-    }
-
-    body.dark-mode .siralama-table tbody tr {
-        border-bottom: 2px solid #3a3a4e !important;
-    }
-
-    body.dark-mode .siralama-table tbody tr:hover {
-        background: #2a2a3e !important;
-    }
-
-    body.dark-mode .first-place:hover {
-        background: #3a3527 !important;
-    }
-
-    body.dark-mode .second-place:hover {
-        background: #3a3a4e !important;
-    }
-
-    body.dark-mode .third-place:hover {
-        background: #3a2e27 !important;
-    }
-
-    body.dark-mode .xp-zero {
-        color: #888 !important;
-    }
-
     @media (max-width: 768px) {
         .header-top {
             flex-direction: column;
@@ -801,6 +686,205 @@
             height: 20px;
         }
     }
+
+    /* ==================== DARK MODE DÜZELTME ==================== */
+    [data-theme="dark"] {
+        --text-primary: #ffffff;
+        --text-secondary: #d0d0d0;
+        --bg-card: #1a1f3a;
+        --bg-card-hover: #1e2749;
+    }
+
+    [data-theme="dark"] body {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+    }
+
+    [data-theme="dark"] .turnuva-header {
+        background: linear-gradient(145deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454 !important;
+    }
+
+    [data-theme="dark"] .header-title h1 {
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .header-title p {
+        color: #a8b3cf !important;
+    }
+
+    [data-theme="dark"] .info-card {
+        background: #1e2749 !important;
+        border: 1px solid #2d3454 !important;
+    }
+
+    [data-theme="dark"] .info-content h3 {
+        color: #a8b3cf !important;
+    }
+
+    [data-theme="dark"] .info-content p {
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .odul-card {
+        background: linear-gradient(135deg, #2a2517, #1e1e0f) !important;
+        border-color: inherit;
+    }
+
+    [data-theme="dark"] .odul-title {
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .odul-xp {
+        color: #ffa726 !important;
+    }
+
+    [data-theme="dark"] .odul-winner {
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .bracket-section,
+    [data-theme="dark"] .siralama-section,
+    [data-theme="dark"] .katilimcilar-section {
+        background: linear-gradient(145deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454 !important;
+    }
+
+    [data-theme="dark"] .bracket-title {
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .round-title {
+        background: #1e2749 !important;
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .match-card {
+        background: #1e2749 !important;
+        border-color: #2d3454 !important;
+    }
+
+    [data-theme="dark"] .match-card:hover {
+        border-color: #8b5cf6 !important;
+    }
+
+    [data-theme="dark"] .match-player {
+        background: #2d3454 !important;
+    }
+
+    [data-theme="dark"] .match-player.winner {
+        background: linear-gradient(135deg, #1a4d2e, #0f3d1f) !important;
+        border-color: #4caf50 !important;
+    }
+
+    [data-theme="dark"] .player-name {
+        color: #e5e7eb !important;
+    }
+
+    [data-theme="dark"] .player-score {
+        color: #a0a0ff !important;
+    }
+
+    [data-theme="dark"] .match-vs {
+        color: #a8b3cf !important;
+    }
+
+    [data-theme="dark"] .match-bye {
+        background: linear-gradient(135deg, #2a2517, #1e1e0f) !important;
+        border-color: #ffb74d !important;
+        color: #ffa726 !important;
+    }
+
+    [data-theme="dark"] .match-pending {
+        background: linear-gradient(135deg, #1a2a3e, #0f1a2e) !important;
+        border-color: #64b5f6 !important;
+        color: #90caf9 !important;
+    }
+
+    [data-theme="dark"] .match-waiting {
+        background: #2a2a3e !important;
+        color: #888 !important;
+    }
+
+    [data-theme="dark"] .match-action-btn {
+        background: linear-gradient(135deg, #7c8ff5, #8e5fc2) !important;
+    }
+
+    [data-theme="dark"] .siralama-table {
+        background: #1a1f3a !important;
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .siralama-table thead {
+        background: linear-gradient(135deg, #7c8ff5, #8e5fc2) !important;
+    }
+
+    [data-theme="dark"] .siralama-table th {
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .siralama-table td {
+        color: #e5e7eb !important;
+        border-color: #2d3454 !important;
+    }
+
+    [data-theme="dark"] .siralama-table tbody tr {
+        border-bottom-color: #2d3454 !important;
+    }
+
+    [data-theme="dark"] .siralama-table tbody tr:hover {
+        background: rgba(139, 92, 246, 0.1) !important;
+    }
+
+    [data-theme="dark"] .first-place {
+        background: linear-gradient(135deg, #2a2517, #1e1e0f) !important;
+        border-left-color: #FFD700 !important;
+    }
+
+    [data-theme="dark"] .second-place {
+        background: linear-gradient(135deg, #2a2a2e, #1e1e1e) !important;
+        border-left-color: #C0C0C0 !important;
+    }
+
+    [data-theme="dark"] .third-place {
+        background: linear-gradient(135deg, #2a1e17, #1e140f) !important;
+        border-left-color: #CD7F32 !important;
+    }
+
+    [data-theme="dark"] .oyuncu-name {
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .sira-number {
+        background: #3a3a4e !important;
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .skor-cell {
+        color: #a0a0ff !important;
+    }
+
+    [data-theme="dark"] .progress-bar {
+        background: #2d3454 !important;
+    }
+
+    [data-theme="dark"] .progress-text {
+        color: #ffffff !important;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.9) !important;
+    }
+
+    [data-theme="dark"] .xp-zero {
+        color: #888 !important;
+    }
+
+    [data-theme="dark"] .katilimci-card {
+        background: #1e2749 !important;
+        border: 1px solid #2d3454 !important;
+    }
+
+    [data-theme="dark"] .katilimci-name {
+        color: #ffffff !important;
+    }
+
 </style>
 {% endblock %}
 
@@ -1063,20 +1147,4 @@
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const darkMode = document.body.classList.contains('dark-mode');
-    
-    if (darkMode) {
-        document.querySelectorAll('.header-title h1, .header-title p, .bracket-title, .siralama-table td, .oyuncu-name, .info-content p, .odul-winner, .odul-title, .katilimci-name').forEach(el => {
-            el.style.setProperty('color', 'white', 'important');
-        });
-        
-        document.querySelectorAll('.progress-text').forEach(el => {
-            el.style.setProperty('color', 'white', 'important');
-            el.style.textShadow = '0 2px 4px rgba(0,0,0,0.9)';
-        });
-    }
-});
-</script>
 {% endblock %}

@@ -13,24 +13,23 @@
         padding: 20px 0;
     }
 
+    [data-theme="dark"] body {
+        background: linear-gradient(135deg, #1a1a3e 0%, #0f0f2e 100%) !important;
+    }
+
     .result-container {
         max-width: 1000px;
         margin: 50px auto;
+        padding: 0 20px;
         animation: fadeInUp 0.6s ease-out;
     }
 
     @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform:  translateY(40px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
-    /* RESULT CARD */
+    /* ===== RESULT CARD ===== */
     .result-card {
         background: white;
         border-radius: 30px;
@@ -39,18 +38,16 @@
         animation: popIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
 
+    [data-theme="dark"] .result-card {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+        box-shadow: 0 25px 80px rgba(0,0,0,0.8);
+    }
+
     @keyframes popIn {
-        0% {
-            opacity: 0;
-            transform:  scale(0.3) rotate(-15deg);
-        }
-        70% {
-            transform: scale(1.05) rotate(5deg);
-        }
-        100% {
-            opacity: 1;
-            transform: scale(1) rotate(0deg);
-        }
+        0% { opacity: 0; transform: scale(0.3) rotate(-15deg); }
+        70% { transform: scale(1.05) rotate(5deg); }
+        100% { opacity: 1; transform: scale(1) rotate(0deg); }
     }
 
     .result-header {
@@ -71,10 +68,8 @@
     .result-header::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
         background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
         animation: shimmer 3s infinite;
     }
@@ -86,25 +81,17 @@
 
     .result-icon {
         font-size: 8rem;
-        margin-bottom:  20px;
+        margin-bottom: 20px;
         animation: bounceScale 1.5s ease-in-out infinite;
         display: inline-block;
         filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
     }
 
     @keyframes bounceScale {
-        0%, 100% {
-            transform: scale(1) rotate(0deg);
-        }
-        25% {
-            transform: scale(1.2) rotate(-10deg);
-        }
-        50% {
-            transform: scale(1) rotate(0deg);
-        }
-        75% {
-            transform: scale(1.1) rotate(10deg);
-        }
+        0%, 100% { transform: scale(1) rotate(0deg); }
+        25% { transform: scale(1.2) rotate(-10deg); }
+        50% { transform: scale(1) rotate(0deg); }
+        75% { transform: scale(1.1) rotate(10deg); }
     }
 
     .result-title {
@@ -112,19 +99,13 @@
         font-weight: 900;
         color: white;
         margin-bottom: 15px;
-        text-shadow:  2px 2px 8px rgba(0,0,0,0.3);
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
         animation: slideInDown 0.8s ease-out 0.3s backwards;
     }
 
     @keyframes slideInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(-50px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .result-subtitle {
@@ -139,7 +120,7 @@
         to { opacity: 1; }
     }
 
-    /* STATS GRID */
+    /* ===== STATS GRID ===== */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -150,13 +131,18 @@
     .stat-box {
         background: linear-gradient(135deg, #f8f9fa, #e9ecef);
         padding: 30px;
-        border-radius:  20px;
+        border-radius: 20px;
         text-align: center;
         transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         border: 3px solid transparent;
         animation: fadeInUp 0.6s ease-out backwards;
         position: relative;
         overflow: hidden;
+    }
+
+    [data-theme="dark"] .stat-box {
+        background: linear-gradient(135deg, #1e2749, #151b35) !important;
+        border-color: #2d3454 !important;
     }
 
     .stat-box:nth-child(1) { animation-delay: 0.1s; }
@@ -167,32 +153,40 @@
     .stat-box::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102,126,234,0.1), transparent);
         transition: left 0.5s;
     }
 
-    .stat-box:hover::before {
-        left:  100%;
-    }
+    .stat-box:hover::before { left: 100%; }
 
     .stat-box:hover {
         transform: translateY(-10px) scale(1.05);
         border-color: #667eea;
-        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 15px 40px rgba(102,126,234,0.3);
+    }
+
+    [data-theme="dark"] .stat-box:hover {
+        border-color: #8b5cf6 !important;
+        box-shadow: 0 15px 40px rgba(139,92,246,0.4) !important;
     }
 
     .stat-value {
         font-size: 3rem;
-        font-weight:  900;
+        font-weight: 900;
         margin-bottom: 10px;
         background: linear-gradient(135deg, #667eea, #764ba2);
         -webkit-background-clip: text;
-        -webkit-text-fill-color:  transparent;
-        background-clip:  text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    [data-theme="dark"] .stat-value {
+        background: linear-gradient(135deg, #a78bfa, #60a5fa) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
     }
 
     .stat-label {
@@ -203,7 +197,9 @@
         letter-spacing: 0.5px;
     }
 
-    /* BUTTONS */
+    [data-theme="dark"] .stat-label { color: #a8b3cf !important; }
+
+    /* ===== BUTTONS ===== */
     .action-buttons {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -215,7 +211,7 @@
     .btn-custom {
         padding: 18px 35px;
         font-size: 1.2rem;
-        font-weight:  700;
+        font-weight: 700;
         border-radius: 50px;
         transition: all 0.3s ease;
         text-decoration: none;
@@ -232,37 +228,33 @@
     .btn-custom::before {
         content: '';
         position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
+        top: 50%; left: 50%;
+        width: 0; height: 0;
         border-radius: 50%;
         background: rgba(255,255,255,0.4);
         transform: translate(-50%, -50%);
         transition: width 0.6s, height 0.6s;
     }
 
-    .btn-custom:hover::before {
-        width: 400px;
-        height: 400px;
-    }
+    .btn-custom:hover::before { width: 400px; height: 400px; }
 
     .btn-custom:hover {
         transform: translateY(-5px);
         box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        text-decoration: none;
     }
 
-    .btn-primary {
+    .btn-oyun {
         background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
+        color: white !important;
     }
 
-    .btn-secondary {
+    .btn-profil {
         background: linear-gradient(135deg, #6c757d, #495057);
-        color: white;
+        color: white !important;
     }
 
-    /* WRONG ANSWERS SECTION */
+    /* ===== WRONG ANSWERS ===== */
     .wrong-section {
         padding: 40px;
         animation: fadeInUp 0.6s ease-out 0.6s backwards;
@@ -270,9 +262,9 @@
 
     .toggle-wrong-btn {
         width: 100%;
-        padding:  20px;
+        padding: 20px;
         font-size: 1.3rem;
-        font-weight:  800;
+        font-weight: 800;
         border-radius: 20px;
         background: linear-gradient(135deg, #ef4444, #dc2626);
         color: white;
@@ -286,25 +278,20 @@
 
     .toggle-wrong-btn::before {
         content: '';
-        position:  absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 0; height: 0;
         border-radius: 50%;
         background: rgba(255,255,255,0.3);
         transform: translate(-50%, -50%);
         transition: width 0.6s, height 0.6s;
     }
 
-    .toggle-wrong-btn:hover::before {
-        width: 400px;
-        height: 400px;
-    }
+    .toggle-wrong-btn:hover::before { width: 400px; height: 400px; }
 
     .toggle-wrong-btn:hover {
         transform: scale(1.02);
-        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+        box-shadow: 0 10px 30px rgba(239,68,68,0.4);
     }
 
     .wrong-card {
@@ -312,9 +299,14 @@
         border-radius: 20px;
         overflow: hidden;
         margin-bottom: 25px;
-        box-shadow:  0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         border: 3px solid #ef4444;
         animation: slideInRight 0.5s ease-out backwards;
+    }
+
+    [data-theme="dark"] .wrong-card {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
     .wrong-card:nth-child(1) { animation-delay: 0.1s; }
@@ -324,14 +316,8 @@
     .wrong-card:nth-child(5) { animation-delay: 0.5s; }
 
     @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
+        from { opacity: 0; transform: translateX(50px); }
+        to { opacity: 1; transform: translateX(0); }
     }
 
     .wrong-card-header {
@@ -345,8 +331,10 @@
         gap: 10px;
     }
 
-    .wrong-card-body {
-        padding: 30px;
+    .wrong-card-body { padding: 30px; }
+
+    [data-theme="dark"] .wrong-card-body {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
     }
 
     .question-box, .answer-box {
@@ -361,24 +349,35 @@
         border-left: 5px solid #667eea;
     }
 
+    [data-theme="dark"] .question-box {
+        background: linear-gradient(135deg, #1e2749, #151b35) !important;
+        border-left-color: #8b5cf6 !important;
+    }
+
     .answer-box {
-        border:  2px solid;
+        border: 2px solid;
         position: relative;
         transition: all 0.3s ease;
     }
 
-    .answer-box:hover {
-        transform: translateX(10px);
-    }
+    .answer-box:hover { transform: translateX(10px); }
 
     .answer-box.wrong-answer {
         background: linear-gradient(135deg, #fef2f2, #fee2e2);
         border-color: #ef4444;
     }
 
+    [data-theme="dark"] .answer-box.wrong-answer {
+        background: linear-gradient(135deg, #3d1515, #2a0f0f) !important;
+    }
+
     .answer-box.correct-answer {
-        background:  linear-gradient(135deg, #f0fdf4, #dcfce7);
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
         border-color: #10b981;
+    }
+
+    [data-theme="dark"] .answer-box.correct-answer {
+        background: linear-gradient(135deg, #0f2d1a, #0a1f12) !important;
     }
 
     .box-title {
@@ -396,79 +395,48 @@
         color: #374151;
     }
 
+    [data-theme="dark"] .box-content { color: #e5e7eb !important; }
+
     .no-wrong-alert {
         background: linear-gradient(135deg, #10b981, #34d399);
         color: white;
         padding: 50px;
-        border-radius:  20px;
+        border-radius: 20px;
         text-align: center;
-        box-shadow: 0 15px 40px rgba(16, 185, 129, 0.3);
+        box-shadow: 0 15px 40px rgba(16,185,129,0.3);
         animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
 
     .no-wrong-icon {
         font-size: 6rem;
-        margin-bottom:  20px;
+        margin-bottom: 20px;
         animation: bounceScale 1.5s ease-in-out infinite;
     }
 
-    .no-wrong-title {
-        font-size:  2rem;
-        font-weight: 900;
-        margin:  0;
-    }
+    .no-wrong-title { font-size: 2rem; font-weight: 900; margin: 0; }
 
-    /* CONFETTI */
+    /* ===== CONFETTI ===== */
     .confetti {
         position: fixed;
-        width: 10px;
-        height: 10px;
+        width: 10px; height: 10px;
         z-index: 9999;
         pointer-events: none;
     }
 
     @keyframes confettiFall {
-        to {
-            transform: translateY(100vh) rotate(720deg);
-            opacity: 0;
-        }
+        to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
     }
 
-    /* RESPONSIVE */
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
-        .result-icon {
-            font-size: 5rem;
-        }
-
-        .result-title {
-            font-size: 2.5rem;
-        }
-
-        .result-subtitle {
-            font-size: 1.2rem;
-        }
-
-        .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-            padding: 30px 20px;
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-        }
-
-        .action-buttons {
-            grid-template-columns: 1fr;
-            padding: 0 20px 30px 20px;
-        }
-
-        .wrong-section {
-            padding: 30px 20px;
-        }
-
-        .wrong-card-body {
-            padding: 20px;
-        }
+        .result-icon { font-size: 5rem; }
+        .result-title { font-size: 2.5rem; }
+        .result-subtitle { font-size: 1.2rem; }
+        .stats-grid { grid-template-columns: repeat(2, 1fr); padding: 30px 20px; }
+        .stat-value { font-size: 2.5rem; }
+        .action-buttons { grid-template-columns: 1fr; padding: 0 20px 30px 20px; }
+        .wrong-section { padding: 30px 20px; }
+        .wrong-card-body { padding: 20px; }
     }
 </style>
 {% endblock %}
@@ -476,17 +444,24 @@
 {% block content %}
 <div class="result-container">
     <div class="result-card">
+
         <!-- HEADER -->
         <div class="result-header {% if kazandi %}success{% else %}fail{% endif %}">
             <div class="result-icon">
                 {% if kazandi %}🎉{% else %}😢{% endif %}
             </div>
             <h1 class="result-title">
-                {% if kazandi %}TEBRİKLER! {% else %}BİR SONRAKİ SEFERE! {% endif %}
+                {% if kazandi %}TEBRİKLER!{% else %}BİR SONRAKİ SEFERE!{% endif %}
             </h1>
             <p class="result-subtitle">
                 {% if kazandi %}
-                    1 puan kazandınız! 🏆
+                    +{{ kazanilan_puan }} puan kazandınız! 🏆
+                    {% if puan_carpani > 1.0 %}
+                        <span style="color:#f59e0b;font-size:0.85em;">🔥 x{{ puan_carpani }} streak çarpanı!</span>
+                    {% endif %}
+                    {% if puan_bonusu > 0 %}
+                        <span style="color:#10b981;font-size:0.85em;">🎯 +%{{ puan_bonusu }} doğruluk bonusu!</span>
+                    {% endif %}
                 {% else %}
                     Maalesef puan kazanamadınız...
                 {% endif %}
@@ -499,17 +474,14 @@
                 <div class="stat-value" id="correctCount">{{ oyun.dogru_sayisi }}</div>
                 <div class="stat-label">✅ Doğru</div>
             </div>
-
             <div class="stat-box">
                 <div class="stat-value" id="wrongCount">{{ oyun.yanlis_sayisi }}</div>
                 <div class="stat-label">❌ Yanlış</div>
             </div>
-
             <div class="stat-box">
                 <div class="stat-value" id="successRate">{% widthratio oyun.dogru_sayisi 5 100 %}%</div>
                 <div class="stat-label">📊 Başarı</div>
             </div>
-
             <div class="stat-box">
                 <div class="stat-value" id="totalPoints">{{ oyun.toplam_puan }}</div>
                 <div class="stat-label">🏆 Puan</div>
@@ -518,12 +490,12 @@
 
         <!-- BUTTONS -->
         <div class="action-buttons">
-            <a href="{% url 'bul_bakalim_sinav_tipi_secimi' %}" class="btn btn-primary btn-custom">
+            <a href="{% url 'bul_bakalim_sinav_tipi_secimi' %}" class="btn-custom btn-oyun">
                 <span style="position: relative; z-index: 1;">
                     <i class="bi bi-arrow-repeat"></i> Tekrar Oyna
                 </span>
             </a>
-            <a href="{% url 'profil' %}" class="btn btn-secondary btn-custom">
+            <a href="{% url 'profil' %}" class="btn-custom btn-profil">
                 <span style="position: relative; z-index: 1;">
                     <i class="bi bi-person-circle"></i> Profilim
                 </span>
@@ -533,7 +505,11 @@
         <!-- WRONG ANSWERS -->
         <div class="wrong-section">
             {% if yanlislar %}
-                <button class="toggle-wrong-btn" type="button" data-bs-toggle="collapse" data-bs-target="#wrongAnswers">
+                <button class="toggle-wrong-btn"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#wrongAnswers"
+                        aria-expanded="true">
                     <span style="position: relative; z-index: 1;">
                         🔍 Yanlışlarımı Göster ({{ yanlislar|length }} adet)
                     </span>
@@ -547,22 +523,16 @@
                             Yanlış Soru {{ forloop.counter }}
                         </div>
                         <div class="wrong-card-body">
-                            <!-- SORU -->
                             <div class="question-box">
                                 <div class="box-title">
-                                    <i class="bi bi-journal-text"></i>
-                                    SORU: 
+                                    <i class="bi bi-journal-text"></i> SORU:
                                 </div>
-                                <div class="box-content">
-                                    {{ sonuc.soru.metin }}
-                                </div>
+                                <div class="box-content">{{ sonuc.soru.metin }}</div>
                             </div>
 
-                            <!-- SENİN CEVABIN -->
                             <div class="answer-box wrong-answer">
                                 <div class="box-title" style="color: #ef4444;">
-                                    <i class="bi bi-x-circle-fill"></i>
-                                    SENİN CEVABIN: 
+                                    <i class="bi bi-x-circle-fill"></i> SENİN CEVABIN:
                                 </div>
                                 <div class="box-content">
                                     {% if sonuc.verilen_cevap %}
@@ -573,11 +543,9 @@
                                 </div>
                             </div>
 
-                            <!-- DOĞRU CEVAP -->
                             <div class="answer-box correct-answer">
-                                <div class="box-title" style="color:  #10b981;">
-                                    <i class="bi bi-check-circle-fill"></i>
-                                    DOĞRU CEVAP:
+                                <div class="box-title" style="color: #10b981;">
+                                    <i class="bi bi-check-circle-fill"></i> DOĞRU CEVAP:
                                 </div>
                                 <div class="box-content">
                                     {% if sonuc.dogru_cevap %}
@@ -591,75 +559,71 @@
                     </div>
                     {% endfor %}
                 </div>
+
             {% else %}
                 <div class="no-wrong-alert">
                     <div class="no-wrong-icon">🎉</div>
-                    <h3 class="no-wrong-title">MÜKEMMEL! HİÇ YANLIŞ YAPMADINIZ! </h3>
+                    <h3 class="no-wrong-title">MÜKEMMEL! HİÇ YANLIŞ YAPMADINIZ!</h3>
                 </div>
             {% endif %}
         </div>
+
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const kazandi = {{ kazandi|yesno:"true,false" }};
-        const yanlisYok = {% if not yanlislar %}true{% else %}false{% endif %};
+document.addEventListener('DOMContentLoaded', function() {
+    const kazandi = {{ kazandi|yesno:"true,false" }};
+    const yanlisYok = {% if not yanlislar %}true{% else %}false{% endif %};
 
-        // Sayaç animasyonları
-        animateValue(document.getElementById('correctCount'), 0, {{ oyun.dogru_sayisi }}, 1000);
-        animateValue(document.getElementById('wrongCount'), 0, {{ oyun.yanlis_sayisi }}, 1000);
-        animateValue(document.getElementById('successRate'), 0, {% widthratio oyun.dogru_sayisi 5 100 %}, 1000, '', '%');
-        animateValue(document.getElementById('totalPoints'), 0, {{ oyun.toplam_puan }}, 1000);
+    // Sayaç animasyonları
+    animateValue(document.getElementById('correctCount'), 0, {{ oyun.dogru_sayisi }}, 1000);
+    animateValue(document.getElementById('wrongCount'), 0, {{ oyun.yanlis_sayisi }}, 1000);
+    animateValue(document.getElementById('successRate'), 0, {% widthratio oyun.dogru_sayisi 5 100 %}, 1000, '', '%');
+    animateValue(document.getElementById('totalPoints'), 0, {{ oyun.toplam_puan }}, 1000);
 
-        // Kazanma veya mükemmel performans durumunda confetti
-        if (kazandi || yanlisYok) {
-            setTimeout(() => {
-                createConfetti();
-                if (yanlisYok) {
-                    showToast('Mükemmel!  Hiç yanlış yapmadın!  🌟', 'success');
-                } else {
-                    showToast('Tebrikler! 1 puan kazandın! 🏆', 'success');
-                }
-            }, 500);
-        } else {
-            showToast('Üzülme! Yanlışlarını incele ve tekrar dene!  💪', 'info');
-        }
-    });
-
-    function animateValue(element, start, end, duration, prefix = '', suffix = '') {
-        let startTime = null;
-        const step = (timestamp) => {
-            if (! startTime) startTime = timestamp;
-            const progress = Math.min((timestamp - startTime) / duration, 1);
-            const value = Math.floor(progress * (end - start) + start);
-            element.textContent = prefix + value + suffix;
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
+    if (kazandi || yanlisYok) {
+        setTimeout(() => {
+            createConfetti();
+            if (yanlisYok) {
+                showToast('Mükemmel! Hiç yanlış yapmadın! 🌟', 'success');
+            } else {
+                showToast('Tebrikler! 1 puan kazandın! 🏆', 'success');
             }
-        };
-        window.requestAnimationFrame(step);
+        }, 500);
+    } else {
+        showToast('Üzülme! Yanlışlarını incele ve tekrar dene! 💪', 'info');
     }
+});
 
-    // Confetti Effect
-    function createConfetti() {
-        const colors = ['#FFD700', '#FFA500', '#FF6347', '#4CAF50', '#2196F3', '#9C27B0'];
-        const confettiCount = 120;
+function animateValue(element, start, end, duration, prefix = '', suffix = '') {
+    if (!element) return;
+    let startTime = null;
+    const step = (timestamp) => {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        const value = Math.floor(progress * (end - start) + start);
+        element.textContent = prefix + value + suffix;
+        if (progress < 1) window.requestAnimationFrame(step);
+    };
+    window.requestAnimationFrame(step);
+}
 
-        for (let i = 0; i < confettiCount; i++) {
-            const confetti = document.createElement('div');
-            confetti.className = 'confetti';
-            confetti.style.left = Math.random() * 100 + '%';
-            confetti.style.top = '-10px';
-            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            confetti.style.animation = `confettiFall ${Math.random() * 3 + 2}s linear forwards`;
-            confetti.style.animationDelay = Math.random() * 2 + 's';
-            document.body.appendChild(confetti);
-
-            setTimeout(() => confetti.remove(), 6000);
-        }
+function createConfetti() {
+    const colors = ['#FFD700', '#FFA500', '#FF6347', '#4CAF50', '#2196F3', '#9C27B0'];
+    for (let i = 0; i < 120; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.top = '-10px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animation = `confettiFall ${Math.random() * 3 + 2}s linear forwards`;
+        confetti.style.animationDelay = Math.random() * 2 + 's';
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 6000);
     }
+}
 </script>
 {% endblock %}

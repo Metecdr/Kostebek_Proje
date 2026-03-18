@@ -18,13 +18,16 @@
         font-family: 'Poppins', sans-serif;
     }
 
+    [data-theme="dark"] body {
+        background: linear-gradient(135deg, #1a1a3e 0%, #0f0f2e 100%) !important;
+    }
+
     .game-container {
         max-width: 1000px;
         margin: 0 auto;
         padding: 20px;
     }
 
-    /* ==================== HEADER BAR ==================== */
     .game-header {
         background: white;
         border-radius: 20px;
@@ -34,15 +37,15 @@
         animation: fadeInDown 0.6s ease-out;
     }
 
+    [data-theme="dark"] .game-header {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+    }
+
     @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .game-title-header {
@@ -58,10 +61,13 @@
         gap: 10px;
     }
 
-    /* ==================== PROGRESS BAR ==================== */
-    .progress-wrapper {
-        margin-bottom: 25px;
+    [data-theme="dark"] .game-title-header {
+        background: linear-gradient(135deg, #a78bfa, #60a5fa) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
     }
+
+    .progress-wrapper { margin-bottom: 25px; }
 
     .progress-info {
         display: flex;
@@ -71,6 +77,8 @@
         color: #2c3e50;
     }
 
+    [data-theme="dark"] .progress-info { color: #a8b3cf !important; }
+
     .custom-progress {
         height: 30px;
         border-radius: 15px;
@@ -79,6 +87,8 @@
         box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
         position: relative;
     }
+
+    [data-theme="dark"] .custom-progress { background: #0f172a !important; }
 
     .custom-progress-bar {
         height: 100%;
@@ -98,11 +108,8 @@
     .custom-progress-bar::after {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
         animation: shimmer 2s infinite;
     }
 
@@ -111,7 +118,6 @@
         100% { transform: translateX(100%); }
     }
 
-    /* ==================== STATS GRID ==================== */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -127,69 +133,48 @@
         transition: all 0.3s ease;
     }
 
-    .stat-box:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    [data-theme="dark"] .stat-box {
+        background: linear-gradient(135deg, #1e2749, #151b35) !important;
+        border-color: #2d3454 !important;
     }
 
-    .stat-label {
-        font-size: 1rem;
-        color: #6c757d;
-        margin-bottom: 8px;
-        font-weight: 600;
-    }
+    .stat-box:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
 
-    .stat-value {
-        font-size: 2.5rem;
-        font-weight: 900;
-    }
+    .stat-label { font-size: 1rem; color: #6c757d; margin-bottom: 8px; font-weight: 600; }
+    [data-theme="dark"] .stat-label { color: #a8b3cf !important; }
 
-    .timer-value {
-        color: var(--success);
-    }
+    .stat-value { font-size: 2.5rem; font-weight: 900; }
 
-    .timer-value.warning {
-        color: var(--warning);
-        animation: pulse 1s infinite;
-    }
-
-    .timer-value.danger {
-        color: var(--danger);
-        animation: pulse 0.5s infinite;
-    }
+    .timer-value { color: var(--success); }
+    .timer-value.warning { color: var(--warning); animation: pulse 1s infinite; }
+    .timer-value.danger { color: var(--danger); animation: pulse 0.5s infinite; }
 
     @keyframes pulse {
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.15); }
     }
 
-    .score-correct {
-        color: var(--success);
-    }
+    .score-correct { color: var(--success); }
+    .score-wrong { color: var(--danger); }
 
-    .score-wrong {
-        color: var(--danger);
-    }
-
-    /* ==================== QUESTION CARD ==================== */
     .question-card {
         background: white;
         border-radius: 20px;
         padding: 40px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         margin-bottom: 30px;
         animation: fadeInUp 0.6s ease-out 0.2s both;
     }
 
+    [data-theme="dark"] .question-card {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+    }
+
     @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .question-number {
@@ -201,7 +186,7 @@
         font-weight: 800;
         font-size: 1.1rem;
         margin-bottom: 25px;
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 5px 15px rgba(102,126,234,0.3);
     }
 
     .question-text {
@@ -216,18 +201,13 @@
         margin-bottom: 35px;
     }
 
-    /* ==================== ANSWERS ==================== */
-    .answers-title {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: #2c3e50;
-        margin-bottom: 20px;
+    [data-theme="dark"] .question-text {
+        color: #e5e7eb !important;
+        background: linear-gradient(135deg, #1e2749, #151b35) !important;
+        border-left-color: #8b5cf6 !important;
     }
 
-    .answer-grid {
-        display: grid;
-        gap: 15px;
-    }
+    .answer-grid { display: grid; gap: 15px; }
 
     .cevap-btn {
         background: white;
@@ -242,16 +222,21 @@
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        width: 100%;
+    }
+
+    [data-theme="dark"] .cevap-btn {
+        background: linear-gradient(135deg, #1e2749, #151b35) !important;
+        border-color: #2d3454 !important;
+        color: #e5e7eb !important;
     }
 
     .cevap-btn::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102,126,234,0.1), transparent);
         transition: left 0.5s;
     }
 
@@ -259,30 +244,30 @@
         transform: translateX(10px);
         border-color: var(--primary);
         background: linear-gradient(135deg, #f8f9ff, #ffffff);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 8px 25px rgba(102,126,234,0.3);
     }
 
-    .cevap-btn:hover::before {
-        left: 100%;
+    [data-theme="dark"] .cevap-btn:hover {
+        background: linear-gradient(135deg, #2d3454, #1e2749) !important;
+        border-color: #8b5cf6 !important;
+        color: #ffffff !important;
     }
 
-    .cevap-btn:disabled {
-        cursor: not-allowed;
-        opacity: 0.6;
-    }
+    .cevap-btn:hover::before { left: 100%; }
+    .cevap-btn:disabled { cursor: not-allowed; opacity: 0.6; }
 
     .cevap-btn.selected {
         border-color: var(--primary);
         background: linear-gradient(135deg, var(--primary), #764ba2);
         color: white;
         transform: scale(1.03);
-        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        box-shadow: 0 10px 30px rgba(102,126,234,0.5);
     }
 
     .cevap-btn.correct {
         border-color: var(--success);
         background: linear-gradient(135deg, var(--success), #34d399);
-        color: white;
+        color: white !important;
         animation: correctAnim 0.5s;
     }
 
@@ -294,7 +279,7 @@
     .cevap-btn.wrong {
         border-color: var(--danger);
         background: linear-gradient(135deg, var(--danger), #dc2626);
-        color: white;
+        color: white !important;
         animation: wrongAnim 0.5s;
     }
 
@@ -304,7 +289,29 @@
         75% { transform: translateX(10px); }
     }
 
-    /* ==================== INFO BOX ==================== */
+    .cevap-harf {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), #764ba2);
+        color: white;
+        font-weight: 900;
+        font-size: 1rem;
+        margin-right: 12px;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+    }
+
+    .cevap-btn:hover .cevap-harf { transform: scale(1.15); box-shadow: 0 4px 12px rgba(102,126,234,0.5); }
+    .cevap-btn.correct .cevap-harf,
+    .cevap-btn.wrong .cevap-harf,
+    .cevap-btn.selected .cevap-harf { background: rgba(255,255,255,0.3); }
+
+    .cevap-icerik { display: flex; align-items: center; }
+
     .info-box {
         background: linear-gradient(135deg, #dbeafe, #bfdbfe);
         border: 3px solid #60a5fa;
@@ -316,21 +323,25 @@
         gap: 10px;
     }
 
-    .info-box strong {
-        color: #1e40af;
+    [data-theme="dark"] .info-box {
+        background: linear-gradient(135deg, #1e2749, #151b35) !important;
+        border-color: #3b82f6 !important;
     }
+
+    .info-box strong { color: #1e40af; }
+    [data-theme="dark"] .info-box strong { color: #60a5fa !important; }
+    [data-theme="dark"] .info-box span { color: #a8b3cf !important; }
 
     @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
     }
 
-    /* ==================== MODALS ==================== */
     .result-modal-content {
         border: none;
         border-radius: 25px;
         overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     }
 
     .result-modal-body {
@@ -339,55 +350,29 @@
         position: relative;
     }
 
-    .result-modal-body.success {
-        background: linear-gradient(135deg, var(--success), #34d399);
-        color: white;
-    }
-
-    .result-modal-body.error {
-        background: linear-gradient(135deg, var(--danger), #dc2626);
-        color: white;
-    }
+    .result-modal-body.success { background: linear-gradient(135deg, var(--success), #34d399); color: white; }
+    .result-modal-body.error { background: linear-gradient(135deg, var(--danger), #dc2626); color: white; }
 
     .result-icon {
         font-size: 120px;
         animation: bounceIn 0.6s;
         margin-bottom: 20px;
-        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
     }
 
     @keyframes bounceIn {
-        0% {
-            opacity: 0;
-            transform: scale(0.3);
-        }
-        50% {
-            opacity: 1;
-            transform: scale(1.15);
-        }
-        100% {
-            transform: scale(1);
-        }
+        0% { opacity: 0; transform: scale(0.3); }
+        50% { opacity: 1; transform: scale(1.15); }
+        100% { transform: scale(1); }
     }
 
-    .result-title {
-        font-size: 3rem;
-        font-weight: 900;
-        margin-bottom: 15px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .result-text {
-        font-size: 1.4rem;
-        margin-bottom: 30px;
-        opacity: 0.95;
-    }
+    .result-title { font-size: 3rem; font-weight: 900; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+    .result-text { font-size: 1.4rem; margin-bottom: 30px; opacity: 0.95; }
 
     .loading-spinner {
         display: inline-block;
-        width: 50px;
-        height: 50px;
-        border: 5px solid rgba(255, 255, 255, 0.3);
+        width: 50px; height: 50px;
+        border: 5px solid rgba(255,255,255,0.3);
         border-top: 5px solid white;
         border-radius: 50%;
         animation: spin 1s linear infinite;
@@ -398,63 +383,29 @@
         100% { transform: rotate(360deg); }
     }
 
-    /* ==================== RESPONSIVE ==================== */
     @media (max-width: 768px) {
-        .game-container {
-            padding: 15px;
-        }
-
-        .game-header {
-            padding: 20px;
-        }
-
-        .game-title-header {
-            font-size: 1.5rem;
-        }
-
-        .stats-grid {
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-        }
-
-        .question-card {
-            padding: 25px;
-        }
-
-        .question-text {
-            font-size: 1.1rem;
-            padding: 20px;
-        }
-
-        .cevap-btn {
-            padding: 18px 22px;
-            font-size: 1rem;
-        }
-
-        .result-modal-body {
-            padding: 40px 25px;
-        }
-
-        .result-icon {
-            font-size: 80px;
-        }
-
-        .result-title {
-            font-size: 2rem;
-        }
-
-        .result-text {
-            font-size: 1.1rem;
-        }
+        .game-container { padding: 15px; }
+        .game-header { padding: 20px; }
+        .game-title-header { font-size: 1.5rem; }
+        .stats-grid { grid-template-columns: 1fr; gap: 15px; }
+        .stat-value { font-size: 2rem; }
+        .question-card { padding: 25px; }
+        .question-text { font-size: 1.1rem; padding: 20px; }
+        .cevap-btn { padding: 18px 22px; font-size: 1rem; }
+        .result-modal-body { padding: 40px 25px; }
+        .result-icon { font-size: 80px; }
+        .result-title { font-size: 2rem; }
+        .result-text { font-size: 1.1rem; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- Django URL'ini JS'e güvenli aktarmak için gizli span -->
+<span id="cevapla-url"
+      data-url="{% url 'bul_bakalim_cevapla' oyun.oyun_id %}"
+      style="display:none;"></span>
+
 <div class="game-container">
     <!-- HEADER BAR -->
     <div class="game-header">
@@ -470,9 +421,7 @@
                 <span>Soru {{ soru_no }} / {{ toplam_soru }}</span>
             </div>
             <div class="custom-progress">
-                <div class="custom-progress-bar" style="width: {{ progress_percentage }}%;">
-                    %{{ progress_percentage }}
-                </div>
+                <div class="custom-progress-bar" id="progressBar" style="width: 0%;"></div>
             </div>
         </div>
 
@@ -498,15 +447,27 @@
         <div class="question-number">
             <i class="bi bi-question-circle-fill"></i> SORU {{ soru_no }}
         </div>
-        
+
         <div class="question-text">
-            {{ soru.metin }}
+            {{ aktif_soru.metin }}
         </div>
 
         <div class="answer-grid">
             {% for cevap in cevaplar %}
-            <button class="cevap-btn" data-cevap-id="{{ cevap.id }}" data-dogru="{{ cevap.dogru_mu }}">
-                <strong>{{ forloop.counter|upper_letter }}</strong>) {{ cevap.metin }}
+            <button class="cevap-btn"
+                    data-cevap-id="{{ cevap.id }}"
+                    data-dogru="{{ cevap.dogru_mu }}">
+                <div class="cevap-icerik">
+                    <span class="cevap-harf">
+                        {% if forloop.counter == 1 %}A
+                        {% elif forloop.counter == 2 %}B
+                        {% elif forloop.counter == 3 %}C
+                        {% elif forloop.counter == 4 %}D
+                        {% elif forloop.counter == 5 %}E
+                        {% endif %}
+                    </span>
+                    <span>{{ cevap.metin }}</span>
+                </div>
             </button>
             {% endfor %}
         </div>
@@ -543,34 +504,43 @@ const csrftoken = getCookie('csrftoken');
 let kalanSure = {{ sure }};
 let timerInterval = null;
 let cevapVerildi = false;
+const TOPLAM_SORU = {{ toplam_soru }};
+const SORU_NO = {{ soru_no }};
+
+// Django'dan URL'i al — hardcoded değil, güvenli!
+const CEVAPLA_URL = document.getElementById('cevapla-url').dataset.url;
 
 // ==================== SAYFA YÜKLENİNCE ====================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎯 Bul Bakalım oyunu başladı');
-    
-    // Timer başlat
+    console.log('🎯 Bul Bakalım başladı. Soru:', SORU_NO, '/', TOPLAM_SORU);
+    console.log('📡 Cevapla URL:', CEVAPLA_URL);
+
+    // Progress bar hesapla
+    const progressBar = document.getElementById('progressBar');
+    if (progressBar) {
+        const yuzde = Math.round(((SORU_NO - 1) / TOPLAM_SORU) * 100);
+        progressBar.style.width = yuzde + '%';
+        progressBar.textContent = yuzde > 5 ? '%' + yuzde : '';
+    }
+
     startTimer();
-    
-    // Cevap butonlarını dinle
     initAnswerButtons();
 });
 
 // ==================== TIMER ====================
 function startTimer() {
     const timerElement = document.getElementById('timer');
-    
+
     timerInterval = setInterval(() => {
         kalanSure--;
         timerElement.textContent = kalanSure;
 
-        // Renk değişimi
         if (kalanSure <= 30 && kalanSure > 10) {
             timerElement.className = 'stat-value timer-value warning';
         } else if (kalanSure <= 10) {
             timerElement.className = 'stat-value timer-value danger';
         }
 
-        // Süre doldu
         if (kalanSure <= 0) {
             clearInterval(timerInterval);
             handleTimeout();
@@ -580,32 +550,26 @@ function startTimer() {
 
 // ==================== SÜRE DOLDU ====================
 function handleTimeout() {
-    console.log('⏰ Süre doldu!');
+    if (cevapVerildi) return;
     cevapVerildi = true;
-    
-    // Tüm butonları devre dışı bırak
+
     document.querySelectorAll('.cevap-btn').forEach(btn => {
         btn.disabled = true;
     });
-    
-    showSonucModal(false, 'Süre bitti! ⏰');
-    showToast('⏰ Süre doldu!', 'warning');
 
-    // Cevap otomatik gönder (yanlış olarak)
-    fetch('{% url "bul_bakalim_cevapla" oyun.oyun_id %}', {
+    showToast('⏰ Süre doldu!', 'warning');
+    showSonucModal(false, 'Süre bitti! ⏰');
+
+    fetch(CEVAPLA_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrftoken
         },
-        body: JSON.stringify({ 
-            cevap_id: null,
-            sure_doldu: true 
-        })
+        body: JSON.stringify({ cevap_id: null, sure_doldu: true })
     })
     .then(response => response.json())
     .then(data => {
-        console.log('📊 Süre doldu sonucu:', data);
         setTimeout(() => {
             if (data.oyun_bitti) {
                 window.location.href = data.redirect_url;
@@ -615,8 +579,8 @@ function handleTimeout() {
         }, 2500);
     })
     .catch(error => {
-        console.error('❌ Hata:', error);
-        showToast('Bir hata oluştu!', 'error');
+        console.error('❌ Süre doldu hatası:', error);
+        setTimeout(() => window.location.reload(), 2500);
     });
 }
 
@@ -627,26 +591,16 @@ function initAnswerButtons() {
     cevapButtons.forEach(btn => {
         btn.addEventListener('click', function() {
             if (cevapVerildi) return;
-            
+
             cevapVerildi = true;
-            const cevapId = this.dataset.cevapId;
-            const dogruMu = this.dataset.dogru === 'True';
-            
-            console.log('📤 Cevap gönderiliyor:', cevapId, 'Doğru mu:', dogruMu);
-
-            // Tüm butonları devre dışı bırak
-            cevapButtons.forEach(b => {
-                b.disabled = true;
-            });
-
-            // Tıklanan butonu vurgula
-            this.classList.add('selected');
-
-            // Timer'ı durdur
             clearInterval(timerInterval);
 
-            // Cevabı gönder
-            fetch('{% url "bul_bakalim_cevapla" oyun.oyun_id %}', {
+            const cevapId = this.dataset.cevapId;
+
+            cevapButtons.forEach(b => b.disabled = true);
+            this.classList.add('selected');
+
+            fetch(CEVAPLA_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -654,25 +608,31 @@ function initAnswerButtons() {
                 },
                 body: JSON.stringify({ cevap_id: cevapId })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP hata: ' + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
-                console.log('✅ Cevap sonucu:', data);
-                
-                // Doğru/yanlış animasyonu
+                this.classList.remove('selected');
+
                 if (data.dogru_mu) {
-                    this.classList.remove('selected');
                     this.classList.add('correct');
                     showToast('✅ Doğru cevap! Tebrikler! 🎉', 'success');
                 } else {
-                    this.classList.remove('selected');
                     this.classList.add('wrong');
+                    // Doğru cevabı da göster
+                    cevapButtons.forEach(b => {
+                        if (b.dataset.dogru === 'True') {
+                            b.classList.add('correct');
+                        }
+                    });
                     showToast('❌ Yanlış cevap! Devam et! 💪', 'error');
                 }
-                
-                // Modal göster
+
                 showSonucModal(data.dogru_mu);
 
-                // Sonraki soruya veya sonuç sayfasına git
                 setTimeout(() => {
                     if (data.oyun_bitti) {
                         window.location.href = data.redirect_url;
@@ -683,16 +643,11 @@ function initAnswerButtons() {
             })
             .catch(error => {
                 console.error('❌ Cevap gönderme hatası:', error);
-                showToast('Bir hata oluştu!', 'error');
-                
-                // Hata durumunda tekrar deneme için
+                showToast('Bağlantı hatası, tekrar deneyin!', 'error');
+
                 cevapVerildi = false;
-                cevapButtons.forEach(b => {
-                    b.disabled = false;
-                });
+                cevapButtons.forEach(b => b.disabled = false);
                 this.classList.remove('selected');
-                
-                // Timer'ı tekrar başlat
                 startTimer();
             });
         });
@@ -701,29 +656,25 @@ function initAnswerButtons() {
 
 // ==================== SONUÇ MODALI ====================
 function showSonucModal(dogruMu, mesaj = '') {
-    // Mevcut modalı kaldır
     const mevcutModal = document.getElementById('dinamikModal');
-    if (mevcutModal) {
-        mevcutModal.remove();
-    }
+    if (mevcutModal) mevcutModal.remove();
 
     const modalHTML = `
-        <div class="modal fade" id="dinamikModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal fade" id="dinamikModal" tabindex="-1"
+             data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content result-modal-content">
                     <div class="modal-body result-modal-body ${dogruMu ? 'success' : 'error'}">
-                        <div class="result-icon">
-                            ${dogruMu ? '✅' : '❌'}
-                        </div>
-                        <h2 class="result-title">
-                            ${dogruMu ? 'DOĞRU!' : 'YANLIŞ!'}
-                        </h2>
+                        <div class="result-icon">${dogruMu ? '✅' : '❌'}</div>
+                        <h2 class="result-title">${dogruMu ? 'DOĞRU!' : 'YANLIŞ!'}</h2>
                         <p class="result-text">
-                            ${mesaj || (dogruMu ? 'Tebrikler! Harika gidiyorsun! 🎉' : 'Üzülme, bir sonraki sefere! 💪')}
+                            ${mesaj || (dogruMu
+                                ? 'Tebrikler! Harika gidiyorsun! 🎉'
+                                : 'Üzülme, bir sonraki sefere! 💪')}
                         </p>
                         <div>
                             <div class="loading-spinner"></div>
-                            <p class="mt-3 mb-0" style="font-size: 1.1rem; font-weight: 600;">
+                            <p class="mt-3 mb-0" style="font-size:1.1rem; font-weight:600;">
                                 Sonraki soruya geçiliyor...
                             </p>
                         </div>
@@ -738,11 +689,9 @@ function showSonucModal(dogruMu, mesaj = '') {
     modal.show();
 }
 
-// ==================== SAYFA KAPATILIRKEN ====================
+// ==================== TEMİZLİK ====================
 window.addEventListener('beforeunload', () => {
-    if (timerInterval) {
-        clearInterval(timerInterval);
-    }
+    if (timerInterval) clearInterval(timerInterval);
 });
 </script>
 {% endblock %}

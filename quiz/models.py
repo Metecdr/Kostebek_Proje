@@ -465,7 +465,7 @@ class BulBakalimOyun(models.Model):
         self.bitirme_tarihi = timezone.now()
         
         if self.dogru_sayisi >= 3:
-            self.toplam_puan = 1
+            self.toplam_puan = 10
         else:
             self.toplam_puan = 0
         
@@ -804,3 +804,72 @@ class TurnuvaSiralama(models.Model):
     
     def __str__(self):
         return f"{self.turnuva.isim} - {self.sira}. {self.kullanici.username}"
+
+
+class MeydanOkuma(models.Model):
+    """Arkadaşa Meydan Okuma"""
+
+    DURUM_SECENEKLERI = [
+        ('beklemede', 'Beklemede'),
+        ('kabul_edildi', 'Kabul Edildi'),
+        ('reddedildi', 'Reddedildi'),
+        ('suresi_doldu', 'Süresi Doldu'),
+    ]
+
+    gonderen = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='gonderilen_meydan_okumalar',
+        verbose_name='Gönderen'
+    )
+    alan = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='alinan_meydan_okumalar',
+        verbose_name='Alan'
+    )
+    oda = models.ForeignKey(
+        KarsilasmaOdasi,
+        on_delete=models.CASCADE,
+        related_name='meydan_okuma',
+        verbose_name='Karşılaşma Odası'
+    )
+    secilen_ders = models.CharField(
+        max_length=30,
+        default='karisik',
+        verbose_name='Seçilen Ders'
+    )
+    sinav_tipi = models.CharField(
+        max_length=10,
+        default='AYT',
+        verbose_name='Sınav Tipi'
+    )
+    durum = models.CharField(
+        max_length=20,
+        choices=DURUM_SECENEKLERI,
+        default='beklemede',
+        db_index=True,
+        verbose_name='Durum'
+    )
+    olusturma_tarihi = models.DateTimeField(
+        auto_now_add=True,
+        db_index=True,
+        verbose_name='Oluşturma Tarihi'
+    )
+
+    class Meta:
+        verbose_name = 'Meydan Okuma'
+        verbose_name_plural = 'Meydan Okumalar'
+        ordering = ['-olusturma_tarihi']
+        indexes = [
+            models.Index(fields=['alan', 'durum'], name='meydan_alan_durum_idx'),
+            models.Index(fields=['gonderen', 'durum'], name='meydan_gonderen_durum_idx'),
+        ]
+
+    def suresi_gecti_mi(self):
+        """24 saat geçti mi?"""
+        from django.utils import timezone
+        return (timezone.now() - self.olusturma_tarihi).total_seconds() > 86400
+
+    def __str__(self):
+        return f"{self.gonderen.username} → {self.alan.username} ({self.get_durum_display()})"

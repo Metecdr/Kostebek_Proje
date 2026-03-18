@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import profile.rozet_aciklama as rozet_aciklama
 
 
+
 class OgrenciProfili(models.Model):
     """Öğrenci Profil Modeli - Temel kullanıcı bilgileri ve istatistikleri"""
     
@@ -84,6 +85,11 @@ class OgrenciProfili(models.Model):
     aylik_cozulen = models.IntegerField(default=0, verbose_name='Aylık Çözülen')
     aylik_dogru = models.IntegerField(default=0, verbose_name='Aylık Doğru')
     aylik_yanlis = models.IntegerField(default=0, verbose_name='Aylık Yanlış')
+
+    # ==================== STREAK (ÇALIŞMASERİSİ) ====================
+    mevcut_seri = models.IntegerField(default=0, verbose_name='Mevcut Seri')
+    en_uzun_seri = models.IntegerField(default=0, verbose_name='En Uzun Seri')
+    son_aktif_tarih = models.DateField(null=True, blank=True, verbose_name='Son Aktif Tarih')
     
     # RESET TARİHLERİ
     son_gunluk_reset = models.DateField(
@@ -119,6 +125,12 @@ class OgrenciProfili(models.Model):
     son_giris = models.DateTimeField(
         auto_now=True,
         verbose_name='Son Giriş'
+    )
+    # ✅ YENİ - Çevrimiçi durumu için
+    son_aktif = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='Son Aktif Zaman'
     )
     aktif_mi = models.BooleanField(
         default=True,
@@ -275,7 +287,8 @@ class OgrenciProfili(models.Model):
             return 19
         else:
             return 20
-    
+
+    @property
     def seviye_unvani(self):
         """Seviyeye göre unvan döndür"""
         unvanlar = {
@@ -301,7 +314,8 @@ class OgrenciProfili(models.Model):
             20: '🔥 Tanrı',
         }
         return unvanlar.get(self.seviye, '🐣 Çaylak')
-    
+
+    @property
     def sonraki_seviye_xp(self):
         """Sonraki seviye için gereken XP"""
         xp_gereksinimleri = {
@@ -311,7 +325,8 @@ class OgrenciProfili(models.Model):
             16: 50000, 17: 65000, 18: 80000, 19: 100000, 20: 999999
         }
         return xp_gereksinimleri.get(self.seviye, 999999)
-    
+        
+    @property
     def xp_yuzdesi(self):
         """Mevcut seviyedeki XP yüzdesi"""
         if self.seviye == 1:
@@ -325,7 +340,7 @@ class OgrenciProfili(models.Model):
             }
             onceki_seviye_xp = onceki_seviye_xp_dict.get(self.seviye, 0)
         
-        sonraki_xp = self.sonraki_seviye_xp()
+        sonraki_xp = self.sonraki_seviye_xp
         mevcut_xp = self.xp - onceki_seviye_xp
         gereken_xp = sonraki_xp - onceki_seviye_xp
         
@@ -335,78 +350,82 @@ class OgrenciProfili(models.Model):
         yuzde = (mevcut_xp / gereken_xp) * 100
         return min(100, max(0, yuzde))
 
-def gunluk_giris_kontrol(self):
-    """
-    Günlük giriş kontrolü ve bonus verme
-    
-    Returns:
-        dict: Bonus bilgileri
-    """
-    from django.utils import timezone
-    
-    bugun = timezone.now().date()
-    
-    # İlk giriş
-    if not self.son_giris_tarihi:
-        self.son_giris_tarihi = bugun
-        self.ardasik_gun_sayisi = 1
-        self.save()
-        return {
-            'ilk_giris':  True,
-            'bonus_verildi': True,
-            'streak':  1,
-            'bonus_xp': 20
-        }
-    
-    # Bugün zaten giriş yapılmış
-    if self.son_giris_tarihi == bugun:
-        return {
-            'ilk_giris': False,
-            'bonus_verildi': False,
-            'streak': self.ardasik_gun_sayisi,
-            'bonus_xp':  0,
-            'mesaj': 'Bugün zaten giriş yaptın!'
-        }
-    
-    # Dün giriş yapılmış (streak devam ediyor)
-    dun = bugun - timezone.timedelta(days=1)
-    if self.son_giris_tarihi == dun:
-        self.ardasik_gun_sayisi += 1
-        self.son_giris_tarihi = bugun
+    def gunluk_giris_kontrol(self):
+
+        bugun = timezone.now().date()
+
+        # İlk giriş
+        if not self.son_giris_tarihi:
+            self.son_giris_tarihi = bugun
+            self.ardasik_gun_sayisi = 1
+            self.save()
+            return {
+                'ilk_giris': True,
+                'bonus_verildi': True,
+                'streak': 1,
+                'bonus_xp': 20
+            }
+
+        # Bugün zaten giriş yapılmış
+        if self.son_giris_tarihi == bugun:
+            return {
+                'ilk_giris': False,
+                'bonus_verildi': False,
+                'streak': self.ardasik_gun_sayisi,
+                'bonus_xp': 0,
+                'mesaj': 'Bugün zaten giriş yaptın!'
+            }
+
+        # Dün giriş yapılmış (streak devam ediyor)
+        dun = bugun - timezone.timedelta(days=1)
+        if self.son_giris_tarihi == dun:
+            self.ardasik_gun_sayisi += 1
+            self.son_giris_tarihi = bugun
+            if self.ardasik_gun_sayisi > self.en_uzun_streak:
+                self.en_uzun_streak = self.ardasik_gun_sayisi
+            self.save()
+            bonus_xp = 20 + min(self.ardasik_gun_sayisi * 2, 50)
+            return {
+                'ilk_giris': False,
+                'bonus_verildi': True,
+                'streak': self.ardasik_gun_sayisi,
+                'bonus_xp': bonus_xp,
+                'streak_devam': True
+            }
+
+        # Streak koptu
+        else:
+            eski_streak = self.ardasik_gun_sayisi
+            self.ardasik_gun_sayisi = 1
+            self.son_giris_tarihi = bugun
+            self.save()
+            return {
+                'ilk_giris': False,
+                'bonus_verildi': True,
+                'streak': 1,
+                'bonus_xp': 20,
+                'streak_koptu': True,
+                'eski_streak': eski_streak
+            }
+
         
-        # En uzun streak güncelle
-        if self.ardasik_gun_sayisi > self.en_uzun_streak: 
-            self.en_uzun_streak = self.ardasik_gun_sayisi
-        
-        self.save()
-        
-        # Bonus XP hesapla (streak'e göre artan)
-        bonus_xp = 20 + min(self.ardasik_gun_sayisi * 2, 50)  # Max 70 XP
-        
-        return {
-            'ilk_giris': False,
-            'bonus_verildi': True,
-            'streak': self.ardasik_gun_sayisi,
-            'bonus_xp': bonus_xp,
-            'streak_devam': True
-        }
-    
-    # Streak koptu
-    else:
-        eski_streak = self.ardasik_gun_sayisi  # ✅ ÖNCEKİ STREAK'İ KAYDET
-        self.ardasik_gun_sayisi = 1
-        self.son_giris_tarihi = bugun
-        self.save()
-        
-        return {
-            'ilk_giris': False,
-            'bonus_verildi': True,
-            'streak': 1,
-            'bonus_xp': 20,
-            'streak_koptu': True,
-            'eski_streak': eski_streak  # ✅ DÜZELTİLDİ
-        }
-    
+    # PROFİL TEMASI
+    tema = models.CharField(
+        max_length=20,
+        default='mor',
+        verbose_name='Profil Teması',
+        choices=[
+            ('mor', '🟣 Mor'),
+            ('okyanus', '🔵 Okyanus'),
+            ('ates', '🔴 Ateş'),
+            ('orman', '🟢 Orman'),
+            ('gece', '🌙 Gece'),
+            ('gunbatimi', '🌅 Gün Batımı'),
+            ('altin', '⭐ Altın'),
+            ('pembe', '🌸 Pembe'),
+        ]
+    )
+
     @property
     def gunluk_siralama(self):
         """Günlük sıralamayı getir"""
@@ -414,7 +433,7 @@ def gunluk_giris_kontrol(self):
             aktif_mi=True,
             gunluk_puan__gt=self.gunluk_puan
         ).count() + 1
-    
+
     @property
     def haftalik_siralama(self):
         """Haftalık sıralamayı getir"""
@@ -422,7 +441,7 @@ def gunluk_giris_kontrol(self):
             aktif_mi=True,
             haftalik_puan__gt=self.haftalik_puan
         ).count() + 1
-    
+
     @property
     def aylik_siralama(self):
         """Aylık sıralamayı getir"""
@@ -430,7 +449,7 @@ def gunluk_giris_kontrol(self):
             aktif_mi=True,
             aylik_puan__gt=self.aylik_puan
         ).count() + 1
-    
+
     @property
     def genel_siralama(self):
         """Genel sıralamayı getir"""
@@ -438,35 +457,31 @@ def gunluk_giris_kontrol(self):
             aktif_mi=True,
             toplam_puan__gt=self.toplam_puan
         ).count() + 1
-    
+
     @property
     def genel_basari_orani(self):
-        """Genel başarı oranını hesapla"""
         if self.cozulen_soru_sayisi > 0:
             return round((self.toplam_dogru / self.cozulen_soru_sayisi) * 100, 2)
         return 0
-    
+
     @property
     def gunluk_basari_orani(self):
-        """Günlük başarı oranını hesapla"""
         if self.gunluk_cozulen > 0:
             return round((self.gunluk_dogru / self.gunluk_cozulen) * 100, 2)
         return 0
-    
+
     @property
     def haftalik_basari_orani(self):
-        """Haftalık başarı oranını hesapla"""
         if self.haftalik_cozulen > 0:
             return round((self.haftalik_dogru / self.haftalik_cozulen) * 100, 2)
         return 0
-    
+
     @property
     def aylik_basari_orani(self):
-        """Aylık başarı oranını hesapla"""
         if self.aylik_cozulen > 0:
             return round((self.aylik_dogru / self.aylik_cozulen) * 100, 2)
         return 0
-    
+
     def haftalik_sifirla(self):
         """ESKİ METOD - Artık reset_kontrolu() kullanılıyor"""
         self.reset_kontrolu()
@@ -984,6 +999,12 @@ class Bildirim(models.Model):
         ('seviye', 'Seviye Atlama'),
         ('basari', 'Özel Başarı'),
         ('sistem', 'Sistem Bildirimi'),
+        # ✅ YENİ
+        ('arkadas', 'Arkadaşlık'),
+        ('meydan_okuma', 'Meydan Okuma'),
+        ('streak', 'Streak'),
+        ('xp', 'XP Kazanıldı'),
+        ('gorev', 'Görev'),
     ]
     
     kullanici = models.ForeignKey(
@@ -1014,12 +1035,24 @@ class Bildirim(models.Model):
         default=False,
         verbose_name='Okundu mu'
     )
+    # ✅ YENİ - Silindi mi
+    silindi_mi = models.BooleanField(
+        default=False,
+        verbose_name='Silindi mi'
+    )
     iliskili_rozet = models.ForeignKey(
         'Rozet',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         verbose_name='İlişkili Rozet'
+    )
+    # ✅ YENİ - Link
+    link = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name='Yönlendirme Linki'
     )
     olusturma_tarihi = models.DateTimeField(
         auto_now_add=True,
@@ -1041,15 +1074,35 @@ class Bildirim(models.Model):
     
     @property
     def renk(self):
-        """Bildirim tipine göre renk"""
         renkler = {
-            'rozet': '#FFD700',
-            'liderlik': '#FF6B6B',
-            'seviye': '#4ECDC4',
-            'basari':  '#95E1D3',
-            'sistem': '#6C757D',
+            'rozet':         '#FFD700',
+            'liderlik':      '#FF6B6B',
+            'seviye':        '#4ECDC4',
+            'basari':        '#95E1D3',
+            'sistem':        '#6C757D',
+            'arkadas':       '#667eea',
+            'meydan_okuma':  '#ef4444',
+            'streak':        '#f59e0b',
+            'xp':            '#10b981',
+            'gorev':         '#8b5cf6',
         }
         return renkler.get(self.tip, '#6C757D')
+
+    @property
+    def renk_class(self):
+        renkler = {
+            'rozet':         'gold',
+            'liderlik':      'red',
+            'seviye':        'teal',
+            'basari':        'green',
+            'sistem':        'gray',
+            'arkadas':       'purple',
+            'meydan_okuma':  'danger',
+            'streak':        'orange',
+            'xp':            'green',
+            'gorev':         'violet',
+        }
+        return renkler.get(self.tip, 'gray')
 
 class Arkadaslik(models.Model):
     """Arkadaşlık İstekleri ve Bağlantılar"""
@@ -1138,3 +1191,199 @@ class Arkadaslik(models.Model):
             alan=kullanici,
             durum='beklemede'
         ).select_related('gonderen', 'gonderen__profil')
+
+
+# ==================== GÜNLÜK GÖREVLER ====================
+
+class GunlukGorevSablonu(models.Model):
+    """Günlük görev şablonları - Admin'den tanımlanır"""
+    
+    GOREV_TIPI_SECENEKLERI = [
+        ('soru_coz', 'Soru Çöz'),
+        ('dogru_cevap', 'Doğru Cevap Ver'),
+        ('bul_bakalim_oyna', 'Bul Bakalım Oyna'),
+        ('karsilasma_oyna', 'Karşılaşma Oyna'),
+        ('karsilasma_kazan', 'Karşılaşma Kazan'),
+        ('streak_koru', 'Streak Koru'),
+        ('farkli_ders', 'Farklı Dersten Soru Çöz'),
+    ]
+    
+    isim = models.CharField(max_length=200, verbose_name='Görev İsmi')
+    aciklama = models.TextField(verbose_name='Açıklama')
+    gorev_tipi = models.CharField(
+        max_length=30,
+        choices=GOREV_TIPI_SECENEKLERI,
+        verbose_name='Görev Tipi',
+        db_index=True
+    )
+    hedef_sayi = models.IntegerField(default=1, verbose_name='Hedef Sayı')
+    odul_xp = models.IntegerField(default=50, verbose_name='Ödül XP')
+    odul_puan = models.IntegerField(default=0, verbose_name='Ödül Puan')
+    icon = models.CharField(max_length=10, default='🎯', verbose_name='İkon')
+    aktif_mi = models.BooleanField(default=True, verbose_name='Aktif Mi', db_index=True)
+    zorluk = models.CharField(
+        max_length=10,
+        choices=[('kolay', 'Kolay'), ('orta', 'Orta'), ('zor', 'Zor')],
+        default='orta',
+        verbose_name='Zorluk'
+    )
+    
+    class Meta:
+        verbose_name = 'Günlük Görev Şablonu'
+        verbose_name_plural = 'Günlük Görev Şablonları'
+    
+    def __str__(self):
+        return f"{self.icon} {self.isim} (Hedef: {self.hedef_sayi})"
+
+
+class KullaniciGunlukGorev(models.Model):
+    """Kullanıcıya atanan günlük görevler"""
+    
+    profil = models.ForeignKey(
+        OgrenciProfili,
+        on_delete=models.CASCADE,
+        related_name='gunluk_gorevler',
+        verbose_name='Profil'
+    )
+    sablon = models.ForeignKey(
+        GunlukGorevSablonu,
+        on_delete=models.CASCADE,
+        verbose_name='Görev Şablonu'
+    )
+    tarih = models.DateField(
+        default=timezone.now,
+        verbose_name='Görev Tarihi',
+        db_index=True
+    )
+    mevcut_ilerleme = models.IntegerField(default=0, verbose_name='Mevcut İlerleme')
+    tamamlandi_mi = models.BooleanField(default=False, verbose_name='Tamamlandı mı', db_index=True)
+    tamamlanma_zamani = models.DateTimeField(null=True, blank=True, verbose_name='Tamamlanma Zamanı')
+    odul_alindi_mi = models.BooleanField(default=False, verbose_name='Ödül Alındı mı')
+    
+    class Meta:
+        verbose_name = 'Kullanıcı Günlük Görevi'
+        verbose_name_plural = 'Kullanıcı Günlük Görevleri'
+        unique_together = ['profil', 'sablon', 'tarih']
+        ordering = ['tamamlandi_mi', '-tarih']
+        indexes = [
+            models.Index(fields=['profil', 'tarih'], name='gorev_profil_tarih_idx'),
+            models.Index(fields=['profil', 'tamamlandi_mi'], name='gorev_profil_tamam_idx'),
+        ]
+    
+    def __str__(self):
+        durum = "✅" if self.tamamlandi_mi else "⏳"
+        return f"{durum} {self.profil.kullanici.username} - {self.sablon.isim}"
+    
+    @property
+    def ilerleme_yuzdesi(self):
+        if self.sablon.hedef_sayi == 0:
+            return 100
+        return min(100, int((self.mevcut_ilerleme / self.sablon.hedef_sayi) * 100))
+    
+    def ilerleme_guncelle(self, miktar=1):
+        """İlerlemeyi güncelle ve tamamlandıysa ödül ver"""
+        if self.tamamlandi_mi:
+            return False
+        
+        self.mevcut_ilerleme = min(
+            self.mevcut_ilerleme + miktar,
+            self.sablon.hedef_sayi
+        )
+        
+        if self.mevcut_ilerleme >= self.sablon.hedef_sayi:
+            self.tamamlandi_mi = True
+            self.tamamlanma_zamani = timezone.now()
+            self.save()
+            return True  # Tamamlandı
+        
+        self.save()
+        return False
+    
+    def odulu_ver(self):
+        """Ödülü kullanıcıya ver"""
+        if self.tamamlandi_mi and not self.odul_alindi_mi:
+            from profile.xp_helper import xp_ekle
+            
+            # XP ver
+            if self.sablon.odul_xp > 0:
+                xp_ekle(self.profil, self.sablon.odul_xp, f'Günlük görev: {self.sablon.isim}')
+            
+            # Puan ver
+            if self.sablon.odul_puan > 0:
+                self.profil.puan_ekle(self.sablon.odul_puan)
+            
+            self.odul_alindi_mi = True
+            self.save()
+            return True
+        return False
+
+
+# ==================== ÇALIŞMA TAKVİMİ ====================
+
+class CalismaKaydi(models.Model):
+    """Günlük çalışma kayıtları - Takvim için"""
+    
+    profil = models.ForeignKey(
+        OgrenciProfili,
+        on_delete=models.CASCADE,
+        related_name='calisma_kayitlari',
+        verbose_name='Profil'
+    )
+    tarih = models.DateField(verbose_name='Tarih', db_index=True)
+    cozulen_soru = models.IntegerField(default=0, verbose_name='Çözülen Soru')
+    dogru_sayisi = models.IntegerField(default=0, verbose_name='Doğru Sayısı')
+    yanlis_sayisi = models.IntegerField(default=0, verbose_name='Yanlış Sayısı')
+    kazanilan_xp = models.IntegerField(default=0, verbose_name='Kazanılan XP')
+    oynanan_oyun = models.IntegerField(default=0, verbose_name='Oynanan Oyun')
+    
+    class Meta:
+        verbose_name = 'Çalışma Kaydı'
+        verbose_name_plural = 'Çalışma Kayıtları'
+        unique_together = ['profil', 'tarih']
+        ordering = ['-tarih']
+        indexes = [
+            models.Index(fields=['profil', '-tarih'], name='calisma_profil_tarih_idx'),
+        ]
+    
+    def __str__(self):
+        return f"{self.profil.kullanici.username} - {self.tarih} - {self.cozulen_soru} soru"
+    
+    @property
+    def aktiflik_seviyesi(self):
+        """GitHub contribution grafiği için 0-4 arası seviye"""
+        if self.cozulen_soru == 0:
+            return 0
+        elif self.cozulen_soru < 5:
+            return 1
+        elif self.cozulen_soru < 15:
+            return 2
+        elif self.cozulen_soru < 30:
+            return 3
+        else:
+            return 4
+
+# ==================== XP KAZANIM GEÇMİŞİ ====================
+
+class XPGecmisi(models.Model):
+    """XP Kazanım Geçmişi"""
+    
+    profil = models.ForeignKey(
+        OgrenciProfili,
+        on_delete=models.CASCADE,
+        related_name='xp_gecmisi',
+        verbose_name='Profil'
+    )
+    miktar = models.IntegerField(verbose_name='XP Miktarı')
+    sebep = models.CharField(max_length=200, verbose_name='Sebep')
+    tarih = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Tarih')
+    
+    class Meta:
+        verbose_name = 'XP Geçmişi'
+        verbose_name_plural = 'XP Geçmişleri'
+        ordering = ['-tarih']
+        indexes = [
+            models.Index(fields=['profil', '-tarih'], name='xp_profil_tarih_idx'),
+        ]
+    
+    def __str__(self):
+        return f"{self.profil.kullanici.username} +{self.miktar} XP - {self.sebep}"

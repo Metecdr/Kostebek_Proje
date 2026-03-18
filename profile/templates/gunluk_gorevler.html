@@ -1,0 +1,698 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}🎯 Günlük Görevler{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px 0;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .gorev-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* HEADER */
+    .gorev-header {
+        background: white;
+        border-radius: 25px;
+        padding: 35px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    [data-theme="dark"] .gorev-header {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header-title {
+        font-size: 2.2rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 5px;
+    }
+
+    .header-subtitle {
+        color: #6c757d;
+        font-size: 1rem;
+        margin-bottom: 25px;
+    }
+
+    [data-theme="dark"] .header-subtitle { color: #a8b3cf !important; }
+
+    /* STATS ROW */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .stat-mini {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 15px;
+        padding: 18px;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    [data-theme="dark"] .stat-mini {
+        background: linear-gradient(135deg, #1e2749, #151b35) !important;
+        border: 1px solid #2d3454;
+    }
+
+    .stat-mini:hover { transform: translateY(-3px); }
+
+    .stat-mini-value {
+        font-size: 2rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-mini-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        font-weight: 600;
+    }
+
+    [data-theme="dark"] .stat-mini-label { color: #a8b3cf !important; }
+
+    /* GENEL İLERLEME */
+    .genel-ilerleme {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+
+    [data-theme="dark"] .genel-ilerleme {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ilerleme-baslik {
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 12px;
+        font-size: 1.1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    [data-theme="dark"] .ilerleme-baslik { color: #e5e7eb !important; }
+
+    .ilerleme-bar-bg {
+        background: #e9ecef;
+        border-radius: 15px;
+        height: 20px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    [data-theme="dark"] .ilerleme-bar-bg { background: #0f172a !important; }
+
+    .ilerleme-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 15px;
+        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ilerleme-bar-fill::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    /* GÖREV KARTLARI */
+    .gorevler-baslik {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .gorev-kart {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 18px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        border-left: 6px solid #667eea;
+        transition: all 0.3s ease;
+        animation: slideInRight 0.5s ease-out both;
+        position: relative;
+        overflow: hidden;
+    }
+
+    [data-theme="dark"] .gorev-kart {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+    }
+
+    .gorev-kart:nth-child(1) { animation-delay: 0.1s; }
+    .gorev-kart:nth-child(2) { animation-delay: 0.2s; }
+    .gorev-kart:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .gorev-kart:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(102,126,234,0.25);
+    }
+
+    .gorev-kart.tamamlandi {
+        border-left-color: #10b981;
+        background: linear-gradient(135deg, #f0fdf4, #ffffff) !important;
+        opacity: 0.9;
+    }
+
+    [data-theme="dark"] .gorev-kart.tamamlandi {
+        background: linear-gradient(135deg, #0d2b1f, #0a1f17) !important;
+        border-color: #10b981 !important;
+    }
+
+    .gorev-ust {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 18px;
+    }
+
+    .gorev-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        flex-shrink: 0;
+        box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        transition: transform 0.3s ease;
+    }
+
+    .gorev-kart:hover .gorev-icon { transform: rotate(10deg) scale(1.1); }
+
+    .gorev-kart.tamamlandi .gorev-icon {
+        background: linear-gradient(135deg, #10b981, #34d399);
+        box-shadow: 0 5px 15px rgba(16,185,129,0.3);
+    }
+
+    .gorev-bilgi { flex: 1; }
+
+    .gorev-isim {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 5px;
+    }
+
+    [data-theme="dark"] .gorev-isim { color: #e5e7eb !important; }
+
+    .gorev-aciklama {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 8px;
+    }
+
+    [data-theme="dark"] .gorev-aciklama { color: #a8b3cf !important; }
+
+    .gorev-odul {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .odul-badge {
+        padding: 4px 10px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .odul-xp {
+        background: linear-gradient(135deg, #ffd700, #ffa500);
+        color: white;
+    }
+
+    .odul-puan {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .zorluk-badge {
+        padding: 3px 10px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .zorluk-kolay { background: rgba(16,185,129,0.15); color: #10b981; }
+    .zorluk-orta { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .zorluk-zor { background: rgba(239,68,68,0.15); color: #ef4444; }
+
+    /* GÖREV İLERLEME BARI */
+    .gorev-ilerleme-bar-bg {
+        background: #e9ecef;
+        border-radius: 10px;
+        height: 12px;
+        overflow: hidden;
+        margin-bottom: 8px;
+    }
+
+    [data-theme="dark"] .gorev-ilerleme-bar-bg { background: #0f172a !important; }
+
+    .gorev-ilerleme-bar-fill {
+        height: 100%;
+        border-radius: 10px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gorev-kart.tamamlandi .gorev-ilerleme-bar-fill {
+        background: linear-gradient(90deg, #10b981, #34d399);
+    }
+
+    .gorev-ilerleme-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 600;
+    }
+
+    [data-theme="dark"] .gorev-ilerleme-text { color: #a8b3cf !important; }
+
+    /* TAMAMLANDI ROZET */
+    .tamamlandi-rozet {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, #10b981, #34d399);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        box-shadow: 0 3px 10px rgba(16,185,129,0.4);
+    }
+
+    /* ÖDÜL AL BUTONU */
+    .odul-al-btn {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #ffd700, #ffa500);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 5px 15px rgba(255,165,0,0.3);
+    }
+
+    .odul-al-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255,165,0,0.5);
+    }
+
+    .odul-alindi-btn {
+        width: 100%;
+        padding: 12px;
+        background: rgba(16,185,129,0.15);
+        color: #10b981;
+        border: 2px solid rgba(16,185,129,0.3);
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 1rem;
+        margin-top: 12px;
+        cursor: not-allowed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    /* SON 7 GÜN */
+    .son7gun-section {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-top: 25px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        animation: fadeInUp 0.6s ease-out 0.4s both;
+    }
+
+    [data-theme="dark"] .son7gun-section {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+    }
+
+    .son7gun-baslik {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    [data-theme="dark"] .son7gun-baslik { color: #e5e7eb !important; }
+
+    .gun-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+    }
+
+    .gun-kutu {
+        text-align: center;
+        padding: 10px 5px;
+        border-radius: 12px;
+        background: #f8f9fa;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .gun-kutu {
+        background: #1e2749 !important;
+    }
+
+    .gun-kutu.bugun {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #f0f4ff, #e8ecff);
+    }
+
+    [data-theme="dark"] .gun-kutu.bugun {
+        background: linear-gradient(135deg, #1e2749, #252d5c) !important;
+    }
+
+    .gun-adi {
+        font-size: 0.7rem;
+        color: #6c757d;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    [data-theme="dark"] .gun-adi { color: #a8b3cf !important; }
+
+    .gun-daire {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        margin: 0 auto 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        font-weight: 900;
+    }
+
+    .gun-daire.tamam {
+        background: linear-gradient(135deg, #10b981, #34d399);
+        color: white;
+        box-shadow: 0 3px 10px rgba(16,185,129,0.3);
+    }
+
+    .gun-daire.bos {
+        background: #e9ecef;
+        color: #adb5bd;
+    }
+
+    [data-theme="dark"] .gun-daire.bos {
+        background: #2d3454 !important;
+        color: #6b7280 !important;
+    }
+
+    .gun-oran {
+        font-size: 0.7rem;
+        color: #6c757d;
+        font-weight: 600;
+    }
+
+    [data-theme="dark"] .gun-oran { color: #a8b3cf !important; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .stats-row { grid-template-columns: 1fr; }
+        .gun-grid { gap: 5px; }
+        .gun-daire { width: 30px; height: 30px; font-size: 0.8rem; }
+        .header-title { font-size: 1.6rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="gorev-container">
+
+    <!-- HEADER -->
+    <div class="gorev-header">
+        <h1 class="header-title">🎯 Günlük Görevler</h1>
+        <p class="header-subtitle">Her gün 3 yeni görev seni bekliyor! Tamamla, XP kazan.</p>
+
+        <!-- STATS -->
+        <div class="stats-row">
+            <div class="stat-mini">
+                <div class="stat-mini-value">{{ tamamlanan_sayi }}/{{ toplam_sayi }}</div>
+                <div class="stat-mini-label">📋 Bugün Tamamlanan</div>
+            </div>
+            <div class="stat-mini">
+                <div class="stat-mini-value">+{{ toplam_xp }}</div>
+                <div class="stat-mini-label">⭐ Kazanılan XP</div>
+            </div>
+            <div class="stat-mini">
+                <div class="stat-mini-value">{{ profil.ardasik_gun_sayisi|default:0 }}</div>
+                <div class="stat-mini-label">🔥 Günlük Seri</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GENEL İLERLEME -->
+    {% if toplam_sayi > 0 %}
+    <div class="genel-ilerleme">
+        {% with oran=tamamlanan_sayi|floatformat:0 %}
+        <div class="ilerleme-baslik">
+            <span>📊 Günlük İlerleme</span>
+            <span style="color: #667eea;">{{ tamamlanan_sayi }}/{{ toplam_sayi }} Görev</span>
+        </div>
+        <div class="ilerleme-bar-bg">
+            <div class="ilerleme-bar-fill"
+                 style="width: 0%"
+                 data-width="{% widthratio tamamlanan_sayi toplam_sayi 100 %}%">
+            </div>
+        </div>
+        {% endwith %}
+
+        {% if tamamlanan_sayi == toplam_sayi %}
+        <div style="text-align:center; margin-top:15px; color:#10b981; font-weight:800; font-size:1.1rem;">
+            🎉 Tüm görevleri tamamladın! Harikasın!
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- GÖREVLER -->
+    <div class="gorevler-baslik">
+        <span>📋</span>
+        <span>Bugünün Görevleri</span>
+    </div>
+
+    {% for gorev in gorevler %}
+    <div class="gorev-kart {% if gorev.tamamlandi_mi %}tamamlandi{% endif %}"
+         id="gorev-{{ gorev.id }}">
+
+        {% if gorev.tamamlandi_mi %}
+        <div class="tamamlandi-rozet">
+            ✅ Tamamlandı
+        </div>
+        {% endif %}
+
+        <div class="gorev-ust">
+            <div class="gorev-icon">{{ gorev.sablon.icon }}</div>
+            <div class="gorev-bilgi">
+                <div class="gorev-isim">{{ gorev.sablon.isim }}</div>
+                <div class="gorev-aciklama">{{ gorev.sablon.aciklama }}</div>
+                <div class="gorev-odul">
+                    <span class="odul-badge odul-xp">⭐ +{{ gorev.sablon.odul_xp }} XP</span>
+                    {% if gorev.sablon.odul_puan > 0 %}
+                    <span class="odul-badge odul-puan">💎 +{{ gorev.sablon.odul_puan }} Puan</span>
+                    {% endif %}
+                    <span class="zorluk-badge zorluk-{{ gorev.sablon.zorluk }}">
+                        {% if gorev.sablon.zorluk == 'kolay' %}🟢{% elif gorev.sablon.zorluk == 'orta' %}🟡{% else %}🔴{% endif %}
+                        {{ gorev.sablon.get_zorluk_display }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- İLERLEME -->
+        <div class="gorev-ilerleme-bar-bg">
+            <div class="gorev-ilerleme-bar-fill"
+                 style="width: 0%"
+                 data-width="{{ gorev.ilerleme_yuzdesi }}%">
+            </div>
+        </div>
+        <div class="gorev-ilerleme-text">
+            <span>{{ gorev.mevcut_ilerleme }} / {{ gorev.sablon.hedef_sayi }}</span>
+            <span>{{ gorev.ilerleme_yuzdesi }}%</span>
+        </div>
+
+        <!-- ÖDÜL BUTONU -->
+        {% if gorev.tamamlandi_mi and not gorev.odul_alindi_mi %}
+        <button class="odul-al-btn" onclick="odulAl({{ gorev.id }}, this)">
+            🎁 Ödülü Al (+{{ gorev.sablon.odul_xp }} XP)
+        </button>
+        {% elif gorev.odul_alindi_mi %}
+        <div class="odul-alindi-btn">
+            ✅ Ödül Alındı
+        </div>
+        {% endif %}
+    </div>
+    {% empty %}
+    <div style="text-align:center; color:white; padding:40px; font-size:1.2rem; font-weight:700;">
+        😴 Bugün henüz görev atanmadı. Sayfayı yenile!
+    </div>
+    {% endfor %}
+
+    <!-- SON 7 GÜN -->
+    <div class="son7gun-section">
+        <div class="son7gun-baslik">
+            📅 Son 7 Gün Performansı
+        </div>
+        <div class="gun-grid">
+            {% for gun in son_7_gun_gorev %}
+            <div class="gun-kutu {% if gun.bugun %}bugun{% endif %}">
+                <div class="gun-adi">{{ gun.gun }}</div>
+                <div class="gun-daire {% if gun.tamamlanan > 0 %}tamam{% else %}bos{% endif %}">
+                    {% if gun.tamamlanan > 0 %}✓{% else %}·{% endif %}
+                </div>
+                <div class="gun-oran">
+                    {% if gun.toplam > 0 %}
+                        {{ gun.tamamlanan }}/{{ gun.toplam }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function odulAl(gorevId, btn) {
+    btn.disabled = true;
+    btn.textContent = '⏳ İşleniyor...';
+
+    fetch(`/gorev/${gorevId}/odul/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.mesaj, 'success');
+            btn.outerHTML = `
+                <div class="odul-alindi-btn">
+                    ✅ Ödül Alındı (+${data.xp} XP)
+                </div>
+            `;
+        } else {
+            showToast('Hata: ' + data.error, 'error');
+            btn.disabled = false;
+            btn.textContent = '🎁 Ödülü Al';
+        }
+    })
+    .catch(() => {
+        showToast('Bağlantı hatası!', 'error');
+        btn.disabled = false;
+    });
+}
+
+// İlerleme barları animasyonu
+window.addEventListener('load', function() {
+    document.querySelectorAll('[data-width]').forEach(bar => {
+        const w = bar.getAttribute('data-width');
+        setTimeout(() => { bar.style.width = w; }, 300);
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    showToast('🎯 Görevlerin hazır! Hadi başla!', 'info');
+});
+</script>
+{% endblock %}

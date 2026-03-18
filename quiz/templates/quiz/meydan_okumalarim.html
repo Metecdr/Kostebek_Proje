@@ -1,0 +1,723 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}⚔️ Meydan Okumalar{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px 0;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .meydan-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* HEADER */
+    .meydan-header {
+        background: white;
+        border-radius: 25px;
+        padding: 35px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    [data-theme="dark"] .meydan-header {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header-title {
+        font-size: 2.2rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 5px;
+    }
+
+    .header-subtitle {
+        color: #6c757d;
+        font-size: 1rem;
+    }
+
+    [data-theme="dark"] .header-subtitle { color: #a8b3cf !important; }
+
+    /* SEKME */
+    .sekme-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 15px;
+        padding: 8px;
+    }
+
+    .sekme-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: transparent;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .sekme-btn.aktif {
+        background: white;
+        color: #667eea;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .badge-count {
+        background: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 900;
+    }
+
+    /* KART */
+    .meydan-kart {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 15px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        border-left: 6px solid #667eea;
+        transition: all 0.3s ease;
+        animation: slideIn 0.5s ease-out both;
+    }
+
+    [data-theme="dark"] .meydan-kart {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+        border-left: 6px solid #667eea !important;
+    }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .meydan-kart:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(102,126,234,0.25);
+    }
+
+    .meydan-kart.gelen { border-left-color: #f59e0b; }
+    .meydan-kart.gonderilen { border-left-color: #667eea; }
+    .meydan-kart.gecmis-kazanildi { border-left-color: #10b981; }
+    .meydan-kart.gecmis-kaybedildi { border-left-color: #ef4444; }
+
+    .kart-ust {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .kullanici-avatar {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: white;
+        flex-shrink: 0;
+        box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+    }
+
+    .kullanici-bilgi { flex: 1; }
+
+    .kullanici-adi {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 3px;
+    }
+
+    [data-theme="dark"] .kullanici-adi { color: #e5e7eb !important; }
+
+    .kullanici-alt {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    [data-theme="dark"] .kullanici-alt { color: #a8b3cf !important; }
+
+    .durum-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 800;
+    }
+
+    .durum-beklemede { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .durum-kabul { background: rgba(16,185,129,0.15); color: #10b981; }
+    .durum-ret { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .durum-doldu { background: rgba(107,114,128,0.15); color: #6b7280; }
+
+    /* KART BİLGİLERİ */
+    .kart-bilgiler {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+
+    .bilgi-chip {
+        padding: 5px 12px;
+        border-radius: 10px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    [data-theme="dark"] .bilgi-chip {
+        background: #1e2749 !important;
+        color: #a8b3cf !important;
+    }
+
+    /* BUTONLAR */
+    .kart-butonlar {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-kabul {
+        flex: 1;
+        padding: 12px;
+        background: linear-gradient(135deg, #10b981, #34d399);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(16,185,129,0.3);
+    }
+
+    .btn-kabul:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(16,185,129,0.5);
+    }
+
+    .btn-reddet {
+        flex: 1;
+        padding: 12px;
+        background: linear-gradient(135deg, #ef4444, #f87171);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(239,68,68,0.3);
+    }
+
+    .btn-reddet:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(239,68,68,0.5);
+    }
+
+    .btn-iptal {
+        flex: 1;
+        padding: 12px;
+        background: rgba(107,114,128,0.15);
+        color: #6b7280;
+        border: 2px solid rgba(107,114,128,0.3);
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-iptal:hover {
+        background: rgba(239,68,68,0.1);
+        color: #ef4444;
+        border-color: rgba(239,68,68,0.3);
+    }
+
+    .btn-oyuna-git {
+        flex: 1;
+        padding: 12px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-oyuna-git:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102,126,234,0.5);
+        color: white;
+    }
+
+    /* SÜRE */
+    .sure-bar {
+        height: 4px;
+        background: #e9ecef;
+        border-radius: 5px;
+        margin-top: 12px;
+        overflow: hidden;
+    }
+
+    .sure-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444);
+        border-radius: 5px;
+        transition: width 0.3s ease;
+    }
+
+    .sure-text {
+        font-size: 0.78rem;
+        color: #6c757d;
+        margin-top: 5px;
+        text-align: right;
+    }
+
+    [data-theme="dark"] .sure-text { color: #a8b3cf !important; }
+
+    /* BOŞ DURUM */
+    .bos-durum {
+        text-align: center;
+        padding: 50px 20px;
+        color: white;
+    }
+
+    .bos-durum-icon {
+        font-size: 4rem;
+        margin-bottom: 15px;
+        opacity: 0.7;
+    }
+
+    .bos-durum-text {
+        font-size: 1.2rem;
+        font-weight: 700;
+        opacity: 0.9;
+        margin-bottom: 20px;
+    }
+
+    .btn-arkadas-bul {
+        display: inline-block;
+        padding: 12px 25px;
+        background: white;
+        color: #667eea;
+        border-radius: 15px;
+        font-weight: 800;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn-arkadas-bul:hover {
+        transform: translateY(-3px);
+        color: #667eea;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    /* SEKME İÇERİKLERİ */
+    .sekme-icerik { display: none; }
+    .sekme-icerik.aktif { display: block; }
+
+    @media (max-width: 768px) {
+        .kart-butonlar { flex-direction: column; }
+        .header-title { font-size: 1.6rem; }
+        .sekme-btn { font-size: 0.8rem; padding: 10px 8px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="meydan-container">
+
+    <!-- HEADER -->
+    <div class="meydan-header">
+        <h1 class="header-title">⚔️ Meydan Okumalar</h1>
+        <p class="header-subtitle">
+            Arkadaşlarınla yarış, zirvede yer kap!
+            {% if gelen_sayisi > 0 %}
+            <span style="color: #f59e0b; font-weight: 800;">
+                {{ gelen_sayisi }} bekleyen meydan okuma var!
+            </span>
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- SEKMELER -->
+    <div class="sekme-container">
+        <button class="sekme-btn aktif" onclick="sekmeDegistir('gelen', this)">
+            📥 Gelen
+            {% if gelen_sayisi > 0 %}
+            <span class="badge-count">{{ gelen_sayisi }}</span>
+            {% endif %}
+        </button>
+        <button class="sekme-btn" onclick="sekmeDegistir('gonderilen', this)">
+            📤 Gönderilen
+        </button>
+        <button class="sekme-btn" onclick="sekmeDegistir('gecmis', this)">
+            📋 Geçmiş
+        </button>
+    </div>
+
+    <!-- GELEN MEYDAN OKUMALAR -->
+    <div class="sekme-icerik aktif" id="sekme-gelen">
+        {% for meydan in gelen %}
+        <div class="meydan-kart gelen" id="meydan-{{ meydan.id }}">
+            <div class="kart-ust">
+                <div class="kullanici-avatar">
+                    {{ meydan.gonderen.username|first|upper }}
+                </div>
+                <div class="kullanici-bilgi">
+                    <div class="kullanici-adi">
+                        ⚔️ {{ meydan.gonderen.username }} sana meydan okuyor!
+                    </div>
+                    <div class="kullanici-alt">
+                        {{ meydan.olusturma_tarihi|timesince }} önce gönderildi
+                    </div>
+                </div>
+                <span class="durum-badge durum-beklemede">⏳ Bekliyor</span>
+            </div>
+
+            <div class="kart-bilgiler">
+                <span class="bilgi-chip">📚 {{ meydan.secilen_ders|title }}</span>
+                <span class="bilgi-chip">📝 {{ meydan.sinav_tipi }}</span>
+                <span class="bilgi-chip">⚡ 5 Soru</span>
+            </div>
+
+            <!-- SÜRE BARI -->
+            <div class="sure-bar">
+                <div class="sure-bar-fill" style="width: 80%"></div>
+            </div>
+            <div class="sure-text">⏰ 24 saat içinde yanıtla</div>
+
+            <div class="kart-butonlar" style="margin-top: 15px;">
+                <button class="btn-kabul" onclick="meydanKabul({{ meydan.id }}, this)">
+                    ✅ Kabul Et
+                </button>
+                <button class="btn-reddet" onclick="meydanReddet({{ meydan.id }}, this)">
+                    ❌ Reddet
+                </button>
+            </div>
+        </div>
+        {% empty %}
+        <div class="bos-durum">
+            <div class="bos-durum-icon">📭</div>
+            <div class="bos-durum-text">Bekleyen meydan okuma yok</div>
+            <a href="{% url 'arkadas_ara' %}" class="btn-arkadas-bul">
+                🔍 Arkadaş Bul
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- GÖNDERİLEN MEYDAN OKUMALAR -->
+    <div class="sekme-icerik" id="sekme-gonderilen">
+        {% for meydan in gonderilen %}
+        <div class="meydan-kart gonderilen" id="meydan-{{ meydan.id }}">
+            <div class="kart-ust">
+                <div class="kullanici-avatar">
+                    {{ meydan.alan.username|first|upper }}
+                </div>
+                <div class="kullanici-bilgi">
+                    <div class="kullanici-adi">
+                        📤 {{ meydan.alan.username }}'a meydan okuma gönderildi
+                    </div>
+                    <div class="kullanici-alt">
+                        {{ meydan.olusturma_tarihi|timesince }} önce gönderildi
+                    </div>
+                </div>
+                <span class="durum-badge durum-beklemede">⏳ Bekliyor</span>
+            </div>
+
+            <div class="kart-bilgiler">
+                <span class="bilgi-chip">📚 {{ meydan.secilen_ders|title }}</span>
+                <span class="bilgi-chip">📝 {{ meydan.sinav_tipi }}</span>
+                <span class="bilgi-chip">⚡ 5 Soru</span>
+            </div>
+
+            <div class="kart-butonlar" style="margin-top: 15px;">
+                <button class="btn-iptal" onclick="meydanIptal({{ meydan.id }}, this)">
+                    🚫 İptal Et
+                </button>
+            </div>
+        </div>
+        {% empty %}
+        <div class="bos-durum">
+            <div class="bos-durum-icon">📤</div>
+            <div class="bos-durum-text">Gönderilen meydan okuma yok</div>
+            <a href="{% url 'arkadaslarim' %}" class="btn-arkadas-bul">
+                👥 Arkadaşlarım
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- GEÇMİŞ -->
+    <div class="sekme-icerik" id="sekme-gecmis">
+        {% for meydan in gecmis %}
+        {% if meydan.gonderen == request.user %}
+            {% if meydan.durum == 'kabul_edildi' %}
+                <div class="meydan-kart gecmis-kazanildi">
+            {% else %}
+                <div class="meydan-kart gecmis-kaybedildi">
+            {% endif %}
+            <div class="kart-ust">
+                <div class="kullanici-avatar">
+                    {{ meydan.alan.username|first|upper }}
+                </div>
+                <div class="kullanici-bilgi">
+                    <div class="kullanici-adi">
+                        📤 {{ meydan.alan.username }}'a gönderildi
+                    </div>
+                    <div class="kullanici-alt">
+                        {{ meydan.olusturma_tarihi|date:"d.m.Y H:i" }}
+                    </div>
+                </div>
+                {% if meydan.durum == 'kabul_edildi' %}
+                    <span class="durum-badge durum-kabul">✅ Kabul Edildi</span>
+                {% elif meydan.durum == 'reddedildi' %}
+                    <span class="durum-badge durum-ret">❌ Reddedildi</span>
+                {% else %}
+                    <span class="durum-badge durum-doldu">⏰ Süre Doldu</span>
+                {% endif %}
+            </div>
+            <div class="kart-bilgiler">
+                <span class="bilgi-chip">📚 {{ meydan.secilen_ders|title }}</span>
+                <span class="bilgi-chip">📝 {{ meydan.sinav_tipi }}</span>
+            </div>
+            {% if meydan.durum == 'kabul_edildi' and meydan.oda %}
+            <div class="kart-butonlar" style="margin-top: 15px;">
+                <a href="{% url 'karsilasma_sonuc' meydan.oda.oda_id %}"
+                   class="btn-oyuna-git">
+                    🏆 Sonucu Gör
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+            {% if meydan.durum == 'kabul_edildi' %}
+                <div class="meydan-kart gecmis-kazanildi">
+            {% else %}
+                <div class="meydan-kart gecmis-kaybedildi">
+            {% endif %}
+            <div class="kart-ust">
+                <div class="kullanici-avatar">
+                    {{ meydan.gonderen.username|first|upper }}
+                </div>
+                <div class="kullanici-bilgi">
+                    <div class="kullanici-adi">
+                        📥 {{ meydan.gonderen.username }}'dan geldi
+                    </div>
+                    <div class="kullanici-alt">
+                        {{ meydan.olusturma_tarihi|date:"d.m.Y H:i" }}
+                    </div>
+                </div>
+                {% if meydan.durum == 'kabul_edildi' %}
+                    <span class="durum-badge durum-kabul">✅ Kabul Edildi</span>
+                {% elif meydan.durum == 'reddedildi' %}
+                    <span class="durum-badge durum-ret">❌ Reddedildi</span>
+                {% else %}
+                    <span class="durum-badge durum-doldu">⏰ Süre Doldu</span>
+                {% endif %}
+            </div>
+            <div class="kart-bilgiler">
+                <span class="bilgi-chip">📚 {{ meydan.secilen_ders|title }}</span>
+                <span class="bilgi-chip">📝 {{ meydan.sinav_tipi }}</span>
+            </div>
+            {% if meydan.durum == 'kabul_edildi' and meydan.oda %}
+            <div class="kart-butonlar" style="margin-top: 15px;">
+                <a href="{% url 'karsilasma_sonuc' meydan.oda.oda_id %}"
+                   class="btn-oyuna-git">
+                    🏆 Sonucu Gör
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% empty %}
+        <div class="bos-durum">
+            <div class="bos-durum-icon">📋</div>
+            <div class="bos-durum-text">Henüz geçmiş meydan okuma yok</div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function sekmeDegistir(sekme, btn) {
+    // Tüm sekmeleri kapat
+    document.querySelectorAll('.sekme-icerik').forEach(el => el.classList.remove('aktif'));
+    document.querySelectorAll('.sekme-btn').forEach(el => el.classList.remove('aktif'));
+
+    // Seçilen sekmeyi aç
+    document.getElementById(`sekme-${sekme}`).classList.add('aktif');
+    btn.classList.add('aktif');
+}
+
+function meydanKabul(meydanId, btn) {
+    btn.disabled = true;
+    btn.textContent = '⏳ İşleniyor...';
+
+    fetch(`/meydan-okuma/kabul/${meydanId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            showToast('✅ Meydan okuma kabul edildi! Yönlendiriliyorsun...', 'success');
+            setTimeout(() => {
+                window.location.href = data.redirect_url;
+            }, 1500);
+        } else {
+            showToast('❌ ' + data.message, 'error');
+            btn.disabled = false;
+            btn.textContent = '✅ Kabul Et';
+        }
+    })
+    .catch(() => {
+        showToast('Bağlantı hatası!', 'error');
+        btn.disabled = false;
+        btn.textContent = '✅ Kabul Et';
+    });
+}
+
+function meydanReddet(meydanId, btn) {
+    if (!confirm('Meydan okumayı reddetmek istediğine emin misin?')) return;
+
+    btn.disabled = true;
+    btn.textContent = '⏳ İşleniyor...';
+
+    fetch(`/meydan-okuma/reddet/${meydanId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Meydan okuma reddedildi.', 'info');
+            document.getElementById(`meydan-${meydanId}`).style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById(`meydan-${meydanId}`).remove();
+            }, 500);
+        } else {
+            showToast('❌ ' + data.message, 'error');
+            btn.disabled = false;
+            btn.textContent = '❌ Reddet';
+        }
+    })
+    .catch(() => {
+        showToast('Bağlantı hatası!', 'error');
+        btn.disabled = false;
+    });
+}
+
+function meydanIptal(meydanId, btn) {
+    if (!confirm('Meydan okumayı iptal etmek istediğine emin misin?')) return;
+
+    btn.disabled = true;
+    btn.textContent = '⏳ İşleniyor...';
+
+    fetch(`/meydan-okuma/iptal/${meydanId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Meydan okuma iptal edildi.', 'info');
+            document.getElementById(`meydan-${meydanId}`).style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById(`meydan-${meydanId}`).remove();
+            }, 500);
+        } else {
+            showToast('❌ ' + data.message, 'error');
+            btn.disabled = false;
+            btn.textContent = '🚫 İptal Et';
+        }
+    })
+    .catch(() => {
+        showToast('Bağlantı hatası!', 'error');
+        btn.disabled = false;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    {% if gelen_sayisi > 0 %}
+    showToast('⚔️ {{ gelen_sayisi }} bekleyen meydan okuma var!', 'warning');
+    {% endif %}
+});
+</script>
+{% endblock %}

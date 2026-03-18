@@ -7,7 +7,12 @@ from quiz.views_tabu import (
 )
 from quiz.views_karsilasma import (
     karsilasma_sinav_tipi_secimi, karsilasma_ders_secimi, karsilasma_oyun, 
-    karsilasma_durum_guncelle, karsilasma_sonuc, karsilasma_rakip_bul
+    karsilasma_durum_guncelle, karsilasma_sonuc, karsilasma_rakip_bul, 
+    meydan_okuma_gonder,
+    meydan_okuma_kabul,
+    meydan_okuma_reddet,
+    meydan_okumalarim,
+    meydan_okuma_iptal,
 )
 from quiz.views_bul_bakalim import (
     bul_bakalim_sinav_tipi_secimi, bul_bakalim_ders_secimi, bul_bakalim_basla, 
@@ -60,9 +65,16 @@ urlpatterns = [
     path('turnuva/mac/<uuid:mac_id>/hazir/', views_turnuva.turnuva_mac_hazir, name='turnuva_mac_hazir'),
     path('turnuva/mac/<uuid:mac_id>/bekleme/', views_turnuva.turnuva_mac_bekleme, name='turnuva_mac_bekleme'),
 
-    # ✅ YENİ URL'LER
+    # Turnuva Maç URL'leri (sıralama güncellemesi)
     path('turnuva/mac/<uuid:mac_id>/baslat/', views_turnuva.turnuva_mac_baslat, name='turnuva_mac_baslat'),
     path('turnuva/mac/<uuid:mac_id>/hazir/', views_turnuva.turnuva_mac_hazir, name='turnuva_mac_hazir'),
     path('turnuva/mac/<uuid:mac_id>/bekleme/', views_turnuva.turnuva_mac_bekleme, name='turnuva_mac_bekleme'),
     path('turnuva/mac/<uuid:mac_id>/sonuc/', views_turnuva.turnuva_mac_sonuc, name='turnuva_mac_sonuc'),
+
+    # ==================== MEYDAN OKUMA ====================
+    path('meydan-okuma/gonder/<int:kullanici_id>/', meydan_okuma_gonder, name='meydan_okuma_gonder'),
+    path('meydan-okuma/kabul/<int:meydan_id>/', meydan_okuma_kabul, name='meydan_okuma_kabul'),
+    path('meydan-okuma/reddet/<int:meydan_id>/', meydan_okuma_reddet, name='meydan_okuma_reddet'),
+    path('meydan-okuma/iptal/<int:meydan_id>/', meydan_okuma_iptal, name='meydan_okuma_iptal'),
+    path('meydan-okumalarim/', meydan_okumalarim, name='meydan_okumalarim'),
 ]

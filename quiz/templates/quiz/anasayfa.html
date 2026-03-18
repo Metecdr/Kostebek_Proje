@@ -1,528 +1,841 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Oyun Modları - Köstebek YKS{% endblock %}
+{% block title %}Ana Sayfa - Köstebek YKS{% endblock %}
 
 {% block extra_css %}
 <style>
-    body {
-        background:  linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-    }
-
-    .page-header {
-        text-align: center;
-        padding: 60px 0 40px;
-        animation: fadeInDown 0.8s ease-out;
-    }
-
-    .page-title {
-        font-size: 3. 5rem;
-        font-weight: 900;
-        color: white;
-        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-        margin-bottom: 15px;
-        letter-spacing: -1px;
-    }
-
-    .page-subtitle {
-        font-size: 1.3rem;
-        color: rgba(255, 255, 255, 0.9);
-        font-weight: 600;
-    }
-
+    /* ==================== ANİMASYONLAR ==================== */
     @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform:  translateY(-30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(-25px); }
+        to   { opacity: 1; transform: translateY(0); }
     }
-
-    .game-modes-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 30px;
-        margin-bottom: 60px;
-    }
-
-    .game-card {
-        background: white;
-        border-radius: 20px;
-        padding: 40px 30px;
-        text-align: center;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-        animation: fadeInUp 0.6s ease-out;
-        animation-fill-mode: both;
-    }
-
-    .game-card:nth-child(1) { animation-delay: 0.1s; }
-    .game-card:nth-child(2) { animation-delay: 0.2s; }
-    .game-card:nth-child(3) { animation-delay: 0.3s; }
-
     @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(40px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(30px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInLeft {
+        from { opacity: 0; transform: translateX(-25px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeInRight {
+        from { opacity: 0; transform: translateX(25px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes countUp {
+        from { opacity: 0; transform: scale(0.5); }
+        to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes shimmer {
+        0%   { background-position: -200% center; }
+        100% { background-position:  200% center; }
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,107,107,0.4); }
+        50%       { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(255,107,107,0); }
+    }
+    @keyframes fireFlicker {
+        0%,100% { transform: scale(1) rotate(-2deg); }
+        50%     { transform: scale(1.15) rotate(2deg); }
+    }
+    @keyframes float {
+        0%,100% { transform: translateY(0); }
+        50%     { transform: translateY(-8px); }
+    }
+    @keyframes glowPulse {
+        0%,100% { box-shadow: 0 0 15px rgba(102,126,234,0.3); }
+        50%      { box-shadow: 0 0 30px rgba(102,126,234,0.7); }
     }
 
-    .game-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left:  -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        transition: left 0.5s;
+    .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(25px);
+        transition: opacity 0.55s ease, transform 0.55s ease;
     }
+    .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
 
-    .game-card:hover::before {
-        left: 100%;
-    }
+    /* ==================== LAYOUT ==================== */
+    .anasayfa-container { max-width: 1200px; margin: 0 auto; padding: 30px 20px 60px; }
 
-    .game-card:hover {
-        transform: translateY(-15px) scale(1.02);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    }
-
-    .game-icon {
-        font-size: 5rem;
-        margin-bottom:  20px;
-        display: inline-block;
-        animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-        0%, 100% {
-            transform: translateY(0);
-        }
-        50% {
-            transform: translateY(-10px);
-        }
-    }
-
-    .game-card:hover .game-icon {
-        animation: spin 0.6s ease-in-out;
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg) scale(1);
-        }
-        50% {
-            transform: rotate(180deg) scale(1.2);
-        }
-        100% {
-            transform: rotate(360deg) scale(1);
-        }
-    }
-
-    .game-title {
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: #2c3e50;
-        margin-bottom: 15px;
-    }
-
-    .game-description {
-        color: #7f8c8d;
-        font-size: 1rem;
-        margin-bottom: 25px;
-        line-height: 1.6;
-    }
-
-    .game-stats {
-        display: flex;
-        justify-content: space-around;
-        margin-bottom: 25px;
-        padding: 15px;
-        background: #f8f9fa;
-        border-radius: 10px;
-    }
-
-    .stat-item {
-        text-align:  center;
-    }
-
-    .stat-value {
-        font-size: 1.5rem;
-        font-weight:  800;
-        color: #667eea;
-        display: block;
-    }
-
-    .stat-label {
-        font-size: 0.8rem;
-        color: #95a5a6;
-        text-transform: uppercase;
-    }
-
-    .game-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        padding: 15px 40px;
-        border-radius: 50px;
-        font-size:  1.1rem;
-        font-weight:  700;
-        cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        position: relative;
-        overflow:  hidden;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-    .game-btn::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-    }
-
-    .game-btn:hover::before {
-        width: 300px;
-        height: 300px;
-    }
-
-    .game-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.6);
-    }
-
-    .game-btn:active {
-        transform: translateY(-1px);
-    }
-
-    .stats-section {
-        background: white;
-        border-radius: 20px;
-        padding: 40px;
-        box-shadow:  0 10px 40px rgba(0, 0, 0, 0.1);
-        animation: fadeInUp 0.8s ease-out 0.4s;
-        animation-fill-mode: both;
-    }
-
-    .stats-header {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 30px;
-    }
-
-    .stats-header h4 {
-        font-size: 1.8rem;
-        font-weight:  800;
-        color: #2c3e50;
-        margin:  0;
-    }
-
-    .stats-icon {
-        font-size: 2rem;
-        color: #667eea;
-    }
-
-    .stats-grid {
+    /* ==================== HERO ==================== */
+    .hero-section {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 25px;
+        margin-bottom: 35px;
+        animation: fadeInDown 0.6s ease-out both;
     }
-
-    .stat-card {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 25px;
-        border-radius:  15px;
-        text-align: center;
-        transition: all 0.3s;
-        border: 2px solid transparent;
+    .hero-hosgeldin {
+        font-size: 0.95rem;
+        color: rgba(255,255,255,0.7);
+        font-weight: 700;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
-
-    .stat-card:hover {
-        transform: translateY(-5px);
-        border-color: #667eea;
-        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
-    }
-
-    .stat-card-value {
-        font-size: 2. 5rem;
+    .hero-baslik {
+        font-size: 2.4rem;
         font-weight: 900;
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        margin: 0 0 10px;
+        text-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        line-height: 1.2;
+    }
+    .hero-baslik span {
+        background: linear-gradient(135deg, #FFD700, #FFA500);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        margin-bottom: 10px;
     }
-
-    .stat-card-label {
-        color: #7f8c8d;
+    .hero-altyazi {
+        color: rgba(255,255,255,0.8);
+        font-size: 1rem;
         font-weight: 600;
-        font-size: 0.95rem;
+        margin: 0;
     }
 
-    .badge-container {
+    /* STREAK BADGE */
+    .streak-hero-badge {
+        background: linear-gradient(135deg, #FF6B6B, #EE5A6F);
+        border-radius: 20px;
+        padding: 18px 24px;
+        text-align: center;
+        color: white;
+        font-weight: 900;
+        box-shadow: 0 8px 25px rgba(255,107,107,0.4);
+        animation: pulse 2.5s infinite;
+        white-space: nowrap;
+        min-width: 120px;
+    }
+    .streak-hero-sayi { font-size: 2.5rem; line-height: 1; display: block; }
+    .streak-hero-label { font-size: 0.75rem; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; display: block; }
+    .streak-hero-icon { font-size: 1.8rem; display: block; animation: fireFlicker 1.5s infinite; }
+
+    /* ==================== QUICK STATS ==================== */
+    .quick-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-bottom: 35px;
+    }
+    .qs-kart {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 18px;
+        padding: 18px 15px;
+        text-align: center;
+        transition: all 0.3s;
+        cursor: default;
+        animation: fadeInUp 0.5s ease-out both;
+    }
+    .qs-kart:hover {
+        background: rgba(255,255,255,0.18);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .qs-icon { font-size: 1.8rem; margin-bottom: 8px; display: block; }
+    .qs-deger {
+        font-size: 1.9rem;
+        font-weight: 900;
+        color: white;
+        display: block;
+        animation: countUp 0.5s ease-out both;
+    }
+    .qs-label {
+        font-size: 0.72rem;
+        color: rgba(255,255,255,0.65);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 4px;
+        display: block;
+    }
+
+    /* ==================== ANA GRID ==================== */
+    .ana-grid {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 25px;
+        align-items: start;
+    }
+
+    /* ==================== OYUN KARTLARI ==================== */
+    .bolum-baslik {
+        color: white;
+        font-size: 1.3rem;
+        font-weight: 900;
+        margin-bottom: 18px;
         display: flex;
+        align-items: center;
         gap: 10px;
+    }
+    .bolum-baslik::after {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: linear-gradient(90deg, rgba(255,255,255,0.25), transparent);
+        border-radius: 2px;
+    }
+
+    .oyun-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 25px;
+    }
+
+    .oyun-kart {
+        background: white;
+        border-radius: 20px;
+        padding: 24px 20px;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        display: block;
+        border: 3px solid transparent;
+        animation: fadeInUp 0.5s ease-out both;
+        cursor: pointer;
+    }
+    .oyun-kart::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        transition: left 0.5s;
+    }
+    .oyun-kart:hover::before { left: 100%; }
+    .oyun-kart:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        border-color: rgba(102,126,234,0.3);
+        text-decoration: none;
+    }
+    .oyun-kart.karsilasma { border-top: 5px solid #667eea; }
+    .oyun-kart.bulbakalim { border-top: 5px solid #10b981; }
+    .oyun-kart.tabu       { border-top: 5px solid #f59e0b; }
+    .oyun-kart.turnuva    { border-top: 5px solid #ef4444; }
+
+    .oyun-kart-icon {
+        font-size: 3rem;
+        margin-bottom: 12px;
+        display: block;
+        animation: float 3s ease-in-out infinite;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .oyun-kart:hover .oyun-kart-icon { transform: scale(1.25) rotate(10deg); animation: none; }
+
+    .oyun-kart-isim {
+        font-size: 1.05rem;
+        font-weight: 900;
+        color: #1a1a2e;
+        margin-bottom: 6px;
+    }
+    .oyun-kart-aciklama {
+        font-size: 0.78rem;
+        color: #6b7280;
+        line-height: 1.5;
+        margin-bottom: 14px;
+        min-height: 36px;
+    }
+
+    .oyun-kart-stats {
+        display: flex;
+        justify-content: space-around;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 14px;
+    }
+    .oyun-stat-item { text-align: center; }
+    .oyun-stat-deger { font-size: 1.1rem; font-weight: 900; color: #667eea; display: block; }
+    .oyun-stat-label { font-size: 0.65rem; color: #9ca3af; text-transform: uppercase; }
+
+    .oyun-kart-badges {
+        display: flex;
+        gap: 6px;
         justify-content: center;
         flex-wrap: wrap;
-        margin-top: 15px;
+        margin-bottom: 14px;
     }
+    .oyun-badge {
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 800;
+    }
+    .badge-hot  { background: linear-gradient(135deg, #ff9500, #ff5e3a); color: white; animation: pulse 2s infinite; }
+    .badge-new  { background: linear-gradient(135deg, #ff6b6b, #ee5a6f); color: white; }
+    .badge-cool { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+    .badge-fun  { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
 
-    .game-badge {
-        background: linear-gradient(135deg, #ffd700, #ffed4e);
-        color: #2c3e50;
-        padding: 5px 15px;
+    .oyun-kart-btn {
+        display: block;
+        width: 100%;
+        padding: 11px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    .oyun-kart-btn::after {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 0; height: 0;
+        background: rgba(255,255,255,0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.4s, height 0.4s;
+    }
+    .oyun-kart-btn:active::after { width: 200px; height: 200px; }
+    .btn-karsilasma { background: linear-gradient(135deg, #667eea, #764ba2); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
+    .btn-bulbakalim { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 12px rgba(16,185,129,0.4); }
+    .btn-tabu       { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 12px rgba(245,158,11,0.4); }
+    .btn-turnuva    { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 12px rgba(239,68,68,0.4); }
+    .oyun-kart-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+    /* DARK MODE - oyun kartları */
+    [data-theme="dark"] .oyun-kart { background: linear-gradient(145deg,#1e2749,#181f3a) !important; border-color: #2d3454 !important; }
+    [data-theme="dark"] .oyun-kart.karsilasma { border-top-color: #667eea !important; }
+    [data-theme="dark"] .oyun-kart.bulbakalim { border-top-color: #10b981 !important; }
+    [data-theme="dark"] .oyun-kart.tabu       { border-top-color: #f59e0b !important; }
+    [data-theme="dark"] .oyun-kart.turnuva    { border-top-color: #ef4444 !important; }
+    [data-theme="dark"] .oyun-kart-isim { color: #fff !important; -webkit-text-fill-color: #fff !important; background: none !important; }
+    [data-theme="dark"] .oyun-kart-aciklama { color: #9ca8c5 !important; }
+    [data-theme="dark"] .oyun-kart-stats { background: rgba(255,255,255,0.05) !important; }
+    [data-theme="dark"] .oyun-stat-deger { color: #a78bfa !important; }
+
+    /* ==================== SAĞ KOLON - WİDGET'LAR ==================== */
+    .widget-stack { display: flex; flex-direction: column; gap: 16px; }
+
+    /* GENEL WİDGET */
+    .widget {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255,255,255,0.15);
         border-radius: 20px;
+        padding: 22px;
+        animation: fadeInRight 0.5s ease-out both;
+    }
+    .widget-baslik {
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 900;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* GÜNLÜK HEDEF WİDGET */
+    .hedef-widget {}
+    .hedef-progress-wrap {
+        background: rgba(255,255,255,0.12);
+        border-radius: 14px;
+        padding: 14px;
+        margin-bottom: 12px;
+    }
+    .hedef-ust {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .hedef-isim { color: rgba(255,255,255,0.85); font-size: 0.82rem; font-weight: 700; }
+    .hedef-yuzde { color: white; font-weight: 900; font-size: 0.9rem; }
+    .hedef-bar-bg {
+        background: rgba(0,0,0,0.2);
+        border-radius: 8px;
+        height: 10px;
+        overflow: hidden;
+    }
+    .hedef-bar-fill {
+        height: 100%;
+        border-radius: 8px;
+        transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+        position: relative;
+        overflow: hidden;
+    }
+    .hedef-bar-fill::after {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        animation: shimmer 2s infinite;
+        background-size: 200% 100%;
+    }
+    .hedef-gorev-bar { background: linear-gradient(90deg, #f59e0b, #d97706); }
+    .hedef-basari-bar { background: linear-gradient(90deg, #10b981, #059669); }
+    .hedef-xp-bar    { background: linear-gradient(90deg, #667eea, #764ba2); }
+
+    .hedef-buton {
+        display: block;
+        text-align: center;
+        padding: 10px;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 12px;
+        color: white;
+        font-weight: 700;
+        font-size: 0.82rem;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    .hedef-buton:hover { background: rgba(255,255,255,0.25); color: white; transform: translateY(-2px); }
+
+    /* LİDERLİK WİDGET */
+    .liderlik-widget {}
+    .liderlik-sira-wrap {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: rgba(255,255,255,0.12);
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+    .liderlik-sira-no {
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #FFD700;
+        text-shadow: 0 2px 10px rgba(255,215,0,0.5);
+        line-height: 1;
+        min-width: 55px;
+        text-align: center;
+    }
+    .liderlik-sira-bilgi { flex: 1; }
+    .liderlik-sira-label { color: rgba(255,255,255,0.7); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+    .liderlik-puan { color: white; font-weight: 900; font-size: 1rem; margin-top: 3px; }
+
+    /* SON AKTIVITE */
+    .aktivite-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 12px;
+        margin-bottom: 8px;
+        transition: all 0.2s;
+    }
+    .aktivite-item:hover { background: rgba(255,255,255,0.12); transform: translateX(4px); }
+    .aktivite-item:last-child { margin-bottom: 0; }
+    .aktivite-icon {
+        width: 36px; height: 36px;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+    .aktivite-icon.karsilasma { background: rgba(102,126,234,0.25); }
+    .aktivite-icon.tabu       { background: rgba(245,158,11,0.25); }
+    .aktivite-icon.bulbakalim { background: rgba(16,185,129,0.25); }
+    .aktivite-isim { color: rgba(255,255,255,0.85); font-size: 0.82rem; font-weight: 700; }
+    .aktivite-deger { color: rgba(255,255,255,0.55); font-size: 0.72rem; margin-top: 2px; }
+    .aktivite-kazanilan { margin-left: auto; color: #FFD700; font-size: 0.8rem; font-weight: 800; white-space: nowrap; }
+
+    /* MAĞAZA CTA */
+    .magaza-cta {
+        background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,165,0,0.15));
+        border: 1px solid rgba(255,215,0,0.3);
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+        animation: fadeInRight 0.5s ease-out 0.4s both;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .magaza-cta:hover { background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,165,0,0.25)); transform: translateY(-3px); }
+    .magaza-cta-icon { font-size: 2.5rem; display: block; margin-bottom: 8px; animation: float 3s ease-in-out infinite; }
+    .magaza-cta-baslik { color: #FFD700; font-size: 1rem; font-weight: 900; margin-bottom: 4px; }
+    .magaza-cta-text { color: rgba(255,255,255,0.7); font-size: 0.78rem; font-weight: 600; margin-bottom: 14px; }
+    .magaza-cta-puan {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        color: #1a1a2e;
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-weight: 900;
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 12px rgba(255,215,0,0.3);
+    }
+    .magaza-cta-btn {
+        display: block;
+        padding: 10px;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        color: #1a1a2e;
+        border-radius: 12px;
+        font-weight: 900;
         font-size: 0.85rem;
-        font-weight:  700;
-        box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3);
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(255,215,0,0.3);
     }
+    .magaza-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,215,0,0.5); color: #1a1a2e; }
 
-    .badge-new {
-        background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
-        color: white;
+    /* ==================== RESPONSIVE ==================== */
+    @media(max-width: 992px) {
+        .ana-grid { grid-template-columns: 1fr; }
+        .widget-stack { display: grid; grid-template-columns: 1fr 1fr; }
+        .magaza-cta { grid-column: 1 / -1; }
     }
-
-    .badge-hot {
-        background: linear-gradient(135deg, #ff9500, #ff5e3a);
-        color: white;
-        animation: pulse 2s infinite;
+    @media(max-width: 768px) {
+        .quick-stats { grid-template-columns: repeat(2, 1fr); }
+        .oyun-grid   { grid-template-columns: 1fr; }
+        .hero-baslik { font-size: 1.8rem; }
+        .widget-stack { grid-template-columns: 1fr; }
+        .hero-section { grid-template-columns: 1fr; }
+        .streak-hero-badge { display: none; }
     }
-
-    @keyframes pulse {
-        0%, 100% {
-            transform:  scale(1);
-        }
-        50% {
-            transform:  scale(1.05);
-        }
-    }
-
-    @media (max-width: 768px) {
-        .page-title {
-            font-size: 2.5rem;
-        }
-
-        .page-subtitle {
-            font-size: 1.1rem;
-        }
-
-        .game-modes-container {
-            grid-template-columns: 1fr;
-        }
-
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .game-card {
-            padding: 30px 20px;
-        }
+    @media(max-width: 480px) {
+        .quick-stats { grid-template-columns: repeat(2, 1fr); }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1 class="page-title">🎮 Oyun Modları</h1>
-    <p class="page-subtitle">Eğlenerek öğren, yarışarak kazan!</p>
-</div>
+<div class="anasayfa-container">
 
-<div class="container">
-    <div class="game-modes-container">
-        <!-- KARŞILAŞMA MODU -->
-        <div class="game-card">
-            <div class="game-icon">⚔️</div>
-            <h3 class="game-title">Karşılaşma</h3>
-            <p class="game-description">
-                Rakibinle 1v1 yarış!  Test formatındaki sorulara kim daha çok doğru cevap verirse o kazanır.
+    <!-- HERO -->
+    <div class="hero-section">
+        <div>
+            <div class="hero-hosgeldin">👋 Hoş geldin</div>
+            <h1 class="hero-baslik">
+                Merhaba, <span>{{ request.user.username }}</span>!<br>
+                Ne oynamak istersin?
+            </h1>
+            <p class="hero-altyazi">
+                🎓 Eğlenerek öğren, yarışarak kazan, seviye atla!
             </p>
-            
-            <div class="badge-container">
-                <span class="game-badge badge-hot">🔥 Popüler</span>
-                <span class="game-badge">⚡ Hızlı</span>
-            </div>
-
-            <div class="game-stats">
-                <div class="stat-item">
-                    <span class="stat-value">5</span>
-                    <span class="stat-label">Soru</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">⏱️</span>
-                    <span class="stat-label">Hızlı</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">+1</span>
-                    <span class="stat-label">Puan</span>
-                </div>
-            </div>
-
-            <a href="{% url 'karsilasma_sinav_tipi_secimi' %}" class="game-btn">
-                <span style="position: relative; z-index: 1;">Rakip Bul →</span>
-            </a>
         </div>
-
-        <!-- BUL BAKALIM MODU -->
-        <div class="game-card">
-            <div class="game-icon">💡</div>
-            <h3 class="game-title">Bul Bakalım</h3>
-            <p class="game-description">
-                5 adet çoktan seçmeli soruyu doğru cevaplayarak puan kazan. 3 veya daha fazla doğru = 1 puan! 
-            </p>
-            
-            <div class="badge-container">
-                <span class="game-badge badge-new">🆕 Yeni</span>
-                <span class="game-badge">🎯 Pratik</span>
-            </div>
-
-            <div class="game-stats">
-                <div class="stat-item">
-                    <span class="stat-value">5</span>
-                    <span class="stat-label">Soru</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">90s</span>
-                    <span class="stat-label">Süre</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">+1</span>
-                    <span class="stat-label">Puan</span>
-                </div>
-            </div>
-
-            <a href="{% url 'bul_bakalim_sinav_tipi_secimi' %}" class="game-btn">
-                <span style="position: relative; z-index: 1;">Başla →</span>
-            </a>
+        {% if profil.ardasik_gun_sayisi >= 1 %}
+        <div class="streak-hero-badge">
+            <span class="streak-hero-icon">🔥</span>
+            <span class="streak-hero-sayi">{{ profil.ardasik_gun_sayisi }}</span>
+            <span class="streak-hero-label">Günlük Streak</span>
         </div>
+        {% endif %}
+    </div>
 
-        <!-- TABU OYUNU -->
-        <div class="game-card">
-            <div class="game-icon">🎭</div>
-            <h3 class="game-title">Tabu</h3>
-            <p class="game-description">
-                Yasaklı kelimeleri kullanmadan kelimeyi anlat!  Takım oyunu ile arkadaşlarınla eğlen.
-            </p>
-            
-            <div class="badge-container">
-                <span class="game-badge">👥 Çok Oyunculu</span>
-                <span class="game-badge">🎉 Eğlenceli</span>
-            </div>
-
-            <div class="game-stats">
-                <div class="stat-item">
-                    <span class="stat-value">10</span>
-                    <span class="stat-label">Kelime</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">60s</span>
-                    <span class="stat-label">Tur</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">2v2</span>
-                    <span class="stat-label">Takım</span>
-                </div>
-            </div>
-
-            <a href="{% url 'tabu_anasayfa' %}" class="game-btn">
-                <span style="position: relative; z-index: 1;">Oyna →</span>
-            </a>
+    <!-- QUICK STATS -->
+    <div class="quick-stats">
+        <div class="qs-kart animate-on-scroll" style="animation-delay:0.05s;">
+            <span class="qs-icon">⚡</span>
+            <span class="qs-deger counter" data-hedef="{{ profil.toplam_puan|default:0 }}">0</span>
+            <span class="qs-label">Toplam Puan</span>
+        </div>
+        <div class="qs-kart animate-on-scroll" style="animation-delay:0.1s;">
+            <span class="qs-icon">📝</span>
+            <span class="qs-deger counter" data-hedef="{{ profil.cozulen_soru_sayisi|default:0 }}">0</span>
+            <span class="qs-label">Çözülen Soru</span>
+        </div>
+        <div class="qs-kart animate-on-scroll" style="animation-delay:0.15s;">
+            <span class="qs-icon">🎮</span>
+            <span class="qs-deger counter" data-hedef="{{ toplam_oyun|default:0 }}">0</span>
+            <span class="qs-label">Oynanan Oyun</span>
+        </div>
+        <div class="qs-kart animate-on-scroll" style="animation-delay:0.2s;">
+            <span class="qs-icon">🎯</span>
+            <span class="qs-deger" id="basariOrani">{{ basari_orani|default:0 }}%</span>
+            <span class="qs-label">Başarı Oranı</span>
         </div>
     </div>
 
-    <!-- İSTATİSTİKLER -->
-    {% if profil %}
-    <div class="stats-section">
-        <div class="stats-header">
-            <span class="stats-icon">📊</span>
-            <h4>İstatistiklerim</h4>
+    <!-- ANA GRID -->
+    <div class="ana-grid">
+
+        <!-- SOL: OYUN KARTLARI -->
+        <div>
+            <div class="bolum-baslik animate-on-scroll">🎮 Oyun Modları</div>
+            <div class="oyun-grid">
+
+                <!-- KARŞILAŞMA -->
+                <a href="{% url 'karsilasma_sinav_tipi_secimi' %}" class="oyun-kart karsilasma animate-on-scroll" style="animation-delay:0.1s;">
+                    <span class="oyun-kart-icon">⚔️</span>
+                    <div class="oyun-kart-isim">Karşılaşma</div>
+                    <div class="oyun-kart-aciklama">Rakibinle 1v1 yarış! Kim daha çok doğru cevap verirse o kazanır.</div>
+                    <div class="oyun-kart-badges">
+                        <span class="oyun-badge badge-hot">🔥 Popüler</span>
+                        <span class="oyun-badge badge-cool">⚡ Hızlı</span>
+                    </div>
+                    <div class="oyun-kart-stats">
+                        <div class="oyun-stat-item">
+                            <span class="oyun-stat-deger">5</span>
+                            <span class="oyun-stat-label">Soru</span>
+                        </div>
+                        <div class="oyun-stat-item">
+                            <span class="oyun-stat-deger">1v1</span>
+                            <span class="oyun-stat-label">Mod</span>
+                        </div>
+                        <div class="oyun-stat-item">
+                            <span class="oyun-stat-deger">{{ karsilasma_ist.oynanan_oyun_sayisi|default:0 }}</span>
+                            <span class="oyun-stat-label">Oynadın</span>
+                        </div>
+                    </div>
+                    <span class="oyun-kart-btn btn-karsilasma">Rakip Bul →</span>
+                </a>
+
+                <!-- BUL BAKALIM -->
+                <a href="{% url 'bul_bakalim_sinav_tipi_secimi' %}" class="oyun-kart bulbakalim animate-on-scroll" style="animation-delay:0.15s;">
+                    <span class="oyun-kart-icon">💡</span>
+                    <div class="oyun-kart-isim">Bul Bakalım</div>
+                    <div class="oyun-kart-aciklama">5 soru, 90 saniye! Doğru cevapla puan kazan.</div>
+                    <div class="oyun-kart-badges">
+                        <span class="oyun-badge badge-new">🆕 Yeni</span>
+                        <span class="oyun-badge badge-cool">🎯 Pratik</span>
+                    </div>
+                    <div class="oyun-kart-stats">
+                        <div class="oyun-stat-item">
+                            <span class="oyun-stat-deger">5</span>
+                            <span class="oyun-stat-label">Soru</span>
+                        </div>
+                        <div class="oyun-stat-item">
+                            <span class="oyun-stat-deger">90s</span>
+                            <span class="oyun-stat-label">Süre</span>
+                        </div>
+                        <div class="oyun-stat-item">
+                            <span class="oyun-stat-deger">{{ bulbakalim_ist.oynanan_oyun_sayisi|default:0 }}</span>
+                            <span class="oyun-stat-label">Oynadın</span>
+                        </div>
+                    </div>
+                    <span class="oyun-kart-btn btn-bulbakalim">Başla →</span>
+                </a>
+
+                <!-- TABU -->
+                <a href="{% url 'tabu_anasayfa' %}" class="oyun-kart tabu animate-on-scroll" style="animation-delay:0.2s;">
+                    <span class="oyun-kart-icon">🎭</span>
+                    <div class="oyun-kart-isim">Tabu</div>
+                    <div class="oyun-kart-aciklama">Yasaklı kelimeleri kullanmadan anlat! Takım oyunu.</div>
+                    <div class="oyun-kart-badges">
+                        <span class="oyun-badge badge-fun">👥 Çok Oyunculu</span>
+                        <span class="oyun-badge badge-fun">🎉 Eğlenceli</span>
+                    </div>
+                    <div class="oyun-kart-stats">
+                        <div class="oyun-stat-item">
+                            <span class="oyun-stat-deger">10</span>
+                            <span class="oyun-stat-label">Kelime</span>
+                        </div>
+                        <div class="oyun-stat-item">
+                            <span class="oyun-stat-deger">2v2</span>
+                            <span class="oyun-stat-label">Takım</span>
+                        </div>
+                        <div class="oyun-stat-item">
+                            <span class="oyun-stat-deger">{{ tabu_ist.oynanan_oyun_sayisi|default:0 }}</span>
+                            <span class="oyun-stat-label">Oynadın</span>
+                        </div>
+                    </div>
+                    <span class="oyun-kart-btn btn-tabu">Oyna →</span>
+                </a>
+
+                <!-- TURNUVA -->
+                <a href="{% url 'turnuva_listesi' %}" class="oyun-kart turnuva animate-on-scroll" style="animation-delay:0.25s;">
+                    <span class="oyun-kart-icon">🏆</span>
+                    <div class="oyun-kart-isim">Turnuvalar</div>
+                    <div class="oyun-kart-aciklama">Resmi turnuvalara katıl, şampiyon ol!</div>
+                    <div class="oyun-kart-badges">
+                        <span class="oyun-badge badge-hot">🔥 Rekabetçi</span>
+                        <span class="oyun-badge badge-new">🥇 Ödüllü</span>
+                    </div>
+                    <div class="oyun-kart-stats">
+                        <div class="oyun-stat-item">
+                            <span class="oyun-stat-deger">∞</span>
+                            <span class="oyun-stat-label">Oyuncu</span>
+                        </div>
+                        <div class="oyun-stat-item">
+                            <span class="oyun-stat-deger">🏆</span>
+                            <span class="oyun-stat-label">Ödül</span>
+                        </div>
+                        <div class="oyun-stat-item">
+                            <span class="oyun-stat-deger">{{ liderlik_sira|default:"--" }}</span>
+                            <span class="oyun-stat-label">Sıran</span>
+                        </div>
+                    </div>
+                    <span class="oyun-kart-btn btn-turnuva">Katıl →</span>
+                </a>
+
+            </div>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-card-value" id="totalPoints">{{ profil.toplam_puan }}</div>
-                <div class="stat-card-label">Toplam Puan</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-card-value" id="weeklyPoints">{{ profil.haftalik_puan }}</div>
-                <div class="stat-card-label">Haftalık Puan</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-card-value" id="solvedQuestions">{{ profil.cozulen_soru_sayisi }}</div>
-                <div class="stat-card-label">Çözülen Soru</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-card-value" id="successRate">
-                    {% if profil.cozulen_soru_sayisi > 0 %}
-                        {{ profil.genel_basari_orani|floatformat:0 }}%
-                    {% else %}
-                        0%
-                    {% endif %}
+        <!-- SAĞ: WİDGET'LAR -->
+        <div class="widget-stack">
+
+            <!-- GÜNLÜK HEDEFLER -->
+            <div class="widget hedef-widget animate-on-scroll">
+                <div class="widget-baslik">🎯 Günlük Hedefler</div>
+
+                <div class="hedef-progress-wrap">
+                    <div class="hedef-ust">
+                        <span class="hedef-isim">📋 Görevler</span>
+                        <span class="hedef-yuzde">{{ bugun_tamamlanan }}/{{ bugun_toplam }}</span>
+                    </div>
+                    <div class="hedef-bar-bg">
+                        <div class="hedef-bar-fill hedef-gorev-bar"
+                             style="width:0%"
+                             data-hedef="{% if bugun_toplam > 0 %}{% widthratio bugun_tamamlanan bugun_toplam 100 %}{% else %}0{% endif %}">
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-card-label">Başarı Oranı</div>
+
+                <div class="hedef-progress-wrap">
+                    <div class="hedef-ust">
+                        <span class="hedef-isim">✅ Başarı Oranı</span>
+                        <span class="hedef-yuzde">{{ basari_orani|default:0 }}%</span>
+                    </div>
+                    <div class="hedef-bar-bg">
+                        <div class="hedef-bar-fill hedef-basari-bar"
+                             style="width:0%"
+                             data-hedef="{{ basari_orani|default:0 }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hedef-progress-wrap">
+                    <div class="hedef-ust">
+                        <span class="hedef-isim">⭐ XP İlerlemesi</span>
+                        <span class="hedef-yuzde">{{ profil.xp }}/{{ profil.sonraki_seviye_xp }}</span>
+                    </div>
+                    <div class="hedef-bar-bg">
+                        <div class="hedef-bar-fill hedef-xp-bar"
+                             style="width:0%"
+                             data-hedef="{{ profil.xp_yuzdesi|default:0 }}">
+                        </div>
+                    </div>
+                </div>
+
+                <a href="{% url 'gunluk_gorevler' %}" class="hedef-buton">
+                    📋 Görevleri Gör →
+                </a>
             </div>
+
+            <!-- LİDERLİK -->
+            <div class="widget liderlik-widget animate-on-scroll" style="animation-delay:0.1s;">
+                <div class="widget-baslik">🏆 Sıralama</div>
+                <div class="liderlik-sira-wrap">
+                    <div class="liderlik-sira-no">#{{ liderlik_sira|default:"--" }}</div>
+                    <div class="liderlik-sira-bilgi">
+                        <div class="liderlik-sira-label">Genel Sıralama</div>
+                        <div class="liderlik-puan">⚡ {{ profil.toplam_puan|default:0 }} Puan</div>
+                    </div>
+                </div>
+                <a href="{% url 'liderlik' %}" class="hedef-buton">🏆 Liderlik Tablosu →</a>
+            </div>
+
+            <!-- SON AKTİVİTE -->
+            <div class="widget animate-on-scroll" style="animation-delay:0.2s;">
+                <div class="widget-baslik">📊 Oyun İstatistikleri</div>
+
+                {% if karsilasma_ist %}
+                <div class="aktivite-item">
+                    <div class="aktivite-icon karsilasma">⚔️</div>
+                    <div>
+                        <div class="aktivite-isim">Karşılaşma</div>
+                        <div class="aktivite-deger">{{ karsilasma_ist.oynanan_oyun_sayisi }} oyun</div>
+                    </div>
+                    <div class="aktivite-kazanilan">🏆 {{ karsilasma_ist.kazanilan_oyun }}</div>
+                </div>
+                {% endif %}
+
+                {% if bulbakalim_ist %}
+                <div class="aktivite-item">
+                    <div class="aktivite-icon bulbakalim">💡</div>
+                    <div>
+                        <div class="aktivite-isim">Bul Bakalım</div>
+                        <div class="aktivite-deger">{{ bulbakalim_ist.oynanan_oyun_sayisi }} oyun</div>
+                    </div>
+                    <div class="aktivite-kazanilan">🏆 {{ bulbakalim_ist.kazanilan_oyun }}</div>
+                </div>
+                {% endif %}
+
+                {% if tabu_ist %}
+                <div class="aktivite-item">
+                    <div class="aktivite-icon tabu">🎭</div>
+                    <div>
+                        <div class="aktivite-isim">Tabu</div>
+                        <div class="aktivite-deger">{{ tabu_ist.oynanan_oyun_sayisi }} oyun</div>
+                    </div>
+                    <div class="aktivite-kazanilan">🏆 {{ tabu_ist.kazanilan_oyun }}</div>
+                </div>
+                {% endif %}
+
+                {% if not karsilasma_ist and not bulbakalim_ist and not tabu_ist %}
+                <div style="text-align:center;padding:20px;color:rgba(255,255,255,0.5);font-size:0.85rem;font-weight:600;">
+                    Henüz oyun oynamadın!<br>Hadi başla 🎮
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- MAĞAZA CTA -->
+            <a href="{% url 'magaza' %}" class="magaza-cta" style="text-decoration:none;">
+                <span class="magaza-cta-icon">🛒</span>
+                <div class="magaza-cta-baslik">Mağaza</div>
+                <div class="magaza-cta-text">Puanlarınla özel unvan, çerçeve ve temalar satın al!</div>
+                <div class="magaza-cta-puan">💰 {{ profil.toplam_puan|default:0 }} Puan</div>
+                <span class="magaza-cta-btn">Mağazayı Keşfet →</span>
+            </a>
+
         </div>
     </div>
-    {% endif %}
+
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Sayı animasyonları
-        {% if profil %}
-        animateCounter(document.getElementById('totalPoints'), 0, {{ profil.toplam_puan }}, 1500);
-        animateCounter(document. getElementById('weeklyPoints'), 0, {{ profil.haftalik_puan }}, 1500);
-        animateCounter(document.getElementById('solvedQuestions'), 0, {{ profil.cozulen_soru_sayisi }}, 1500);
-        
-        // Başarı oranı animasyonu
-        const successRateElement = document.getElementById('successRate');
-        const targetRate = {% if profil.cozulen_soru_sayisi > 0 %}{{ profil.genel_basari_orani|floatformat:0 }}{% else %}0{% endif %};
-        animateCounter(successRateElement, 0, targetRate, 1500);
-        
-        // Animasyon bitince % işareti ekle
-        setTimeout(() => {
-            successRateElement.textContent = targetRate + '%';
-        }, 1500);
-        {% endif %}
+    // ==================== SCROLL ANİMASYONU ====================
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.08 });
 
-        // Oyun kartlarına hover efekti ekle
-        const gameCards = document.querySelectorAll('.game-card');
-        gameCards.forEach(card => {
-            card. addEventListener('mouseenter', function() {
-                this.style.zIndex = '10';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.zIndex = '1';
-            });
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    // ==================== SAYAÇ ANİMASYONU ====================
+    function animateCounter(el, hedef, sure = 1200) {
+        if (!el) return;
+        let start = 0;
+        const step = timestamp => {
+            if (!step.startTime) step.startTime = timestamp;
+            const progress = Math.min((timestamp - step.startTime) / sure, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.floor(eased * hedef);
+            if (progress < 1) requestAnimationFrame(step);
+            else el.textContent = hedef;
+        };
+        requestAnimationFrame(step);
+    }
+
+    window.addEventListener('load', () => {
+        // Sayaçlar
+        document.querySelectorAll('.counter').forEach(el => {
+            const hedef = parseInt(el.getAttribute('data-hedef')) || 0;
+            animateCounter(el, hedef);
         });
 
-        // Sayfa yüklendiğinde hoş geldin mesajı
-        {% if user.is_authenticated %}
+        // Progress barlar
         setTimeout(() => {
-            showToast('Hoş geldin {{ user.username }}! Hangi oyunu oynamak istersin?', 'info', 'Merhaba!  👋');
-        }, 500);
-        {% endif %}
+            document.querySelectorAll('.hedef-bar-fill').forEach(bar => {
+                const hedef = parseFloat(bar.getAttribute('data-hedef')) || 0;
+                bar.style.width = Math.min(hedef, 100) + '%';
+            });
+        }, 400);
     });
 </script>
 {% endblock %}

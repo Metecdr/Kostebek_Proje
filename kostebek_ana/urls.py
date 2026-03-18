@@ -11,6 +11,9 @@ urlpatterns = [
     
     # Quiz
     path('', include('quiz.urls')),
+
+    # Magaza
+    path('magaza/', include('magaza.urls')),
 ]
 
 if settings.DEBUG:

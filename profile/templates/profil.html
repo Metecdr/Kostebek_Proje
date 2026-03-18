@@ -1,1361 +1,1324 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Profilim - Köstebek YKS{% endblock %}
+{% block title %}
+    {% if goruntulenen_kullanici == request.user %}Profilim{% else %}{{ goruntulenen_kullanici.username }} - Profil{% endif %} - Köstebek YKS
+{% endblock %}
 
 {% block extra_css %}
 <style>
-    :root {
-        --primary-purple: #7B68EE;
-        --dark-purple: #6A5ACD;
-        --accent-orange: #FF8C00;
-        --success-green: #4CAF50;
-        --danger-red: #F44336;
-        --gold:  #FFD700;
-        --shadow-lg: 0 15px 40px rgba(0,0,0,0.2);
-        --shadow-md: 0 10px 30px rgba(0,0,0,0.1);
+    /* ==================== ANİMASYONLAR ==================== */
+    @keyframes fadeInDown  { from{opacity:0;transform:translateY(-25px);}  to{opacity:1;transform:translateY(0);} }
+    @keyframes fadeInUp    { from{opacity:0;transform:translateY(30px);}   to{opacity:1;transform:translateY(0);} }
+    @keyframes fadeInLeft  { from{opacity:0;transform:translateX(-25px);}  to{opacity:1;transform:translateX(0);} }
+    @keyframes fadeInRight { from{opacity:0;transform:translateX(25px);}   to{opacity:1;transform:translateX(0);} }
+    @keyframes scaleIn     { from{opacity:0;transform:scale(0.85);}        to{opacity:1;transform:scale(1);} }
+    @keyframes shimmer     { 0%{background-position:-200% center;} 100%{background-position:200% center;} }
+    @keyframes pulse       { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+    @keyframes fireFlicker { 0%,100%{transform:scale(1) rotate(-2deg);} 50%{transform:scale(1.15) rotate(2deg);} }
+    @keyframes float       { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);} }
+    @keyframes rotateIn    { from{opacity:0;transform:rotate(-10deg) scale(0.8);} to{opacity:1;transform:rotate(0) scale(1);} }
+    @keyframes badgePop    { 0%{transform:scale(0);} 70%{transform:scale(1.2);} 100%{transform:scale(1);} }
+
+    .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(25px);
+        transition: opacity 0.55s ease, transform 0.55s ease;
     }
-    
-    body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        font-family: 'Poppins', 'Nunito', sans-serif;
-        min-height: 100vh;
-        padding: 20px 0;
+    .animate-on-scroll.visible { opacity:1; transform:translateY(0); }
+
+    /* ==================== LAYOUT ==================== */
+    .profil-container { max-width: 1100px; margin: 0 auto; padding: 30px 20px 60px; }
+
+    /* ==================== HERO KARTI ==================== */
+    .profil-hero {
+        border-radius: 28px;
+        overflow: hidden;
+        margin-bottom: 28px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+        animation: fadeInDown 0.6s ease-out both;
+        position: relative;
     }
-    
-    .profile-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 20px;
-        animation: fadeIn 0.6s ease-out;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    /* PROFILE HEADER */
-    .profile-header {
-        background: white;
-        border-radius: 25px;
-        padding: 40px;
-        margin-bottom: 30px;
-        box-shadow: var(--shadow-lg);
-        display: flex;
-        align-items: center;
-        gap: 30px;
-        flex-wrap: wrap;
-        animation: slideUp 0.6s ease-out;
+
+    /* Tema banner */
+    .hero-banner {
+        height: 130px;
         position: relative;
         overflow: hidden;
     }
-
-    .profile-header::before {
+    .hero-banner::after {
         content: '';
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 300px;
-        height: 300px;
-        background: linear-gradient(135deg, rgba(123, 104, 238, 0.1), transparent);
-        border-radius: 50%;
-        transform: translate(30%, -30%);
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.3));
     }
-    
-    @keyframes slideUp {
-        from { opacity: 0; transform: translateY(40px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .profile-photo-section {
+
+    /* Hero body */
+    .hero-body {
+        background: white;
+        padding: 0 35px 30px;
         position: relative;
-        animation: scaleIn 0.8s ease-out;
-        z-index: 1;
     }
-    
-    @keyframes scaleIn {
-        from { opacity: 0; transform: scale(0.8); }
-        to { opacity: 1; transform: scale(1); }
+
+    /* Foto */
+    .hero-foto-wrap {
+        position: relative;
+        display: inline-block;
+        margin-top: -55px;
+        margin-bottom: 15px;
+        z-index: 2;
     }
-    
-    .profile-photo {
-        width: 150px;
-        height: 150px;
-        border-radius:  50%;
-        object-fit: cover;
-        border: 5px solid var(--primary-purple);
-        box-shadow: 0 10px 30px rgba(123, 104, 238, 0.4);
-        transition: all 0.4s ease;
-    }
-    
-    .profile-photo:hover {
-        transform: scale(1.08) rotate(5deg);
-        box-shadow: 0 15px 50px rgba(123, 104, 238, 0.6);
-    }
-    
-    .photo-upload-btn {
-        position: absolute;
-        bottom: 5px;
-        right: 5px;
-        width: 40px;
-        height: 40px;
+    .hero-foto {
+        width: 110px;
+        height: 110px;
         border-radius: 50%;
-        background: var(--accent-orange);
+        object-fit: cover;
+        border: 5px solid white;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        transition: all 0.4s ease;
+        display: block;
+    }
+    .hero-foto:hover { transform: scale(1.08) rotate(3deg); }
+    .hero-foto-kamera {
+        position: absolute;
+        bottom: 3px; right: 3px;
+        width: 34px; height: 34px;
+        border-radius: 50%;
+        background: #667eea;
         color: white;
         border: 3px solid white;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.95rem;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 15px rgba(255, 140, 0, 0.5);
+        transition: all 0.3s;
+        box-shadow: 0 3px 10px rgba(102,126,234,0.4);
     }
-    
-    .photo-upload-btn:hover {
-        transform: scale(1.2) rotate(15deg);
-        box-shadow:  0 8px 25px rgba(255, 140, 0, 0.7);
-        background: #ff7700;
-    }
+    .hero-foto-kamera:hover { background: #764ba2; transform: scale(1.15); }
 
-    .photo-upload-btn:active {
-        transform: scale(0.95);
+    /* Hero içerik */
+    .hero-icerik {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 15px;
     }
-    
-    .profile-info {
-        flex:  1;
-        min-width: 300px;
-        z-index: 1;
-    }
-    
-    .profile-name {
-        font-size: 2.5rem;
+    .hero-sol { flex: 1; min-width: 250px; }
+    .hero-isim {
+        font-size: 1.9rem;
         font-weight: 900;
-        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 10px;
-        animation: fadeInLeft 0.6s ease-out 0.2s both;
+        color: #1a1a2e;
+        margin-bottom: 3px;
+        line-height: 1.2;
+    }
+    .hero-kullanici-adi {
+        color: #9ca3af;
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 14px;
     }
 
-    @keyframes fadeInLeft {
-        from { opacity: 0; transform: translateX(-20px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
-    
-    .profile-username {
-        font-size: 1.2rem;
-        color: #6c757d;
-        margin-bottom: 15px;
-        font-weight: 600;
-        animation: fadeInLeft 0.6s ease-out 0.3s both;
-    }
-    
-    .profile-badges {
-        display: flex;
-        gap: 10px;
-        flex-wrap:  wrap;
-        margin-bottom:  20px;
-        animation: fadeInLeft 0.6s ease-out 0.4s both;
-    }
-    
-    .badge-item {
-        padding: 8px 16px;
+    /* Mağaza unvanı */
+    .hero-unvan {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 14px;
         border-radius: 20px;
-        font-weight: 700;
-        font-size: 0.9rem;
+        font-size: 0.82rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 14px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        animation: badgePop 0.4s ease both;
+    }
+
+    /* Badge'ler */
+    .hero-badges {
         display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 18px;
+    }
+    .hero-badge {
+        display: inline-flex;
         align-items: center;
         gap: 5px;
-        transition: all 0.3s ease;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-        animation: bounceIn 0.6s ease-out;
-        position: relative;
-    }
-
-    @keyframes bounceIn {
-        0% { opacity: 0; transform: scale(0.3); }
-        50% { transform: scale(1.05); }
-        100% { opacity: 1; transform: scale(1); }
-    }
-    
-    .badge-item:hover {
-        transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    }
-    
-    .badge-level {
-        background: linear-gradient(135deg, var(--gold), #FFA500);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 800;
         color: white;
-        cursor: pointer;
-    }
-
-    .xp-tooltip {
-        position: absolute;
-        bottom: -35px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0,0,0,0.9);
-        color: white;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size:  0.75rem;
-        white-space: nowrap;
-        opacity: 0;
         transition: all 0.3s;
-        pointer-events: none;
-        z-index: 1000;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
     }
+    .hero-badge:hover { transform: translateY(-3px) scale(1.05); }
+    .badge-seviye  { background: linear-gradient(135deg, #FFD700, #FFA500); }
+    .badge-sira    { background: linear-gradient(135deg, #10b981, #059669); }
+    .badge-alan    { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .badge-streak  { background: linear-gradient(135deg, #FF6B6B, #EE5A6F); animation: pulse 2s infinite; }
 
-    .badge-level:hover .xp-tooltip {
-        opacity: 1;
-        bottom: -40px;
+    /* Butonlar */
+    .hero-butonlar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
     }
-    
-    .badge-area {
-        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
-        color: white;
-    }
-    
-    .badge-rank {
-        background: linear-gradient(135deg, var(--success-green), #45a049);
-        color: white;
-    }
-
-    /* STREAK BADGE */
-    .badge-streak {
-        background: linear-gradient(135deg, #FF6B6B, #EE5A6F);
-        color: white;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-    
-    .edit-profile-btn {
-        padding: 12px 30px;
-        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
-        color: white;
-        border:  none;
-        border-radius:  25px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 15px rgba(123, 104, 238, 0.3);
-        animation: fadeInLeft 0.6s ease-out 0.5s both;
-        position: relative;
-        overflow:  hidden;
-        margin-right: 10px;
-    }
-
-    .edit-profile-btn::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background:  rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-    }
-
-    .edit-profile-btn:hover::before {
-        width: 300px;
-        height: 300px;
-    }
-    
-    .edit-profile-btn:hover {
-        transform:  translateY(-3px);
-        box-shadow:  0 10px 25px rgba(123, 104, 238, 0.5);
-    }
-
-    .edit-profile-btn:active {
-        transform: translateY(-1px);
-    }
-
-    /* ARKADAŞ AKSİYONU */
-    .arkadas-aksiyonu {
-        margin-top: 15px;
-        animation: fadeInLeft 0.6s ease-out 0.6s both;
-    }
-
-    .btn-arkadas {
-        width: 100%;
-        padding:  12px;
+    .hero-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 16px;
+        border-radius: 18px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        text-decoration: none;
+        transition: all 0.3s;
         border: none;
-        border-radius: 12px;
-        font-weight:  700;
         cursor: pointer;
+        color: white;
+    }
+    .hero-btn:hover { transform: translateY(-3px); filter: brightness(1.1); color: white; }
+    .btn-duzenle  { background: linear-gradient(135deg, #667eea, #764ba2); box-shadow: 0 4px 12px rgba(102,126,234,0.35); }
+    .btn-gorev    { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 12px rgba(245,158,11,0.35); }
+    .btn-takvim   { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 12px rgba(16,185,129,0.35); }
+    .btn-meydan   { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 12px rgba(239,68,68,0.35); }
+    .btn-paylasim { background: linear-gradient(135deg, #06b6d4, #0891b2); box-shadow: 0 4px 12px rgba(6,182,212,0.35); }
+    .btn-arkadas-ekle    { background: linear-gradient(135deg, #4ECDC4, #44A08D); box-shadow: 0 4px 12px rgba(78,205,196,0.35); }
+    .btn-arkadas-mevcut  { background: rgba(16,185,129,0.15); color: #10b981 !important; border: 2px solid rgba(16,185,129,0.3); cursor: default; }
+    .btn-arkadas-bekle   { background: rgba(245,158,11,0.15); color: #f59e0b !important; border: 2px solid rgba(245,158,11,0.3); cursor: default; }
+    .btn-meydan-oku { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 12px rgba(239,68,68,0.35); }
+
+    /* Sağ kısım - mini istatistikler */
+    .hero-sag {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+    }
+    .hero-mini-stats {
+        display: flex;
+        gap: 12px;
+    }
+    .hero-mini-stat {
+        text-align: center;
+        background: #f8f9fa;
+        border-radius: 14px;
+        padding: 12px 16px;
+        min-width: 70px;
+        transition: all 0.3s;
+    }
+    .hero-mini-stat:hover { background: #f0f0ff; transform: translateY(-3px); }
+    .hero-mini-deger { font-size: 1.4rem; font-weight: 900; color: #667eea; display: block; }
+    .hero-mini-label { font-size: 0.65rem; color: #9ca3af; font-weight: 700; text-transform: uppercase; margin-top: 2px; display: block; }
+
+    /* XP bar hero */
+    .hero-xp-bar-wrap { width: 100%; max-width: 300px; }
+    .hero-xp-label { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 700; color: #6b7280; margin-bottom: 6px; }
+    .hero-xp-bg { background: #e9ecef; border-radius: 8px; height: 10px; overflow: hidden; }
+    .hero-xp-fill {
+        height: 100%;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #FFD700, #FFA500);
+        transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+        position: relative; overflow: hidden;
+    }
+    .hero-xp-fill::after {
+        content: '';
+        position: absolute; inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+        animation: shimmer 2s infinite;
+        background-size: 200% 100%;
+    }
+
+    /* Arkadaş durum bar */
+    .arkadas-durum-bar {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
+        gap: 14px;
+        flex-wrap: wrap;
+        padding: 10px 14px;
+        background: rgba(102,126,234,0.07);
+        border: 1px solid rgba(102,126,234,0.18);
+        border-radius: 12px;
+        margin-top: 12px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #6c757d;
+    }
+    .durum-dot { width: 9px; height: 9px; border-radius: 50%; background: #6b7280; display: inline-block; flex-shrink: 0; }
+    .durum-dot.online { background: #10b981; animation: pulse 2s infinite; }
+    .durum-dot.az-once { background: #f59e0b; }
+
+    /* ==================== ANA GRID ==================== */
+    .profil-ana-grid {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 22px;
+        align-items: start;
     }
 
-    .btn-arkadas::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width:  0;
-        height: 0;
-        border-radius:  50%;
-        background: rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-    }
-
-    .btn-arkadas:hover::before {
-        width: 300px;
-        height: 300px;
-    }
-
-    .btn-arkadas.ekle {
-        background: linear-gradient(135deg, #4ECDC4, #44A08D);
+    /* ==================== BÖLÜM BAŞLIĞI ==================== */
+    .bolum-baslik {
         color: white;
-        box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        font-size: 1.1rem;
+        font-weight: 900;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+    .bolum-baslik::after {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: linear-gradient(90deg, rgba(255,255,255,0.25), transparent);
+        border-radius: 2px;
     }
 
-    .btn-arkadas.ekle:hover {
-        transform: translateY(-2px);
-        box-shadow:  0 8px 20px rgba(78, 205, 196, 0.6);
-    }
-
-    .btn-arkadas.arkadas {
-        background: rgba(16, 185, 129, 0.2);
-        color: #10b981;
-        border: 2px solid rgba(16, 185, 129, 0.3);
-        cursor: not-allowed;
-    }
-
-    .btn-arkadas.beklemede {
-        background: rgba(251, 191, 36, 0.2);
-        color: #fbbf24;
-        border:  2px solid rgba(251, 191, 36, 0.3);
-        cursor: not-allowed;
-    }
-    
-    /* STATS GRID */
+    /* ==================== İSTATİSTİK KARTLARI ==================== */
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        margin-bottom: 30px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-bottom: 22px;
     }
-    
-    .stat-card {
+    .stat-kart {
         background: white;
-        border-radius: 20px;
-        padding: 25px;
-        box-shadow: var(--shadow-md);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        animation:  slideUp 0.6s ease-out;
-        animation-fill-mode: backwards;
+        border-radius: 18px;
+        padding: 20px;
+        transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
-        overflow:  hidden;
+        overflow: hidden;
+        text-decoration: none;
+        display: block;
+        color: inherit;
+        border-left: 5px solid transparent;
+        animation: fadeInUp 0.5s ease-out both;
     }
-
-    .stat-card::before {
+    .stat-kart::before {
         content: '';
         position: absolute;
-        top: 0;
-        left:  -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(123, 104, 238, 0.1), transparent);
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
         transition: left 0.5s;
     }
+    .stat-kart:hover::before { left: 100%; }
+    .stat-kart:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        text-decoration: none;
+    }
+    .stat-kart.purple { border-left-color: #667eea; }
+    .stat-kart.orange { border-left-color: #f59e0b; }
+    .stat-kart.green  { border-left-color: #10b981; }
+    .stat-kart.red    { border-left-color: #ef4444; }
+    .stat-kart.gold   { border-left-color: #FFD700; }
+    .stat-kart.streak { border-left-color: #FF6B6B; }
+    .stat-kart.teal   { border-left-color: #06b6d4; }
+    .stat-kart.amber  { border-left-color: #f59e0b; }
 
-    .stat-card:hover::before {
-        left: 100%;
-    }
-    
-    .stat-card:nth-child(1) { animation-delay: 0.1s; }
-    .stat-card:nth-child(2) { animation-delay: 0.2s; }
-    .stat-card:nth-child(3) { animation-delay: 0.3s; }
-    .stat-card:nth-child(4) { animation-delay: 0.4s; }
-    .stat-card:nth-child(5) { animation-delay: 0.5s; }
-    .stat-card:nth-child(6) { animation-delay: 0.6s; }
-    
-    .stat-card:hover {
-        transform: translateY(-10px) scale(1.03);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-    }
-    
-    .stat-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 15px;
+    .stat-ust {
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        margin-bottom: 15px;
-        transition: transform 0.4s ease;
+        justify-content: space-between;
+        margin-bottom: 12px;
     }
-    
-    .stat-card:hover .stat-icon {
-        transform: scale(1.15) rotate(10deg);
-        animation: wiggle 0.5s ease-in-out;
+    .stat-icon {
+        width: 46px; height: 46px;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        flex-shrink: 0;
     }
+    .stat-kart:hover .stat-icon { transform: scale(1.18) rotate(8deg); }
+    .ic-purple { background: linear-gradient(135deg,#667eea,#764ba2); color:white; box-shadow:0 4px 12px rgba(102,126,234,0.35); }
+    .ic-orange { background: linear-gradient(135deg,#f59e0b,#d97706); color:white; box-shadow:0 4px 12px rgba(245,158,11,0.35); }
+    .ic-green  { background: linear-gradient(135deg,#10b981,#059669); color:white; box-shadow:0 4px 12px rgba(16,185,129,0.35); }
+    .ic-red    { background: linear-gradient(135deg,#ef4444,#dc2626); color:white; box-shadow:0 4px 12px rgba(239,68,68,0.35); }
+    .ic-gold   { background: linear-gradient(135deg,#FFD700,#FFA500); color:white; box-shadow:0 4px 12px rgba(255,215,0,0.35); }
+    .ic-streak { background: linear-gradient(135deg,#FF6B6B,#EE5A6F); color:white; box-shadow:0 4px 12px rgba(255,107,107,0.35); }
+    .ic-teal   { background: linear-gradient(135deg,#06b6d4,#0891b2); color:white; box-shadow:0 4px 12px rgba(6,182,212,0.35); }
+    .ic-amber  { background: linear-gradient(135deg,#f59e0b,#d97706); color:white; box-shadow:0 4px 12px rgba(245,158,11,0.35); }
 
-    @keyframes wiggle {
-        0%, 100% { transform: scale(1.15) rotate(10deg); }
-        25% { transform: scale(1.15) rotate(-10deg); }
-        75% { transform: scale(1.15) rotate(10deg); }
+    .stat-label { font-size: 0.75rem; color: #9ca3af; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-deger {
+        font-size: 2rem; font-weight: 900;
+        background: linear-gradient(135deg, #1a1a2e, #374151);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    
-    .stat-icon.purple { 
-        background: linear-gradient(135deg, #7B68EE, #6A5ACD); 
-        color: white;
-        box-shadow: 0 5px 15px rgba(123, 104, 238, 0.4);
-    }
-    
-    .stat-icon.orange { 
-        background: linear-gradient(135deg, #FF8C00, #ff7700); 
-        color: white;
-        box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
-    }
-    
-    .stat-icon.green { 
-        background: linear-gradient(135deg, #4CAF50, #45a049); 
-        color: white;
-        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
-    }
-    
-    .stat-icon.red { 
-        background: linear-gradient(135deg, #F44336, #e53935); 
-        color: white;
-        box-shadow:  0 5px 15px rgba(244, 67, 54, 0.4);
-    }
+    .stat-alt { font-size: 0.75rem; color: #9ca3af; font-weight: 600; margin-top: 5px; display: block; }
 
-    .stat-icon.gold {
-        background: linear-gradient(135deg, var(--gold), #FFA500);
-        color: white;
-        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    /* XP progress içinde */
+    .stat-xp-bg { background: #e9ecef; border-radius: 6px; height: 8px; overflow: hidden; margin-top: 8px; }
+    .stat-xp-fill {
+        height: 100%; border-radius: 6px;
+        background: linear-gradient(90deg, #FFD700, #FFA500);
+        transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
     }
+    .gorev-bar-bg { background: #e9ecef; border-radius: 6px; height: 7px; overflow: hidden; margin-top: 8px; }
+    .gorev-bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #f59e0b, #d97706); }
 
-    /* STREAK ICON */
-    .stat-icon.streak {
-        background: linear-gradient(135deg, #FF6B6B, #EE5A6F);
-        color: white;
-        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+    /* ==================== İLERLEME BÖLÜMÜ ==================== */
+    .ilerleme-kart {
+        background: white;
+        border-radius: 18px;
+        padding: 24px;
+        margin-bottom: 22px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+        animation: fadeInUp 0.5s ease-out 0.2s both;
     }
+    .ilerleme-baslik {
+        font-size: 1rem;
+        font-weight: 900;
+        color: #1a1a2e;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .ilerleme-satir { margin-bottom: 16px; }
+    .ilerleme-satir:last-child { margin-bottom: 0; }
+    .ilerleme-ust { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .ilerleme-isim { font-weight: 700; color: #374151; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; }
+    .ilerleme-yuzde { font-weight: 900; font-size: 0.9rem; color: #667eea; }
+    .ilerleme-bar-bg { height: 12px; background: #e9ecef; border-radius: 8px; overflow: hidden; }
+    .ilerleme-bar-fill {
+        height: 100%; border-radius: 8px;
+        transition: width 1.8s cubic-bezier(0.4,0,0.2,1);
+        position: relative; overflow: hidden;
+    }
+    .ilerleme-bar-fill::after {
+        content: '';
+        position: absolute; inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        animation: shimmer 2s infinite;
+        background-size: 200% 100%;
+    }
+    .bar-basari { background: linear-gradient(90deg, #10b981, #059669); box-shadow: 0 2px 8px rgba(16,185,129,0.4); }
 
-    .stat-icon .bi-fire {
-        animation: fireFlicker 1.5s infinite;
+    /* ==================== ROZETLER ==================== */
+    .rozetler-kart {
+        background: white;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+        animation: fadeInUp 0.5s ease-out 0.3s both;
     }
-
-    @keyframes fireFlicker {
-        0%, 100% { 
-            transform: scale(1); 
-            filter: brightness(1);
-        }
-        50% { 
-            transform: scale(1.1); 
-            filter: brightness(1.3);
-        }
+    .rozetler-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 4px;
     }
-    
-    .stat-label {
-        font-size: 0.9rem;
-        color: #6c757d;
+    .rozet-item {
+        text-align: center;
+        padding: 14px 8px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #f8f9fa, #f0f0ff);
+        border: 2px solid #e9ecef;
+        transition: all 0.3s;
+        animation: rotateIn 0.4s ease-out both;
+    }
+    .rozet-item:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 8px 20px rgba(102,126,234,0.2); border-color: #667eea; }
+    .rozet-icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+    .rozet-isim { font-size: 0.7rem; font-weight: 800; color: #374151; }
+    .rozet-bos {
+        text-align: center;
+        padding: 30px;
+        color: #9ca3af;
+        font-size: 0.85rem;
         font-weight: 600;
-        margin-bottom: 5px;
+    }
+
+    /* ==================== SAĞ KOLON ==================== */
+    .sag-widget-stack { display: flex; flex-direction: column; gap: 16px; }
+
+    .sag-widget {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 18px;
+        padding: 20px;
+        animation: fadeInRight 0.5s ease-out both;
+    }
+    .sag-widget-baslik {
+        color: white;
+        font-size: 0.85rem;
+        font-weight: 900;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
-    
-    .stat-value {
-        font-size: 2.5rem;
-        font-weight: 900;
-        background: linear-gradient(135deg, #333, #666);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
 
-    /* XP PROGRESS BAR */
-    .xp-progress-container {
-        margin-top: 15px;
-    }
-
-    .xp-bar-bg {
-        background: #e9ecef;
-        border-radius: 10px;
-        height: 12px;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .xp-bar-fill {
-        background: linear-gradient(90deg, var(--gold), #FFA500);
-        height: 100%;
-        border-radius: 10px;
-        transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .xp-bar-fill::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom:  0;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-        animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
-    }
-
-    .xp-text {
-        color: #6c757d;
-        font-size: 0.8rem;
-        margin-top:  8px;
-        display: block;
-        text-align: center;
-        font-weight: 600;
-    }
-    
-    /* PROGRESS SECTION */
-    .progress-section {
-        background: white;
-        border-radius: 20px;
-        padding: 30px;
-        margin-bottom: 30px;
-        box-shadow: var(--shadow-md);
-        animation: slideUp 0.6s ease-out 0.2s;
-        animation-fill-mode:  backwards;
-    }
-    
-    .section-title {
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: var(--dark-purple);
-        margin-bottom: 20px;
+    /* Oyun özeti */
+    .oyun-ozet-item {
         display: flex;
         align-items: center;
-        gap: 10px;
-    }
-    
-    .progress-item {
-        margin-bottom: 25px;
-    }
-    
-    .progress-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-        align-items: center;
-    }
-    
-    .progress-label {
-        font-weight: 700;
-        color: #333;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .progress-percentage {
-        font-weight: 800;
-        color: var(--primary-purple);
-        font-size: 1.2rem;
-        animation: countUp 1.5s ease-out;
-    }
-
-    @keyframes countUp {
-        from { opacity: 0; transform: scale(0.5); }
-        to { opacity: 1; transform: scale(1); }
-    }
-    
-    .progress-bar-container {
-        height: 25px;
-        background: #e9ecef;
-        border-radius: 15px;
-        overflow: hidden;
-        position: relative;
-        box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-    }
-    
-    .progress-bar-fill {
-        height: 100%;
-        border-radius: 15px;
-        transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
-        align-items: center;
-        padding-left: 15px;
-        color: white;
-        font-weight: 700;
-        font-size: 0.85rem;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .progress-bar-fill::before {
-        content: '';
-        position: absolute;
-        top:  0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-        animation: shimmer 2s infinite;
-    }
-    
-    .progress-bar-fill.green {
-        background: linear-gradient(90deg, #4CAF50, #45a049);
-        box-shadow: 0 3px 15px rgba(76, 175, 80, 0.4);
-    }
-    
-    /* CHART SECTION */
-    .chart-section {
-        background: white;
-        border-radius: 20px;
-        padding: 30px;
-        margin-bottom:  30px;
-        box-shadow: var(--shadow-md);
-        animation: slideUp 0.6s ease-out 0.3s;
-        animation-fill-mode: backwards;
-    }
-    
-    .chart-container {
-        position: relative;
-        height: 300px;
-        margin-top: 20px;
-    }
-    
-    /* GAMES GRID */
-    .games-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-        margin-top: 30px;
-    }
-    
-    .game-card-container {
-        position: relative;
-        border-radius: 20px;
-        overflow: hidden;
-        height: 280px;
-        cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        animation: fadeInUp 0.6s ease-out;
-        animation-fill-mode:  backwards;
-    }
-
-    .game-card-container:nth-child(1) { animation-delay: 0.1s; }
-    .game-card-container:nth-child(2) { animation-delay: 0.2s; }
-    .game-card-container:nth-child(3) { animation-delay: 0.3s; }
-    .game-card-container:nth-child(4) { animation-delay: 0.4s; }
-
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .game-card-container:hover {
-        transform:  translateY(-15px) scale(1.03);
-        box-shadow: 0 25px 60px rgba(0,0,0,0.35);
-    }
-    
-    .game-card-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-    
-    .game-card-container:hover img {
-        transform:  scale(1.15);
-    }
-    
-    .game-overlay {
-        position: absolute;
-        bottom: 0;
-        left:  0;
-        right: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 70%, transparent 100%);
-        padding: 30px 20px;
-        color: white;
-        transition: all 0.3s ease;
-    }
-    
-    .game-card-container:hover .game-overlay {
-        background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 70%, transparent 100%);
-        padding: 35px 20px;
-    }
-    
-    .game-title {
-        font-size: 1.8rem;
-        font-weight:  900;
-        margin-bottom: 10px;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        transition: all 0.3s ease;
-    }
-
-    .game-card-container:hover .game-title {
-        transform: translateX(5px);
-    }
-    
-    .games-section-title {
-        font-size: 2rem;
-        font-weight: 800;
-        color: white;
-        margin-bottom: 20px;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        animation: fadeIn 0.6s ease-out 0.4s;
-        animation-fill-mode: backwards;
-    }
-    
-    /* MODAL STYLES */
-    .modal.fade .modal-dialog {
-        transition: transform 0.3s ease-out;
-        transform: scale(0.8);
-    }
-    
-    .modal.show .modal-dialog {
-        transform: scale(1);
-    }
-    
-    .modal-content {
-        border-radius: 20px;
-        border: none;
-        overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-    
-    .modal-header {
-        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
-        color: white;
-        border-radius: 20px 20px 0 0;
-        border-bottom: none;
-        padding: 25px 30px;
-    }
-    
-    .modal-title {
-        font-weight: 800;
-        font-size: 1.4rem;
-    }
-    
-    .modal-body {
-        padding: 30px;
-    }
-    
-    .form-control, .form-select {
-        border:  2px solid #e9ecef;
-        border-radius: 10px;
-        padding: 12px;
-        transition: all 0.3s ease;
-        font-weight: 500;
-    }
-    
-    .form-control:focus, .form-select:focus {
-        border-color: var(--primary-purple);
-        box-shadow: 0 0 0 0.2rem rgba(123, 104, 238, 0.25);
-        transform: scale(1.01);
-    }
-    
-    .form-control:hover, .form-select:hover {
-        border-color: var(--primary-purple);
-    }
-    
-    .form-label {
-        font-weight: 700;
-        color: #333;
+        gap: 12px;
+        padding: 10px 12px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 12px;
         margin-bottom: 8px;
+        transition: all 0.25s;
+    }
+    .oyun-ozet-item:hover { background: rgba(255,255,255,0.13); transform: translateX(4px); }
+    .oyun-ozet-item:last-child { margin-bottom: 0; }
+    .oyun-ozet-icon {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.1rem; flex-shrink: 0;
+    }
+    .oyun-ozet-isim { color: rgba(255,255,255,0.9); font-size: 0.82rem; font-weight: 700; }
+    .oyun-ozet-detay { color: rgba(255,255,255,0.5); font-size: 0.7rem; }
+    .oyun-ozet-kazanc { margin-left: auto; text-align: right; }
+    .oyun-ozet-kazanilan { color: #10b981; font-size: 0.78rem; font-weight: 800; display: block; }
+    .oyun-ozet-kaybedilen { color: #ef4444; font-size: 0.7rem; font-weight: 700; display: block; }
+
+    /* Hızlı linkler */
+    .hizli-link {
         display: flex;
         align-items: center;
-        gap: 5px;
-    }
-    
-    .btn-primary {
-        background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
-        border: none;
-        border-radius: 10px;
-        padding: 12px;
+        gap: 10px;
+        padding: 11px 14px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 12px;
+        margin-bottom: 8px;
+        text-decoration: none;
+        color: rgba(255,255,255,0.85);
+        font-size: 0.83rem;
         font-weight: 700;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
+        transition: all 0.25s;
     }
+    .hizli-link:last-child { margin-bottom: 0; }
+    .hizli-link:hover { background: rgba(255,255,255,0.15); transform: translateX(5px); color: white; }
+    .hizli-link-icon {
+        width: 34px; height: 34px;
+        border-radius: 9px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1rem; flex-shrink: 0;
+    }
+    .hizli-link-ok { margin-left: auto; opacity: 0.5; font-size: 0.8rem; }
 
-    .btn-primary::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-    }
+    /* DARK MODE */
+    [data-theme="dark"] .hero-body { background: linear-gradient(145deg,#1e2749,#181f3a) !important; }
+    [data-theme="dark"] .hero-isim { color: #fff !important; -webkit-text-fill-color: #fff !important; background: none !important; }
+    [data-theme="dark"] .hero-kullanici-adi { color: #9ca8c5 !important; }
+    [data-theme="dark"] .hero-mini-stat { background: rgba(255,255,255,0.06) !important; }
+    [data-theme="dark"] .hero-mini-deger { color: #a78bfa !important; }
+    [data-theme="dark"] .hero-mini-label { color: #6b7280 !important; }
+    [data-theme="dark"] .hero-xp-bg { background: #2d3454 !important; }
+    [data-theme="dark"] .hero-xp-label { color: #9ca8c5 !important; }
+    [data-theme="dark"] .stat-kart { background: linear-gradient(145deg,#1e2749,#181f3a) !important; border-color: #2d3454 !important; }
+    [data-theme="dark"] .stat-deger { background: none !important; -webkit-text-fill-color: #fff !important; color: #fff !important; }
+    [data-theme="dark"] .stat-label { color: #9ca8c5 !important; }
+    [data-theme="dark"] .stat-alt { color: #6b7280 !important; }
+    [data-theme="dark"] .stat-xp-bg, [data-theme="dark"] .gorev-bar-bg { background: #2d3454 !important; }
+    [data-theme="dark"] .ilerleme-kart, [data-theme="dark"] .rozetler-kart { background: linear-gradient(145deg,#1e2749,#181f3a) !important; border: 2px solid #2d3454 !important; }
+    [data-theme="dark"] .ilerleme-baslik { color: #fff !important; -webkit-text-fill-color: #fff !important; background: none !important; }
+    [data-theme="dark"] .ilerleme-isim { color: #e5e7eb !important; }
+    [data-theme="dark"] .ilerleme-bar-bg { background: #2d3454 !important; }
+    [data-theme="dark"] .rozet-item { background: rgba(102,126,234,0.1) !important; border-color: #2d3454 !important; }
+    [data-theme="dark"] .rozet-isim { color: #e5e7eb !important; }
+    [data-theme="dark"] .arkadas-durum-bar { background: rgba(102,126,234,0.1) !important; border-color: rgba(102,126,234,0.25) !important; }
 
-    .btn-primary:hover::before {
-        width: 300px;
-        height: 300px;
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow:  0 5px 15px rgba(123, 104, 238, 0.4);
-    }
-    
-    .btn-secondary {
-        border-radius: 10px;
-        padding: 12px;
-        font-weight: 700;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-secondary:hover {
-        transform:  translateY(-2px);
-    }
-    
     /* RESPONSIVE */
-    @media (max-width: 768px) {
-        .profile-header {
-            flex-direction: column;
-            text-align: center;
-            padding: 30px 20px;
-        }
-        
-        .profile-name {
-            font-size: 2rem;
-        }
-        
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .games-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .profile-badges {
-            justify-content: center;
-        }
-
-        .btn-arkadas {
-            margin-top: 10px;
-        }
+    @media(max-width:900px) {
+        .profil-ana-grid { grid-template-columns: 1fr; }
+        .sag-widget-stack { display: grid; grid-template-columns: 1fr 1fr; }
+    }
+    @media(max-width:640px) {
+        .hero-icerik { flex-direction: column; }
+        .hero-sag { align-items: flex-start; }
+        .hero-mini-stats { flex-wrap: wrap; }
+        .stats-grid { grid-template-columns: 1fr 1fr; }
+        .sag-widget-stack { grid-template-columns: 1fr; }
+        .rozetler-grid { grid-template-columns: repeat(3,1fr); }
+        .hero-body { padding: 0 20px 24px; }
+    }
+    @media(max-width:400px) {
+        .stats-grid { grid-template-columns: 1fr; }
     }
 </style>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 {% endblock %}
 
 {% block content %}
-<div class="profile-container">
-    <!-- PROFILE HEADER -->
-    <div class="profile-header">
-        <div class="profile-photo-section">
-            {% if profil.profil_fotografi %}
-                <img src="{{ profil.profil_fotografi.url }}" alt="Profil Fotoğrafı" class="profile-photo">
-            {% else %}
-                <img src="https://ui-avatars.com/api/? name={{ profil.kullanici.username }}&size=150&background=7B68EE&color=fff&bold=true&font-size=0.4" alt="Profil Fotoğrafı" class="profile-photo">
-            {% endif %}
-            
-            {% if profil.kullanici == request.user %}
-            <button class="photo-upload-btn" onclick="document.getElementById('photoInput').click()" title="Fotoğraf Değiştir">
-                <i class="bi bi-camera-fill"></i>
-            </button>
-            <form id="photoUploadForm" method="POST" action="{% url 'profil' %}" enctype="multipart/form-data" style="display: none;">
-                {% csrf_token %}
-                <input type="file" id="photoInput" name="profil_fotografi" accept="image/*" onchange="uploadPhoto()">
-            </form>
-            {% endif %}
+<div class="profil-container">
+
+    <!-- ==================== HERO ==================== -->
+    <div class="profil-hero">
+
+        <!-- BANNER -->
+        <div class="hero-banner" style="background:
+            {% if envanter.aktif_tema %}
+                linear-gradient(135deg, {{ envanter.aktif_tema.tema_primary }}, {{ envanter.aktif_tema.tema_secondary }})
+            {% elif profil.tema == 'okyanus' %}linear-gradient(135deg,#2196F3,#00BCD4)
+            {% elif profil.tema == 'ates'   %}linear-gradient(135deg,#FF6B6B,#FF8C00)
+            {% elif profil.tema == 'orman'  %}linear-gradient(135deg,#4CAF50,#2E7D32)
+            {% elif profil.tema == 'gece'   %}linear-gradient(135deg,#9b59b6,#2c3e50)
+            {% elif profil.tema == 'gunbatimi' %}linear-gradient(135deg,#f093fb,#f5576c)
+            {% elif profil.tema == 'altin'  %}linear-gradient(135deg,#FFD700,#FFA500)
+            {% elif profil.tema == 'pembe'  %}linear-gradient(135deg,#ff9a9e,#fecfef)
+            {% else %}linear-gradient(135deg,#667eea,#764ba2){% endif %};">
         </div>
-        
-        <div class="profile-info">
-            <h1 class="profile-name">
-                {% if profil.ad and profil.soyad %}
-                    {{ profil.ad }} {{ profil.soyad }}
+
+        <!-- HERO BODY -->
+        <div class="hero-body">
+
+            <!-- FOTO -->
+            <div class="hero-foto-wrap">
+                {% if profil.profil_fotografi %}
+                    <img src="{{ profil.profil_fotografi.url }}" alt="Profil" class="hero-foto"
+                         style="{% if envanter.aktif_cerceve %}{{ envanter.aktif_cerceve.cerceve_css }}{% endif %}">
                 {% else %}
-                    {{ profil.kullanici.username }}
+                    <img src="https://ui-avatars.com/api/?name={{ profil.kullanici.username }}&size=110&background=667eea&color=fff&bold=true&font-size=0.4"
+                         alt="Profil" class="hero-foto"
+                         style="{% if envanter.aktif_cerceve %}{{ envanter.aktif_cerceve.cerceve_css }}{% endif %}">
                 {% endif %}
-            </h1>
-            <p class="profile-username">
-                <i class="bi bi-at"></i>{{ profil.kullanici.username }}
-            </p>
-            
-            <div class="profile-badges">
-                <!-- SEVİYE BADGE -->
-                <span class="badge-item badge-level">
-                    <i class="bi bi-star-fill"></i> 
-                    Seviye {{ profil.seviye }} - {{ profil.seviye_unvani }}
-                    <div class="xp-tooltip">
-                        {{ profil.xp }} / {{ profil.sonraki_seviye_xp }} XP
-                    </div>
-                </span>
-                
-                <!-- SIRA BADGE -->
-                <span class="badge-item badge-rank">
-                    <i class="bi bi-trophy-fill"></i> #{{ sira|default:"--" }} Sırada
-                </span>
-                
-                <!-- ALAN BADGE -->
-                <span class="badge-item badge-area">
-                    <i class="bi bi-book-fill"></i> {{ profil.get_alan_display|default:"Alan Seçilmedi" }}
-                </span>
-
-                <!-- STREAK BADGE (3+ günse göster) -->
-                {% if profil.ardasik_gun_sayisi >= 3 %}
-                <span class="badge-item badge-streak">
-                    <i class="bi bi-fire"></i> {{ profil.ardasik_gun_sayisi }} Gün Streak! 
-                </span>
-                {% endif %}
-            </div>
-            
-            {% if profil.kullanici == request.user %}
-            <div>
-                <button class="edit-profile-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                    <span style="position: relative; z-index: 1;">
-                        <i class="bi bi-pencil-fill"></i> Profili Düzenle
-                    </span>
+                {% if goruntulenen_kullanici == request.user %}
+                <button class="hero-foto-kamera" onclick="document.getElementById('photoInput').click()" title="Fotoğraf Değiştir">
+                    📷
                 </button>
-                
-                <button class="btn btn-secondary" disabled style="opacity: 0.6; cursor: not-allowed; display: inline-block; padding: 12px 30px; border-radius: 25px; font-weight: 700;">
-                    <i class="bi bi-bar-chart"></i> Konu Analizleri (Yakında)
-                </button>
-            </div>
-            {% else %}
-            <!-- ARKADAŞ EKLEME BUTONU -->
-            <div class="arkadas-aksiyonu">
-                {% if arkadaslik_durumu == 'arkadas' %}
-                <button class="btn-arkadas arkadas" disabled>
-                    <i class="bi bi-check-circle-fill"></i>
-                    <span style="position: relative; z-index: 1;">Arkadaşsınız</span>
-                </button>
-                {% elif arkadaslik_durumu == 'beklemede' %}
-                <button class="btn-arkadas beklemede" disabled>
-                    <i class="bi bi-clock-history"></i>
-                    <span style="position: relative; z-index: 1;">İstek Gönderildi</span>
-                </button>
-                {% else %}
-                <button class="btn-arkadas ekle" onclick="arkadasEkle({{ profil.kullanici.id }})">
-                    <i class="bi bi-person-plus-fill"></i>
-                    <span style="position: relative; z-index: 1;">Arkadaş Ekle</span>
-                </button>
-                {% endif %}
-            </div>
-            {% endif %}
-        </div>
-    </div>
-    
-    <!-- STATS GRID -->
-    <div class="stats-grid">
-        <!-- 1.SEVİYE KARTI -->
-        <div class="stat-card">
-            <div class="stat-icon gold">
-                <i class="bi bi-star-fill"></i>
-            </div>
-            <div class="stat-label">Seviye</div>
-            <div class="stat-value">{{ profil.seviye }}</div>
-            <div class="xp-progress-container">
-                <div class="xp-bar-bg">
-                    <div class="xp-bar-fill" style="width: 0%" data-xp-width="{{ profil.xp_yuzdesi }}"></div>
-                </div>
-                <small class="xp-text">
-                    {{ profil.xp }} / {{ profil.sonraki_seviye_xp }} XP
-                </small>
-            </div>
-        </div>
-
-        <!-- 2.STREAK KARTI -->
-        <div class="stat-card">
-            <div class="stat-icon streak">
-                <i class="bi bi-fire"></i>
-            </div>
-            <div class="stat-label">Ardışık Gün</div>
-            <div class="stat-value">{{ profil.ardasik_gun_sayisi|default:0 }}</div>
-            <div style="margin-top: 10px;">
-                <small style="color: #6c757d; font-size:  0.8rem; display: block;">
-                    🏆 En uzun:  {{ profil.en_uzun_streak|default:0 }} gün
-                </small>
-            </div>
-        </div>
-
-        <!-- 3.TOPLAM PUAN -->
-        <div class="stat-card">
-            <div class="stat-icon purple">
-                <i class="bi bi-lightning-charge-fill"></i>
-            </div>
-            <div class="stat-label">Toplam Puan</div>
-            <div class="stat-value" id="totalPoints">{{ profil.toplam_puan|default:0 }}</div>
-        </div>
-        
-        <!-- 4.ÇÖZÜLEN SORU -->
-        <div class="stat-card">
-            <div class="stat-icon orange">
-                <i class="bi bi-journal-check"></i>
-            </div>
-            <div class="stat-label">Çözülen Soru</div>
-            <div class="stat-value" id="solvedQuestions">{{ profil.cozulen_soru_sayisi|default:0 }}</div>
-        </div>
-        
-        <!-- 5.DOĞRU SAYISI -->
-        <div class="stat-card">
-            <div class="stat-icon green">
-                <i class="bi bi-check-circle-fill"></i>
-            </div>
-            <div class="stat-label">Doğru Sayısı</div>
-            <div class="stat-value" id="correctAnswers">{{ profil.toplam_dogru|default:0 }}</div>
-        </div>
-        
-        <!-- 6.YANLIŞ SAYISI -->
-        <div class="stat-card">
-            <div class="stat-icon red">
-                <i class="bi bi-x-circle-fill"></i>
-            </div>
-            <div class="stat-label">Yanlış Sayısı</div>
-            <div class="stat-value" id="wrongAnswers">{{ profil.toplam_yanlis|default:0 }}</div>
-        </div>
-    </div>
-    
-    <!-- PROGRESS SECTION -->
-    <div class="progress-section">
-        <h2 class="section-title">
-            <i class="bi bi-graph-up-arrow"></i> İlerleme Durumu
-        </h2>
-        
-        <div class="progress-item">
-            <div class="progress-header">
-                <span class="progress-label">
-                    <i class="bi bi-percent"></i> Başarı Oranı
-                </span>
-                <span class="progress-percentage">{{ basari_orani|default:0 }}%</span>
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar-fill green" style="width: 0%" data-width="{{ basari_orani|default:0 }}%">
-                    {% if basari_orani > 20 %}{{ basari_orani }}%{% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- CHART SECTION -->
-    <div class="chart-section">
-        <h2 class="section-title">
-            <i class="bi bi-bar-chart-fill"></i> İstatistikler
-        </h2>
-        <div class="chart-container">
-            <canvas id="statsChart"></canvas>
-        </div>
-    </div>
-    
-    {% if profil.kullanici == request.user %}
-    <!-- GAMES SECTION -->
-    <h2 class="games-section-title">
-        <i class="bi bi-controller"></i> Bölümler
-    </h2>
-    <div class="games-grid">
-        <a href="{% url 'karsilasma_sinav_tipi_secimi' %}" class="text-decoration-none">
-            <div class="game-card-container">
-                <img src="{% static 'images/karsilasma.png' %}" alt="Karşılaşma" onerror="this.src='https://via.placeholder.com/400x280/FF8C00/ffffff?text=KARŞILAŞMA'">
-                <div class="game-overlay">
-                    <h3 class="game-title">⚔️ KARŞILAŞMA</h3>
-                    <p class="mb-0">Rakiplerle yarış, puan kazan!</p>
-                </div>
-            </div>
-        </a>
-        
-        <a href="{% url 'tabu_anasayfa' %}" class="text-decoration-none">
-            <div class="game-card-container">
-                <img src="{% static 'images/tabu.png' %}" alt="Tabu" onerror="this.src='https://via.placeholder.com/400x280/7B68EE/ffffff?text=TABU'">
-                <div class="game-overlay">
-                    <h3 class="game-title">🎴 TABU</h3>
-                    <p class="mb-0">Yasak kelimeleri kullanmadan anlat!</p>
-                </div>
-            </div>
-        </a>
-        
-        <a href="{% url 'rozetler_view' %}" class="text-decoration-none">
-            <div class="game-card-container">
-                <img src="https://via.placeholder.com/400x280/FFD700/ffffff?text=ROZETLER" alt="Rozetler">
-                <div class="game-overlay">
-                    <h3 class="game-title">🏆 ROZETLER</h3>
-                    <p class="mb-0">Başarılarını gör, rozetlerini topla!</p>
-                </div>
-            </div>
-        </a>
-        
-        <a href="{% url 'bul_bakalim_sinav_tipi_secimi' %}" class="text-decoration-none">
-            <div class="game-card-container">
-                <img src="{% static 'images/bulbakalim.png' %}" alt="Bul Bakalım" onerror="this.src='https://via.placeholder.com/400x280/4CAF50/ffffff?text=BUL+BAKALIM'">
-                <div class="game-overlay">
-                    <h3 class="game-title">💡 BUL BAKALIM</h3>
-                    <p class="mb-0">5 soru, 90 saniye!  Hemen başla!</p>
-                </div>
-            </div>
-        </a>
-    </div>
-    {% endif %}
-</div>
-
-{% if profil.kullanici == request.user %}
-<!-- PROFİL DÜZENLEME MODALI -->
-<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editProfileModalLabel">
-                    <i class="bi bi-pencil-square"></i> Profili Düzenle
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" action="{% url 'profil_duzenle' %}">
+                <form id="photoUploadForm" method="POST" action="{% url 'profil' %}" enctype="multipart/form-data" style="display:none;">
                     {% csrf_token %}
-                    
-                    <div class="mb-4 text-center">
-                        <div style="position: relative; display: inline-block;">
-                            {% if request.user.profil.profil_fotografi %}
-                                <img src="{{ request.user.profil.profil_fotografi.url }}" alt="Profil" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-purple);">
+                    <input type="file" id="photoInput" name="profil_fotografi" accept="image/*" onchange="document.getElementById('photoUploadForm').submit()">
+                </form>
+                {% endif %}
+            </div>
+
+            <!-- İÇERİK -->
+            <div class="hero-icerik">
+                <div class="hero-sol">
+
+                    <!-- İSİM -->
+                    <div class="hero-isim">
+                        {% if profil.ad and profil.soyad %}{{ profil.ad }} {{ profil.soyad }}
+                        {% else %}{{ profil.kullanici.username }}{% endif %}
+                    </div>
+                    <div class="hero-kullanici-adi">@{{ profil.kullanici.username }}</div>
+
+                    <!-- MAĞAZA UNVANI -->
+                    {% if envanter.aktif_unvan %}
+                    <div>
+                        <span class="hero-unvan" style="background:{{ envanter.aktif_unvan.unvan_renk }};">
+                            {{ envanter.aktif_unvan.icon }} {{ envanter.aktif_unvan.unvan_metni }}
+                        </span>
+                    </div>
+                    {% endif %}
+
+                    <!-- BADGE'LER -->
+                    <div class="hero-badges">
+                        <span class="hero-badge badge-seviye">⭐ Seviye {{ profil.seviye }} · {{ profil.seviye_unvani }}</span>
+                        <span class="hero-badge badge-sira">🏆 #{{ sira }} Sırada</span>
+                        <span class="hero-badge badge-alan">📚 {{ profil.get_alan_display|default:"Alan Seçilmedi" }}</span>
+                        {% if profil.ardasik_gun_sayisi >= 3 %}
+                        <span class="hero-badge badge-streak">🔥 {{ profil.ardasik_gun_sayisi }} Gün Streak!</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- ARKADAŞ DURUM BARI (başkasının profili) -->
+                    {% if goruntulenen_kullanici != request.user and arkadaslik_durumu == 'arkadas' %}
+                    <div class="arkadas-durum-bar" id="arkadasDurumBar" data-son-aktif="{{ profil.son_aktif|date:'c' }}">
+                        <span class="durum-dot" id="profilOnlineDot"></span>
+                        <span id="profilOnlineText">Hesaplanıyor...</span>
+                        <span>🔥 {{ profil.ardasik_gun_sayisi }} gün streak</span>
+                    </div>
+                    {% endif %}
+
+                    <!-- BUTONLAR -->
+                    <div class="hero-butonlar" style="margin-top:16px;">
+                        {% if goruntulenen_kullanici == request.user %}
+                            <a href="{% url 'profil_duzenle' %}" class="hero-btn btn-duzenle">✏️ Profili Düzenle</a>
+                            <a href="{% url 'gunluk_gorevler' %}" class="hero-btn btn-gorev">
+                                🎯 Görevler
+                                {% if bugun_tamamlanan is not None %}
+                                <span style="background:rgba(255,255,255,0.3);border-radius:8px;padding:1px 6px;font-size:0.75rem;">{{ bugun_tamamlanan }}/{{ bugun_toplam }}</span>
+                                {% endif %}
+                            </a>
+                            <a href="{% url 'calisma_takvimi' %}" class="hero-btn btn-takvim">📅 Takvim</a>
+                            <a href="{% url 'meydan_okumalarim' %}" class="hero-btn btn-meydan">
+                                ⚔️ Meydanlar
+                                {% if gelen_meydan_sayisi > 0 %}
+                                <span style="background:white;color:#ef4444;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:900;">{{ gelen_meydan_sayisi }}</span>
+                                {% endif %}
+                            </a>
+                            <button class="hero-btn btn-paylasim" onclick="paylasimAc()">📤 Paylaş</button>
+                        {% else %}
+                            {% if arkadaslik_durumu == 'arkadas' %}
+                                <button class="hero-btn btn-arkadas-mevcut" disabled>✅ Arkadaşsınız</button>
+                                <button class="hero-btn btn-meydan-oku" data-bs-toggle="modal" data-bs-target="#meydanModal">⚔️ Meydan Oku</button>
+                            {% elif arkadaslik_durumu == 'beklemede' %}
+                                <button class="hero-btn btn-arkadas-bekle" disabled>⏳ İstek Gönderildi</button>
                             {% else %}
-                                <img src="https://ui-avatars.com/api/?name={{ request.user.username }}&size=120&background=7B68EE&color=fff&bold=true&font-size=0.4" alt="Profil" style="width:  120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-purple);">
+                                <button class="hero-btn btn-arkadas-ekle" onclick="arkadasEkle({{ profil.kullanici.id }})">➕ Arkadaş Ekle</button>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <!-- SAĞ: MİNİ STATS + XP -->
+                <div class="hero-sag">
+                    <div class="hero-mini-stats">
+                        <div class="hero-mini-stat">
+                            <span class="hero-mini-deger">{{ profil.toplam_puan|default:0 }}</span>
+                            <span class="hero-mini-label">⚡ Puan</span>
+                        </div>
+                        <div class="hero-mini-stat">
+                            <span class="hero-mini-deger">{{ profil.cozulen_soru_sayisi|default:0 }}</span>
+                            <span class="hero-mini-label">📝 Soru</span>
+                        </div>
+                        <div class="hero-mini-stat">
+                            <span class="hero-mini-deger">{{ profil.ardasik_gun_sayisi|default:0 }}</span>
+                            <span class="hero-mini-label">🔥 Streak</span>
+                        </div>
+                    </div>
+                    <div class="hero-xp-bar-wrap">
+                        <div class="hero-xp-label">
+                            <span>⭐ XP: {{ profil.xp }} / {{ profil.sonraki_seviye_xp }}</span>
+                            <span>Seviye {{ profil.seviye }}</span>
+                        </div>
+                        <div class="hero-xp-bg">
+                            <div class="hero-xp-fill" style="width:0%" data-hedef="{{ profil.xp_yuzdesi|default:0 }}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ANA GRID ==================== -->
+    <div class="profil-ana-grid">
+
+        <!-- SOL KOLON -->
+        <div>
+            <!-- İSTATİSTİKLER -->
+            <div class="bolum-baslik animate-on-scroll">📊 İstatistikler</div>
+            <div class="stats-grid">
+
+                <div class="stat-kart gold animate-on-scroll" style="animation-delay:0.05s;">
+                    <div class="stat-ust">
+                        <div>
+                            <div class="stat-label">Seviye</div>
+                            <div class="stat-deger">{{ profil.seviye }}</div>
+                        </div>
+                        <div class="stat-icon ic-gold">⭐</div>
+                    </div>
+                    <div class="stat-xp-bg">
+                        <div class="stat-xp-fill" style="width:0%" data-hedef="{{ profil.xp_yuzdesi|default:0 }}"></div>
+                    </div>
+                    <span class="stat-alt">{{ profil.xp }} / {{ profil.sonraki_seviye_xp }} XP</span>
+                </div>
+
+                <div class="stat-kart streak animate-on-scroll" style="animation-delay:0.1s;">
+                    <div class="stat-ust">
+                        <div>
+                            <div class="stat-label">Ardışık Gün</div>
+                            <div class="stat-deger">{{ profil.ardasik_gun_sayisi|default:0 }}</div>
+                        </div>
+                        <div class="stat-icon ic-streak">🔥</div>
+                    </div>
+                    <span class="stat-alt">🏆 En uzun: {{ profil.en_uzun_streak|default:0 }} gün</span>
+                </div>
+
+                <div class="stat-kart purple animate-on-scroll" style="animation-delay:0.15s;">
+                    <div class="stat-ust">
+                        <div>
+                            <div class="stat-label">Toplam Puan</div>
+                            <div class="stat-deger" id="totalPoints">{{ profil.toplam_puan|default:0 }}</div>
+                        </div>
+                        <div class="stat-icon ic-purple">⚡</div>
+                    </div>
+                    <span class="stat-alt">📅 Haftalık: {{ profil.haftalik_puan|default:0 }}</span>
+                </div>
+
+                <div class="stat-kart orange animate-on-scroll" style="animation-delay:0.2s;">
+                    <div class="stat-ust">
+                        <div>
+                            <div class="stat-label">Çözülen Soru</div>
+                            <div class="stat-deger" id="solvedQ">{{ profil.cozulen_soru_sayisi|default:0 }}</div>
+                        </div>
+                        <div class="stat-icon ic-orange">📝</div>
+                    </div>
+                    <span class="stat-alt">✅ {{ profil.toplam_dogru|default:0 }} doğru · ❌ {{ profil.toplam_yanlis|default:0 }} yanlış</span>
+                </div>
+
+                <div class="stat-kart green animate-on-scroll" style="animation-delay:0.25s;">
+                    <div class="stat-ust">
+                        <div>
+                            <div class="stat-label">Doğru Sayısı</div>
+                            <div class="stat-deger" id="correctQ">{{ profil.toplam_dogru|default:0 }}</div>
+                        </div>
+                        <div class="stat-icon ic-green">✅</div>
+                    </div>
+                </div>
+
+                <div class="stat-kart red animate-on-scroll" style="animation-delay:0.3s;">
+                    <div class="stat-ust">
+                        <div>
+                            <div class="stat-label">Yanlış Sayısı</div>
+                            <div class="stat-deger" id="wrongQ">{{ profil.toplam_yanlis|default:0 }}</div>
+                        </div>
+                        <div class="stat-icon ic-red">❌</div>
+                    </div>
+                </div>
+
+                {% if goruntulenen_kullanici == request.user %}
+                <a href="{% url 'xp_gecmisi' %}" class="stat-kart teal animate-on-scroll" style="animation-delay:0.35s;">
+                    <div class="stat-ust">
+                        <div>
+                            <div class="stat-label">XP Geçmişi</div>
+                            <div class="stat-deger">{{ profil.xp }} XP</div>
+                        </div>
+                        <div class="stat-icon ic-teal">🕐</div>
+                    </div>
+                    <span class="stat-alt">📋 Geçmişi gör →</span>
+                </a>
+
+                <a href="{% url 'gunluk_gorevler' %}" class="stat-kart amber animate-on-scroll" style="animation-delay:0.4s;">
+                    <div class="stat-ust">
+                        <div>
+                            <div class="stat-label">Günlük Görevler</div>
+                            <div class="stat-deger">{{ bugun_tamamlanan|default:0 }}/{{ bugun_toplam|default:3 }}</div>
+                        </div>
+                        <div class="stat-icon ic-amber">🎯</div>
+                    </div>
+                    <div class="gorev-bar-bg">
+                        <div class="gorev-bar-fill" style="width:{% if bugun_toplam > 0 %}{% widthratio bugun_tamamlanan bugun_toplam 100 %}{% else %}0{% endif %}%"></div>
+                    </div>
+                    <span class="stat-alt">🔥 XP kazan →</span>
+                </a>
+                {% endif %}
+
+            </div>
+
+            <!-- İLERLEME -->
+            <div class="ilerleme-kart animate-on-scroll">
+                <div class="ilerleme-baslik">📈 İlerleme Durumu</div>
+                <div class="ilerleme-satir">
+                    <div class="ilerleme-ust">
+                        <span class="ilerleme-isim">✅ Başarı Oranı</span>
+                        <span class="ilerleme-yuzde">{{ basari_orani|default:0 }}%</span>
+                    </div>
+                    <div class="ilerleme-bar-bg">
+                        <div class="ilerleme-bar-fill bar-basari" style="width:0%" data-hedef="{{ basari_orani|default:0 }}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROZETLER -->
+            <div class="rozetler-kart animate-on-scroll">
+                <div class="ilerleme-baslik">
+                    🏅 Rozetler
+                    <a href="{% url 'rozetler_view' %}" style="margin-left:auto;font-size:0.78rem;color:#667eea;font-weight:700;text-decoration:none;">Tümünü gör →</a>
+                </div>
+                {% if kullanici_rozetleri %}
+                <div class="rozetler-grid">
+                    {% for rozet in kullanici_rozetleri %}
+                    <div class="rozet-item" style="animation-delay:{{ forloop.counter0 }}00ms;">
+                        <span class="rozet-icon">{{ rozet.icon }}</span>
+                        <div class="rozet-isim">{{ rozet.get_kategori_display }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="rozet-bos">
+                    🏅 Henüz rozet kazanılmadı.<br>
+                    <small>Oynayarak rozet kazan!</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- SAĞ KOLON -->
+        <div class="sag-widget-stack">
+
+            <!-- OYUN İSTATİSTİKLERİ -->
+            <div class="sag-widget animate-on-scroll">
+                <div class="sag-widget-baslik">🎮 Oyun Özeti</div>
+                {% if karsilasma_ist %}
+                <div class="oyun-ozet-item">
+                    <div class="oyun-ozet-icon" style="background:rgba(102,126,234,0.2);">⚔️</div>
+                    <div>
+                        <div class="oyun-ozet-isim">Karşılaşma</div>
+                        <div class="oyun-ozet-detay">{{ karsilasma_ist.oynanan_oyun_sayisi }} oyun</div>
+                    </div>
+                    <div class="oyun-ozet-kazanc">
+                                                <span class="oyun-ozet-kazanilan">🏆 {{ karsilasma_ist.kazanilan_oyun }} kazandı</span>
+                        <span class="oyun-ozet-kaybedilen">💔 {{ karsilasma_ist.kaybedilen_oyun }} kaybetti</span>
+                    </div>
+                </div>
+                {% endif %}
+                {% if bulbakalim_ist %}
+                <div class="oyun-ozet-item">
+                    <div class="oyun-ozet-icon" style="background:rgba(16,185,129,0.2);">💡</div>
+                    <div>
+                        <div class="oyun-ozet-isim">Bul Bakalım</div>
+                        <div class="oyun-ozet-detay">{{ bulbakalim_ist.oynanan_oyun_sayisi }} oyun</div>
+                    </div>
+                    <div class="oyun-ozet-kazanc">
+                        <span class="oyun-ozet-kazanilan">🏆 {{ bulbakalim_ist.kazanilan_oyun }} kazandı</span>
+                        <span class="oyun-ozet-kaybedilen">💔 {{ bulbakalim_ist.kaybedilen_oyun }} kaybetti</span>
+                    </div>
+                </div>
+                {% endif %}
+                {% if tabu_ist %}
+                <div class="oyun-ozet-item">
+                    <div class="oyun-ozet-icon" style="background:rgba(245,158,11,0.2);">🎭</div>
+                    <div>
+                        <div class="oyun-ozet-isim">Tabu</div>
+                        <div class="oyun-ozet-detay">{{ tabu_ist.oynanan_oyun_sayisi }} oyun</div>
+                    </div>
+                    <div class="oyun-ozet-kazanc">
+                        <span class="oyun-ozet-kazanilan">🏆 {{ tabu_ist.kazanilan_oyun }} kazandı</span>
+                        <span class="oyun-ozet-kaybedilen">💔 {{ tabu_ist.kaybedilen_oyun }} kaybetti</span>
+                    </div>
+                </div>
+                {% endif %}
+                {% if not karsilasma_ist and not bulbakalim_ist and not tabu_ist %}
+                <div style="text-align:center;padding:20px;color:rgba(255,255,255,0.4);font-size:0.82rem;font-weight:600;">
+                    Henüz oyun oynamadın! ��
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- HIZLI LİNKLER -->
+            <div class="sag-widget animate-on-scroll" style="animation-delay:0.1s;">
+                <div class="sag-widget-baslik">🔗 Hızlı Erişim</div>
+                <a href="{% url 'liderlik' %}" class="hizli-link">
+                    <div class="hizli-link-icon" style="background:rgba(255,215,0,0.2);">🏆</div>
+                    Liderlik Tablosu
+                    <span class="hizli-link-ok">›</span>
+                </a>
+                <a href="{% url 'rozetler_view' %}" class="hizli-link">
+                    <div class="hizli-link-icon" style="background:rgba(102,126,234,0.2);">🏅</div>
+                    Rozetlerim
+                    <span class="hizli-link-ok">›</span>
+                </a>
+                <a href="{% url 'arkadaslarim' %}" class="hizli-link">
+                    <div class="hizli-link-icon" style="background:rgba(16,185,129,0.2);">👥</div>
+                    Arkadaşlarım
+                    <span class="hizli-link-ok">›</span>
+                </a>
+                <a href="{% url 'calisma_takvimi' %}" class="hizli-link">
+                    <div class="hizli-link-icon" style="background:rgba(6,182,212,0.2);">📅</div>
+                    Çalışma Takvimi
+                    <span class="hizli-link-ok">›</span>
+                </a>
+                <a href="{% url 'magaza' %}" class="hizli-link">
+                    <div class="hizli-link-icon" style="background:rgba(255,165,0,0.2);">🛒</div>
+                    Mağaza
+                    <span class="hizli-link-ok">›</span>
+                </a>
+                <a href="{% url 'envanter' %}" class="hizli-link">
+                    <div class="hizli-link-icon" style="background:rgba(139,92,246,0.2);">🎒</div>
+                    Envanterim
+                    <span class="hizli-link-ok">›</span>
+                </a>
+            </div>
+
+            <!-- AKTİF MAĞAZA ÜRÜNLERİ -->
+            {% if envanter and goruntulenen_kullanici == request.user %}
+            <div class="sag-widget animate-on-scroll" style="animation-delay:0.2s;">
+                <div class="sag-widget-baslik">✨ Aktif Özelleştirmeler</div>
+
+                <div class="oyun-ozet-item">
+                    <div class="oyun-ozet-icon" style="background:rgba(255,215,0,0.2);">👑</div>
+                    <div>
+                        <div class="oyun-ozet-isim">Unvan</div>
+                        <div class="oyun-ozet-detay">
+                            {% if envanter.aktif_unvan %}
+                                <span style="background:{{ envanter.aktif_unvan.unvan_renk }};color:white;padding:2px 8px;border-radius:10px;font-size:0.7rem;font-weight:800;">
+                                    {{ envanter.aktif_unvan.unvan_metni }}
+                                </span>
+                            {% else %}
+                                <span style="color:rgba(255,255,255,0.35);">Seçilmedi</span>
                             {% endif %}
                         </div>
-                        <div class="mt-2">
-                            <small class="text-muted">
-                                <i class="bi bi-info-circle"></i> Profil fotoğrafını kamera ikonundan değiştirebilirsiniz
-                            </small>
+                    </div>
+                </div>
+
+                <div class="oyun-ozet-item">
+                    <div class="oyun-ozet-icon" style="background:rgba(102,126,234,0.2);">🖼️</div>
+                    <div>
+                        <div class="oyun-ozet-isim">Çerçeve</div>
+                        <div class="oyun-ozet-detay" style="color:rgba(255,255,255,0.55);font-size:0.72rem;">
+                            {% if envanter.aktif_cerceve %}{{ envanter.aktif_cerceve.isim }}
+                            {% else %}<span style="color:rgba(255,255,255,0.35);">Seçilmedi</span>{% endif %}
                         </div>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="id_ad" class="form-label">
-                            <i class="bi bi-person-fill"></i> Ad
-                        </label>
-                        <input type="text" class="form-control" id="id_ad" name="ad" value="{{ request.user.profil.ad }}" placeholder="Adınız" maxlength="100">
+                </div>
+
+                <div class="oyun-ozet-item">
+                    <div class="oyun-ozet-icon" style="background:rgba(16,185,129,0.2);">🎨</div>
+                    <div>
+                        <div class="oyun-ozet-isim">Tema</div>
+                        <div class="oyun-ozet-detay" style="color:rgba(255,255,255,0.55);font-size:0.72rem;">
+                            {% if envanter.aktif_tema %}{{ envanter.aktif_tema.isim }}
+                            {% else %}<span style="color:rgba(255,255,255,0.35);">Varsayılan</span>{% endif %}
+                        </div>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="id_soyad" class="form-label">
-                            <i class="bi bi-person-fill"></i> Soyad
-                        </label>
-                        <input type="text" class="form-control" id="id_soyad" name="soyad" value="{{ request.user.profil.soyad }}" placeholder="Soyadınız" maxlength="100">
+                </div>
+
+                <a href="{% url 'profil_duzenle' %}" style="
+                    display:block;text-align:center;padding:10px;
+                    background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);
+                    border-radius:12px;color:white;font-weight:700;font-size:0.8rem;
+                    text-decoration:none;margin-top:10px;transition:all 0.3s;">
+                    ✏️ Özelleştirmeleri Düzenle
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PAYLAŞIM MODALİ ==================== -->
+{% if goruntulenen_kullanici == request.user %}
+<div id="paylasimModal" style="
+    display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;
+    background:rgba(0,0,0,0.7);z-index:999999;align-items:center;justify-content:center;
+    backdrop-filter:blur(8px);">
+    <div style="background:white;border-radius:24px;padding:30px;max-width:440px;width:92%;animation:scaleIn 0.3s ease-out both;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(135deg,#667eea,#764ba2);"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <h3 style="font-weight:900;color:#1a1a2e;margin:0;font-size:1.3rem;">📤 Profil Kartını Paylaş</h3>
+            <button onclick="paylasimKapat()" style="background:rgba(239,68,68,0.1);border:none;color:#ef4444;width:34px;height:34px;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+        </div>
+
+        <!-- PAYLAŞIM KARTI -->
+        <div id="paylasimKarti" style="
+            background:linear-gradient(135deg,
+                {% if envanter.aktif_tema %}{{ envanter.aktif_tema.tema_primary }},{{ envanter.aktif_tema.tema_secondary }}
+                {% elif profil.tema == 'okyanus' %}#2196F3,#00BCD4
+                {% elif profil.tema == 'ates'    %}#FF6B6B,#FF8C00
+                {% elif profil.tema == 'orman'   %}#4CAF50,#2E7D32
+                {% elif profil.tema == 'gece'    %}#1a1a2e,#9b59b6
+                {% elif profil.tema == 'gunbatimi'%}#f093fb,#f5576c
+                {% elif profil.tema == 'altin'   %}#FFD700,#FFA500
+                {% elif profil.tema == 'pembe'   %}#ff9a9e,#fecfef
+                {% else %}#667eea,#764ba2{% endif %}
+            );
+            border-radius:18px;padding:24px;color:white;position:relative;overflow:hidden;margin-bottom:20px;">
+            <div style="position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:rgba(255,255,255,0.07);border-radius:50%;pointer-events:none;"></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+                <div style="font-weight:900;font-size:0.88rem;opacity:0.9;">⛏️ Köstebek YKS</div>
+                <div style="background:rgba(255,255,255,0.2);padding:3px 10px;border-radius:15px;font-size:0.7rem;font-weight:700;">Profil Kartı</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+                <div style="width:60px;height:60px;border-radius:50%;border:3px solid rgba(255,255,255,0.8);overflow:hidden;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;flex-shrink:0;">
+                    {% if profil.profil_fotografi %}
+                        <img src="{{ profil.profil_fotografi.url }}" style="width:100%;height:100%;object-fit:cover;">
+                    {% else %}
+                        {{ profil.kullanici.username|slice:":1"|upper }}
+                    {% endif %}
+                </div>
+                <div>
+                    <div style="font-size:1.2rem;font-weight:900;">
+                        {% if profil.ad and profil.soyad %}{{ profil.ad }} {{ profil.soyad }}{% else %}{{ profil.kullanici.username }}{% endif %}
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="id_hedef_puan" class="form-label">
-                            <i class="bi bi-target"></i> Hedef Puan
-                        </label>
-                        <input type="number" class="form-control" id="id_hedef_puan" name="hedef_puan" value="{{ request.user.profil.hedef_puan }}" placeholder="Hedef puanınız" min="0" max="1000">
-                        <small class="text-muted">
-                            <i class="bi bi-lightbulb"></i> YKS hedef puanınızı girin (0-1000 arası)
-                        </small>
+                    <div style="opacity:0.8;font-size:0.82rem;">@{{ profil.kullanici.username }}</div>
+                    {% if envanter.aktif_unvan %}
+                    <div style="background:rgba(255,255,255,0.2);display:inline-block;padding:2px 8px;border-radius:10px;font-size:0.72rem;font-weight:800;margin-top:4px;">
+                        {{ envanter.aktif_unvan.unvan_metni }}
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="id_alan" class="form-label">
-                            <i class="bi bi-book-fill"></i> Alan
-                        </label>
-                        <select class="form-select" id="id_alan" name="alan">
-                            <option value="sayisal" {% if request.user.profil.alan == 'sayisal' %}selected{% endif %}>Sayısal</option>
-                            <option value="esit_agirlik" {% if request.user.profil.alan == 'esit_agirlik' %}selected{% endif %}>Eşit Ağırlık</option>
-                            <option value="sozel" {% if request.user.profil.alan == 'sozel' %}selected{% endif %}>Sözel</option>
-                            <option value="dil" {% if request.user.profil.alan == 'dil' %}selected{% endif %}>Dil</option>
-                        </select>
-                    </div>
-                    
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary flex-fill">
-                            <span style="position: relative; z-index: 1;">
-                                <i class="bi bi-check-circle-fill"></i> Kaydet
-                            </span>
-                        </button>
-                        <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal">
-                            <i class="bi bi-x-circle-fill"></i> İptal
-                        </button>
-                    </div>
-                </form>
+                    {% endif %}
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
+                <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 4px;text-align:center;">
+                    <div style="font-size:1.2rem;font-weight:900;">{{ profil.toplam_puan|default:0 }}</div>
+                    <div style="font-size:0.62rem;opacity:0.8;font-weight:700;">⚡ Puan</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 4px;text-align:center;">
+                    <div style="font-size:1.2rem;font-weight:900;">{{ profil.cozulen_soru_sayisi|default:0 }}</div>
+                    <div style="font-size:0.62rem;opacity:0.8;font-weight:700;">📝 Soru</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 4px;text-align:center;">
+                    <div style="font-size:1.2rem;font-weight:900;">{{ profil.ardasik_gun_sayisi|default:0 }}</div>
+                    <div style="font-size:0.62rem;opacity:0.8;font-weight:700;">🔥 Streak</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 4px;text-align:center;">
+                    <div style="font-size:1.2rem;font-weight:900;">#{{ sira|default:"--" }}</div>
+                    <div style="font-size:0.62rem;opacity:0.8;font-weight:700;">🏆 Sıra</div>
+                </div>
+            </div>
+            <div style="background:rgba(255,255,255,0.15);border-radius:12px;padding:12px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                    <span style="font-size:0.82rem;font-weight:700;">✅ Başarı Oranı</span>
+                    <span style="font-weight:900;">%{{ basari_orani|default:0 }}</span>
+                </div>
+                <div style="background:rgba(0,0,0,0.2);border-radius:8px;height:10px;overflow:hidden;">
+                    <div style="width:{{ basari_orani|default:0 }}%;height:100%;background:linear-gradient(90deg,#4ade80,#22c55e);border-radius:8px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex;gap:10px;">
+            <button onclick="linkKopyala()" id="kopyalaBtn" style="flex:1;padding:12px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:12px;font-weight:800;cursor:pointer;transition:all 0.3s;font-size:0.88rem;">
+                🔗 Linki Kopyala
+            </button>
+            <button onclick="linkPaylas()" style="flex:1;padding:12px;background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:12px;font-weight:800;cursor:pointer;transition:all 0.3s;font-size:0.88rem;">
+                📤 Paylaş
+            </button>
+            <button onclick="paylasimKapat()" style="padding:12px 16px;background:#f3f4f6;border:none;border-radius:12px;font-weight:700;cursor:pointer;color:#6b7280;transition:all 0.3s;">
+                ✕
+            </button>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ==================== MEYDAN OKUMA MODALİ ==================== -->
+{% if goruntulenen_kullanici != request.user and arkadaslik_durumu == 'arkadas' %}
+<div class="modal fade" id="meydanModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:20px;overflow:hidden;border:none;">
+            <div class="modal-header" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border:none;padding:20px 25px;">
+                <h5 class="modal-title" style="font-weight:900;">⚔️ {{ profil.kullanici.username }}'a Meydan Oku</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding:25px;">
+                <p style="font-weight:700;color:#374151;margin-bottom:10px;">📝 Sınav Tipi:</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+                    <button class="sinav-btn secili" onclick="sinavTipiSec('TYT',this)" style="padding:12px;border:2px solid #667eea;border-radius:12px;background:rgba(102,126,234,0.1);color:#667eea;font-weight:800;cursor:pointer;transition:all 0.3s;">TYT</button>
+                    <button class="sinav-btn" onclick="sinavTipiSec('AYT',this)" style="padding:12px;border:2px solid #e5e7eb;border-radius:12px;background:white;font-weight:800;cursor:pointer;transition:all 0.3s;">AYT</button>
+                </div>
+                <p style="font-weight:700;color:#374151;margin-bottom:10px;">📚 Ders Seç:</p>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;">
+                    <!-- YENİ KODU KOY -->
+                    <button class="ders-btn secili" onclick="dersSec('karisik',this)"
+                        style="padding:10px 6px;border:2px solid #ef4444;border-radius:10px;background:rgba(239,68,68,0.08);font-weight:700;font-size:0.78rem;cursor:pointer;color:#ef4444;">
+                        🎲 Karışık
+                    </button>
+                    <button class="ders-btn" onclick="dersSec('matematik',this)"
+                        style="padding:10px 6px;border:2px solid #e5e7eb;border-radius:10px;background:white;font-weight:700;font-size:0.78rem;cursor:pointer;color:#374151;">
+                        🔢 Matematik
+                    </button>
+                    <button class="ders-btn" onclick="dersSec('fizik',this)"
+                        style="padding:10px 6px;border:2px solid #e5e7eb;border-radius:10px;background:white;font-weight:700;font-size:0.78rem;cursor:pointer;color:#374151;">
+                        ⚛️ Fizik
+                    </button>
+                    <button class="ders-btn" onclick="dersSec('kimya',this)"
+                        style="padding:10px 6px;border:2px solid #e5e7eb;border-radius:10px;background:white;font-weight:700;font-size:0.78rem;cursor:pointer;color:#374151;">
+                        🧪 Kimya
+                    </button>
+                    <button class="ders-btn" onclick="dersSec('biyoloji',this)"
+                        style="padding:10px 6px;border:2px solid #e5e7eb;border-radius:10px;background:white;font-weight:700;font-size:0.78rem;cursor:pointer;color:#374151;">
+                        🧬 Biyoloji
+                    </button>
+                    <button class="ders-btn" onclick="dersSec('tarih',this)"
+                        style="padding:10px 6px;border:2px solid #e5e7eb;border-radius:10px;background:white;font-weight:700;font-size:0.78rem;cursor:pointer;color:#374151;">
+                        🏛️ Tarih
+                    </button>
+                    <button class="ders-btn" onclick="dersSec('cografya',this)"
+                        style="padding:10px 6px;border:2px solid #e5e7eb;border-radius:10px;background:white;font-weight:700;font-size:0.78rem;cursor:pointer;color:#374151;">
+                        🌍 Coğrafya
+                    </button>
+                    <button class="ders-btn" onclick="dersSec('felsefe',this)"
+                        style="padding:10px 6px;border:2px solid #e5e7eb;border-radius:10px;background:white;font-weight:700;font-size:0.78rem;cursor:pointer;color:#374151;">
+                        💭 Felsefe
+                    </button>
+                    <button class="ders-btn" onclick="dersSec('turkce',this)"
+                        style="padding:10px 6px;border:2px solid #e5e7eb;border-radius:10px;background:white;font-weight:700;font-size:0.78rem;cursor:pointer;color:#374151;">
+                        📖 Türkçe
+                    </button>
+                </div>
+                <button onclick="meydanGonder({{ profil.kullanici.id }})" style="width:100%;padding:14px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border:none;border-radius:12px;font-weight:900;font-size:1rem;cursor:pointer;box-shadow:0 5px 15px rgba(239,68,68,0.35);transition:all 0.3s;">
+                    ⚔️ Meydan Oku!
+                </button>
             </div>
         </div>
     </div>
 </div>
 {% endif %}
+
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Fotoğraf yükleme
-    function uploadPhoto() {
-        showLoading('Fotoğraf yükleniyor...');
-        document.getElementById('photoUploadForm').submit();
+    // ==================== SCROLL ANİMASYONU ====================
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    // ==================== SAYAÇ ANİMASYONU ====================
+    function animateCounter(el, hedef, sure = 1200) {
+        if (!el || !hedef) return;
+        const step = timestamp => {
+            if (!step.t) step.t = timestamp;
+            const p = Math.min((timestamp - step.t) / sure, 1);
+            const e = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.floor(e * hedef);
+            if (p < 1) requestAnimationFrame(step);
+            else el.textContent = hedef;
+        };
+        requestAnimationFrame(step);
     }
 
-    // Arkadaş ekle
+    window.addEventListener('load', () => {
+        // XP barları
+        setTimeout(() => {
+            document.querySelectorAll('.hero-xp-fill, .stat-xp-fill, .ilerleme-bar-fill').forEach(bar => {
+                bar.style.width = (parseFloat(bar.getAttribute('data-hedef')) || 0) + '%';
+            });
+        }, 400);
+
+        // Sayaçlar
+        animateCounter(document.getElementById('totalPoints'), {{ profil.toplam_puan|default:0 }});
+        animateCounter(document.getElementById('solvedQ'),    {{ profil.cozulen_soru_sayisi|default:0 }});
+        animateCounter(document.getElementById('correctQ'),   {{ profil.toplam_dogru|default:0 }});
+        animateCounter(document.getElementById('wrongQ'),     {{ profil.toplam_yanlis|default:0 }});
+    });
+
+    // ==================== ONLINE DURUMU ====================
+    function profilOnlineDurumu() {
+        const bar = document.getElementById('arkadasDurumBar');
+        if (!bar) return;
+        const sonAktif = new Date(bar.getAttribute('data-son-aktif'));
+        const farkDk   = Math.floor((new Date() - sonAktif) / 60000);
+        const dot  = document.getElementById('profilOnlineDot');
+        const text = document.getElementById('profilOnlineText');
+        if (!dot || !text) return;
+        if (farkDk < 5) {
+            dot.className = 'durum-dot online';
+            text.textContent = 'Çevrimiçi';
+            text.style.color = '#10b981';
+        } else if (farkDk < 60) {
+            dot.className = 'durum-dot az-once';
+            text.textContent = `${farkDk} dakika önce aktifti`;
+            text.style.color = '#f59e0b';
+        } else {
+            dot.className = 'durum-dot';
+            text.textContent = `${Math.floor(farkDk/60)} saat önce aktifti`;
+        }
+    }
+    profilOnlineDurumu();
+    setInterval(profilOnlineDurumu, 60000);
+
+    // ==================== PAYLAŞIM ==================== 
+    function paylasimAc() {
+        const m = document.getElementById('paylasimModal');
+        m.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    function paylasimKapat() {
+        document.getElementById('paylasimModal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    document.getElementById('paylasimModal')?.addEventListener('click', function(e) {
+        if (e.target === this) paylasimKapat();
+    });
+
+    const profilLinki = `${window.location.origin}/profil/?user={{ profil.kullanici.username }}`;
+
+    async function linkKopyala() {
+        const btn = document.getElementById('kopyalaBtn');
+        try {
+            await navigator.clipboard.writeText(profilLinki);
+            btn.textContent = '✅ Kopyalandı!';
+            btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+            showToast('Profil linki kopyalandı!', 'success');
+            setTimeout(() => {
+                btn.textContent = '🔗 Linki Kopyala';
+                btn.style.background = 'linear-gradient(135deg,#667eea,#764ba2)';
+            }, 2500);
+        } catch {
+            showToast('Kopyalanamadı!', 'error');
+        }
+    }
+
+    async function linkPaylas() {
+        try {
+            if (navigator.share) {
+                await navigator.share({
+                    title: '⛏️ Köstebek YKS',
+                    text: '{{ profil.kullanici.username }} - Seviye {{ profil.seviye }} 🚀',
+                    url: profilLinki
+                });
+            } else {
+                await linkKopyala();
+            }
+        } catch {}
+    }
+
+    // ==================== ARKADAŞ EKLE ====================
     function arkadasEkle(kullaniciId) {
-        if (!confirm('Bu kullanıcıya arkadaşlık isteği göndermek istiyor musun?')) return;
-        
-        showLoading('İstek gönderiliyor...');
-        
         fetch(`/arkadaslik/gonder/${kullaniciId}/`, {
             method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json'
-            }
+            headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' }
         })
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
-            hideLoading();
+            if (data.success) { showToast(data.message, 'success'); setTimeout(() => location.reload(), 1200); }
+            else { showToast(data.message, 'error'); }
+        });
+    }
+
+    // ==================== MEYDAN OKUMA ====================
+    let seciliDers = 'karisik';
+    let seciliSinav = 'TYT';
+
+    function dersSec(ders, btn) {
+        seciliDers = ders;
+        document.querySelectorAll('.ders-btn').forEach(b => {
+            b.style.borderColor = '#e5e7eb';
+            b.style.background = 'white';
+            b.style.color = '#374151';
+        });
+        btn.style.borderColor = '#ef4444';
+        btn.style.background = 'rgba(239,68,68,0.08)';
+        btn.style.color = '#ef4444';
+    }
+
+    function sinavTipiSec(tip, btn) {
+        seciliSinav = tip;
+        document.querySelectorAll('.sinav-btn').forEach(b => {
+            b.style.borderColor = '#e5e7eb';
+            b.style.background = 'white';
+            b.style.color = '#374151';
+        });
+        btn.style.borderColor = '#667eea';
+        btn.style.background = 'rgba(102,126,234,0.1)';
+        btn.style.color = '#667eea';
+    }
+
+    function meydanGonder(kullaniciId) {
+        fetch(`/meydan-okuma/gonder/${kullaniciId}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ders: seciliDers, sinav_tipi: seciliSinav })
+        })
+        .then(r => r.json())
+        .then(data => {
             if (data.success) {
                 showToast(data.message, 'success');
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                showToast(data.message, 'error');
-            }
-        })
-        .catch(error => {
-            hideLoading();
-            console.error('Hata:', error);
-            showToast('Bir hata oluştu! ', 'error');
+                bootstrap.Modal.getInstance(document.getElementById('meydanModal')).hide();
+            } else { showToast(data.message, 'error'); }
         });
     }
 
-    // CSRF Token
+    // ==================== COOKIE ====================
     function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    // İstatistik sayaçları animate et
-    function animateValue(element, start, end, duration) {
-        let startTime = null;
-        const step = (timestamp) => {
-            if (!startTime) startTime = timestamp;
-            const progress = Math.min((timestamp - startTime) / duration, 1);
-            const value = Math.floor(progress * (end - start) + start);
-            element.textContent = value;
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
-            }
-        };
-        window.requestAnimationFrame(step);
-    }
-
-    // İstatistik Grafiği
-    const ctx = document.getElementById('statsChart').getContext('2d');
-    const statsChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Doğru', 'Yanlış'],
-            datasets: [{
-                data: [
-                    {{ profil.toplam_dogru|default:0 }},
-                    {{ profil.toplam_yanlis|default:0 }}
-                ],
-                backgroundColor: ['#4CAF50', '#F44336'],
-                borderWidth: 0,
-                borderRadius: 8,
-                spacing: 5
-            }]
-        },
-        options: {
-            responsive:  true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels:  {
-                        font: {
-                            size: 16,
-                            weight: 'bold',
-                            family: 'Poppins'
-                        },
-                        padding: 20,
-                        usePointStyle: true,
-                        pointStyle: 'circle'
-                    }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0,0,0,0.8)',
-                    titleFont: { size: 16, family: 'Poppins', weight: 'bold' },
-                    bodyFont: { size:  14, family: 'Poppins' },
-                    padding: 15,
-                    cornerRadius: 10,
-                    displayColors: false
-                }
-            },
-            animation: {
-                animateRotate: true,
-                animateScale: true,
-                duration: 1500
-            }
-        }
-    });
-    
-    // Sayfa yüklendiğinde animasyonlar
-    window.addEventListener('load', function() {
-        // Progress bar animasyonu
-        const progressBars = document.querySelectorAll('.progress-bar-fill');
-        progressBars.forEach(bar => {
-            const targetWidth = bar.getAttribute('data-width');
-            setTimeout(() => {
-                bar.style.width = targetWidth;
-            }, 300);
+        let v = null;
+        document.cookie.split(';').forEach(c => {
+            c = c.trim();
+            if (c.startsWith(name + '=')) v = decodeURIComponent(c.slice(name.length + 1));
         });
-
-        // XP bar animasyonu
-        const xpBars = document.querySelectorAll('.xp-bar-fill');
-        xpBars.forEach(bar => {
-            const targetWidth = bar.getAttribute('data-xp-width');
-            setTimeout(() => {
-                bar.style.width = targetWidth + '%';
-            }, 500);
-        });
-
-        // Sayaç animasyonları
-        const totalPoints = document.getElementById('totalPoints');
-        const solvedQuestions = document.getElementById('solvedQuestions');
-        const correctAnswers = document.getElementById('correctAnswers');
-        const wrongAnswers = document.getElementById('wrongAnswers');
-
-        animateValue(totalPoints, 0, {{ profil.toplam_puan|default:0 }}, 1500);
-        animateValue(solvedQuestions, 0, {{ profil.cozulen_soru_sayisi|default:0 }}, 1500);
-        animateValue(correctAnswers, 0, {{ profil.toplam_dogru|default:0 }}, 1500);
-        animateValue(wrongAnswers, 0, {{ profil.toplam_yanlis|default:0 }}, 1500);
-
-        {% if profil.kullanici == request.user %}
-        // Hoş geldin mesajı
-        showToast('Hoş geldin {{ request.user.username }}!  🎉', 'success');
-        {% endif %}
-    });
+        return v;
+    }
 </script>
 {% endblock %}
