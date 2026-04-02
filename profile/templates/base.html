@@ -1763,7 +1763,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'quiz_anasayfa' %}">
-                <i class="bi bi-gem"></i> Köstebek YKS
+                <img src="{% static 'images/kostebek_navbar.png' %}" alt="Köstebek" style="height:32px; width:auto; vertical-align:middle; margin-right:6px;"> Köstebek YKS
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -1812,6 +1812,12 @@
                                 </a>
                             </li>
                         </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'karsilasma_gecmis' %}">
+                            <i class="bi bi-clock-history"></i> Karşılaşma Geçmişi
+                        </a>
                     </li>
 
                     <li class="nav-item">
@@ -1939,7 +1945,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4><i class="bi bi-gem"></i> Köstebek YKS</h4>
+                    <h4><img src="{% static 'images/kostebek_navbar.png' %}" alt="Köstebek" style="height:28px; width:auto; vertical-align:middle; margin-right:6px;"> Köstebek YKS</h4>
                     <p>Eğlenerek YKS'ye hazırlan! Oyunlaştırılmış eğitim platformu ile sınavda başarıya ulaş.</p>
                     <div class="social-links">
                         <a href="https://www.instagram.com/kostebek.yks/" target="_blank" class="social-link" title="Instagram">

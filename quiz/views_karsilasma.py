@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.urls import reverse
 from datetime import timedelta
-from quiz.models import KarsilasmaOdasi, Cevap, Soru, MeydanOkuma
+from quiz.models import KarsilasmaOdasi, Cevap, Soru, MeydanOkuma, TurnuvaMaci
 from quiz.helpers import get_random_soru_by_ders, update_stats_with_combo
 from profile.models import OyunModuIstatistik, OgrenciProfili
 from profile.rozet_kontrol import rozet_kontrol_yap
@@ -882,3 +882,72 @@ def meydan_okuma_iptal(request, meydan_id):
         meydan.oda.save()
 
     return JsonResponse({'success': True, 'message': 'Meydan okuma iptal edildi.'})
+
+
+@login_required
+def karsilasma_gecmis(request):
+    """
+    Kullanıcının bitmiş karşılaşmalarını listeler.
+    - En yeni en üstte: bitis_zamani DESC, yoksa olusturma_tarihi DESC
+    - Turnuva maçı ise Turnuva etiketi gösterebilmek için TurnuvaMaci eşlemesi yapar.
+    """
+    user = request.user
+
+    try:
+        # Not: oda_id UUID PK olduğu için order_by ve filtrelerde sorun yok
+        odalar = (
+            KarsilasmaOdasi.objects
+            .select_related('oyuncu1', 'oyuncu2')
+            .filter(models.Q(oyuncu1=user) | models.Q(oyuncu2=user))
+            .filter(oyun_durumu='bitti')
+            .filter(oyuncu2__isnull=False)
+            .order_by('-bitis_zamani', '-olusturma_tarihi')
+        )
+
+        # Turnuva maçlarını tek seferde çek
+        turnuva_maclari = (
+            TurnuvaMaci.objects
+            .filter(karsilasma_oda__in=odalar)
+            .select_related('turnuva', 'kazanan', 'karsilasma_oda')
+        )
+        turnuva_by_oda_id = {
+            tm.karsilasma_oda_id: tm
+            for tm in turnuva_maclari
+            if tm.karsilasma_oda_id
+        }
+
+        rows = []
+        for oda in odalar:
+            is_oyuncu1 = (oda.oyuncu1_id == user.id)
+
+            rakip = oda.oyuncu2 if is_oyuncu1 else oda.oyuncu1
+            benim_skor = oda.oyuncu1_skor if is_oyuncu1 else oda.oyuncu2_skor
+            rakip_skor = oda.oyuncu2_skor if is_oyuncu1 else oda.oyuncu1_skor
+
+            if benim_skor > rakip_skor:
+                sonuc = "Kazandı"
+            elif benim_skor < rakip_skor:
+                sonuc = "Kaybetti"
+            else:
+                sonuc = "Berabere"
+
+            tm = turnuva_by_oda_id.get(oda.oda_id)
+
+            rows.append({
+                "oda": oda,
+                "rakip": rakip,
+                "benim_skor": benim_skor,
+                "rakip_skor": rakip_skor,
+                "sonuc": sonuc,
+                "puan_farki": abs(benim_skor - rakip_skor),
+                "is_turnuva": tm is not None,
+                "turnuva_maci": tm,
+            })
+
+        context = {"rows": rows}
+        return render(request, "quiz/karsilasma_gecmisi.html", context)
+
+    except Exception as e:
+        logger.error(f"❌ Karşılaşma geçmişi hatası: {e}", exc_info=True)
+        messages.error(request, "Karşılaşma geçmişi yüklenirken bir hata oluştu.")
+        return redirect('quiz_anasayfa')

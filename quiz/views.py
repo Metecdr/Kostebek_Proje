@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.cache import cache
-from profile.models import OyunModuIstatistik
+from profile.models import OyunModuIstatistik, OgrenciProfili
 from profile.rozet_kontrol import rozet_kontrol_yap
 import logging
 

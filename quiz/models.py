@@ -319,6 +319,8 @@ class KarsilasmaOdasi(models.Model):
     
     ara_ekran_bekleniyor = models.BooleanField(default=False, verbose_name="Ara Ekran Bekleniyor")
     olusturma_tarihi = models.DateTimeField(auto_now_add=True, db_index=True)
+    # ✅ EKLE (views_karsilasma.py zaten set ediyor)
+    bitis_zamani = models.DateTimeField(null=True, blank=True, db_index=True)
 
     class Meta:
         verbose_name = "Karşılaşma Odası"
