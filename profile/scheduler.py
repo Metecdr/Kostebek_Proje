@@ -12,9 +12,9 @@ def reset_liderlik_job():
     """Liderlik reset görevi"""
     try:
         call_command('reset_liderlik')
-        logger.info('✅ Liderlik reset başarılı')
-    except Exception as e: 
-        logger.error(f'❌ Liderlik reset hatası: {e}')
+        logger.info('Liderlik reset başarılı')
+    except Exception as e:
+        logger.error(f'Liderlik reset hatası: {e}')
 
 
 def start_scheduler():
@@ -36,7 +36,7 @@ def start_scheduler():
     )
     
     scheduler.start()
-    logger.info('🚀 Liderlik zamanlayıcı başlatıldı!  (Her gün 00:05)')
+    logger.info('Liderlik zamanlayıcı başlatıldı! (Her gün 00:05)')
 
 
 def stop_scheduler():
@@ -45,4 +45,4 @@ def stop_scheduler():
     if scheduler is not None:
         scheduler.shutdown()
         scheduler = None
-        logger.info('🛑 Liderlik zamanlayıcı durduruldu')
+        logger.info('Liderlik zamanlayıcı durduruldu')

@@ -13,6 +13,7 @@ from quiz.views_karsilasma import (
     meydan_okuma_reddet,
     meydan_okumalarim,
     meydan_okuma_iptal,
+    karsilasma_gecmis,
 )
 from quiz.views_bul_bakalim import (
     bul_bakalim_sinav_tipi_secimi, bul_bakalim_ders_secimi, bul_bakalim_basla, 
@@ -44,6 +45,7 @@ urlpatterns = [
     path('karsilasma/oyun/<str:oda_id>/', karsilasma_oyun, name='karsilasma_oyun'),
     path('karsilasma/durum/<str:oda_id>/', karsilasma_durum_guncelle, name='karsilasma_durum_guncelle'),
     path('karsilasma/sonuc/<str:oda_id>/', karsilasma_sonuc, name='karsilasma_sonuc'),
+    path('karsilasma/gecmis/', karsilasma_gecmis, name='karsilasma_gecmis'),
     
     # ==================== BUL BAKALIM ====================
     path('bul-bakalim/sinav-tipi/', bul_bakalim_sinav_tipi_secimi, name='bul_bakalim_sinav_tipi_secimi'),

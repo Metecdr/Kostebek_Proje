@@ -49,8 +49,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'profile/templates'),  # Profile templates
-            os.path.join(BASE_DIR, 'quiz/templates'),     # Quiz templates
             os.path.join(BASE_DIR, 'templates'),          # Global templates
         ],
         'APP_DIRS': True,
