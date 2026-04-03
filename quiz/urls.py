@@ -6,8 +6,10 @@ from quiz.views_tabu import (
     tabu_oyun, tabu_tur_guncelle, tabu_tur_degistir, tabu_sonuc
 )
 from quiz.views_karsilasma import (
-    karsilasma_sinav_tipi_secimi, karsilasma_ders_secimi, karsilasma_oyun, 
-    karsilasma_durum_guncelle, karsilasma_sonuc, karsilasma_rakip_bul, 
+    karsilasma_sinav_tipi_secimi, karsilasma_ders_secimi, karsilasma_oyun,
+    karsilasma_durum_guncelle, karsilasma_sonuc, karsilasma_rakip_bul,
+    karsilasma_oda_kur, karsilasma_oda_bekleme, karsilasma_oda_bekleme_durum,
+    karsilasma_oda_katil,
     meydan_okuma_gonder,
     meydan_okuma_kabul,
     meydan_okuma_reddet,
@@ -46,6 +48,10 @@ urlpatterns = [
     path('karsilasma/durum/<str:oda_id>/', karsilasma_durum_guncelle, name='karsilasma_durum_guncelle'),
     path('karsilasma/sonuc/<str:oda_id>/', karsilasma_sonuc, name='karsilasma_sonuc'),
     path('karsilasma/gecmis/', karsilasma_gecmis, name='karsilasma_gecmis'),
+    path('karsilasma/oda-kur/', karsilasma_oda_kur, name='karsilasma_oda_kur'),
+    path('karsilasma/oda/<str:oda_kodu>/bekleme/', karsilasma_oda_bekleme, name='karsilasma_oda_bekleme'),
+    path('karsilasma/oda/<str:oda_kodu>/durum/', karsilasma_oda_bekleme_durum, name='karsilasma_oda_bekleme_durum'),
+    path('karsilasma/oda-katil/', karsilasma_oda_katil, name='karsilasma_oda_katil'),
     
     # ==================== BUL BAKALIM ====================
     path('bul-bakalim/sinav-tipi/', bul_bakalim_sinav_tipi_secimi, name='bul_bakalim_sinav_tipi_secimi'),

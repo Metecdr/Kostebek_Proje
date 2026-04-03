@@ -217,7 +217,8 @@ class TabuOyun(models.Model):
 class KarsilasmaOdasi(models.Model):
     """1v1 Karşılaşma odaları"""
     oda_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    
+    oda_kodu = models.CharField(max_length=8, null=True, blank=True, unique=True, verbose_name="Oda Kodu")
+
     oyuncu1 = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
@@ -304,7 +305,7 @@ class KarsilasmaOdasi(models.Model):
         verbose_name="Aktif Soru"
     )
     aktif_soru_no = models.IntegerField(default=1, verbose_name="Aktif Soru Numarası")
-    toplam_soru = models.IntegerField(default=5, verbose_name="Toplam Soru Sayısı")
+    toplam_soru = models.IntegerField(default=10, verbose_name="Toplam Soru Sayısı")
     
     oyuncu1_cevapladi = models.BooleanField(default=False)
     oyuncu2_cevapladi = models.BooleanField(default=False)

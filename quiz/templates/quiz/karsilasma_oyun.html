@@ -972,10 +972,12 @@ async function loadGameState() {
             roundModalGosterildi = false;
         }
         
-        if (data.oyuncu2_adi) {
+        // Rakip adını doğru oyuncuya göre güncelle
+        const rakipAdi = isOyuncu1 ? data.oyuncu2_adi : data.oyuncu1_adi;
+        if (rakipAdi) {
             const waitingModal = bootstrap.Modal.getInstance(document.getElementById('waitingModal'));
             if (waitingModal) waitingModal.hide();
-            document.getElementById('rakipUsername').textContent = data.oyuncu2_adi;
+            document.getElementById('rakipUsername').textContent = rakipAdi;
         }
         
         if (data.oyuncu1_cevapladi && data.oyuncu2_cevapladi && !roundModalGosterildi) {
@@ -1068,13 +1070,12 @@ function updateQuestion(data) {
 
 function showRoundTransition(data) {
     console.log('⚡ MODAL GÖSTER (5 SANİYE)!');
-    
-    const kalanSure = 5;
+
     const senScore = isOyuncu1 ? data.oyuncu1_skor : data.oyuncu2_skor;
     const rakipScore = isOyuncu1 ? data.oyuncu2_skor : data.oyuncu1_skor;
-    
+
     const roundFlashIcon = document.getElementById('roundFlashIcon');
-    
+
     if (senScore > rakipScore) {
         roundFlashIcon.textContent = '🏆';
     } else if (rakipScore > senScore) {
@@ -1082,35 +1083,30 @@ function showRoundTransition(data) {
     } else {
         roundFlashIcon.textContent = '🤝';
     }
-    
+
     const roundModalElement = document.getElementById('roundModal');
     let roundModal = bootstrap.Modal.getInstance(roundModalElement);
-    
+
     if (!roundModal) {
         roundModal = new bootstrap.Modal(roundModalElement, {
             backdrop: 'static',
             keyboard: false
         });
     }
-    
+
     roundModal.show();
     console.log('✅ MODAL AÇILDI! 5 saniye bekleyecek...');
-    
+
+    // Polling'i hızlandır - modal kapanınca yeni soru gelmiş olsun
+    clearInterval(pollingInterval);
+    pollingInterval = setInterval(loadGameState, 300);
+
     setTimeout(() => {
         console.log('⏰ MODAL KAPANIYOR (5 saniye sonra)');
         roundModal.hide();
-        cevapVerildi = false;
+        // Modal kapandıktan sonra hemen durumu kontrol et
         loadGameState();
-    }, kalanSure * 1000);
-}
-
-function showXPNotification(xp) {
-    const notification = document.getElementById('xpNotification');
-    document.getElementById('xpAmount').textContent = xp;
-    notification.style.display = 'block';
-    setTimeout(() => {
-        notification.style.display = 'none';
-    }, 3000);
+    }, 5200);
 }
 
 function getCookie(name) {
@@ -1128,11 +1124,16 @@ function getCookie(name) {
     return cookieValue;
 }
 
-window.addEventListener('beforeunload', () => {
-    if (pollingInterval) clearInterval(pollingInterval);
-    if (timer) clearInterval(timer);
-});
-
-console.log('✅ Oyun hazır! Sol üstte ses butonu YOK artık.');
+function showXPNotification(xp) {
+    if (!xp || xp <= 0) return;
+    const notif = document.getElementById('xpNotification');
+    document.getElementById('xpAmount').textContent = xp;
+    notif.style.display = 'block';
+    notif.style.animation = 'none';
+    void notif.offsetWidth;
+    notif.style.animation = 'slideInRight 0.5s ease-out, fadeOut 0.5s ease-out 2.5s forwards';
+    setTimeout(() => { notif.style.display = 'none'; }, 3000);
+}
 </script>
 {% endblock %}
+   
