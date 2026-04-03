@@ -62,8 +62,8 @@ def kayit_view(request):
             logger.warning(f"Kayıt denemesi: Email mevcut - {email}")
             return render(request, 'kayit.html')
 
-        if len(sifre) < 6:
-            messages.error(request, 'Şifre en az 6 karakter olmalı!')
+        if len(sifre) < 8:
+            messages.error(request, 'Şifre en az 8 karakter olmalı!')
             logger.warning(f"Kayıt denemesi: Kısa şifre - Kullanıcı: {kullanici_adi}")
             return render(request, 'kayit.html')
 
@@ -189,19 +189,8 @@ def profil_view(request):
     else:
         goruntulenen_kullanici = request.user
 
-    # ==================== POST - FOTOĞRAF UPLOAD ====================
+    # ==================== POST ====================
     if request.method == 'POST':
-        if 'profil_fotografi' in request.FILES:
-            try:
-                profil = OgrenciProfili.objects.get(kullanici=request.user)
-                profil.profil_fotografi = request.FILES['profil_fotografi']
-                profil.save()
-                messages.success(request, '✅ Profil fotoğrafı güncellendi!')
-                logger.info(f"Profil fotoğrafı güncellendi: Kullanıcı={request.user.username}")
-            except Exception as e:
-                logger.error(f"Fotoğraf upload hatası: {e}", exc_info=True)
-                messages.error(request, '❌ Fotoğraf yüklenirken hata oluştu!')
-        # ✅ PRG Pattern - F5 sorunu çözümü
         return redirect('profil')
 
     # ==================== PROFİL ====================
@@ -388,13 +377,24 @@ def profil_duzenle_view(request):
     sahip_unvanlar = MagazaUrun.objects.filter(id__in=sahip_olunan_ids, kategori='unvan')
     sahip_cerceveler = MagazaUrun.objects.filter(id__in=sahip_olunan_ids, kategori='cerceve')
     sahip_temalar = MagazaUrun.objects.filter(id__in=sahip_olunan_ids, kategori='tema')
+    sahip_avatar_urunler = MagazaUrun.objects.filter(id__in=sahip_olunan_ids, kategori='avatar')
+
+    # Avatar listesi: ücretsizler + satın alınanlar
+    from profile.avatar_listesi import UCRETSIZ_AVATARLAR, UCRETSIZ_EMOJI_SETI
+    premium_avatarlar = [
+        {'emoji': u.avatar_emoji, 'isim': u.isim, 'premium': True}
+        for u in sahip_avatar_urunler if u.avatar_emoji
+    ]
+    tum_kullanilabilir_avatarlar = [
+        {**a, 'premium': False} for a in UCRETSIZ_AVATARLAR
+    ] + premium_avatarlar
 
     if request.method == 'POST':
         alan = request.POST.get('alan')
-        profil_fotografi = request.FILES.get('profil_fotografi')
         ad = request.POST.get('ad', '').strip()
         soyad = request.POST.get('soyad', '').strip()
         hedef_puan = request.POST.get('hedef_puan')
+        secilen_avatar = request.POST.get('avatar')
 
         # Mağaza seçimleri
         aktif_unvan_id = request.POST.get('aktif_unvan')
@@ -405,8 +405,12 @@ def profil_duzenle_view(request):
             with transaction.atomic():
                 if alan:
                     profil.alan = alan
-                if profil_fotografi:
-                    profil.profil_fotografi = profil_fotografi
+                # Avatar güvenlik kontrolü
+                if secilen_avatar:
+                    satin_alinan_emojiler = {u.avatar_emoji for u in sahip_avatar_urunler if u.avatar_emoji}
+                    from profile.avatar_listesi import avatar_gecerli_mi
+                    if avatar_gecerli_mi(secilen_avatar, satin_alinan_emojiler):
+                        profil.avatar = secilen_avatar
                 if ad:
                     profil.ad = ad
                 if soyad:
@@ -475,6 +479,7 @@ def profil_duzenle_view(request):
         'sahip_unvanlar': sahip_unvanlar,
         'sahip_cerceveler': sahip_cerceveler,
         'sahip_temalar': sahip_temalar,
+        'tum_kullanilabilir_avatarlar': tum_kullanilabilir_avatarlar,
         'alan_secenekleri': OgrenciProfili.ALAN_SECENEKLERI,
     }
     return render(request, 'profil_duzenle.html', context)

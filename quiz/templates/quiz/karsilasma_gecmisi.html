@@ -1086,10 +1086,8 @@
           <!-- Kullanıcı -->
           <div class="kh-who">
             <div class="kh-avi">
-              {% if r.rakip and r.rakip.profil and r.rakip.profil.profil_fotografi %}
-              <img src="{{ r.rakip.profil.profil_fotografi.url }}" alt="{{ r.rakip.username }}">
-              {% elif r.rakip %}
-              {{ r.rakip.username|slice:":1"|upper }}
+              {% if r.rakip and r.rakip.profil %}
+              {{ r.rakip.profil.avatar }}
               {% else %}
               <i class="bi bi-person-fill"></i>
               {% endif %}

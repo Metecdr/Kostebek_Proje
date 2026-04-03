@@ -61,21 +61,50 @@
     .iki-kolon { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     @media(max-width:600px) { .iki-kolon { grid-template-columns: 1fr; } }
 
-    /* FOTO ÖNİZLEME */
-    .foto-onizleme-wrap {
+    /* AVATAR SEÇİMİ */
+    .avatar-secim-alani {
         display: flex;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 12px;
     }
-    .foto-onizleme {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid #667eea;
+    .avatar-secim-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        padding: 10px;
+        border-radius: 16px;
+        border: 3px solid transparent;
+        transition: all 0.2s;
+        position: relative;
+        background: #f8f9fa;
+        min-width: 70px;
+    }
+    .avatar-secim-item:hover {
+        border-color: #667eea;
+        background: #f0f2ff;
+        transform: translateY(-3px);
+    }
+    .avatar-secim-item.secili {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #f0f2ff, #e8eaff);
         box-shadow: 0 4px 15px rgba(102,126,234,0.3);
     }
+    .avatar-emoji-buyuk { font-size: 2.5rem; line-height: 1; }
+    .avatar-isim { font-size: 0.7rem; font-weight: 700; color: #555; text-align: center; }
+    .avatar-premium-rozet {
+        position: absolute;
+        top: 2px; right: 4px;
+        font-size: 0.7rem;
+    }
+    [data-theme="dark"] .avatar-secim-item { background: #1e2749; }
+    [data-theme="dark"] .avatar-secim-item:hover { background: #2d3454; }
+    [data-theme="dark"] .avatar-secim-item.secili { background: linear-gradient(135deg,#2d3454,#1e2749); }
+    [data-theme="dark"] .avatar-isim { color: #9ca3af; }
+
+    /* ESKİ FOTO STİLLERİ (kaldırıldı, yer tutucu) */
     .foto-onizleme-default {
         width: 80px;
         height: 80px;
@@ -245,20 +274,22 @@
             <div class="kart-baslik">👤 Kişisel Bilgiler</div>
             <div class="kart-govde">
 
-                <!-- FOTO -->
+                <!-- AVATAR SEÇİMİ -->
                 <div class="form-group">
-                    <label class="form-label"><i class="bi bi-camera-fill"></i> Profil Fotoğrafı</label>
-                    <div class="foto-onizleme-wrap">
-                        {% if profil.profil_fotografi %}
-                        <img src="{{ profil.profil_fotografi.url }}" class="foto-onizleme" id="fotoOnizleme" alt="Profil">
-                        {% else %}
-                        <div class="foto-onizleme-default" id="fotoOnizleme">👤</div>
-                        {% endif %}
-                        <div>
-                            <input type="file" name="profil_fotografi" id="profilFoto" accept="image/*" class="form-control" style="max-width:300px;">
-                            <div class="form-hint">JPG, PNG, GIF - Max 5MB</div>
-                        </div>
+                    <label class="form-label">🎭 Avatar Seç</label>
+                    <div class="avatar-secim-alani">
+                        {% for av in tum_kullanilabilir_avatarlar %}
+                        <label class="avatar-secim-item {% if profil.avatar == av.emoji %}secili{% endif %}">
+                            <input type="radio" name="avatar" value="{{ av.emoji }}"
+                                {% if profil.avatar == av.emoji %}checked{% endif %}
+                                style="display:none;">
+                            <span class="avatar-emoji-buyuk">{{ av.emoji }}</span>
+                            <span class="avatar-isim">{{ av.isim }}</span>
+                            {% if av.premium %}<span class="avatar-premium-rozet">⭐</span>{% endif %}
+                        </label>
+                        {% endfor %}
                     </div>
+                    <div class="form-hint">Premium avatarlar mağazadan satın alınabilir.</div>
                 </div>
 
                 <div class="iki-kolon">

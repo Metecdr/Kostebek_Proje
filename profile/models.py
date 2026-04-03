@@ -29,11 +29,10 @@ class OgrenciProfili(models.Model):
         default='sayisal',
         verbose_name='Alan'
     )
-    profil_fotografi = models.ImageField(
-        upload_to='profil_fotograflari/', 
-        null=True, 
-        blank=True,
-        verbose_name='Profil Fotoğrafı'
+    avatar = models.CharField(
+        max_length=10,
+        default='🦔',
+        verbose_name='Avatar'
     )
     
     # TOPLAM İSTATİSTİKLER

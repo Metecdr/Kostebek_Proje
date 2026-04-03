@@ -10,6 +10,7 @@ class MagazaUrun(models.Model):
         ('unvan', 'Unvan'),
         ('cerceve', 'Profil Çerçevesi'),
         ('tema', 'Tema'),
+        ('avatar', 'Avatar'),
     ]
 
     isim = models.CharField(max_length=100, verbose_name='Ürün Adı')
@@ -29,6 +30,9 @@ class MagazaUrun(models.Model):
     # Tema için
     tema_primary = models.CharField(max_length=20, null=True, blank=True, verbose_name='Ana Renk')
     tema_secondary = models.CharField(max_length=20, null=True, blank=True, verbose_name='İkincil Renk')
+
+    # Avatar için
+    avatar_emoji = models.CharField(max_length=10, null=True, blank=True, verbose_name='Avatar Emoji')
 
     aktif = models.BooleanField(default=True, verbose_name='Aktif')
     olusturma_tarihi = models.DateTimeField(auto_now_add=True)

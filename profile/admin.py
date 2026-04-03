@@ -27,7 +27,7 @@ class OgrenciProfiliAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Kullanıcı Bilgileri', {
-            'fields': ('kullanici', 'ad', 'soyad', 'profil_fotografi')
+            'fields': ('kullanici', 'ad', 'soyad', 'avatar')
         }),
         ('Seviye Sistemi', {
             'fields': ('seviye', 'xp'),
@@ -408,7 +408,7 @@ class OgrenciProfiliInline(admin.StackedInline):
 
     fieldsets = (
         ('Temel Bilgiler', {
-            'fields': ('alan', 'profil_fotografi', 'unvanlar', 'seviye', 'xp')
+            'fields': ('alan', 'avatar', 'unvanlar', 'seviye', 'xp')
         }),
         ('İstatistikler', {
             'fields': ('toplam_puan', 'haftalik_puan', 'ardasik_gun_sayisi')
