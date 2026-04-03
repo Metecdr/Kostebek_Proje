@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Oda Kur - Karşılaşma{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+    .oda-container {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+    .oda-card {
+        background: white;
+        border-radius: 25px;
+        padding: 40px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        animation: slideUp 0.5s ease-out;
+    }
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .oda-title {
+        font-size: 2rem;
+        font-weight: 900;
+        text-align: center;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .oda-subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 1.1rem;
+    }
+    .ders-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 30px;
+    }
+    .ders-btn {
+        padding: 18px 12px;
+        border: 3px solid #e9ecef;
+        border-radius: 15px;
+        background: white;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.3s;
+        font-weight: 700;
+        font-size: 0.95rem;
+    }
+    .ders-btn:hover {
+        border-color: #667eea;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 20px rgba(102,126,234,0.2);
+    }
+    .ders-btn.selected {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea22, #764ba222);
+        box-shadow: 0 5px 20px rgba(102,126,234,0.3);
+    }
+    .ders-btn .emoji {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 8px;
+    }
+    .submit-btn {
+        display: block;
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        font-size: 1.2rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+    }
+    .submit-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .alt-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: white;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 1.05rem;
+    }
+    .alt-link:hover { text-decoration: underline; color: #ffd700; }
+    @media (max-width: 600px) {
+        .ders-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="oda-container">
+    <div class="oda-card">
+        <div class="oda-title">🏠 Oda Kur</div>
+        <div class="oda-subtitle">Ders seç, oda kodunu arkadaşınla paylaş!</div>
+
+        <form method="post" id="odaForm">
+            {% csrf_token %}
+            <input type="hidden" name="selected_ders" id="selectedDers" value="">
+
+            <div class="ders-grid">
+                {% for key, name, emoji in ders_secenekleri %}
+                <div class="ders-btn" onclick="selectDers('{{ key }}', this)">
+                    <span class="emoji">{{ emoji }}</span>
+                    {{ name }}
+                </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                Oda Oluştur
+            </button>
+        </form>
+    </div>
+    <a href="{% url 'karsilasma_oda_katil' %}" class="alt-link">Oda kodun var mı? Katıl &rarr;</a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function selectDers(ders, el) {
+    document.querySelectorAll('.ders-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('selectedDers').value = ders;
+    document.getElementById('submitBtn').disabled = false;
+}
+</script>
+{% endblock %}

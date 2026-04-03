@@ -598,15 +598,20 @@
         <div class="tabu-tahmin-box">
             <div class="tabu-tahmin-title">Tahminler</div>
             <div class="tabu-tahmin-metin" id="ana-kelime">{{ kelime.kelime }}</div>
-            <div class="tabu-buttons">
-                <button onclick="turGuncelle('dogru')" class="tabu-btn dogru">
+            <div class="tabu-buttons" id="actionButtons">
+                <button onclick="turGuncelle('dogru')" class="tabu-btn dogru" id="btnDogru">
                     <span style="position:  relative; z-index: 1;">✅ DOĞRU</span>
                 </button>
-                <button onclick="turGuncelle('pas')" class="tabu-btn pas">
+                <button onclick="turGuncelle('pas')" class="tabu-btn pas" id="btnPas">
                     <span style="position: relative; z-index:  1;">⏭️ PAS</span>
                 </button>
-                <button onclick="turGuncelle('tabu')" class="tabu-btn tabu">
+                <button onclick="turGuncelle('tabu')" class="tabu-btn tabu" id="btnTabu">
                     <span style="position: relative; z-index: 1;">❌ TABU</span>
+                </button>
+            </div>
+            <div id="nextButtonContainer" style="display:none; margin-top:18px;">
+                <button onclick="siradakiSoru()" class="tabu-btn dogru" style="background: linear-gradient(90deg, #49df7b, #7B68EE); color:#fff; width:100%; max-width:320px; font-size:1.25rem;">
+                    <span style="position: relative; z-index: 1;">➡️ Sıradaki Soru</span>
                 </button>
             </div>
         </div>
@@ -635,6 +640,8 @@ let saniye = TABU_SURE;
 let sayac = null;
 let kelimeSayisi = 1;
 let turAktif = false;
+let mevcutKelimeId = {% if kelime %}{{ kelime.id }}{% else %}null{% endif %};
+let bekleyenData = null;
 
 function baslatTur() {
     fetch(window.location.pathname, {
@@ -681,11 +688,16 @@ function turuBaslat() {
     if (sayac) clearInterval(sayac);
     turAktif = true;
     sayac = setInterval(zamanlayici, 1000);
-    if (typeof showToast === 'function') showToast('Tur başladı!  İyi şanslar!  🎭', 'success');
+    if (typeof showToast === 'function') showToast('Tur başladı! İyi şanslar! 🎭', 'success');
 }
 
 function turGuncelle(action) {
     if (!turAktif) return;
+
+    // Butonları devre dışı bırak
+    document.getElementById('btnDogru').disabled = true;
+    document.getElementById('btnPas').disabled = true;
+    document.getElementById('btnTabu').disabled = true;
 
     fetch("{% url 'tabu_tur_guncelle' oyun.id %}", {
         method: 'POST',
@@ -695,64 +707,95 @@ function turGuncelle(action) {
         },
         body: JSON.stringify({
             action: action,
-            mevcut_kelime_id: {{ kelime.id }}
+            mevcut_kelime_id: mevcutKelimeId
         })
     })
     .then(response => response.json())
     .then(data => {
         if (data.tur_bitti_kelime_yok) {
             turuBitir();
+            return;
+        }
+
+        // Skorları güncelle
+        const skorA = document.getElementById('takim-a-skor');
+        const skorB = document.getElementById('takim-b-skor');
+
+        if (skorA.innerText !== data.takim_a_skor.toString()) {
+            skorA.innerText = data.takim_a_skor;
+            skorA.classList.add('score-update');
+            setTimeout(() => skorA.classList.remove('score-update'), 500);
+        }
+        if (skorB.innerText !== data.takim_b_skor.toString()) {
+            skorB.innerText = data.takim_b_skor;
+            skorB.classList.add('score-update');
+            setTimeout(() => skorB.classList.remove('score-update'), 500);
+        }
+
+        if (typeof showToast === 'function') {
+            if (action === 'dogru') {
+                showToast('Doğru! +1 Puan! 🎉', 'success');
+            } else if (action === 'tabu') {
+                showToast('Tabu! -1 Puan! ❌', 'error');
+            } else if (action === 'pas') {
+                showToast('Pas geçildi! ⏭️', 'info');
+            }
+        }
+
+        // Yeni kelime verisini sakla, "Sıradaki Soru" butonunu göster
+        bekleyenData = data;
+        kelimeSayisi++;
+
+        if (kelimeSayisi > TABU_MAX_KELIME) {
+            // Son kelime idi, turu bitir
+            setTimeout(turuBitir, 600);
         } else {
-            kelimeSayisi++;
-            let gosterilecekSoru = kelimeSayisi;
-            if (gosterilecekSoru > TABU_MAX_KELIME) gosterilecekSoru = TABU_MAX_KELIME;
-            document.getElementById('soruSayisi').innerText = gosterilecekSoru;
-            document.getElementById('ana-kelime').innerText = data.kelime;
-            document.querySelector('.tabu-kelime').innerText = data.kelime;
-
-            const skorA = document.getElementById('takim-a-skor');
-            const skorB = document.getElementById('takim-b-skor');
-
-            if (skorA.innerText !== data.takim_a_skor.toString()) {
-                skorA.innerText = data.takim_a_skor;
-                skorA.classList.add('score-update');
-                setTimeout(() => skorA.classList.remove('score-update'), 500);
-            }
-
-            if (skorB.innerText !== data.takim_b_skor.toString()) {
-                skorB.innerText = data.takim_b_skor;
-                skorB.classList.add('score-update');
-                setTimeout(() => skorB.classList.remove('score-update'), 500);
-            }
-
-            if (data.yasaklilar) {
-                let yasakliList = "";
-                data.yasaklilar.slice(0, 5).forEach(function(yasakli) {
-                    yasakliList += "<li>" + yasakli + "</li>";
-                });
-                const yasakliUl = document.querySelector('.tabu-yasakli-list');
-                if (yasakliUl) yasakliUl.innerHTML = yasakliList;
-            }
-
-            if (typeof showToast === 'function') {
-                if (action === 'dogru') {
-                    showToast('Doğru!  +1 Puan!  🎉', 'success');
-                } else if (action === 'tabu') {
-                    showToast('Tabu! -1 Puan! ❌', 'error');
-                } else if (action === 'pas') {
-                    showToast('Pas geçildi! ⏭️', 'info');
-                }
-            }
-
-            if (kelimeSayisi >= TABU_MAX_KELIME) {
-                setTimeout(turuBitir, 400);
-            }
+            // Action butonlarını gizle, "Sıradaki Soru" butonunu göster
+            document.getElementById('actionButtons').style.display = 'none';
+            document.getElementById('nextButtonContainer').style.display = 'flex';
+            document.getElementById('nextButtonContainer').style.justifyContent = 'center';
         }
     })
     .catch(error => {
         if (typeof showToast === 'function') showToast('Bir hata oluştu!', 'error');
         console.error('Hata:', error);
+        // Butonları tekrar aktif et
+        document.getElementById('btnDogru').disabled = false;
+        document.getElementById('btnPas').disabled = false;
+        document.getElementById('btnTabu').disabled = false;
     });
+}
+
+function siradakiSoru() {
+    if (!bekleyenData) return;
+
+    const data = bekleyenData;
+    bekleyenData = null;
+
+    // Kelime ID'sini güncelle
+    mevcutKelimeId = data.kelime_id;
+
+    let gosterilecekSoru = kelimeSayisi;
+    if (gosterilecekSoru > TABU_MAX_KELIME) gosterilecekSoru = TABU_MAX_KELIME;
+    document.getElementById('soruSayisi').innerText = gosterilecekSoru;
+    document.getElementById('ana-kelime').innerText = data.kelime;
+    document.querySelector('.tabu-kelime').innerText = data.kelime;
+
+    if (data.yasaklilar) {
+        let yasakliList = "";
+        data.yasaklilar.slice(0, 5).forEach(function(yasakli) {
+            yasakliList += "<li>" + yasakli + "</li>";
+        });
+        const yasakliUl = document.querySelector('.tabu-yasakli-list');
+        if (yasakliUl) yasakliUl.innerHTML = yasakliList;
+    }
+
+    // "Sıradaki Soru" butonunu gizle, action butonlarını göster
+    document.getElementById('nextButtonContainer').style.display = 'none';
+    document.getElementById('actionButtons').style.display = 'flex';
+    document.getElementById('btnDogru').disabled = false;
+    document.getElementById('btnPas').disabled = false;
+    document.getElementById('btnTabu').disabled = false;
 }
 
 function turuBitir() {
@@ -766,7 +809,7 @@ function turuBitir() {
     })
     .then(response => response.json())
     .then(data => {
-        if (typeof showToast === 'function') showToast('Tur bitti! ', 'info');
+        if (typeof showToast === 'function') showToast('Tur bitti!', 'info');
         setTimeout(() => {
             window.location.href = data.redirect_url;
         }, 1000);

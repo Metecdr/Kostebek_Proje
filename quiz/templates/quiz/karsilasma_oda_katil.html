@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Odaya Katıl - Karşılaşma{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+    .katil-container {
+        max-width: 550px;
+        margin: 60px auto;
+        padding: 20px;
+    }
+    .katil-card {
+        background: white;
+        border-radius: 25px;
+        padding: 50px 40px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        text-align: center;
+        animation: slideUp 0.5s ease-out;
+    }
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .katil-icon {
+        font-size: 4rem;
+        margin-bottom: 15px;
+    }
+    .katil-title {
+        font-size: 1.8rem;
+        font-weight: 900;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .katil-text {
+        color: #666;
+        font-size: 1.05rem;
+        margin-bottom: 30px;
+    }
+    .kod-input {
+        width: 100%;
+        padding: 18px;
+        font-size: 2rem;
+        font-weight: 900;
+        text-align: center;
+        letter-spacing: 8px;
+        border: 3px solid #e9ecef;
+        border-radius: 15px;
+        outline: none;
+        transition: all 0.3s;
+        text-transform: uppercase;
+    }
+    .kod-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 20px rgba(102,126,234,0.2);
+    }
+    .kod-input::placeholder {
+        letter-spacing: 4px;
+        font-size: 1.2rem;
+        color: #ccc;
+    }
+    .submit-btn {
+        display: block;
+        width: 100%;
+        padding: 16px;
+        margin-top: 20px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        font-size: 1.2rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+    }
+    .alt-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: white;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 1.05rem;
+    }
+    .alt-link:hover { text-decoration: underline; color: #ffd700; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="katil-container">
+    <div class="katil-card">
+        <div class="katil-icon">🔑</div>
+        <div class="katil-title">Odaya Katıl</div>
+        <div class="katil-text">Arkadaşından aldığın 6 haneli oda kodunu gir!</div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mb-3" style="border-radius:12px; font-weight:600;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="oda_kodu" class="kod-input" maxlength="6"
+                   placeholder="ABC123" autocomplete="off" required autofocus>
+            <button type="submit" class="submit-btn">Odaya Katıl</button>
+        </form>
+    </div>
+    <a href="{% url 'karsilasma_oda_kur' %}" class="alt-link">&larr; Yeni oda kur</a>
+</div>
+{% endblock %}

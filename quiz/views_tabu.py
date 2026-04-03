@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.urls import reverse
 from quiz.models import TabuKelime, TabuOyun
 import json
 import random
@@ -259,7 +260,7 @@ def tabu_tur_degistir(request, oyun_id):
             logger.info(f"Tur değişti: Oyun={oyun_id}, Yeni Takım=B")
             return JsonResponse({
                 'oyun_bitti': False,
-                'redirect_url': f'/quiz/tabu/oyun/{oyun.id}/'
+                'redirect_url': reverse('tabu_oyun', args=[oyun.id])
             })
         else:
             oyun.oyun_durumu = 'bitti'
@@ -267,7 +268,7 @@ def tabu_tur_degistir(request, oyun_id):
             logger.info(f"Oyun tamamlandı: Oyun={oyun_id}")
             return JsonResponse({
                 'oyun_bitti': True,
-                'redirect_url':  f'/quiz/tabu/sonuc/{oyun.id}/'
+                'redirect_url': reverse('tabu_sonuc', args=[oyun.id])
             })
     return JsonResponse({'error': 'Invalid request'}, status=400)
 

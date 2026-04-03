@@ -18,6 +18,7 @@ from profile.puan_helper import puan_ekle
 import json
 import logging
 import random
+import string
 
 logger = logging.getLogger(__name__)
 
@@ -379,6 +380,7 @@ def karsilasma_durum_guncelle(request, oda_id):
                 'oyuncu2_skor': oda.oyuncu2_skor,
                 'oyuncu1_combo': oda.oyuncu1_combo,
                 'oyuncu2_combo': oda.oyuncu2_combo,
+                'oyuncu1_adi': oda.oyuncu1.username if oda.oyuncu1 else None,
                 'oyuncu2_adi': oda.oyuncu2.username if oda.oyuncu2 else None,
                 'oyun_durumu': oda.oyun_durumu,
                 'soru': soru_obj.metin if soru_obj else None,
@@ -644,6 +646,150 @@ def karsilasma_rakip_bul(request):
         )
         logger.info(f"Yeni oda: {yeni_oda.oda_id}")
         return redirect('karsilasma_oyun', oda_id=yeni_oda.oda_id)
+
+
+# ==================== ODA KURMA SİSTEMİ ====================
+
+def oda_kodu_olustur():
+    """6 haneli büyük harf + rakam oda kodu üret"""
+    while True:
+        kod = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        if not KarsilasmaOdasi.objects.filter(oda_kodu=kod).exists():
+            return kod
+
+
+@login_required
+def karsilasma_oda_kur(request):
+    """Oda oluşturma sayfası - ders ve sınav tipi seçilir, kod oluşturulur"""
+    sinav_tipi = request.GET.get('sinav_tipi', 'AYT')
+
+    if sinav_tipi == 'TYT':
+        ders_secenekleri = [
+            ('matematik', 'Matematik', '🔢'),
+            ('turkce', 'Türkçe', '📚'),
+            ('fizik', 'Fizik', '⚛️'),
+            ('kimya', 'Kimya', '🧪'),
+            ('biyoloji', 'Biyoloji', '🧬'),
+            ('tarih', 'Tarih', '🏛️'),
+            ('cografya', 'Coğrafya', '🌍'),
+            ('felsefe', 'Felsefe', '💭'),
+            ('karisik', 'Karışık', '🎲')
+        ]
+    else:
+        ders_secenekleri = [
+            ('matematik', 'Matematik', '🔢'),
+            ('fizik', 'Fizik', '⚛️'),
+            ('kimya', 'Kimya', '🧪'),
+            ('biyoloji', 'Biyoloji', '🧬'),
+            ('edebiyat', 'Edebiyat', '📚'),
+            ('tarih', 'Tarih', '🏛️'),
+            ('cografya', 'Coğrafya', '🌍'),
+            ('felsefe', 'Felsefe', '💭'),
+            ('karisik', 'Karışık', '🎲')
+        ]
+
+    if request.method == 'POST':
+        secilen_ders = request.POST.get('selected_ders', 'karisik')
+        kod = oda_kodu_olustur()
+
+        oda = KarsilasmaOdasi.objects.create(
+            oyuncu1=request.user,
+            oyun_durumu='bekleniyor',
+            secilen_ders=secilen_ders,
+            sinav_tipi=sinav_tipi,
+            oda_kodu=kod
+        )
+        logger.info(f"Oda kuruldu: Kod={kod}, Ders={secilen_ders}, User={request.user.username}")
+        return redirect('karsilasma_oda_bekleme', oda_kodu=kod)
+
+    context = {
+        'ders_secenekleri': ders_secenekleri,
+        'sinav_tipi': sinav_tipi
+    }
+    return render(request, 'quiz/karsilasma_oda_kur.html', context)
+
+
+@login_required
+def karsilasma_oda_bekleme(request, oda_kodu):
+    """Oda sahibi burada bekler, rakip katılınca oyuna yönlendirilir"""
+    try:
+        oda = KarsilasmaOdasi.objects.select_related('oyuncu1', 'oyuncu2').get(
+            oda_kodu=oda_kodu
+        )
+    except KarsilasmaOdasi.DoesNotExist:
+        messages.error(request, 'Oda bulunamadı!')
+        return redirect('karsilasma_sinav_tipi_secimi')
+
+    if oda.oyuncu1 != request.user:
+        messages.error(request, 'Bu oda size ait değil!')
+        return redirect('karsilasma_sinav_tipi_secimi')
+
+    # Oyun başladıysa oyuna yönlendir
+    if oda.oyun_durumu == 'oynaniyor':
+        return redirect('karsilasma_oyun', oda_id=oda.oda_id)
+
+    context = {
+        'oda': oda,
+        'oda_kodu': oda_kodu,
+    }
+    return render(request, 'quiz/karsilasma_oda_bekleme.html', context)
+
+
+@login_required
+def karsilasma_oda_bekleme_durum(request, oda_kodu):
+    """AJAX: Oda durumu kontrolü"""
+    try:
+        oda = KarsilasmaOdasi.objects.get(oda_kodu=oda_kodu)
+    except KarsilasmaOdasi.DoesNotExist:
+        return JsonResponse({'error': 'Oda bulunamadı'}, status=404)
+
+    return JsonResponse({
+        'oyun_durumu': oda.oyun_durumu,
+        'oyuncu2_var': oda.oyuncu2 is not None,
+        'oyuncu2_adi': oda.oyuncu2.username if oda.oyuncu2 else None,
+        'redirect_url': reverse('karsilasma_oyun', args=[str(oda.oda_id)]) if oda.oyun_durumu == 'oynaniyor' else None,
+    })
+
+
+@login_required
+def karsilasma_oda_katil(request):
+    """Oda kodunu girip odaya katılma"""
+    if request.method == 'POST':
+        oda_kodu = request.POST.get('oda_kodu', '').strip().upper()
+
+        if not oda_kodu or len(oda_kodu) != 6:
+            messages.error(request, 'Geçersiz oda kodu! 6 haneli bir kod girin.')
+            return render(request, 'quiz/karsilasma_oda_katil.html')
+
+        try:
+            oda = KarsilasmaOdasi.objects.get(
+                oda_kodu=oda_kodu,
+                oyun_durumu='bekleniyor',
+                oyuncu2=None
+            )
+        except KarsilasmaOdasi.DoesNotExist:
+            messages.error(request, 'Oda bulunamadı veya dolu! Kodu kontrol edin.')
+            return render(request, 'quiz/karsilasma_oda_katil.html')
+
+        if oda.oyuncu1 == request.user:
+            messages.error(request, 'Kendi odanıza katılamazsınız!')
+            return render(request, 'quiz/karsilasma_oda_katil.html')
+
+        # Odaya katıl ve oyunu başlat
+        oda.oyuncu2 = request.user
+        oda.oyun_durumu = 'oynaniyor'
+
+        ilk_soru = get_random_soru_by_ders(oda.secilen_ders)
+        if ilk_soru:
+            oda.aktif_soru = ilk_soru
+            oda.aktif_soru_no = 1
+            oda.soru_baslangic_zamani = timezone.now()
+
+        oda.save()
+        logger.info(f"Odaya katılındı: Kod={oda_kodu}, User={request.user.username}")
+        return redirect('karsilasma_oyun', oda_id=oda.oda_id)
+
+    return render(request, 'quiz/karsilasma_oda_katil.html')
 
 
 # ==================== MEYDAN OKUMA ====================
