@@ -29,6 +29,7 @@ def magaza(request):
     unvanlar = MagazaUrun.objects.filter(kategori='unvan', aktif=True)
     cerceveler = MagazaUrun.objects.filter(kategori='cerceve', aktif=True)
     temalar = MagazaUrun.objects.filter(kategori='tema', aktif=True)
+    avatarlar = MagazaUrun.objects.filter(kategori='avatar', aktif=True)
 
     context = {
         'profil': profil,
@@ -36,6 +37,7 @@ def magaza(request):
         'unvanlar': unvanlar,
         'cerceveler': cerceveler,
         'temalar': temalar,
+        'avatarlar': avatarlar,
         'sahip_olunan_ids': sahip_olunan_ids,
         'toplam_puan': profil.toplam_puan,
     }

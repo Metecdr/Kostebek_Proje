@@ -120,12 +120,7 @@
                 <!-- AVATAR + ONLINE DOT -->
                 <div class="arkadas-header">
                     <div style="position:relative;display:inline-block;">
-                        {% if arkadas.profil.profil_fotografi %}
-                            <img src="{{ arkadas.profil.profil_fotografi.url }}"
-                                 class="avatar-circle-big avatar-img" alt="Profil">
-                        {% else %}
-                            <div class="avatar-circle-big">{{ arkadas.username|slice:":1"|upper }}</div>
-                        {% endif %}
+                        <div class="avatar-circle-big" style="font-size:2.5rem;">{{ arkadas.profil.avatar }}</div>
                         <!-- ✅ ONLINE NOKTA -->
                         <div class="online-dot" id="dot-{{ arkadas.id }}"
                              data-son-aktif="{{ arkadas.profil.son_aktif|date:'c' }}"></div>

@@ -468,13 +468,7 @@
 
             <!-- AVATAR -->
             <div class="lider-avatar-wrapper">
-                {% if lider.profil_fotografi %}
-                    <img src="{{ lider.profil_fotografi.url }}" class="lider-avatar" alt="avatar">
-                {% else %}
-                    <div class="lider-avatar-placeholder">
-                        {{ lider.kullanici.username|slice:": 1"|upper }}
-                    </div>
-                {% endif %}
+                <div class="lider-avatar-placeholder" style="font-size:2rem;">{{ lider.avatar }}</div>
             </div>
 
             <!-- USER INFO -->
