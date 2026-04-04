@@ -712,7 +712,11 @@
                 <div class="podium-avatar">
                     {{ liderler.1.kullanici.username|slice:":1"|upper }}
                 </div>
-                <div class="podium-name">{{ liderler.1.kullanici.username }}</div>
+                <div class="podium-name">
+                    <a href="{% url 'profil' %}?user={{ liderler.1.kullanici.username }}" style="color:inherit; text-decoration:none;">
+                        {{ liderler.1.kullanici.username }}
+                    </a>
+                </div>
                 <div class="podium-score">
                     {% if puan_alani == 'gunluk_puan' %}{{ liderler.1.gunluk_puan }}
                     {% elif puan_alani == 'haftalik_puan' %}{{ liderler.1.haftalik_puan }}
@@ -731,7 +735,11 @@
                     <div class="podium-crown">👑</div>
                     {{ liderler.0.kullanici.username|slice:":1"|upper }}
                 </div>
-                <div class="podium-name">{{ liderler.0.kullanici.username }}</div>
+                <div class="podium-name">
+                    <a href="{% url 'profil' %}?user={{ liderler.0.kullanici.username }}" style="color:inherit; text-decoration:none;">
+                        {{ liderler.0.kullanici.username }}
+                    </a>
+                </div>
                 <div class="podium-score">
                     {% if puan_alani == 'gunluk_puan' %}{{ liderler.0.gunluk_puan }}
                     {% elif puan_alani == 'haftalik_puan' %}{{ liderler.0.haftalik_puan }}
@@ -749,7 +757,11 @@
                 <div class="podium-avatar">
                     {{ liderler.2.kullanici.username|slice:":1"|upper }}
                 </div>
-                <div class="podium-name">{{ liderler.2.kullanici.username }}</div>
+                <div class="podium-name">
+                    <a href="{% url 'profil' %}?user={{ liderler.2.kullanici.username }}" style="color:inherit; text-decoration:none;">
+                        {{ liderler.2.kullanici.username }}
+                    </a>
+                </div>
                 <div class="podium-score">
                     {% if puan_alani == 'gunluk_puan' %}{{ liderler.2.gunluk_puan }}
                     {% elif puan_alani == 'haftalik_puan' %}{{ liderler.2.haftalik_puan }}
@@ -804,7 +816,9 @@
                     <td>
                         <span class="leader-avatar">{{ profil.kullanici.username|slice:":1"|upper }}</span>
                         <span class="leader-name">
-                            {{ profil.kullanici.username }}
+                            <a href="{% url 'profil' %}?user={{ profil.kullanici.username }}" style="color:inherit; text-decoration:none;">
+                                {{ profil.kullanici.username }}
+                            </a>
                             {% if profil.kullanici == request.user %}<span style="color: #FFD700;">👤</span>{% endif %}
                         </span>
                     </td>

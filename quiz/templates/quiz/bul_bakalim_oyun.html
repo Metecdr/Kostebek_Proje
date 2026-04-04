@@ -384,18 +384,112 @@
     }
 
     @media (max-width: 768px) {
-        .game-container { padding: 15px; }
-        .game-header { padding: 20px; }
-        .game-title-header { font-size: 1.5rem; }
-        .stats-grid { grid-template-columns: 1fr; gap: 15px; }
-        .stat-value { font-size: 2rem; }
-        .question-card { padding: 25px; }
-        .question-text { font-size: 1.1rem; padding: 20px; }
-        .cevap-btn { padding: 18px 22px; font-size: 1rem; }
-        .result-modal-body { padding: 40px 25px; }
-        .result-icon { font-size: 80px; }
-        .result-title { font-size: 2rem; }
-        .result-text { font-size: 1.1rem; }
+        .game-container {
+            padding: 10px;
+            margin: 10px auto;
+        }
+
+        .game-header {
+            padding: 12px 15px;
+            border-radius: 15px;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .game-title-header {
+            font-size: 1.3rem;
+        }
+
+        .progress-wrapper {
+            gap: 8px;
+        }
+
+        .progress-info {
+            font-size: 0.85rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-box {
+            padding: 10px 12px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+        }
+
+        .question-card {
+            padding: 15px 12px;
+            border-radius: 15px;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 1rem;
+            padding: 12px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .cevap-btn {
+            padding: 12px 15px;
+            font-size: 0.9rem;
+            border-radius: 12px;
+        }
+
+        .answers-grid {
+            gap: 8px;
+        }
+
+        .result-modal-body {
+            padding: 30px 20px;
+        }
+
+        .result-icon {
+            font-size: 60px;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+        }
+
+        .result-text {
+            font-size: 1rem;
+        }
+
+        .timer-value {
+            font-size: 1.8rem;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .game-title-header {
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+        }
+
+        .question-text {
+            font-size: 0.9rem;
+        }
+
+        .cevap-btn {
+            padding: 10px 12px;
+            font-size: 0.85rem;
+        }
     }
 </style>
 {% endblock %}

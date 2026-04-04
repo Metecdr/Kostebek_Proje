@@ -110,7 +110,7 @@ def karsilasma_oyun(request, oda_id):
     if soru_obj:
         try:
             cevaplar_qs = Cevap.objects.filter(soru=soru_obj).order_by('id')
-            cevaplar = [{'id': c.id, 'metin': c.metin} for c in cevaplar_qs]
+            cevaplar = [{'id': c.id, 'metin': c.metin, 'dogru_mu': c.dogru_mu} for c in cevaplar_qs]
             logger.info(f"✅ Soru yüklendi: ID={soru_obj.id}, Cevap sayısı={len(cevaplar)}")
         except Exception as e:
             logger.error(f"❌ Cevap yükleme hatası: {e}", exc_info=True)
@@ -366,7 +366,7 @@ def karsilasma_durum_guncelle(request, oda_id):
             if soru_obj:
                 try:
                     cevaplar_qs = Cevap.objects.filter(soru=soru_obj).order_by('id')
-                    cevaplar = [{'id': c.id, 'metin': c.metin} for c in cevaplar_qs]
+                    cevaplar = [{'id': c.id, 'metin': c.metin, 'dogru_mu': c.dogru_mu} for c in cevaplar_qs]
                 except Exception as e:
                     logger.error(f"❌ Cevap yükleme hatası: {e}")
 
@@ -589,13 +589,12 @@ def karsilasma_rakip_bul(request):
     sinav_tipi = request.GET.get('sinav_tipi', 'AYT')
     logger.info(f"Rakip aranıyor: User={request.user.username}, Ders={secilen_ders}, Sınav={sinav_tipi}")
 
-    # Eski odaları temizle
-    bes_dakika_once = timezone.now() - timedelta(minutes=5)
+    # Eski odaları temizle (2 dakikadan eski bekleyen odalar)
+    iki_dakika_once = timezone.now() - timedelta(minutes=2)
     KarsilasmaOdasi.objects.filter(
-        oyuncu1=request.user,
         oyun_durumu='bekleniyor',
         oyuncu2=None,
-        olusturma_tarihi__lt=bes_dakika_once
+        olusturma_tarihi__lt=iki_dakika_once
     ).update(oyun_durumu='bitti')
 
     # Aktif oda var mı?

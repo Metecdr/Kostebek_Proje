@@ -1,0 +1,540 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Yönetim Paneli - Köstebek YKS{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    [data-theme="dark"] body {
+        background: linear-gradient(135deg, #1a1a3e 0%, #0f0f2e 100%) !important;
+    }
+
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px 20px;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* PAGE HEADER */
+    .dashboard-header {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        border-radius: 25px;
+        padding: 40px;
+        margin-bottom: 40px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        animation: slideDown 0.8s ease-out;
+        text-align: center;
+    }
+
+    [data-theme="dark"] .dashboard-header {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+    }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-50px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard-title {
+        font-size: 2.8rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    [data-theme="dark"] .dashboard-title {
+        background: linear-gradient(135deg, #a78bfa, #60a5fa) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+    }
+
+    .dashboard-subtitle {
+        font-size: 1.1rem;
+        color: #666;
+        margin: 0;
+    }
+
+    [data-theme="dark"] .dashboard-subtitle {
+        color: #a8b3cf !important;
+    }
+
+    /* STATS GRID */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+        animation: fadeInUp 0.8s ease-out 0.2s backwards;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+        border-left: 5px solid #667eea;
+        position: relative;
+        overflow: hidden;
+    }
+
+    [data-theme="dark"] .stat-card {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+        border-left-width: 5px;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102,126,234,0.1), transparent);
+        animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(102,126,234,0.3);
+    }
+
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        font-size: 0.95rem;
+        color: #666;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [data-theme="dark"] .stat-label {
+        color: #a8b3cf !important;
+    }
+
+    .stat-card.accent-orange { border-left-color: #ff9800; }
+    .stat-card.accent-blue { border-left-color: #2196f3; }
+    .stat-card.accent-green { border-left-color: #4caf50; }
+    .stat-card.accent-purple { border-left-color: #9c27b0; }
+
+    /* TABLE CARDS */
+    .table-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        margin-bottom: 30px;
+        animation: fadeInUp 0.8s ease-out 0.4s backwards;
+    }
+
+    [data-theme="dark"] .table-card {
+        background: linear-gradient(135deg, #1a1f3a, #151929) !important;
+        border: 2px solid #2d3454;
+    }
+
+    .card-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    [data-theme="dark"] .card-title {
+        background: linear-gradient(135deg, #a78bfa, #60a5fa) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+    }
+
+    .card-icon {
+        font-size: 1.8rem;
+    }
+
+    /* TABLE STYLES */
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .admin-table thead {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    [data-theme="dark"] .admin-table thead {
+        background: linear-gradient(135deg, #4c3d8f, #5b3d8f) !important;
+    }
+
+    .admin-table th {
+        padding: 16px 15px;
+        text-align: left;
+        font-weight: 800;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .admin-table td {
+        padding: 14px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .admin-table td {
+        border-bottom-color: #2d3454 !important;
+        color: #e5e7eb !important;
+    }
+
+    .admin-table tbody tr {
+        animation: slideInRight 0.5s ease-out backwards;
+    }
+
+    .admin-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+    .admin-table tbody tr:nth-child(2) { animation-delay: 0.15s; }
+    .admin-table tbody tr:nth-child(3) { animation-delay: 0.2s; }
+    .admin-table tbody tr:nth-child(4) { animation-delay: 0.25s; }
+    .admin-table tbody tr:nth-child(5) { animation-delay: 0.3s; }
+
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .admin-table tbody tr:hover {
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        box-shadow: 0 5px 20px rgba(102,126,234,0.2);
+    }
+
+    [data-theme="dark"] .admin-table tbody tr:hover {
+        background: linear-gradient(135deg, #2d3454, #1e2749) !important;
+        box-shadow: 0 5px 20px rgba(139,92,246,0.3) !important;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 1rem;
+        color: white;
+        margin-right: 10px;
+    }
+
+    .user-info {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .user-name {
+        font-weight: 700;
+        color: #333;
+    }
+
+    [data-theme="dark"] .user-name {
+        color: #e5e7eb !important;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .badge-success {
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+    }
+
+    .badge-info {
+        background: linear-gradient(135deg, #2196F3, #1976d2);
+        color: white;
+    }
+
+    .badge-warning {
+        background: linear-gradient(135deg, #FF9800, #f57c00);
+        color: white;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .dashboard-header {
+            padding: 30px 20px;
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .admin-table {
+            font-size: 0.9rem;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 10px 8px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- HEADER -->
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">
+            <i class="bi bi-speedometer2"></i> Yönetim Paneli
+        </h1>
+        <p class="dashboard-subtitle">Köstebek YKS Platform İstatistikleri</p>
+    </div>
+
+    <!-- STATS GRID -->
+    <div class="stats-grid">
+        <!-- Toplam Kullanıcı -->
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">{{ toplam_kullanici }}</div>
+            <div class="stat-label">Toplam Kullanıcı</div>
+        </div>
+
+        <!-- Aktif Kullanıcılar -->
+        <div class="stat-card accent-green">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value">{{ aktif_kullanicilar }}</div>
+            <div class="stat-label">Aktif Kullanıcılar (7 Gün)</div>
+        </div>
+
+        <!-- Toplam Soru -->
+        <div class="stat-card accent-blue">
+            <div class="stat-icon">📚</div>
+            <div class="stat-value">{{ toplam_soru }}</div>
+            <div class="stat-label">Toplam Soru</div>
+        </div>
+
+        <!-- Tamamlanan Karşılaşmalar -->
+        <div class="stat-card accent-purple">
+            <div class="stat-icon">✓</div>
+            <div class="stat-value">{{ toplam_karsilasma }}</div>
+            <div class="stat-label">Tamamlanan Karşılaşmalar</div>
+        </div>
+
+        <!-- Aktif Karşılaşmalar -->
+        <div class="stat-card accent-orange">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-value">{{ aktif_karsilasma }}</div>
+            <div class="stat-label">Oynanıyor</div>
+        </div>
+
+        <!-- Bekleyen Karşılaşmalar -->
+        <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-value">{{ bekleyen_karsilasma }}</div>
+            <div class="stat-label">Bekleyen Karşılaşmalar</div>
+        </div>
+    </div>
+
+    <!-- SON KAYIT OLAN KULLANICILAR -->
+    <div class="table-card">
+        <h3 class="card-title">
+            <i class="bi bi-person-plus-fill"></i> Son Kayıt Olan Kullanıcılar
+        </h3>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Kullanıcı</th>
+                    <th>Email</th>
+                    <th>Kayıt Tarihi</th>
+                    <th>Durum</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for kullanici in son_kullanicilar %}
+                <tr>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">{{ kullanici.username|slice:":1"|upper }}</div>
+                            <span class="user-name">
+                                <a href="{% url 'profil' %}?user={{ kullanici.username }}" style="color:inherit; text-decoration:none;">
+                                    {{ kullanici.username }}
+                                </a>
+                            </span>
+                        </div>
+                    </td>
+                    <td>{{ kullanici.email }}</td>
+                    <td>{{ kullanici.date_joined|date:"d M Y, H:i" }}</td>
+                    <td>
+                        <span class="badge badge-success">
+                            <i class="bi bi-check-circle"></i> Aktif
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; color: #999; padding: 40px;">
+                        Henüz kullanıcı yok
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- EN AKTİF KULLANICILAR -->
+    <div class="table-card">
+        <h3 class="card-title">
+            <i class="bi bi-fire"></i> En Aktif Kullanıcılar (Haftalık)
+        </h3>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Sıra</th>
+                    <th>Kullanıcı</th>
+                    <th>Alan</th>
+                    <th>Çözülen Sorular</th>
+                    <th>Seviye</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profil in en_aktif %}
+                <tr>
+                    <td>
+                        <span class="badge badge-info">{{ forloop.counter }}</span>
+                    </td>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">{{ profil.kullanici.username|slice:":1"|upper }}</div>
+                            <span class="user-name">
+                                <a href="{% url 'profil' %}?user={{ profil.kullanici.username }}" style="color:inherit; text-decoration:none;">
+                                    {{ profil.kullanici.username }}
+                                </a>
+                            </span>
+                        </div>
+                    </td>
+                    <td>{{ profil.get_alan_display }}</td>
+                    <td>{{ profil.haftalik_cozulen }}</td>
+                    <td>
+                        <span class="badge badge-warning">
+                            <i class="bi bi-star-fill"></i> Lv.{{ profil.seviye }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #999; padding: 40px;">
+                        Veri yok
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- DERS BAZINDA SORU DAĞILIMI -->
+    <div class="table-card">
+        <h3 class="card-title">
+            <i class="bi bi-bookmarks-fill"></i> Ders Bazında Soru Dağılımı
+        </h3>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Ders</th>
+                    <th>Toplam Soru</th>
+                    <th>Yüzde</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ders in ders_dagilimi %}
+                <tr>
+                    <td>
+                        <strong>{{ ders.ders|default:"Belirtilmemiş" }}</strong>
+                    </td>
+                    <td>{{ ders.sayi }}</td>
+                    <td>
+                        {% widthratio ders.sayi toplam_soru 100 as yuzde %}
+                        <div style="width: 100%; background: #f0f0f0; border-radius: 10px; overflow: hidden;">
+                            <div style="width: {{ yuzde }}%; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 5px 10px; text-align: center; font-weight: 700; min-width: 40px;">
+                                {{ yuzde }}%
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align: center; color: #999; padding: 40px;">
+                        Soru yok
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        showToast('🔐 Yönetim paneline hoş geldin!', 'info');
+    });
+</script>
+{% endblock %}

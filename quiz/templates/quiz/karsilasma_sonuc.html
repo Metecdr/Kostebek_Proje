@@ -538,9 +538,13 @@
         <div class="player-score {% if not kazandim and not berabere %}winner-score{% endif %}">
             <div class="player-name">
                 {% if is_oyuncu1 %}
-                    {{ oda.oyuncu2.username }}
+                    <a href="{% url 'profil' %}?user={{ oda.oyuncu2.username }}" style="color:inherit; text-decoration:none; border-bottom:2px dashed rgba(102,126,234,0.4);">
+                        {{ oda.oyuncu2.username }}
+                    </a>
                 {% else %}
-                    {{ oda.oyuncu1.username }}
+                    <a href="{% url 'profil' %}?user={{ oda.oyuncu1.username }}" style="color:inherit; text-decoration:none; border-bottom:2px dashed rgba(102,126,234,0.4);">
+                        {{ oda.oyuncu1.username }}
+                    </a>
                 {% endif %}
             </div>
             <div id="opponentScore">{{ rakip_skorom }}</div>

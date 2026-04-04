@@ -1195,3 +1195,45 @@ def iletisim(request):
 
 def gizlilik_politikasi(request):
     return render(request, 'gizlilik_politikasi.html')
+
+
+@login_required
+def admin_dashboard(request):
+    """Özel admin dashboard - sadece superuser"""
+    if not request.user.is_superuser:
+        messages.error(request, 'Bu sayfaya erişim yetkiniz yok!')
+        return redirect('profil')
+
+    from django.contrib.auth.models import User
+    from quiz.models import KarsilasmaOdasi, Soru, TabuKelime
+    from profile.models import OgrenciProfili
+
+    # Genel istatistikler
+    toplam_kullanici = User.objects.count()
+    aktif_kullanicilar = User.objects.filter(last_login__gte=timezone.now() - timezone.timedelta(days=7)).count()
+    toplam_soru = Soru.objects.count()
+    toplam_karsilasma = KarsilasmaOdasi.objects.filter(oyun_durumu='bitti').count()
+    aktif_karsilasma = KarsilasmaOdasi.objects.filter(oyun_durumu='oynaniyor').count()
+    bekleyen_karsilasma = KarsilasmaOdasi.objects.filter(oyun_durumu='bekleniyor').count()
+
+    # Son kayıt olan kullanıcılar
+    son_kullanicilar = User.objects.order_by('-date_joined')[:10]
+
+    # En aktif kullanıcılar (son 7 gün)
+    en_aktif = OgrenciProfili.objects.select_related('kullanici').order_by('-haftalik_cozulen')[:10]
+
+    # Ders bazında soru dağılımı
+    ders_dagilimi = Soru.objects.values('ders').annotate(sayi=Count('id')).order_by('-sayi')
+
+    context = {
+        'toplam_kullanici': toplam_kullanici,
+        'aktif_kullanicilar': aktif_kullanicilar,
+        'toplam_soru': toplam_soru,
+        'toplam_karsilasma': toplam_karsilasma,
+        'aktif_karsilasma': aktif_karsilasma,
+        'bekleyen_karsilasma': bekleyen_karsilasma,
+        'son_kullanicilar': son_kullanicilar,
+        'en_aktif': en_aktif,
+        'ders_dagilimi': ders_dagilimi,
+    }
+    return render(request, 'admin_dashboard.html', context)
