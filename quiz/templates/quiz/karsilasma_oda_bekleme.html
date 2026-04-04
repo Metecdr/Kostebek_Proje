@@ -152,6 +152,10 @@
             <span></span>
             <span></span>
         </div>
+
+        <button class="copy-btn" style="margin-top:20px; background:linear-gradient(135deg,#ef4444,#dc2626);" onclick="odadanAyril()">
+            <i class="bi bi-box-arrow-left"></i> Odadan Ayrıl
+        </button>
     </div>
 </div>
 {% endblock %}
@@ -180,6 +184,31 @@ function copyCode() {
     });
 }
 
+let oyunBasladi = false;
+
+function getCsrf() {
+    const c = document.cookie.match(/csrftoken=([^;]+)/);
+    return c ? c[1] : '';
+}
+
+function odadanAyril() {
+    if (oyunBasladi) return;
+    navigator.sendBeacon(
+        '/karsilasma/oda/{{ oda_kodu }}/ayril/',
+        new URLSearchParams({ csrfmiddlewaretoken: getCsrf() })
+    );
+    window.location.href = '{% url "karsilasma_sinav_tipi_secimi" %}';
+}
+
+// Sayfa kapanınca/geri gidince odayı sil
+window.addEventListener('beforeunload', () => {
+    if (oyunBasladi) return;
+    navigator.sendBeacon(
+        '/karsilasma/oda/{{ oda_kodu }}/ayril/',
+        new URLSearchParams({ csrfmiddlewaretoken: getCsrf() })
+    );
+});
+
 // Polling: rakip geldi mi?
 setInterval(async () => {
     try {
@@ -187,10 +216,12 @@ setInterval(async () => {
         const data = await response.json();
 
         if (data.oyuncu2_var) {
+            oyunBasladi = true;
             document.getElementById('statusText').textContent = data.oyuncu2_adi + ' katıldı! Oyun başlıyor...';
             document.getElementById('loadingDots').style.display = 'none';
         }
         if (data.redirect_url) {
+            oyunBasladi = true;
             window.location.href = data.redirect_url;
         }
     } catch (e) {

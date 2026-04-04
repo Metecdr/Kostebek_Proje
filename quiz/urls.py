@@ -9,7 +9,7 @@ from quiz.views_karsilasma import (
     karsilasma_sinav_tipi_secimi, karsilasma_ders_secimi, karsilasma_oyun,
     karsilasma_durum_guncelle, karsilasma_sonuc, karsilasma_rakip_bul,
     karsilasma_oda_kur, karsilasma_oda_bekleme, karsilasma_oda_bekleme_durum,
-    karsilasma_oda_katil,
+    karsilasma_oda_katil, karsilasma_oda_ayril,
     meydan_okuma_gonder,
     meydan_okuma_kabul,
     meydan_okuma_reddet,
@@ -52,6 +52,7 @@ urlpatterns = [
     path('karsilasma/oda/<str:oda_kodu>/bekleme/', karsilasma_oda_bekleme, name='karsilasma_oda_bekleme'),
     path('karsilasma/oda/<str:oda_kodu>/durum/', karsilasma_oda_bekleme_durum, name='karsilasma_oda_bekleme_durum'),
     path('karsilasma/oda-katil/', karsilasma_oda_katil, name='karsilasma_oda_katil'),
+    path('karsilasma/oda/<str:oda_kodu>/ayril/', karsilasma_oda_ayril, name='karsilasma_oda_ayril'),
     
     # ==================== BUL BAKALIM ====================
     path('bul-bakalim/sinav-tipi/', bul_bakalim_sinav_tipi_secimi, name='bul_bakalim_sinav_tipi_secimi'),
