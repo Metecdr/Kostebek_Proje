@@ -293,19 +293,6 @@
                 </div>
 
                 <div class="iki-kolon">
-                    <!-- AD -->
-                    <div class="form-group">
-                        <label class="form-label"><i class="bi bi-person-fill"></i> Ad</label>
-                        <input type="text" name="ad" value="{{ profil.ad|default:'' }}" class="form-control" placeholder="Adınız">
-                    </div>
-                    <!-- SOYAD -->
-                    <div class="form-group">
-                        <label class="form-label"><i class="bi bi-person-fill"></i> Soyad</label>
-                        <input type="text" name="soyad" value="{{ profil.soyad|default:'' }}" class="form-control" placeholder="Soyadınız">
-                    </div>
-                </div>
-
-                <div class="iki-kolon">
                     <!-- ALAN -->
                     <div class="form-group">
                         <label class="form-label"><i class="bi bi-book-fill"></i> Alan</label>
@@ -318,7 +305,7 @@
                     <!-- HEDEF PUAN -->
                     <div class="form-group">
                         <label class="form-label"><i class="bi bi-bullseye"></i> Hedef Puan</label>
-                        <input type="number" name="hedef_puan" value="{{ profil.hedef_puan|default:'' }}" class="form-control" placeholder="0-1000" min="0" max="1000">
+                        <input type="number" name="hedef_puan" value="{{ profil.hedef_puan|default:'' }}" class="form-control" placeholder="0-500" min="0" max="500">
                         <div class="form-hint">YKS hedef puanınız</div>
                     </div>
                 </div>
