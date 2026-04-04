@@ -582,7 +582,72 @@
   }
 
   .kh-btn-detail:hover i {
-    transform: translateX(4px);
+    transform: rotate(180deg);
+  }
+
+  /* Detay paneli (açılır kapanır) */
+  .kh-detail-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .35s ease, padding .35s ease;
+    padding: 0 16px;
+  }
+
+  .kh-detail-panel.open {
+    max-height: 300px;
+    padding: 14px 16px;
+    border-top: 1.5px solid #e8edf8;
+    margin-top: 10px;
+  }
+
+  .kh-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  @media (max-width: 500px) {
+    .kh-detail-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .kh-detail-item {
+    background: #f4f7ff;
+    border-radius: 10px;
+    padding: 10px 12px;
+    text-align: center;
+    border: 1px solid #e8edf8;
+  }
+
+  .kh-detail-label {
+    display: block;
+    font-size: .72rem;
+    color: #94a3b8;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 4px;
+  }
+
+  .kh-detail-val {
+    display: block;
+    font-size: 1rem;
+    font-weight: 900;
+    color: #1e293b;
+  }
+
+  [data-bs-theme="dark"] .kh-detail-panel.open {
+    border-top-color: #374151;
+  }
+
+  [data-bs-theme="dark"] .kh-detail-item {
+    background: #1e293b;
+    border-color: #374151;
+  }
+
+  [data-bs-theme="dark"] .kh-detail-val {
+    color: #e2e8f0;
   }
 
   /* Skor bölümü */
@@ -1143,10 +1208,10 @@
             <span class="kh-tag t-diff">Fark: {{ r.puan_farki }}</span>
           </div>
 
-          <!-- Detay butonu -->
-          <a class="kh-btn-detail" href="{% url 'karsilasma_sonuc' r.oda.oda_id %}" target="_blank">
-            Detaylar <i class="bi bi-arrow-right"></i>
-          </a>
+          <!-- Detay butonu (açılır kapanır) -->
+          <button class="kh-btn-detail" onclick="this.closest('.kh-card-inner').querySelector('.kh-detail-panel').classList.toggle('open')">
+            Detaylar <i class="bi bi-chevron-down"></i>
+          </button>
 
         </div><!-- /kh-main-row -->
 
@@ -1163,6 +1228,36 @@
           <div class="kh-prog">
             <div class="kh-prog-fill js-fill" data-sonuc="{{ r.sonuc }}"
               style="width:{% if r.benim_skor == 0 and r.rakip_skor == 0 %}50{% else %}{% widthratio r.benim_skor r.benim_skor|add:r.rakip_skor 100 %}{% endif %}%;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Detay paneli (gizli, toggle ile açılır) -->
+        <div class="kh-detail-panel">
+          <div class="kh-detail-grid">
+            <div class="kh-detail-item">
+              <span class="kh-detail-label">Ders</span>
+              <span class="kh-detail-val">{{ r.oda.secilen_ders }}</span>
+            </div>
+            <div class="kh-detail-item">
+              <span class="kh-detail-label">Toplam Soru</span>
+              <span class="kh-detail-val">{{ r.oda.toplam_soru }}</span>
+            </div>
+            <div class="kh-detail-item">
+              <span class="kh-detail-label">Benim Doğru</span>
+              <span class="kh-detail-val" style="color:#4caf50;">{{ r.benim_dogru }}</span>
+            </div>
+            <div class="kh-detail-item">
+              <span class="kh-detail-label">Benim Yanlış</span>
+              <span class="kh-detail-val" style="color:#f44336;">{{ r.benim_yanlis }}</span>
+            </div>
+            <div class="kh-detail-item">
+              <span class="kh-detail-label">Rakip Doğru</span>
+              <span class="kh-detail-val" style="color:#4caf50;">{{ r.rakip_dogru }}</span>
+            </div>
+            <div class="kh-detail-item">
+              <span class="kh-detail-label">Rakip Yanlış</span>
+              <span class="kh-detail-val" style="color:#f44336;">{{ r.rakip_yanlis }}</span>
             </div>
           </div>
         </div>

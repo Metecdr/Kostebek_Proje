@@ -3,6 +3,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+# Django Admin özelleştirme
+admin.site.site_header = "Köstebek YKS Yönetim Paneli"
+admin.site.site_title = "Köstebek Admin"
+admin.site.index_title = "Yönetim"
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     

@@ -284,6 +284,29 @@ def karsilasma_durum_guncelle(request, oda_id):
 
         # ==================== GET: DURUM KONTROLÜ ====================
         elif request.method == 'GET':
+
+            # ⏰ SUNUCU TARAFI TIMEOUT: 35 saniye geçtiyse cevapsız oyuncuyu otomatik boş geç
+            if oda.soru_baslangic_zamani and oda.oyun_durumu == 'oynaniyor':
+                soru_gecen = (timezone.now() - oda.soru_baslangic_zamani).total_seconds()
+                if soru_gecen >= 35 and not (oda.oyuncu1_cevapladi and oda.oyuncu2_cevapladi):
+                    if not oda.oyuncu1_cevapladi:
+                        oda.oyuncu1_cevapladi = True
+                        oda.oyuncu1_cevap_zamani = timezone.now()
+                        oda.oyuncu1_yanlis += 1
+                        oda.oyuncu1_combo = 0
+                        logger.info(f"⏰ Oyuncu1 timeout (boş geçiş): {oda.oyuncu1.username}")
+                    if not oda.oyuncu2_cevapladi:
+                        oda.oyuncu2_cevapladi = True
+                        oda.oyuncu2_cevap_zamani = timezone.now()
+                        oda.oyuncu2_yanlis += 1
+                        oda.oyuncu2_combo = 0
+                        logger.info(f"⏰ Oyuncu2 timeout (boş geçiş): {oda.oyuncu2.username if oda.oyuncu2 else 'YOK'}")
+                    if not oda.round_bekleme_durumu:
+                        oda.round_bekleme_durumu = True
+                        oda.round_bitis_zamani = timezone.now()
+                        logger.info(f"⏳ Round bekleme BAŞLATILDI (TIMEOUT)")
+                    oda.save()
+
             if oda.oyuncu1_cevapladi and oda.oyuncu2_cevapladi and oda.round_bekleme_durumu:
                 if oda.round_bitis_zamani:
                     gecen_sure = (timezone.now() - oda.round_bitis_zamani).total_seconds()
@@ -791,6 +814,24 @@ def karsilasma_oda_katil(request):
     return render(request, 'quiz/karsilasma_oda_katil.html')
 
 
+@login_required
+@require_http_methods(["POST"])
+def karsilasma_oda_ayril(request, oda_kodu):
+    """Eşleşmeden önce odadan ayrıl → odayı sil"""
+    try:
+        oda = KarsilasmaOdasi.objects.get(oda_kodu=oda_kodu)
+    except KarsilasmaOdasi.DoesNotExist:
+        return JsonResponse({'success': True})  # zaten silinmiş
+
+    # Sadece oda sahibi silebilir ve oyun başlamamış olmalı
+    if oda.oyuncu1 == request.user and oda.oyun_durumu == 'bekleniyor' and oda.oyuncu2 is None:
+        logger.info(f"Oda silindi (ayrılma): Kod={oda_kodu}, User={request.user.username}")
+        oda.delete()
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False, 'error': 'Oda silinemez'}, status=400)
+
+
 # ==================== MEYDAN OKUMA ====================
 
 @login_required
@@ -1078,6 +1119,11 @@ def karsilasma_gecmis(request):
 
             tm = turnuva_by_oda_id.get(oda.oda_id)
 
+            benim_dogru = oda.oyuncu1_dogru if is_oyuncu1 else oda.oyuncu2_dogru
+            benim_yanlis = oda.oyuncu1_yanlis if is_oyuncu1 else oda.oyuncu2_yanlis
+            rakip_dogru = oda.oyuncu2_dogru if is_oyuncu1 else oda.oyuncu1_dogru
+            rakip_yanlis = oda.oyuncu2_yanlis if is_oyuncu1 else oda.oyuncu1_yanlis
+
             rows.append({
                 "oda": oda,
                 "rakip": rakip,
@@ -1087,6 +1133,10 @@ def karsilasma_gecmis(request):
                 "puan_farki": abs(benim_skor - rakip_skor),
                 "is_turnuva": tm is not None,
                 "turnuva_maci": tm,
+                "benim_dogru": benim_dogru,
+                "benim_yanlis": benim_yanlis,
+                "rakip_dogru": rakip_dogru,
+                "rakip_yanlis": rakip_yanlis,
             })
 
         context = {"rows": rows}

@@ -23,16 +23,41 @@ class KonuAdmin(admin.ModelAdmin):
     ordering = ['sira']  # 'sira' sıralama için kullanılıyor
 
 
+class CevapInline(admin.TabularInline):
+    model = Cevap
+    extra = 4
+    min_num = 2
+    max_num = 5
+
+
 @admin.register(Soru)
 class SoruAdmin(admin.ModelAdmin):
-    list_display = ['metin_kisaltma', 'ders', 'konu', 'bul_bakalimda_cikar']
-    list_filter = ['ders', 'konu', 'bul_bakalimda_cikar']
+    list_display = ['metin_kisaltma', 'ders', 'konu', 'karsilasmada_cikar', 'bul_bakalimda_cikar', 'cevap_sayisi']
+    list_filter = ['ders', 'konu', 'karsilasmada_cikar', 'bul_bakalimda_cikar']
+    list_editable = ['karsilasmada_cikar', 'bul_bakalimda_cikar']
     search_fields = ['metin']
-    list_per_page = 20
-    
+    list_per_page = 30
+    inlines = [CevapInline]
+    actions = ['karsilasmaya_ekle', 'karsilasmadan_cikar']
+
     def metin_kisaltma(self, obj):
-        return obj.metin[:50] + "..." if len(obj.metin) > 50 else obj.metin
+        return obj.metin[:60] + "..." if len(obj.metin) > 60 else obj.metin
     metin_kisaltma.short_description = 'Soru Metni'
+
+    def cevap_sayisi(self, obj):
+        return obj.cevap_set.count()
+    cevap_sayisi.short_description = 'Cevap'
+
+    @admin.action(description='Seçilenleri karşılaşmaya ekle')
+    def karsilasmaya_ekle(self, request, queryset):
+        updated = queryset.update(karsilasmada_cikar=True)
+        self.message_user(request, f'{updated} soru karşılaşmaya eklendi.')
+
+    @admin.action(description='Seçilenleri karşılaşmadan çıkar')
+    def karsilasmadan_cikar(self, request, queryset):
+        updated = queryset.update(karsilasmada_cikar=False)
+        self.message_user(request, f'{updated} soru karşılaşmadan çıkarıldı.')
+
 
 @admin.register(Cevap)
 class CevapAdmin(admin.ModelAdmin):
@@ -40,7 +65,7 @@ class CevapAdmin(admin.ModelAdmin):
     list_filter = ['dogru_mu']
     search_fields = ['metin', 'soru__metin']
     list_per_page = 50
-    
+
     def soru_kisaltma(self, obj):
         return obj.soru.metin[:30] + "..." if len(obj.soru.metin) > 30 else obj.soru.metin
     soru_kisaltma.short_description = 'Soru'
@@ -74,25 +99,37 @@ class TabuOyunAdmin(admin.ModelAdmin):
 @admin.register(KarsilasmaOdasi)
 class KarsilasmaOdasiAdmin(admin.ModelAdmin):
     list_display = [
-        'oda_id_kisaltma', 
-        'oyuncu1', 
-        'oyuncu2', 
-        'oyuncu1_skor', 
+        'oda_id_kisaltma',
+        'oyuncu1',
+        'oyuncu2',
+        'oyuncu1_skor',
         'oyuncu2_skor',
         'oyuncu1_dogru',
         'oyuncu1_yanlis',
-        'oyun_durumu', 
+        'oyun_durumu',
         'aktif_soru_no',
+        'oda_kodu',
         'olusturma_tarihi'
     ]
-    list_filter = ['oyun_durumu', 'olusturma_tarihi']
-    search_fields = ['oyuncu1__username', 'oyuncu2__username']
+    list_filter = ['oyun_durumu', 'secilen_ders', 'olusturma_tarihi']
+    search_fields = ['oyuncu1__username', 'oyuncu2__username', 'oda_kodu']
     readonly_fields = ['oda_id', 'olusturma_tarihi']
-    list_per_page = 20
-    
+    list_per_page = 30
+    actions = ['odalari_bitir', 'bekleyen_odalari_sil']
+
     def oda_id_kisaltma(self, obj):
         return str(obj.oda_id)[:8]
     oda_id_kisaltma.short_description = 'Oda ID'
+
+    @admin.action(description='Seçilen odaları "bitti" olarak işaretle')
+    def odalari_bitir(self, request, queryset):
+        updated = queryset.update(oyun_durumu='bitti')
+        self.message_user(request, f'{updated} oda "bitti" olarak işaretlendi.')
+
+    @admin.action(description='Bekleyen boş odaları sil')
+    def bekleyen_odalari_sil(self, request, queryset):
+        deleted, _ = queryset.filter(oyun_durumu='bekleniyor', oyuncu2=None).delete()
+        self.message_user(request, f'{deleted} bekleyen oda silindi.')
 
 @admin.register(KullaniciCevap)
 class KullaniciCevapAdmin(admin.ModelAdmin):

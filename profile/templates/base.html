@@ -1929,8 +1929,11 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profilDropdown">
                                 {% if user.is_superuser %}
+                                <li><a class="dropdown-item" href="/admin/" target="_blank">
+                                    <i class="bi bi-speedometer2 text-danger"></i> Django Admin
+                                </a></li>
                                 <li><a class="dropdown-item" href="{% url 'admin_dashboard' %}">
-                                    <i class="bi bi-speedometer2 text-danger"></i> Yönetim Paneli
+                                    <i class="bi bi-bar-chart-fill text-info"></i> İstatistikler
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 {% endif %}
