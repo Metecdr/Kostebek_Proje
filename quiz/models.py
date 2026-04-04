@@ -318,6 +318,9 @@ class KarsilasmaOdasi(models.Model):
         related_name='ilk_cevaplayan'
     )
     
+    oyuncu1_hazir = models.BooleanField(default=False, verbose_name="Oyuncu 1 Hazır")
+    oyuncu2_hazir = models.BooleanField(default=False, verbose_name="Oyuncu 2 Hazır")
+
     ara_ekran_bekleniyor = models.BooleanField(default=False, verbose_name="Ara Ekran Bekleniyor")
     olusturma_tarihi = models.DateTimeField(auto_now_add=True, db_index=True)
     # ✅ EKLE (views_karsilasma.py zaten set ediyor)
@@ -870,9 +873,9 @@ class MeydanOkuma(models.Model):
         ]
 
     def suresi_gecti_mi(self):
-        """24 saat geçti mi?"""
+        """5 dakika geçti mi?"""
         from django.utils import timezone
-        return (timezone.now() - self.olusturma_tarihi).total_seconds() > 86400
+        return (timezone.now() - self.olusturma_tarihi).total_seconds() > 300
 
     def __str__(self):
         return f"{self.gonderen.username} → {self.alan.username} ({self.get_durum_display()})"

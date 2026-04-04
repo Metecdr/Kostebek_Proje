@@ -87,6 +87,10 @@ def karsilasma_oyun(request, oda_id):
         messages.error(request, 'Bu odaya erişim yetkiniz yok!')
         return redirect('karsilasma_sinav_tipi_secimi')
 
+    # Oyun henüz başlamadıysa ve oda kodu varsa bekleme sayfasına yönlendir
+    if oda.oyun_durumu == 'bekleniyor' and oda.oda_kodu:
+        return redirect('karsilasma_oda_bekleme', oda_kodu=oda.oda_kodu)
+
     is_oyuncu1 = (oda.oyuncu1 == request.user)
 
     if is_oyuncu1:
@@ -94,15 +98,19 @@ def karsilasma_oyun(request, oda_id):
         rakip_username = rakip.username if rakip else 'Rakip Bekleniyor...'
         try:
             rakip_seviye = rakip.profil.seviye if rakip else '?'
+            rakip_avatar = rakip.profil.avatar if rakip else '🦔'
         except Exception:
             rakip_seviye = '?'
+            rakip_avatar = '🦔'
     else:
         rakip = oda.oyuncu1
         rakip_username = rakip.username
         try:
             rakip_seviye = rakip.profil.seviye
+            rakip_avatar = rakip.profil.avatar
         except Exception:
             rakip_seviye = '?'
+            rakip_avatar = '🦔'
 
     soru_obj = oda.aktif_soru
     cevaplar = []
@@ -123,6 +131,7 @@ def karsilasma_oyun(request, oda_id):
         'is_oyuncu1': is_oyuncu1,
         'rakip_username': rakip_username,
         'rakip_seviye': rakip_seviye,
+        'rakip_avatar': rakip_avatar,
         'soru': soru_obj,
         'cevaplar': cevaplar,
         'cevaplar_json': json.dumps(cevaplar)
@@ -285,6 +294,12 @@ def karsilasma_durum_guncelle(request, oda_id):
         # ==================== GET: DURUM KONTROLÜ ====================
         elif request.method == 'GET':
 
+            # Oyun henüz başlamadıysa ve oda kodu varsa → hazır sayfasına yönlendir
+            if oda.oyun_durumu == 'bekleniyor' and oda.oda_kodu:
+                return JsonResponse({
+                    'redirect_bekleme': reverse('karsilasma_oda_bekleme', args=[oda.oda_kodu])
+                })
+
             # ⏰ SUNUCU TARAFI TIMEOUT: 35 saniye geçtiyse cevapsız oyuncuyu otomatik boş geç
             if oda.soru_baslangic_zamani and oda.oyun_durumu == 'oynaniyor':
                 soru_gecen = (timezone.now() - oda.soru_baslangic_zamani).total_seconds()
@@ -311,8 +326,8 @@ def karsilasma_durum_guncelle(request, oda_id):
                 if oda.round_bitis_zamani:
                     gecen_sure = (timezone.now() - oda.round_bitis_zamani).total_seconds()
 
-                    if gecen_sure >= 5:
-                        logger.info(f"✅ 5 saniye geçti, yeni soruya geçiliyor")
+                    if gecen_sure >= 3:
+                        logger.info(f"✅ 3 saniye geçti, yeni soruya geçiliyor")
 
                         if oda.aktif_soru_no >= oda.toplam_soru:
                             # OYUN BİTTİ
@@ -647,18 +662,14 @@ def karsilasma_rakip_bul(request):
     ).exclude(oyuncu1=request.user).first()
 
     if bekleyen_oda:
+        # Rakip bulundu — oyunu henüz başlatma, hazır sistemi bekle
         bekleyen_oda.oyuncu2 = request.user
-        bekleyen_oda.oyun_durumu = 'oynaniyor'
-
-        ilk_soru = get_random_soru_by_ders(secilen_ders)
-        if ilk_soru:
-            bekleyen_oda.aktif_soru = ilk_soru
-            bekleyen_oda.aktif_soru_no = 1
-            bekleyen_oda.soru_baslangic_zamani = timezone.now()
-            logger.info(f"Oyun başladı: Oda={bekleyen_oda.oda_id}")
-
+        # Oda kodunu ata (yoksa bekleme sayfası çalışmaz)
+        if not bekleyen_oda.oda_kodu:
+            bekleyen_oda.oda_kodu = oda_kodu_olustur()
         bekleyen_oda.save()
-        return redirect('karsilasma_oyun', oda_id=bekleyen_oda.oda_id)
+        logger.info(f"Rakip bulundu, hazır bekleniyor: Oda={bekleyen_oda.oda_id}")
+        return redirect('karsilasma_oda_bekleme', oda_kodu=bekleyen_oda.oda_kodu)
     else:
         yeni_oda = KarsilasmaOdasi.objects.create(
             oyuncu1=request.user,
@@ -733,7 +744,7 @@ def karsilasma_oda_kur(request):
 
 @login_required
 def karsilasma_oda_bekleme(request, oda_kodu):
-    """Oda sahibi burada bekler, rakip katılınca oyuna yönlendirilir"""
+    """Her iki oyuncu da burada bekler, ikisi de hazır olunca oyun başlar"""
     try:
         oda = KarsilasmaOdasi.objects.select_related('oyuncu1', 'oyuncu2').get(
             oda_kodu=oda_kodu
@@ -742,17 +753,21 @@ def karsilasma_oda_bekleme(request, oda_kodu):
         messages.error(request, 'Oda bulunamadı!')
         return redirect('karsilasma_sinav_tipi_secimi')
 
-    if oda.oyuncu1 != request.user:
-        messages.error(request, 'Bu oda size ait değil!')
+    # Sadece oyuncu1 veya oyuncu2 erişebilir
+    if request.user != oda.oyuncu1 and request.user != oda.oyuncu2:
+        messages.error(request, 'Bu odaya erişim yetkiniz yok!')
         return redirect('karsilasma_sinav_tipi_secimi')
 
     # Oyun başladıysa oyuna yönlendir
     if oda.oyun_durumu == 'oynaniyor':
         return redirect('karsilasma_oyun', oda_id=oda.oda_id)
 
+    ben_oyuncu1 = (request.user == oda.oyuncu1)
+
     context = {
         'oda': oda,
         'oda_kodu': oda_kodu,
+        'ben_oyuncu1': ben_oyuncu1,
     }
     return render(request, 'quiz/karsilasma_oda_bekleme.html', context)
 
@@ -761,14 +776,17 @@ def karsilasma_oda_bekleme(request, oda_kodu):
 def karsilasma_oda_bekleme_durum(request, oda_kodu):
     """AJAX: Oda durumu kontrolü"""
     try:
-        oda = KarsilasmaOdasi.objects.get(oda_kodu=oda_kodu)
+        oda = KarsilasmaOdasi.objects.select_related('oyuncu1', 'oyuncu2').get(oda_kodu=oda_kodu)
     except KarsilasmaOdasi.DoesNotExist:
         return JsonResponse({'error': 'Oda bulunamadı'}, status=404)
 
     return JsonResponse({
         'oyun_durumu': oda.oyun_durumu,
         'oyuncu2_var': oda.oyuncu2 is not None,
+        'oyuncu1_adi': oda.oyuncu1.username,
         'oyuncu2_adi': oda.oyuncu2.username if oda.oyuncu2 else None,
+        'oyuncu1_hazir': oda.oyuncu1_hazir,
+        'oyuncu2_hazir': oda.oyuncu2_hazir,
         'redirect_url': reverse('karsilasma_oyun', args=[str(oda.oda_id)]) if oda.oyun_durumu == 'oynaniyor' else None,
     })
 
@@ -797,39 +815,91 @@ def karsilasma_oda_katil(request):
             messages.error(request, 'Kendi odanıza katılamazsınız!')
             return render(request, 'quiz/karsilasma_oda_katil.html')
 
-        # Odaya katıl ve oyunu başlat
+        # Odaya katıl - oyunu henüz başlatma, hazır sistemi bekle
         oda.oyuncu2 = request.user
-        oda.oyun_durumu = 'oynaniyor'
-
-        ilk_soru = get_random_soru_by_ders(oda.secilen_ders)
-        if ilk_soru:
-            oda.aktif_soru = ilk_soru
-            oda.aktif_soru_no = 1
-            oda.soru_baslangic_zamani = timezone.now()
-
         oda.save()
         logger.info(f"Odaya katılındı: Kod={oda_kodu}, User={request.user.username}")
-        return redirect('karsilasma_oyun', oda_id=oda.oda_id)
+        return redirect('karsilasma_oda_bekleme', oda_kodu=oda.oda_kodu)
 
     return render(request, 'quiz/karsilasma_oda_katil.html')
 
 
 @login_required
 @require_http_methods(["POST"])
+def karsilasma_oda_hazir(request, oda_kodu):
+    """Oyuncu hazır olduğunu bildirir. İkisi de hazırsa oyun başlar."""
+    try:
+        with transaction.atomic():
+            oda = KarsilasmaOdasi.objects.select_for_update().get(oda_kodu=oda_kodu)
+
+            if oda.oyun_durumu == 'oynaniyor':
+                return JsonResponse({
+                    'success': True,
+                    'redirect_url': reverse('karsilasma_oyun', args=[str(oda.oda_id)])
+                })
+
+            if request.user == oda.oyuncu1:
+                oda.oyuncu1_hazir = True
+            elif request.user == oda.oyuncu2:
+                oda.oyuncu2_hazir = True
+            else:
+                return JsonResponse({'success': False, 'error': 'Bu odada değilsiniz'}, status=403)
+
+            # İkisi de hazırsa oyunu başlat
+            if oda.oyuncu1_hazir and oda.oyuncu2_hazir and oda.oyuncu2 is not None:
+                oda.oyun_durumu = 'oynaniyor'
+                ilk_soru = get_random_soru_by_ders(oda.secilen_ders)
+                if ilk_soru:
+                    oda.aktif_soru = ilk_soru
+                    oda.aktif_soru_no = 1
+                    oda.soru_baslangic_zamani = timezone.now()
+
+            oda.save()
+
+            redirect_url = None
+            if oda.oyun_durumu == 'oynaniyor':
+                redirect_url = reverse('karsilasma_oyun', args=[str(oda.oda_id)])
+
+            return JsonResponse({
+                'success': True,
+                'oyuncu1_hazir': oda.oyuncu1_hazir,
+                'oyuncu2_hazir': oda.oyuncu2_hazir,
+                'oyun_basladi': oda.oyun_durumu == 'oynaniyor',
+                'redirect_url': redirect_url,
+            })
+    except KarsilasmaOdasi.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Oda bulunamadı'}, status=404)
+
+
+@login_required
+@require_http_methods(["POST"])
 def karsilasma_oda_ayril(request, oda_kodu):
-    """Eşleşmeden önce odadan ayrıl → odayı sil"""
+    """Eşleşmeden önce odadan ayrıl"""
     try:
         oda = KarsilasmaOdasi.objects.get(oda_kodu=oda_kodu)
     except KarsilasmaOdasi.DoesNotExist:
         return JsonResponse({'success': True})  # zaten silinmiş
 
-    # Sadece oda sahibi silebilir ve oyun başlamamış olmalı
-    if oda.oyuncu1 == request.user and oda.oyun_durumu == 'bekleniyor' and oda.oyuncu2 is None:
-        logger.info(f"Oda silindi (ayrılma): Kod={oda_kodu}, User={request.user.username}")
+    # Oyun başlamışsa ayrılamaz
+    if oda.oyun_durumu == 'oynaniyor':
+        return JsonResponse({'success': False, 'error': 'Oyun başlamış'}, status=400)
+
+    # Oyuncu 1 (oda sahibi) ayrılırsa → odayı sil
+    if oda.oyuncu1 == request.user:
+        logger.info(f"Oda silindi (sahip ayrıldı): Kod={oda_kodu}, User={request.user.username}")
         oda.delete()
         return JsonResponse({'success': True})
 
-    return JsonResponse({'success': False, 'error': 'Oda silinemez'}, status=400)
+    # Oyuncu 2 ayrılırsa → oyuncu2'yi temizle, hazır durumunu sıfırla
+    if oda.oyuncu2 == request.user:
+        logger.info(f"Oyuncu2 ayrıldı: Kod={oda_kodu}, User={request.user.username}")
+        oda.oyuncu2 = None
+        oda.oyuncu2_hazir = False
+        oda.oyuncu1_hazir = False  # İkisini de sıfırla
+        oda.save()
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False, 'error': 'Bu odada değilsiniz'}, status=400)
 
 
 # ==================== MEYDAN OKUMA ====================
@@ -936,17 +1006,11 @@ def meydan_okuma_kabul(request, meydan_id):
         meydan.save()
         return JsonResponse({'success': False, 'message': 'Meydan okumanın süresi doldu!'})
 
-    # Odaya katıl
+    # Odaya katıl — oyunu henüz başlatma, hazır sistemi bekle
     oda = meydan.oda
     oda.oyuncu2 = request.user
-    oda.oyun_durumu = 'oynaniyor'
-
-    ilk_soru = get_random_soru_by_ders(meydan.secilen_ders)
-    if ilk_soru:
-        oda.aktif_soru = ilk_soru
-        oda.aktif_soru_no = 1
-        oda.soru_baslangic_zamani = timezone.now()
-
+    if not oda.oda_kodu:
+        oda.oda_kodu = oda_kodu_olustur()
     oda.save()
 
     # Meydan okumayı güncelle
@@ -960,7 +1024,7 @@ def meydan_okuma_kabul(request, meydan_id):
             kullanici=meydan.gonderen,
             tip='sistem',
             baslik='✅ Meydan Okuma Kabul Edildi!',
-            mesaj=f'{request.user.username} meydan okumani kabul etti! Oyun başlıyor!',
+            mesaj=f'{request.user.username} meydan okumanı kabul etti! Hazır ol!',
             icon='⚔️'
         )
     except Exception as e:
@@ -970,8 +1034,8 @@ def meydan_okuma_kabul(request, meydan_id):
 
     return JsonResponse({
         'success': True,
-        'message': 'Meydan okuma kabul edildi! Oyun başlıyor...',
-        'redirect_url': reverse('karsilasma_oyun', args=[str(oda.oda_id)])
+        'message': 'Meydan okuma kabul edildi! Hazır sayfasına yönlendiriliyorsunuz...',
+        'redirect_url': reverse('karsilasma_oda_bekleme', args=[oda.oda_kodu])
     })
 
 
@@ -1020,6 +1084,22 @@ def meydan_okuma_reddet(request, meydan_id):
 @login_required
 def meydan_okumalarim(request):
     """Gelen ve gönderilen meydan okumalar"""
+
+    # 5 dakikası dolmuş bekleyen meydan okumaları otomatik iptal et
+    bes_dk_once = timezone.now() - timedelta(minutes=5)
+    suresi_dolanlar = MeydanOkuma.objects.filter(
+        durum='beklemede',
+        olusturma_tarihi__lt=bes_dk_once
+    )
+    for m in suresi_dolanlar:
+        m.durum = 'suresi_doldu'
+        m.save()
+        if m.oda and m.oda.oyun_durumu == 'bekleniyor':
+            m.oda.oyun_durumu = 'bitti'
+            m.oda.save()
+    if suresi_dolanlar.count() > 0:
+        logger.info(f"⏰ {suresi_dolanlar.count()} meydan okuma süresi doldu (otomatik iptal)")
+
     gelen = MeydanOkuma.objects.filter(
         alan=request.user,
         durum='beklemede'
