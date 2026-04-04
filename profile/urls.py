@@ -55,4 +55,7 @@ urlpatterns = [
     path('xp-gecmisi/', xp_gecmisi_view, name='xp_gecmisi'),
 
     path('haftalik-rapor/', haftalik_rapor_view, name='haftalik_rapor'),
+
+    # Admin Dashboard
+    path('yonetim/', views.admin_dashboard, name='admin_dashboard'),
 ]

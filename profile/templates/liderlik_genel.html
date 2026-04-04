@@ -474,7 +474,9 @@
             <!-- USER INFO -->
             <div class="lider-info">
                 <div class="lider-name">
-                    {{ lider.kullanici.username }}
+                    <a href="{% url 'profil' %}?user={{ lider.kullanici.username }}" style="color:inherit; text-decoration:none;">
+                        {{ lider.kullanici.username }}
+                    </a>
                     {% if lider.kullanici == request.user %}
                         <span class="me-badge">SEN</span>
                     {% endif %}

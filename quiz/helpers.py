@@ -39,20 +39,20 @@ def update_stats_with_combo(user, oda, cevap_obj, is_oyuncu1):
     """Combo ve hız bonusu ile istatistik güncelle"""
     try:
         profil = user.profil
-        base_puan = 10
+        base_puan = 5  # 10 → 5 (dengeleme)
         bonus_puan = 0
-        
+
         if is_oyuncu1 and oda.oyuncu1_cevap_zamani and oda.soru_baslangic_zamani:
             sure = (oda.oyuncu1_cevap_zamani - oda.soru_baslangic_zamani).total_seconds()
             if sure < 5:
-                bonus_puan += 5
+                bonus_puan += 3  # 5 → 3 (dengeleme)
                 logger.debug(f"Hız bonusu: Kullanıcı={user.username}, Süre={sure:.1f}s")
         elif not is_oyuncu1 and oda.oyuncu2_cevap_zamani and oda.soru_baslangic_zamani:
             sure = (oda.oyuncu2_cevap_zamani - oda.soru_baslangic_zamani).total_seconds()
             if sure < 5:
-                bonus_puan += 5
+                bonus_puan += 3  # 5 → 3 (dengeleme)
                 logger.debug(f"Hız bonusu: Kullanıcı={user.username}, Süre={sure:.1f}s")
-        
+
         if cevap_obj.dogru_mu:
             if is_oyuncu1:
                 oda.oyuncu1_combo += 1
@@ -62,16 +62,16 @@ def update_stats_with_combo(user, oda, cevap_obj, is_oyuncu1):
                 oda.oyuncu2_combo += 1
                 combo = oda.oyuncu2_combo
                 oda.oyuncu2_dogru += 1
-            
-            combo_bonus = min(combo * 2, 20)
+
+            combo_bonus = min(combo * 2, 10)  # max 20 → max 10 (dengeleme)
             bonus_puan += combo_bonus
             logger.debug(f"Combo bonusu: Kullanıcı={user.username}, Combo={combo}, Bonus={combo_bonus}")
-            
+
             if oda.ilk_dogru_cevaplayan is None:
                 oda.ilk_dogru_cevaplayan = user
-                bonus_puan += 3
+                bonus_puan += 2  # 3 → 2 (dengeleme)
                 logger.debug(f"İlk doğru bonusu: Kullanıcı={user.username}")
-            
+
             toplam_puan = base_puan + bonus_puan
             
             if is_oyuncu1:

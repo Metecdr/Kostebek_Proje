@@ -1094,7 +1094,13 @@
             </div>
             <div>
               <div class="kh-name">
-                {% if r.rakip %}{{ r.rakip.username }}{% else %}Gizli Rakip{% endif %}
+                {% if r.rakip %}
+                  <a href="{% url 'profil' %}?user={{ r.rakip.username }}" style="color:inherit; text-decoration:none;">
+                    {{ r.rakip.username }}
+                  </a>
+                {% else %}
+                  Gizli Rakip
+                {% endif %}
               </div>
               <div class="kh-date">
                 {% if r.oda.bitis_zamani %}{{ r.oda.bitis_zamani|date:"d M Y, H:i" }}
@@ -1138,7 +1144,7 @@
           </div>
 
           <!-- Detay butonu -->
-          <a class="kh-btn-detail" href="{% url 'karsilasma_sonuc' r.oda.oda_id %}">
+          <a class="kh-btn-detail" href="{% url 'karsilasma_sonuc' r.oda.oda_id %}" target="_blank">
             Detaylar <i class="bi bi-arrow-right"></i>
           </a>
 

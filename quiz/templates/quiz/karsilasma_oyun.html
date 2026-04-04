@@ -563,38 +563,156 @@
     }
 
     @media (max-width: 768px) {
+        .game-container {
+            padding: 10px;
+            margin: 10px auto;
+        }
+
         .game-header {
-            flex-direction: column;
-            gap: 20px;
+            flex-direction: row;
+            gap: 8px;
+            padding: 12px 15px;
+            border-radius: 15px;
         }
 
-        .score-grid {
-            grid-template-columns: 1fr;
-            gap: 20px;
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            font-size: 1.5rem;
         }
 
-        .score-item:nth-child(2) {
-            border-left: none;
-            border-right: none;
-            border-top: 2px solid #e9ecef;
-            border-bottom: 2px solid #e9ecef;
-            padding: 20px 0;
+        .player-details h3 {
+            font-size: 0.9rem;
         }
 
-        .question-card {
-            padding: 20px;
+        .player-level {
+            font-size: 0.65rem;
+            padding: 2px 6px;
         }
 
-        .question-text {
+        .vs-divider {
             font-size: 1.2rem;
         }
 
+        .score-panel {
+            padding: 15px 12px;
+            border-radius: 15px;
+            margin-bottom: 12px;
+        }
+
+        .score-grid {
+            grid-template-columns: 1fr auto 1fr;
+            gap: 10px;
+        }
+
+        .score-value {
+            font-size: 2rem;
+        }
+
+        .score-label {
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+
+        .score-item:nth-child(2) {
+            border-left: 2px solid #e9ecef;
+            border-right: 2px solid #e9ecef;
+            border-top: none;
+            border-bottom: none;
+            padding: 0 10px;
+        }
+
+        .score-item:nth-child(2) .score-value {
+            font-size: 1.8rem;
+        }
+
+        .score-item:nth-child(2) small {
+            font-size: 0.8rem;
+        }
+
+        .time-text {
+            margin-top: 10px;
+        }
+
+        .time-circle {
+            width: 55px;
+            height: 55px;
+        }
+
+        .time-circle svg {
+            width: 55px;
+            height: 55px;
+        }
+
+        .time-circle-text {
+            font-size: 1.3rem;
+        }
+
+        .time-label {
+            font-size: 0.8rem;
+        }
+
+        .question-card {
+            padding: 18px 15px;
+            border-radius: 15px;
+        }
+
+        .question-number {
+            font-size: 0.85rem;
+            padding: 5px 12px;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .answer-btn {
+            padding: 12px 15px;
+            font-size: 0.9rem;
+            border-radius: 12px;
+        }
+
+        .answers-grid {
+            gap: 8px;
+        }
+
+        .combo-badge {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+        }
+
         .round-flash-icon {
-            font-size: 5rem;
+            font-size: 4rem;
         }
 
         .round-next-text {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .modal-dialog {
+            margin: 10px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .player-details h3 {
+            font-size: 0.8rem;
+        }
+
+        .score-value {
+            font-size: 1.6rem;
+        }
+
+        .question-text {
+            font-size: 0.9rem;
+        }
+
+        .answer-btn {
+            padding: 10px 12px;
+            font-size: 0.85rem;
         }
     }
 </style>
@@ -969,7 +1087,6 @@ async function loadGameState() {
             console.log('🆕 YENİ SORU! ID:', yeniSoruId);
             updateQuestion(data);
             startTimer();
-            roundModalGosterildi = false;
         }
         
         // Rakip adını doğru oyuncuya göre güncelle
@@ -1057,15 +1174,20 @@ function updateQuestion(data) {
     soruMetinDiv.textContent = data.soru || 'Soru yükleniyor...';
     soruMetinDiv.setAttribute('data-soru-id', data.soru_id || '');
     soruMetinDiv.setAttribute('data-dogru-cevap-id', '');
-    
+
     if (data.cevaplar && data.cevaplar.length > 0) {
         renderAnswers(data.cevaplar);
     }
-    
+
     cevapVerildi = false;
-    
+    roundModalGosterildi = false;
+
     const roundModal = bootstrap.Modal.getInstance(document.getElementById('roundModal'));
     if (roundModal) roundModal.hide();
+
+    // Reset polling to normal speed
+    clearInterval(pollingInterval);
+    pollingInterval = setInterval(loadGameState, 500);
 }
 
 function showRoundTransition(data) {
