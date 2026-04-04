@@ -45,7 +45,7 @@ class SoruAdmin(admin.ModelAdmin):
     metin_kisaltma.short_description = 'Soru Metni'
 
     def cevap_sayisi(self, obj):
-        return obj.cevap_set.count()
+        return obj.cevaplar.count()
     cevap_sayisi.short_description = 'Cevap'
 
     @admin.action(description='Seçilenleri karşılaşmaya ekle')

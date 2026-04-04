@@ -266,6 +266,18 @@ def profil_view(request):
             logger.error(f"Oyun istatistik hatası: Kullanıcı={goruntulenen_kullanici.username}, Hata={e}", exc_info=True)
             oyun_istatistikleri = []
 
+    # Template'in beklediği ayrı değişkenler
+    karsilasma_ist = None
+    bulbakalim_ist = None
+    tabu_ist = None
+    for ist in oyun_istatistikleri:
+        if ist.oyun_modu == 'karsilasma':
+            karsilasma_ist = ist
+        elif ist.oyun_modu == 'bul_bakalim':
+            bulbakalim_ist = ist
+        elif ist.oyun_modu == 'tabu':
+            tabu_ist = ist
+
     # ==================== DERS İSTATİSTİKLERİ ====================
     cache_key_ders = f'ders_ist_{profil.id}'
     ders_istatistikleri = cache.get(cache_key_ders)
@@ -340,6 +352,9 @@ def profil_view(request):
         'profil': profil,
         'kullanici_rozetleri': kullanici_rozetleri,
         'oyun_istatistikleri': oyun_istatistikleri,
+        'karsilasma_ist': karsilasma_ist,
+        'bulbakalim_ist': bulbakalim_ist,
+        'tabu_ist': tabu_ist,
         'ders_istatistikleri': ders_istatistikleri,
         'sira': kullanici_sira,
         'basari_orani': basari_orani,
@@ -1237,3 +1252,43 @@ def admin_dashboard(request):
         'ders_dagilimi': ders_dagilimi,
     }
     return render(request, 'admin_dashboard.html', context)
+
+
+@login_required
+def seviye_oduller_view(request):
+    """Seviye ödülleri ve ilerleme sayfası"""
+    profil = request.user.profil
+
+    # Seviye tablosu: seviye, xp eşiği, unvan, ödül puanı
+    seviye_tablosu = [
+        {'seviye': 1,  'xp': 0,      'unvan': '🐣 Çaylak',           'odul_puan': 0},
+        {'seviye': 2,  'xp': 100,    'unvan': '🌱 Acemi',            'odul_puan': 20},
+        {'seviye': 3,  'xp': 250,    'unvan': '⚡ Hızlı Başlangıç',  'odul_puan': 30},
+        {'seviye': 4,  'xp': 500,    'unvan': '🔥 Ateşli',           'odul_puan': 50},
+        {'seviye': 5,  'xp': 1000,   'unvan': '💪 Güçlü',            'odul_puan': 75},
+        {'seviye': 6,  'xp': 1500,   'unvan': '🎯 Hedef Odaklı',    'odul_puan': 100},
+        {'seviye': 7,  'xp': 2500,   'unvan': '🚀 Roket',            'odul_puan': 150},
+        {'seviye': 8,  'xp': 4000,   'unvan': '⭐ Yıldız',           'odul_puan': 200},
+        {'seviye': 9,  'xp': 6000,   'unvan': '💎 Elmas',            'odul_puan': 250},
+        {'seviye': 10, 'xp': 8500,   'unvan': '🏆 Usta',             'odul_puan': 350},
+        {'seviye': 11, 'xp': 12000,  'unvan': '👑 Kral Adayı',      'odul_puan': 450},
+        {'seviye': 12, 'xp': 16000,  'unvan': '🦅 Kartal',           'odul_puan': 550},
+        {'seviye': 13, 'xp': 20000,  'unvan': '🔱 Gladyatör',       'odul_puan': 700},
+        {'seviye': 14, 'xp': 25000,  'unvan': '⚔️ Savaşçı',        'odul_puan': 850},
+        {'seviye': 15, 'xp': 30000,  'unvan': '👑 Kral',             'odul_puan': 1000},
+        {'seviye': 16, 'xp': 40000,  'unvan': '🌟 Süper Yıldız',    'odul_puan': 1250},
+        {'seviye': 17, 'xp': 50000,  'unvan': '🏅 Şampiyon',        'odul_puan': 1500},
+        {'seviye': 18, 'xp': 65000,  'unvan': '💫 Efsane Adayı',    'odul_puan': 2000},
+        {'seviye': 19, 'xp': 80000,  'unvan': '🌠 Efsane',           'odul_puan': 2500},
+        {'seviye': 20, 'xp': 100000, 'unvan': '🔥 Tanrı',            'odul_puan': 5000},
+    ]
+
+    for s in seviye_tablosu:
+        s['ulasildi'] = profil.seviye >= s['seviye']
+        s['aktif'] = profil.seviye == s['seviye']
+
+    context = {
+        'profil': profil,
+        'seviye_tablosu': seviye_tablosu,
+    }
+    return render(request, 'seviye_oduller.html', context)

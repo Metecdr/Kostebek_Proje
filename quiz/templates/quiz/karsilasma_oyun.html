@@ -736,7 +736,7 @@
                 <h3 id="rakipUsername">{{ rakip_username }}</h3>
                 <span class="player-level">⭐ Lv.<span id="rakipLevel">{{ rakip_seviye }}</span></span>
             </div>
-            <div class="player-avatar" id="rakipAvatar">🦔</div>
+            <div class="player-avatar" id="rakipAvatar">{{ rakip_avatar }}</div>
         </div>
     </div>
 
@@ -897,10 +897,9 @@ window.checkAnswer = async function(cevapId, btn) {
             }, 1000);
         }
         
-        setTimeout(() => loadGameState(), 100);
-        clearInterval(pollingInterval);
-        pollingInterval = setInterval(loadGameState, 200);
-        
+        setTimeout(() => loadGameState(), 200);
+        setPolling(300);
+
     } catch (error) {
         console.error('❌ Cevap hatası:', error);
         cevapVerildi = false;
@@ -949,8 +948,7 @@ async function autoSubmitAnswer() {
         }
         
         setTimeout(() => loadGameState(), 2000);
-        clearInterval(pollingInterval);
-        pollingInterval = setInterval(loadGameState, 200);
+        setPolling(300);
         
     } catch (error) {
         console.error('❌ Boş geçiş hatası:', error);
@@ -1063,62 +1061,94 @@ function updateTimer() {
     timeLeft--;
 }
 
+let isLoadingState = false;  // çift istek engelle
+let sonIslenmisSoruNo = 0;   // son işlenmiş soru numarası
+
 async function loadGameState() {
+    if (isLoadingState) return;  // çift istek engelle
+    isLoadingState = true;
+
     try {
         const response = await fetch(`/karsilasma/durum/${odaId}/`, {
             method: 'GET',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken')
-            }
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }
         });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        
-        updateScores(data);
-        
-        const mevcutSoruId = document.getElementById('soruMetin').getAttribute('data-soru-id');
-        const yeniSoruId = data.soru_id ? String(data.soru_id) : '';
-        
-        if (yeniSoruId && yeniSoruId !== mevcutSoruId) {
-            console.log('🆕 YENİ SORU! ID:', yeniSoruId);
-            updateQuestion(data);
-            startTimer();
-        }
-        
-        // Rakip adını doğru oyuncuya göre güncelle
-        const rakipAdi = isOyuncu1 ? data.oyuncu2_adi : data.oyuncu1_adi;
-        if (rakipAdi) {
-            const waitingModal = bootstrap.Modal.getInstance(document.getElementById('waitingModal'));
-            if (waitingModal) waitingModal.hide();
-            document.getElementById('rakipUsername').textContent = rakipAdi;
-        }
-        
-        if (data.oyuncu1_cevapladi && data.oyuncu2_cevapladi && !roundModalGosterildi) {
-            console.log('✅ HER İKİ OYUNCU CEVAPLADI!');
-            roundModalGosterildi = true;
-            showRoundTransition(data);
-        }
-        
-        if (!data.round_bekleme && cevapVerildi) {
+
+        // Hazır sayfasına yönlendir (rakip bulundu ama henüz hazır değil)
+        if (data.redirect_bekleme) {
             clearInterval(pollingInterval);
-            pollingInterval = setInterval(loadGameState, 500);
+            clearInterval(timer);
+            window.location.href = data.redirect_bekleme;
+            isLoadingState = false;
+            return;
         }
-        
+
+        // Oyun bitti mi?
         if (data.oyun_durumu === 'bitti') {
             console.log('🏁 Oyun bitti!');
             clearInterval(pollingInterval);
+            clearInterval(timer);
             setTimeout(() => {
                 window.location.href = `/karsilasma/sonuc/${odaId}/`;
             }, 2000);
+            isLoadingState = false;
+            return;
         }
-        
+
+        updateScores(data);
+
+        // Rakip adı
+        const rakipAdi = isOyuncu1 ? data.oyuncu2_adi : data.oyuncu1_adi;
+        if (rakipAdi) {
+            const wm = bootstrap.Modal.getInstance(document.getElementById('waitingModal'));
+            if (wm) wm.hide();
+            document.getElementById('rakipUsername').textContent = rakipAdi;
+        }
+
+        // YENİ SORU GELDİ Mİ? (soru_id veya aktif_soru_no değişti)
+        const mevcutSoruId = document.getElementById('soruMetin').getAttribute('data-soru-id');
+        const yeniSoruId = data.soru_id ? String(data.soru_id) : '';
+
+        if (yeniSoruId && yeniSoruId !== mevcutSoruId) {
+            console.log('🆕 YENİ SORU! ID:', yeniSoruId, 'No:', data.aktif_soru_no);
+            updateQuestion(data);
+            startTimer();
+        }
+
+        // İKİ OYUNCU DA CEVAPLADI → MODAL GÖSTER
+        // round_bekleme sunucudan gelmeli VE daha önce bu round için modal gösterilmemiş olmalı
+        if (data.round_bekleme && data.oyuncu1_cevapladi && data.oyuncu2_cevapladi && !roundModalGosterildi) {
+            console.log('✅ HER İKİ OYUNCU CEVAPLADI! Round bekleme aktif.');
+            roundModalGosterildi = true;
+            showRoundTransition(data);
+        }
+
+        // Sunucu round bekleme'yi kapattıysa ama biz hala bekliyorsak → zorla sıfırla
+        if (!data.round_bekleme && roundModalGosterildi) {
+            console.log('🔄 Sunucu round bekleme kapattı, bayrak sıfırlanıyor');
+            roundModalGosterildi = false;
+            const rm = bootstrap.Modal.getInstance(document.getElementById('roundModal'));
+            if (rm) rm.hide();
+        }
+
+        // Normal polling hızına dön (round bekleme yoksa)
+        if (!data.round_bekleme && cevapVerildi) {
+            setPolling(500);
+        }
+
     } catch (error) {
         console.error('❌ Durum yükleme hatası:', error);
+    } finally {
+        isLoadingState = false;
     }
+}
+
+function setPolling(ms) {
+    clearInterval(pollingInterval);
+    pollingInterval = setInterval(loadGameState, ms);
 }
 
 function updateScores(data) {
@@ -1126,45 +1156,43 @@ function updateScores(data) {
     const rakipScore = isOyuncu1 ? data.oyuncu2_skor : data.oyuncu1_skor;
     const senCombo = isOyuncu1 ? data.oyuncu1_combo : data.oyuncu2_combo;
     const rakipCombo = isOyuncu1 ? data.oyuncu2_combo : data.oyuncu1_combo;
-    
-    const senScoreElement = document.getElementById('senScore');
-    const rakipScoreElement = document.getElementById('rakipScore');
-    
-    const previousSenScore = parseInt(senScoreElement.dataset.score || '0');
-    const previousRakipScore = parseInt(rakipScoreElement.dataset.score || '0');
-    
-    if (senScore !== previousSenScore) {
-        senScoreElement.classList.remove('updated');
-        void senScoreElement.offsetWidth;
-        senScoreElement.classList.add('updated');
-        senScoreElement.dataset.score = senScore;
+
+    const senEl = document.getElementById('senScore');
+    const rakipEl = document.getElementById('rakipScore');
+
+    const prevSen = parseInt(senEl.dataset.score || '0');
+    const prevRakip = parseInt(rakipEl.dataset.score || '0');
+
+    if (senScore !== prevSen) {
+        senEl.classList.remove('updated');
+        void senEl.offsetWidth;
+        senEl.classList.add('updated');
+        senEl.dataset.score = senScore;
     }
-    
-    if (rakipScore !== previousRakipScore) {
-        rakipScoreElement.classList.remove('updated');
-        void rakipScoreElement.offsetWidth;
-        rakipScoreElement.classList.add('updated');
-        rakipScoreElement.dataset.score = rakipScore;
+    if (rakipScore !== prevRakip) {
+        rakipEl.classList.remove('updated');
+        void rakipEl.offsetWidth;
+        rakipEl.classList.add('updated');
+        rakipEl.dataset.score = rakipScore;
     }
-    
-    senScoreElement.textContent = senScore;
-    rakipScoreElement.textContent = rakipScore;
-    
+
+    senEl.textContent = senScore;
+    rakipEl.textContent = rakipScore;
+
     if (senCombo >= 2) {
-        const comboBadge = `<span class="combo-badge">🔥 ${senCombo}x COMBO!</span>`;
-        document.getElementById('senCombo').innerHTML = comboBadge;
+        document.getElementById('senCombo').innerHTML = `<span class="combo-badge">🔥 ${senCombo}x COMBO!</span>`;
         document.getElementById('senCombo').dataset.combo = senCombo;
     } else {
         document.getElementById('senCombo').innerHTML = '';
         document.getElementById('senCombo').dataset.combo = '0';
     }
-    
+
     if (rakipCombo >= 2) {
         document.getElementById('rakipCombo').innerHTML = `<span class="combo-badge">🔥 ${rakipCombo}x COMBO!</span>`;
     } else {
         document.getElementById('rakipCombo').innerHTML = '';
     }
-    
+
     document.getElementById('soruNo').textContent = data.aktif_soru_no;
     document.getElementById('soruNoText').textContent = data.aktif_soru_no;
 }
@@ -1179,56 +1207,55 @@ function updateQuestion(data) {
         renderAnswers(data.cevaplar);
     }
 
+    // Tüm durumu sıfırla
     cevapVerildi = false;
     roundModalGosterildi = false;
+    sonIslenmisSoruNo = data.aktif_soru_no || 0;
 
-    const roundModal = bootstrap.Modal.getInstance(document.getElementById('roundModal'));
-    if (roundModal) roundModal.hide();
+    const rm = bootstrap.Modal.getInstance(document.getElementById('roundModal'));
+    if (rm) rm.hide();
 
-    // Reset polling to normal speed
-    clearInterval(pollingInterval);
-    pollingInterval = setInterval(loadGameState, 500);
+    // Butonları etkinleştir
+    document.querySelectorAll('.answer-btn').forEach(b => {
+        b.disabled = false;
+        b.style.opacity = '1';
+    });
+
+    setPolling(500);
 }
 
 function showRoundTransition(data) {
-    console.log('⚡ MODAL GÖSTER (5 SANİYE)!');
+    console.log('⚡ MODAL GÖSTER!');
 
     const senScore = isOyuncu1 ? data.oyuncu1_skor : data.oyuncu2_skor;
     const rakipScore = isOyuncu1 ? data.oyuncu2_skor : data.oyuncu1_skor;
+    const icon = document.getElementById('roundFlashIcon');
 
-    const roundFlashIcon = document.getElementById('roundFlashIcon');
+    if (senScore > rakipScore) icon.textContent = '🏆';
+    else if (rakipScore > senScore) icon.textContent = '💪';
+    else icon.textContent = '🤝';
 
-    if (senScore > rakipScore) {
-        roundFlashIcon.textContent = '🏆';
-    } else if (rakipScore > senScore) {
-        roundFlashIcon.textContent = '💪';
-    } else {
-        roundFlashIcon.textContent = '🤝';
-    }
+    const el = document.getElementById('roundModal');
+    let modal = bootstrap.Modal.getInstance(el);
+    if (!modal) modal = new bootstrap.Modal(el, { backdrop: 'static', keyboard: false });
 
-    const roundModalElement = document.getElementById('roundModal');
-    let roundModal = bootstrap.Modal.getInstance(roundModalElement);
+    modal.show();
 
-    if (!roundModal) {
-        roundModal = new bootstrap.Modal(roundModalElement, {
-            backdrop: 'static',
-            keyboard: false
-        });
-    }
+    // Hızlı poll — sunucu 5sn sonra yeni soruyu yükler
+    setPolling(400);
 
-    roundModal.show();
-    console.log('✅ MODAL AÇILDI! 5 saniye bekleyecek...');
-
-    // Polling'i hızlandır - modal kapanınca yeni soru gelmiş olsun
-    clearInterval(pollingInterval);
-    pollingInterval = setInterval(loadGameState, 300);
-
+    // 3.5 saniye sonra modal zorla kapat + durum kontrol
     setTimeout(() => {
-        console.log('⏰ MODAL KAPANIYOR (5 saniye sonra)');
-        roundModal.hide();
-        // Modal kapandıktan sonra hemen durumu kontrol et
-        loadGameState();
-    }, 5200);
+        console.log('⏰ Modal kapanıyor');
+        modal.hide();
+        setTimeout(() => {
+            if (roundModalGosterildi) {
+                console.log('⚠️ Yeni soru gelmedi, bayrak zorla sıfırlanıyor');
+                roundModalGosterildi = false;
+            }
+            loadGameState();
+        }, 500);
+    }, 3500);
 }
 
 function getCookie(name) {

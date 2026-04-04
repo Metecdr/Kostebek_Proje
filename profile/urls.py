@@ -58,4 +58,7 @@ urlpatterns = [
 
     # Admin Dashboard
     path('yonetim/', views.admin_dashboard, name='admin_dashboard'),
+
+    # Seviye Ödülleri
+    path('seviye-oduller/', views.seviye_oduller_view, name='seviye_oduller'),
 ]

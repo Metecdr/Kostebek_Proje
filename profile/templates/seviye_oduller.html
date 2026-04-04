@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Seviye Ödülleri - Köstebek YKS{% endblock %}
+
+{% block extra_css %}
+<style>
+body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-height: 100vh; }
+
+.so-container { max-width: 800px; margin: 30px auto; padding: 0 15px; }
+
+.so-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #fff;
+}
+.so-header h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.so-header p { color: #94a3b8; font-size: 1rem; }
+
+.so-current {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 40px rgba(102,126,234,.3);
+}
+.so-current-level { font-size: 3rem; font-weight: 900; }
+.so-current-title { font-size: 1.2rem; margin: 5px 0; }
+.so-current-xp { font-size: .9rem; opacity: .85; }
+
+.so-progress {
+    background: rgba(255,255,255,.15);
+    border-radius: 10px;
+    height: 12px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+.so-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FF6B6B);
+    border-radius: 10px;
+    transition: width .5s;
+}
+
+.so-list { display: flex; flex-direction: column; gap: 10px; }
+
+.so-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255,255,255,.06);
+    border: 1.5px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    padding: 16px 20px;
+    transition: all .3s;
+}
+.so-item.aktif {
+    background: linear-gradient(135deg, rgba(102,126,234,.25), rgba(118,75,162,.25));
+    border-color: #667eea;
+    box-shadow: 0 0 20px rgba(102,126,234,.2);
+}
+.so-item.ulasildi { opacity: 1; }
+.so-item.kilitli { opacity: .45; }
+
+.so-num {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+.so-item.ulasildi .so-num { background: linear-gradient(135deg, #4caf50, #2e7d32); color: #fff; }
+.so-item.aktif .so-num { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
+.so-item.kilitli .so-num { background: rgba(255,255,255,.1); color: #64748b; }
+
+.so-info { flex: 1; }
+.so-title { font-weight: 800; color: #e2e8f0; font-size: 1rem; }
+.so-xp { font-size: .8rem; color: #94a3b8; margin-top: 2px; }
+
+.so-reward {
+    background: rgba(255,215,0,.12);
+    border: 1px solid rgba(255,215,0,.3);
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-weight: 800;
+    font-size: .85rem;
+    color: #FFD700;
+    white-space: nowrap;
+}
+.so-item.ulasildi .so-reward { background: rgba(76,175,80,.12); border-color: rgba(76,175,80,.3); color: #4caf50; }
+.so-item.kilitli .so-reward { opacity: .5; }
+
+.so-check { color: #4caf50; font-size: 1.3rem; }
+
+.so-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.08);
+    color: #e2e8f0;
+    text-decoration: none;
+    font-weight: 700;
+    margin-bottom: 15px;
+    transition: all .3s;
+}
+.so-back:hover { background: rgba(255,255,255,.15); color: #fff; }
+
+@media (max-width: 600px) {
+    .so-item { padding: 12px 14px; gap: 10px; }
+    .so-num { width: 38px; height: 38px; font-size: .95rem; }
+    .so-reward { font-size: .75rem; padding: 5px 10px; }
+    .so-current-level { font-size: 2.2rem; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="so-container">
+    <a href="{% url 'profil' %}" class="so-back"><i class="bi bi-arrow-left"></i> Profile Dön</a>
+
+    <div class="so-header">
+        <h1>Seviye Ödülleri</h1>
+        <p>Her seviyeye ulaştığında puan kazanırsın!</p>
+    </div>
+
+    <div class="so-current">
+        <div class="so-current-level">Seviye {{ profil.seviye }}</div>
+        <div class="so-current-title">{{ profil.seviye_unvani }}</div>
+        <div class="so-current-xp">{{ profil.xp }} / {{ profil.sonraki_seviye_xp }} XP</div>
+        <div class="so-progress">
+            <div class="so-progress-fill" style="width: {{ profil.xp_yuzdesi }}%;"></div>
+        </div>
+    </div>
+
+    <div class="so-list">
+        {% for s in seviye_tablosu %}
+        <div class="so-item {% if s.aktif %}aktif{% elif s.ulasildi %}ulasildi{% else %}kilitli{% endif %}">
+            <div class="so-num">{{ s.seviye }}</div>
+            <div class="so-info">
+                <div class="so-title">{{ s.unvan }}</div>
+                <div class="so-xp">{{ s.xp }} XP gerekli</div>
+            </div>
+            {% if s.odul_puan > 0 %}
+            <div class="so-reward">+{{ s.odul_puan }} Puan</div>
+            {% endif %}
+            {% if s.ulasildi and not s.aktif %}
+            <span class="so-check"><i class="bi bi-check-circle-fill"></i></span>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
