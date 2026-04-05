@@ -23,11 +23,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',  # Sitemap desteği
     'profile',
     'quiz',
     'magaza',
     'utils',
 ]
+
+# ==================== ANALYTICS ====================
+GOOGLE_ANALYTICS_ID = os.getenv('GOOGLE_ANALYTICS_ID', '')        # GA4: G-XXXXXXXXXX
+GOOGLE_SC_TOKEN = os.getenv('GOOGLE_SC_TOKEN', '')                 # Search Console HTML doğrulama kodu
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -58,6 +63,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'profile.context_processors.analytics_settings',  # GA4 + SC
             ],
         },
     },

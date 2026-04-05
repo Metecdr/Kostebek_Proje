@@ -528,6 +528,66 @@
         </table>
     </div>
 
+    <!-- ==================== GOOGLE ANALYTICS PANELI ==================== -->
+    {% if GOOGLE_ANALYTICS_ID %}
+    <div style="background: white; border-radius: 20px; padding: 30px; margin-top: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+        <h3 style="font-weight: 800; color: #333; margin-bottom: 5px;">📊 Google Analytics</h3>
+        <p style="color: #888; font-size: 0.9rem; margin-bottom: 20px;">Trafik ve kullanıcı verileri — Google Analytics panelinde detaylı görüntüle</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+            <a href="https://analytics.google.com/analytics/web/#/p{{ GOOGLE_ANALYTICS_ID|slice:'2:' }}/reports/intelligenthome"
+               target="_blank"
+               style="display: block; background: linear-gradient(135deg, #4285f4, #0d47a1); color: white; border-radius: 15px; padding: 20px; text-decoration: none; text-align: center; transition: transform 0.2s;"
+               onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                <div style="font-size: 2rem; margin-bottom: 8px;">📈</div>
+                <div style="font-weight: 700; font-size: 0.95rem;">Genel Rapor</div>
+                <div style="font-size: 0.75rem; opacity: 0.8;">Anlık + geçmiş</div>
+            </a>
+            <a href="https://analytics.google.com/analytics/web/#/p{{ GOOGLE_ANALYTICS_ID|slice:'2:' }}/reports/realtime"
+               target="_blank"
+               style="display: block; background: linear-gradient(135deg, #34a853, #1b5e20); color: white; border-radius: 15px; padding: 20px; text-decoration: none; text-align: center; transition: transform 0.2s;"
+               onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                <div style="font-size: 2rem; margin-bottom: 8px;">🔴</div>
+                <div style="font-weight: 700; font-size: 0.95rem;">Anlık Kullanıcılar</div>
+                <div style="font-size: 0.75rem; opacity: 0.8;">Şu an sitede kim var</div>
+            </a>
+            <a href="https://analytics.google.com/analytics/web/#/p{{ GOOGLE_ANALYTICS_ID|slice:'2:' }}/reports/explorer"
+               target="_blank"
+               style="display: block; background: linear-gradient(135deg, #fbbc04, #e37400); color: white; border-radius: 15px; padding: 20px; text-decoration: none; text-align: center; transition: transform 0.2s;"
+               onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                <div style="font-size: 2rem; margin-bottom: 8px;">🔍</div>
+                <div style="font-weight: 700; font-size: 0.95rem;">Detaylı Analiz</div>
+                <div style="font-size: 0.75rem; opacity: 0.8;">Sayfa & etkinlik bazlı</div>
+            </a>
+            <a href="https://search.google.com/search-console/performance/search-analytics"
+               target="_blank"
+               style="display: block; background: linear-gradient(135deg, #ea4335, #b71c1c); color: white; border-radius: 15px; padding: 20px; text-decoration: none; text-align: center; transition: transform 0.2s;"
+               onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                <div style="font-size: 2rem; margin-bottom: 8px;">🔎</div>
+                <div style="font-weight: 700; font-size: 0.95rem;">Search Console</div>
+                <div style="font-size: 0.75rem; opacity: 0.8;">Google'dan tıklama & arama</div>
+            </a>
+        </div>
+
+        <div style="background: #f8f9fa; border-radius: 12px; padding: 15px; font-size: 0.85rem; color: #555; border-left: 4px solid #4285f4;">
+            <strong>🔑 Aktif GA4 ID:</strong> {{ GOOGLE_ANALYTICS_ID }}
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            <strong>📡 Sitemap:</strong>
+            <a href="/sitemap.xml" target="_blank" style="color: #4285f4;">kostebekyks.com/sitemap.xml</a>
+        </div>
+    </div>
+    {% else %}
+    <div style="background: white; border-radius: 20px; padding: 30px; margin-top: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 2px dashed #dee2e6; text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 15px;">📊</div>
+        <h4 style="color: #666; font-weight: 700;">Google Analytics Henüz Bağlı Değil</h4>
+        <p style="color: #999; margin-bottom: 15px;">VPS'teki <code>.env</code> dosyasına <code>GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX</code> ekle.</p>
+        <a href="https://analytics.google.com" target="_blank"
+           style="display: inline-block; background: linear-gradient(135deg, #4285f4, #0d47a1); color: white; padding: 12px 25px; border-radius: 10px; text-decoration: none; font-weight: 700;">
+            Google Analytics'e Git →
+        </a>
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}
 

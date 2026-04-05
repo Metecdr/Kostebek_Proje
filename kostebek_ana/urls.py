@@ -2,18 +2,28 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.sitemaps.views import sitemap
+from kostebek_ana.sitemaps import StatikSayfalarSitemap, AnaSayfaSitemap
 
 # Django Admin özelleştirme
 admin.site.site_header = "Köstebek YKS Yönetim Paneli"
 admin.site.site_title = "Köstebek Admin"
 admin.site.index_title = "Yönetim"
 
+sitemaps = {
+    'statik': StatikSayfalarSitemap,
+    'ana': AnaSayfaSitemap,
+}
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
+
+    # Sitemap (Google Search Console için)
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+
     # Profile (giris, cikis profil içinde)
     path('', include('profile.urls')),
-    
+
     # Quiz
     path('', include('quiz.urls')),
 
