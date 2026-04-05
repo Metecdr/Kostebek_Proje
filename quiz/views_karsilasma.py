@@ -188,16 +188,19 @@ def karsilasma_durum_guncelle(request, oda_id):
 
                 oda.save()
 
-                # Kullanıcı cevabını kaydet (boş geçiş)
+                # Kullanıcı cevabını kaydet (boş geçiş) - duplicate önle
                 try:
                     if oda.aktif_soru:
-                        KullaniciCevap.objects.create(
-                            kullanici=request.user,
-                            oda=oda,
-                            soru=oda.aktif_soru,
-                            verilen_cevap=None,
-                            dogru_mu=False
-                        )
+                        if not KullaniciCevap.objects.filter(
+                            kullanici=request.user, oda=oda, soru=oda.aktif_soru
+                        ).exists():
+                            KullaniciCevap.objects.create(
+                                kullanici=request.user,
+                                oda=oda,
+                                soru=oda.aktif_soru,
+                                verilen_cevap=None,
+                                dogru_mu=False
+                            )
                 except Exception as e:
                     logger.error(f"KullaniciCevap kayıt hatası (boş geçiş): {e}", exc_info=True)
 
@@ -248,15 +251,18 @@ def karsilasma_durum_guncelle(request, oda_id):
             # İstatistik güncelle
             update_stats_with_combo(request.user, oda, cevap_obj, is_oyuncu1)
 
-            # Kullanıcı cevabını kaydet
+            # Kullanıcı cevabını kaydet - duplicate önle
             try:
-                KullaniciCevap.objects.create(
-                    kullanici=request.user,
-                    oda=oda,
-                    soru=oda.aktif_soru,
-                    verilen_cevap=cevap_obj,
-                    dogru_mu=dogru_mu
-                )
+                if not KullaniciCevap.objects.filter(
+                    kullanici=request.user, oda=oda, soru=oda.aktif_soru
+                ).exists():
+                    KullaniciCevap.objects.create(
+                        kullanici=request.user,
+                        oda=oda,
+                        soru=oda.aktif_soru,
+                        verilen_cevap=cevap_obj,
+                        dogru_mu=dogru_mu
+                    )
             except Exception as e:
                 logger.error(f"KullaniciCevap kayıt hatası: {e}", exc_info=True)
 
@@ -325,22 +331,38 @@ def karsilasma_durum_guncelle(request, oda_id):
                     'redirect_bekleme': reverse('karsilasma_oda_bekleme', args=[oda.oda_kodu])
                 })
 
-            # ⏰ SUNUCU TARAFI TIMEOUT: 35 saniye geçtiyse cevapsız oyuncuyu otomatik boş geç
+            # ⏰ SUNUCU TARAFI TIMEOUT: 32 saniye (client 30sn + 2sn tolerans)
             if oda.soru_baslangic_zamani and oda.oyun_durumu == 'oynaniyor':
                 soru_gecen = (timezone.now() - oda.soru_baslangic_zamani).total_seconds()
-                if soru_gecen >= 35 and not (oda.oyuncu1_cevapladi and oda.oyuncu2_cevapladi):
+                if soru_gecen >= 32 and not (oda.oyuncu1_cevapladi and oda.oyuncu2_cevapladi):
                     if not oda.oyuncu1_cevapladi:
                         oda.oyuncu1_cevapladi = True
                         oda.oyuncu1_cevap_zamani = timezone.now()
                         oda.oyuncu1_yanlis += 1
                         oda.oyuncu1_combo = 0
+                        # Timeout boş geçiş cevap kaydı
+                        if oda.aktif_soru and not KullaniciCevap.objects.filter(
+                            kullanici=oda.oyuncu1, oda=oda, soru=oda.aktif_soru
+                        ).exists():
+                            KullaniciCevap.objects.create(
+                                kullanici=oda.oyuncu1, oda=oda, soru=oda.aktif_soru,
+                                verilen_cevap=None, dogru_mu=False
+                            )
                         logger.info(f"⏰ Oyuncu1 timeout (boş geçiş): {oda.oyuncu1.username}")
-                    if not oda.oyuncu2_cevapladi:
+                    if not oda.oyuncu2_cevapladi and oda.oyuncu2:
                         oda.oyuncu2_cevapladi = True
                         oda.oyuncu2_cevap_zamani = timezone.now()
                         oda.oyuncu2_yanlis += 1
                         oda.oyuncu2_combo = 0
-                        logger.info(f"⏰ Oyuncu2 timeout (boş geçiş): {oda.oyuncu2.username if oda.oyuncu2 else 'YOK'}")
+                        # Timeout boş geçiş cevap kaydı
+                        if oda.aktif_soru and not KullaniciCevap.objects.filter(
+                            kullanici=oda.oyuncu2, oda=oda, soru=oda.aktif_soru
+                        ).exists():
+                            KullaniciCevap.objects.create(
+                                kullanici=oda.oyuncu2, oda=oda, soru=oda.aktif_soru,
+                                verilen_cevap=None, dogru_mu=False
+                            )
+                        logger.info(f"⏰ Oyuncu2 timeout (boş geçiş): {oda.oyuncu2.username}")
                     if not oda.round_bekleme_durumu:
                         oda.round_bekleme_durumu = True
                         oda.round_bitis_zamani = timezone.now()
@@ -436,7 +458,7 @@ def karsilasma_durum_guncelle(request, oda_id):
             kalan_sure = 0
             if oda.round_bekleme_durumu and oda.round_bitis_zamani:
                 gecen = (timezone.now() - oda.round_bitis_zamani).total_seconds()
-                kalan_sure = max(0, round(5 - gecen, 1))
+                kalan_sure = max(0, round(3 - gecen, 1))
 
             response_data = {
                 'oyuncu1_skor': oda.oyuncu1_skor,
@@ -618,7 +640,7 @@ def karsilasma_sonuc(request, oda_id):
         except Exception as e:
             logger.error(f"Sonuç hatası: {e}", exc_info=True)
 
-        # Yanlış cevapları getir
+        # Yanlış cevapları getir (optimize: tek sorguda doğru cevapları da çek)
         yanlislar = []
         try:
             kullanici_cevaplari = KullaniciCevap.objects.filter(
@@ -627,12 +649,18 @@ def karsilasma_sonuc(request, oda_id):
                 dogru_mu=False
             ).select_related('soru', 'verilen_cevap')
 
+            # Tüm yanlış soruların doğru cevaplarını tek sorguda çek
+            yanlis_soru_ids = [kc.soru_id for kc in kullanici_cevaplari]
+            dogru_cevaplar = {}
+            if yanlis_soru_ids:
+                for c in Cevap.objects.filter(soru_id__in=yanlis_soru_ids, dogru_mu=True):
+                    dogru_cevaplar[c.soru_id] = c
+
             for kc in kullanici_cevaplari:
-                dogru_cevap = Cevap.objects.filter(soru=kc.soru, dogru_mu=True).first()
                 yanlislar.append({
                     'soru': kc.soru,
                     'verilen_cevap': kc.verilen_cevap,
-                    'dogru_cevap': dogru_cevap,
+                    'dogru_cevap': dogru_cevaplar.get(kc.soru_id),
                     'detayli_aciklama': kc.soru.detayli_aciklama or '',
                 })
         except Exception as e:

@@ -433,6 +433,11 @@
         padding: 30px;
     }
 
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
     .waiting-icon {
         font-size: 5rem;
         margin-bottom: 20px;
@@ -847,8 +852,8 @@
             <div class="modal-body" style="padding: 0;">
                 <div class="modern-round-transition">
                     <div class="round-flash-icon" id="roundFlashIcon">⚡</div>
-                    <div class="round-next-text">Sonraki Soru Yükleniyor</div>
-                    <div class="round-loading-dots">
+                    <div class="round-next-text" id="roundNextText">Sonraki Soru Yükleniyor</div>
+                    <div class="round-loading-dots" id="roundLoadingDots">
                         <span></span>
                         <span></span>
                         <span></span>
@@ -866,34 +871,37 @@
 
 {% block extra_js %}
 <script>
+/* ===== SABITLER ===== */
 const odaId = '{{ oda.oda_id }}';
 const isOyuncu1 = {{ is_oyuncu1|yesno:"true,false" }};
 const ilkCevaplar = {{ cevaplar_json|safe }};
+const TOPLAM_SORU = {{ oda.toplam_soru }};
+const SURE_LIMIT = 30;
 
+/* ===== STATE ===== */
 let pollingInterval = null;
-let timeLeft = 30;
+let timeLeft = SURE_LIMIT;
 let timer = null;
 let cevapVerildi = false;
+let bosGecisGonderildi = false;  // çift boş geçiş engelle
 let roundModalGosterildi = false;
 let warningShown = false;
+let isLoadingState = false;
+let oyunBittiYonlendirme = false;  // çift yönlendirme engelle
+let mevcutSoruId = '';  // soru değişim takibi
 
-// *** SES SİSTEMİ TAMAMEN KALDIRILDI - ARTIK SOL ÜSTTE SES BUTONU YOK ***
-
+/* ===== CEVAP GÖNDERME ===== */
 window.checkAnswer = async function(cevapId, btn) {
-    if (cevapVerildi) {
-        console.log('⚠️ Cevap zaten verildi!');
-        return;
-    }
-    
-    console.log('📤 Cevap gönderiliyor:', cevapId);
+    if (cevapVerildi) return;
+
     cevapVerildi = true;
-    // Timer durmaz, süre akmaya devam eder
-    
+
+    // Butonları kilitle
     document.querySelectorAll('.answer-btn').forEach(b => {
         b.disabled = true;
         if (b !== btn) b.style.opacity = '0.5';
     });
-    
+
     try {
         const response = await fetch(`/karsilasma/durum/${odaId}/`, {
             method: 'POST',
@@ -903,29 +911,33 @@ window.checkAnswer = async function(cevapId, btn) {
             },
             body: JSON.stringify({ cevap_id: cevapId })
         });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        console.log('✅ Cevap sonucu:', data);
-        
+
+        if (data.error) {
+            // "Zaten cevaplandı" hatası - sorun değil, devam et
+            console.log('ℹ️ Sunucu:', data.error);
+            return;
+        }
+
+        // Doğru/yanlış göster
         if (data.dogru_mu) {
             btn.classList.add('correct');
-            showXPNotification(data.kazanilan_xp);
         } else {
             btn.classList.add('wrong');
-            showXPNotification(data.kazanilan_xp);
+            showCorrectAnswer();
         }
-        
+
+        showXPNotification(data.kazanilan_xp);
+
         if (data.seviye_atlandi) {
             setTimeout(() => {
                 alert(`🎉 SEVİYE ATLADIN! Seviye ${data.yeni_seviye} - ${data.yeni_unvan}`);
             }, 1000);
         }
-        
-        setTimeout(() => loadGameState(), 200);
+
+        // Cevap verildi, hızlı poll başlat
         setPolling(300);
 
     } catch (error) {
@@ -938,24 +950,22 @@ window.checkAnswer = async function(cevapId, btn) {
     }
 };
 
+/* ===== SÜRE DOLDU - BOŞ GEÇİŞ ===== */
 async function autoSubmitAnswer() {
-    if (cevapVerildi) {
-        console.log('⚠️ Cevap zaten verildi, boş geçiş yapılmıyor.');
-        return;
-    }
-    
-    console.log('⏰ SÜRE DOLDU! Boş geçiliyor...');
+    if (cevapVerildi || bosGecisGonderildi) return;
+
     cevapVerildi = true;
-    
+    bosGecisGonderildi = true;
+
     document.querySelectorAll('.answer-btn').forEach(b => {
         b.disabled = true;
         b.style.opacity = '0.5';
     });
-    
+
     showCorrectAnswer();
-    
+
     try {
-        const response = await fetch(`/karsilasma/durum/${odaId}/`, {
+        await fetch(`/karsilasma/durum/${odaId}/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -963,43 +973,29 @@ async function autoSubmitAnswer() {
             },
             body: JSON.stringify({ cevap_id: null })
         });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('✅ Boş geçildi:', data);
-        
-        if (data.kazanilan_xp && data.kazanilan_xp > 0) {
-            showXPNotification(data.kazanilan_xp);
-        }
-        
-        setTimeout(() => loadGameState(), 2000);
-        setPolling(300);
-        
     } catch (error) {
         console.error('❌ Boş geçiş hatası:', error);
-        cevapVerildi = false;
     }
+
+    // Hızlı poll - sunucu her iki tarafı da işleyecek
+    setPolling(300);
 }
 
+/* ===== DOĞRU CEVABI İŞARETLE ===== */
 function showCorrectAnswer() {
     const dogruCevapId = document.getElementById('soruMetin').getAttribute('data-dogru-cevap-id');
     if (dogruCevapId) {
         const correctBtn = document.querySelector(`[data-cevap-id="${dogruCevapId}"]`);
         if (correctBtn) {
             correctBtn.classList.add('correct-answer-highlight');
-            console.log('✅ Doğru cevap gösterildi:', dogruCevapId);
         }
     }
 }
 
-// Sayfa kapanırken rakip yoksa odayı temizle
+/* ===== SAYFA KAPATMA TEMİZLİĞİ ===== */
 window.addEventListener('beforeunload', function() {
     const rakipEl = document.getElementById('rakipUsername');
     const rakipAdi = rakipEl ? rakipEl.textContent.trim() : '';
-    // Rakip yoksa veya hala "Rakip Bekleniyor" ise odayı temizle
     if (!rakipAdi || rakipAdi === 'Rakip Bekleniyor...') {
         navigator.sendBeacon(
             `/karsilasma/oda-birak/${odaId}/`,
@@ -1008,31 +1004,29 @@ window.addEventListener('beforeunload', function() {
     }
 });
 
+/* ===== BAŞLANGIÇ ===== */
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🎮 Oyun başlıyor...');
-    
     if (ilkCevaplar && ilkCevaplar.length > 0) {
         renderAnswers(ilkCevaplar);
+        mevcutSoruId = document.getElementById('soruMetin').getAttribute('data-soru-id') || '';
     }
-    
+
     {% if not oda.oyuncu2 %}
     new bootstrap.Modal(document.getElementById('waitingModal')).show();
     {% endif %}
-    
+
     startTimer();
     loadGameState();
     pollingInterval = setInterval(loadGameState, 500);
 });
 
+/* ===== CEVAPLARI RENDER ET ===== */
 function renderAnswers(cevaplar) {
     const cevaplarDiv = document.getElementById('cevaplar');
-    if (!cevaplarDiv || !cevaplar || cevaplar.length === 0) {
-        console.warn('⚠️ Cevaplar render edilemedi!');
-        return;
-    }
-    
+    if (!cevaplarDiv || !cevaplar || cevaplar.length === 0) return;
+
     cevaplarDiv.innerHTML = '';
-    
+
     cevaplar.forEach((cevap, index) => {
         const btn = document.createElement('button');
         btn.className = 'answer-btn';
@@ -1045,68 +1039,69 @@ function renderAnswers(cevaplar) {
             window.checkAnswer(cevap.id, this);
         });
         cevaplarDiv.appendChild(btn);
-        
+
         if (cevap.dogru_mu) {
             document.getElementById('soruMetin').setAttribute('data-dogru-cevap-id', cevap.id);
         }
     });
-    
-    console.log('✅ Cevaplar render edildi:', cevaplar.length);
 }
 
+/* ===== TIMER ===== */
 function startTimer() {
-    timeLeft = 30;
+    timeLeft = SURE_LIMIT;
     warningShown = false;
-    updateTimer();
     if (timer) clearInterval(timer);
-    timer = setInterval(updateTimer, 1000);
-    console.log('⏱️ Timer başlatıldı');
+    updateTimerDisplay();
+    timer = setInterval(updateTimerTick, 1000);
 }
 
-function updateTimer() {
+function updateTimerTick() {
+    timeLeft--;
+
     if (timeLeft <= 0) {
+        timeLeft = 0;
+        updateTimerDisplay();
         clearInterval(timer);
-        console.log('⏰ Süre doldu!');
+        timer = null;
         autoSubmitAnswer();
         return;
     }
-    
+
+    updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
     const kalanSureElement = document.getElementById('kalanSure');
     const circle = document.getElementById('timeCircle');
     const timeCircle = document.querySelector('.time-circle');
-    
+
     kalanSureElement.textContent = timeLeft;
-    
+
     const circumference = 2 * Math.PI * 36;
-    const offset = circumference - (timeLeft / 30) * circumference;
+    const offset = circumference - (timeLeft / SURE_LIMIT) * circumference;
     circle.style.strokeDashoffset = offset;
-    
+
     if (timeLeft <= 10) {
         circle.style.stroke = '#f44336';
         kalanSureElement.style.color = '#f44336';
-        
-        if (timeLeft <= 5) {
+        kalanSureElement.style.webkitTextFillColor = '#f44336';
+
+        if (timeLeft <= 5 && !cevapVerildi) {
             timeCircle.style.animation = 'shake 0.5s infinite';
-            
-            if (!warningShown) {
-                warningShown = true;
-                console.log('⚠️ SON 5 SANİYE!');
-            }
+        } else {
+            timeCircle.style.animation = '';
         }
     } else {
         circle.style.stroke = 'url(#timeGradient)';
         kalanSureElement.style.color = '';
+        kalanSureElement.style.webkitTextFillColor = '';
         timeCircle.style.animation = '';
     }
-    
-    timeLeft--;
 }
 
-let isLoadingState = false;  // çift istek engelle
-let sonIslenmisSoruNo = 0;   // son işlenmiş soru numarası
-
+/* ===== ANA POLLING FONKSİYONU ===== */
 async function loadGameState() {
-    if (isLoadingState) return;  // çift istek engelle
+    if (isLoadingState || oyunBittiYonlendirme) return;
     isLoadingState = true;
 
     try {
@@ -1118,30 +1113,32 @@ async function loadGameState() {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
 
-        // Hazır sayfasına yönlendir (rakip bulundu ama henüz hazır değil)
+        // Hazır sayfasına yönlendir
         if (data.redirect_bekleme) {
-            clearInterval(pollingInterval);
-            clearInterval(timer);
+            stopEverything();
             window.location.href = data.redirect_bekleme;
-            isLoadingState = false;
             return;
         }
 
-        // Oyun bitti mi?
+        // Oyun bitti
         if (data.oyun_durumu === 'bitti') {
-            console.log('🏁 Oyun bitti!');
-            clearInterval(pollingInterval);
-            clearInterval(timer);
-            setTimeout(() => {
-                window.location.href = `/karsilasma/sonuc/${odaId}/`;
-            }, 2000);
-            isLoadingState = false;
+            if (!oyunBittiYonlendirme) {
+                oyunBittiYonlendirme = true;
+                stopEverything();
+                // Modal varsa kapat
+                const rm = bootstrap.Modal.getInstance(document.getElementById('roundModal'));
+                if (rm) rm.hide();
+                setTimeout(() => {
+                    window.location.href = `/karsilasma/sonuc/${odaId}/`;
+                }, 1500);
+            }
             return;
         }
 
+        // Skorları güncelle
         updateScores(data);
 
-        // Rakip adı
+        // Rakip adı güncelle
         const rakipAdi = isOyuncu1 ? data.oyuncu2_adi : data.oyuncu1_adi;
         if (rakipAdi) {
             const wm = bootstrap.Modal.getInstance(document.getElementById('waitingModal'));
@@ -1149,33 +1146,31 @@ async function loadGameState() {
             document.getElementById('rakipUsername').textContent = rakipAdi;
         }
 
-        // YENİ SORU GELDİ Mİ? (soru_id veya aktif_soru_no değişti)
-        const mevcutSoruId = document.getElementById('soruMetin').getAttribute('data-soru-id');
+        // Durum mesajlarını güncelle
+        updatePlayerStatus(data);
+
+        // YENİ SORU GELDİ Mİ?
         const yeniSoruId = data.soru_id ? String(data.soru_id) : '';
 
         if (yeniSoruId && yeniSoruId !== mevcutSoruId) {
-            console.log('🆕 YENİ SORU! ID:', yeniSoruId, 'No:', data.aktif_soru_no);
             updateQuestion(data);
             startTimer();
         }
 
-        // İKİ OYUNCU DA CEVAPLADI → MODAL GÖSTER
-        // round_bekleme sunucudan gelmeli VE daha önce bu round için modal gösterilmemiş olmalı
+        // İKİ OYUNCU DA CEVAPLADI → ROUND GEÇİŞ MODALİ
         if (data.round_bekleme && data.oyuncu1_cevapladi && data.oyuncu2_cevapladi && !roundModalGosterildi) {
-            console.log('✅ HER İKİ OYUNCU CEVAPLADI! Round bekleme aktif.');
             roundModalGosterildi = true;
             showRoundTransition(data);
         }
 
-        // Sunucu round bekleme'yi kapattıysa ama biz hala bekliyorsak → zorla sıfırla
+        // Sunucu round bekleme kapattı → modal kapat
         if (!data.round_bekleme && roundModalGosterildi) {
-            console.log('🔄 Sunucu round bekleme kapattı, bayrak sıfırlanıyor');
             roundModalGosterildi = false;
             const rm = bootstrap.Modal.getInstance(document.getElementById('roundModal'));
             if (rm) rm.hide();
         }
 
-        // Normal polling hızına dön (round bekleme yoksa)
+        // Cevap verildi + round bekleme yok → normal hıza dön
         if (!data.round_bekleme && cevapVerildi) {
             setPolling(500);
         }
@@ -1185,6 +1180,14 @@ async function loadGameState() {
     } finally {
         isLoadingState = false;
     }
+}
+
+/* ===== YARDIMCI FONKSİYONLAR ===== */
+function stopEverything() {
+    clearInterval(pollingInterval);
+    clearInterval(timer);
+    pollingInterval = null;
+    timer = null;
 }
 
 function setPolling(ms) {
@@ -1220,25 +1223,19 @@ function updateScores(data) {
     senEl.textContent = senScore;
     rakipEl.textContent = rakipScore;
 
-    if (senCombo >= 2) {
-        document.getElementById('senCombo').innerHTML = `<span class="combo-badge">🔥 ${senCombo}x COMBO!</span>`;
-        document.getElementById('senCombo').dataset.combo = senCombo;
-    } else {
-        document.getElementById('senCombo').innerHTML = '';
-        document.getElementById('senCombo').dataset.combo = '0';
-    }
+    // Combo badge
+    const senComboEl = document.getElementById('senCombo');
+    const rakipComboEl = document.getElementById('rakipCombo');
 
-    if (rakipCombo >= 2) {
-        document.getElementById('rakipCombo').innerHTML = `<span class="combo-badge">🔥 ${rakipCombo}x COMBO!</span>`;
-    } else {
-        document.getElementById('rakipCombo').innerHTML = '';
-    }
+    senComboEl.innerHTML = senCombo >= 2
+        ? `<span class="combo-badge">🔥 ${senCombo}x COMBO!</span>` : '';
+    senComboEl.dataset.combo = senCombo || '0';
+
+    rakipComboEl.innerHTML = rakipCombo >= 2
+        ? `<span class="combo-badge">🔥 ${rakipCombo}x COMBO!</span>` : '';
 
     document.getElementById('soruNo').textContent = data.aktif_soru_no;
     document.getElementById('soruNoText').textContent = data.aktif_soru_no;
-
-    // Rakip durum mesajları
-    updatePlayerStatus(data);
 }
 
 function updatePlayerStatus(data) {
@@ -1248,41 +1245,25 @@ function updatePlayerStatus(data) {
     const benStatusEl = document.getElementById('benStatus');
     const rakipStatusEl = document.getElementById('rakipStatus');
 
-    // Ben cevapladıysam
     if (benCevapladi && !rakipCevapladi) {
-        benStatusEl.style.display = 'inline-block';
-        benStatusEl.className = 'player-status status-answered';
-        benStatusEl.textContent = '✅ Cevapladın';
-
-        rakipStatusEl.style.display = 'inline-block';
-        rakipStatusEl.className = 'player-status status-waiting';
-        rakipStatusEl.textContent = '⏳ Cevaplıyor...';
-    }
-    // Rakip cevapladı ama ben henüz
-    else if (!benCevapladi && rakipCevapladi) {
-        rakipStatusEl.style.display = 'inline-block';
-        rakipStatusEl.className = 'player-status status-answered';
-        rakipStatusEl.textContent = '✅ Cevapladı';
-
-        benStatusEl.style.display = 'inline-block';
-        benStatusEl.className = 'player-status status-your-turn';
-        benStatusEl.textContent = '🎯 Cevapla!';
-    }
-    // İkisi de cevapladı
-    else if (benCevapladi && rakipCevapladi) {
-        benStatusEl.style.display = 'inline-block';
-        benStatusEl.className = 'player-status status-answered';
-        benStatusEl.textContent = '✅ Cevapladın';
-
-        rakipStatusEl.style.display = 'inline-block';
-        rakipStatusEl.className = 'player-status status-answered';
-        rakipStatusEl.textContent = '✅ Cevapladı';
-    }
-    // Hiçbiri cevaplamamış
-    else {
+        setStatus(benStatusEl, '✅ Cevapladın', 'status-answered');
+        setStatus(rakipStatusEl, '⏳ Cevaplıyor...', 'status-waiting');
+    } else if (!benCevapladi && rakipCevapladi) {
+        setStatus(rakipStatusEl, '✅ Cevapladı', 'status-answered');
+        setStatus(benStatusEl, '🎯 Cevapla!', 'status-your-turn');
+    } else if (benCevapladi && rakipCevapladi) {
+        setStatus(benStatusEl, '✅ Cevapladın', 'status-answered');
+        setStatus(rakipStatusEl, '✅ Cevapladı', 'status-answered');
+    } else {
         benStatusEl.style.display = 'none';
         rakipStatusEl.style.display = 'none';
     }
+}
+
+function setStatus(el, text, className) {
+    el.style.display = 'inline-block';
+    el.className = 'player-status ' + className;
+    el.textContent = text;
 }
 
 function updateQuestion(data) {
@@ -1291,16 +1272,18 @@ function updateQuestion(data) {
     soruMetinDiv.setAttribute('data-soru-id', data.soru_id || '');
     soruMetinDiv.setAttribute('data-dogru-cevap-id', '');
 
+    mevcutSoruId = data.soru_id ? String(data.soru_id) : '';
+
     if (data.cevaplar && data.cevaplar.length > 0) {
         renderAnswers(data.cevaplar);
     }
 
-    // Tüm durumu sıfırla
+    // State sıfırla
     cevapVerildi = false;
+    bosGecisGonderildi = false;
     roundModalGosterildi = false;
-    sonIslenmisSoruNo = data.aktif_soru_no || 0;
 
-    // Durum mesajlarını sıfırla
+    // UI sıfırla
     document.getElementById('benStatus').style.display = 'none';
     document.getElementById('rakipStatus').style.display = 'none';
 
@@ -1317,37 +1300,47 @@ function updateQuestion(data) {
 }
 
 function showRoundTransition(data) {
-    console.log('⚡ MODAL GÖSTER!');
-
     const senScore = isOyuncu1 ? data.oyuncu1_skor : data.oyuncu2_skor;
     const rakipScore = isOyuncu1 ? data.oyuncu2_skor : data.oyuncu1_skor;
     const icon = document.getElementById('roundFlashIcon');
+    const textEl = document.getElementById('roundNextText');
+    const dotsEl = document.getElementById('roundLoadingDots');
 
-    if (senScore > rakipScore) icon.textContent = '🏆';
-    else if (rakipScore > senScore) icon.textContent = '💪';
-    else icon.textContent = '🤝';
+    // Son soru mu?
+    const sonSoru = data.aktif_soru_no >= TOPLAM_SORU;
+
+    if (sonSoru) {
+        if (senScore > rakipScore) {
+            icon.textContent = '🏆';
+            textEl.textContent = 'Kazandın! Sonuçlar yükleniyor...';
+        } else if (rakipScore > senScore) {
+            icon.textContent = '😢';
+            textEl.textContent = 'Kaybettin! Sonuçlar yükleniyor...';
+        } else {
+            icon.textContent = '🤝';
+            textEl.textContent = 'Berabere! Sonuçlar yükleniyor...';
+        }
+    } else {
+        if (senScore > rakipScore) {
+            icon.textContent = '🔥';
+            textEl.textContent = 'Öndesin! Devam et!';
+        } else if (rakipScore > senScore) {
+            icon.textContent = '💪';
+            textEl.textContent = 'Geride kaldın! Yakala!';
+        } else {
+            icon.textContent = '⚡';
+            textEl.textContent = 'Eşitsiniz! Her şey olabilir!';
+        }
+    }
+    dotsEl.style.display = 'flex';
 
     const el = document.getElementById('roundModal');
     let modal = bootstrap.Modal.getInstance(el);
     if (!modal) modal = new bootstrap.Modal(el, { backdrop: 'static', keyboard: false });
-
     modal.show();
 
-    // Hızlı poll — sunucu 5sn sonra yeni soruyu yükler
+    // Hızlı poll - sunucu yeni soruyu hazırlayana kadar
     setPolling(400);
-
-    // 3.5 saniye sonra modal zorla kapat + durum kontrol
-    setTimeout(() => {
-        console.log('⏰ Modal kapanıyor');
-        modal.hide();
-        setTimeout(() => {
-            if (roundModalGosterildi) {
-                console.log('⚠️ Yeni soru gelmedi, bayrak zorla sıfırlanıyor');
-                roundModalGosterildi = false;
-            }
-            loadGameState();
-        }, 500);
-    }, 3500);
 }
 
 function getCookie(name) {
