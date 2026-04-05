@@ -1158,7 +1158,9 @@ async function loadGameState() {
         }
 
         // İKİ OYUNCU DA CEVAPLADI → ROUND GEÇİŞ MODALİ
-        if (data.round_bekleme && data.oyuncu1_cevapladi && data.oyuncu2_cevapladi && !roundModalGosterildi) {
+        // Modal yalnızca benim de cevabım alındıktan (veya sürem bittikten) sonra açılır
+        const modalAcilabilir = (cevapVerildi || bosGecisGonderildi || timeLeft <= 0);
+        if (data.round_bekleme && data.oyuncu1_cevapladi && data.oyuncu2_cevapladi && !roundModalGosterildi && modalAcilabilir) {
             roundModalGosterildi = true;
             showRoundTransition(data);
         }
