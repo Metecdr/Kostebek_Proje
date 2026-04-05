@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.urls import reverse
 from datetime import timedelta
-from quiz.models import KarsilasmaOdasi, Cevap, Soru, MeydanOkuma, TurnuvaMaci
+from quiz.models import KarsilasmaOdasi, Cevap, Soru, MeydanOkuma, TurnuvaMaci, KullaniciCevap
 from quiz.helpers import get_random_soru_by_ders, update_stats_with_combo
 from profile.models import OyunModuIstatistik, OgrenciProfili
 from profile.rozet_kontrol import rozet_kontrol_yap
@@ -188,6 +188,19 @@ def karsilasma_durum_guncelle(request, oda_id):
 
                 oda.save()
 
+                # Kullanıcı cevabını kaydet (boş geçiş)
+                try:
+                    if oda.aktif_soru:
+                        KullaniciCevap.objects.create(
+                            kullanici=request.user,
+                            oda=oda,
+                            soru=oda.aktif_soru,
+                            verilen_cevap=None,
+                            dogru_mu=False
+                        )
+                except Exception as e:
+                    logger.error(f"KullaniciCevap kayıt hatası (boş geçiş): {e}", exc_info=True)
+
                 # ==================== GÖREV: SORU ÇÖZÜLDÜ (BOŞ GEÇİŞ) ====================
                 try:
                     profil = request.user.profil
@@ -234,6 +247,18 @@ def karsilasma_durum_guncelle(request, oda_id):
 
             # İstatistik güncelle
             update_stats_with_combo(request.user, oda, cevap_obj, is_oyuncu1)
+
+            # Kullanıcı cevabını kaydet
+            try:
+                KullaniciCevap.objects.create(
+                    kullanici=request.user,
+                    oda=oda,
+                    soru=oda.aktif_soru,
+                    verilen_cevap=cevap_obj,
+                    dogru_mu=dogru_mu
+                )
+            except Exception as e:
+                logger.error(f"KullaniciCevap kayıt hatası: {e}", exc_info=True)
 
             # XP + Görev güncelle
             try:
@@ -593,6 +618,26 @@ def karsilasma_sonuc(request, oda_id):
         except Exception as e:
             logger.error(f"Sonuç hatası: {e}", exc_info=True)
 
+        # Yanlış cevapları getir
+        yanlislar = []
+        try:
+            kullanici_cevaplari = KullaniciCevap.objects.filter(
+                kullanici=request.user,
+                oda=oda,
+                dogru_mu=False
+            ).select_related('soru', 'verilen_cevap')
+
+            for kc in kullanici_cevaplari:
+                dogru_cevap = Cevap.objects.filter(soru=kc.soru, dogru_mu=True).first()
+                yanlislar.append({
+                    'soru': kc.soru,
+                    'verilen_cevap': kc.verilen_cevap,
+                    'dogru_cevap': dogru_cevap,
+                    'detayli_aciklama': kc.soru.detayli_aciklama or '',
+                })
+        except Exception as e:
+            logger.error(f"Yanlış cevap getirme hatası: {e}", exc_info=True)
+
         context = {
             'oda': oda,
             'kazandim': kazandim,
@@ -606,6 +651,7 @@ def karsilasma_sonuc(request, oda_id):
             'kazanilan_xp': kazanilan_toplam_xp,
             'turnuva': turnuva,
             'turnuva_maci': turnuva_maci,
+            'yanlislar': yanlislar,
             # ✅ YENİ - puan detayları
             'kazanilan_puan': kazanilan_puan,
             'puan_carpani': puan_carpani,
@@ -900,6 +946,36 @@ def karsilasma_oda_ayril(request, oda_kodu):
         return JsonResponse({'success': True})
 
     return JsonResponse({'success': False, 'error': 'Bu odada değilsiniz'}, status=400)
+
+
+@login_required
+@require_http_methods(["POST"])
+def karsilasma_oda_birak(request, oda_id):
+    """Rakip beklerken sayfadan ayrılırsa odayı temizle (random eşleşme)"""
+    try:
+        oda = KarsilasmaOdasi.objects.get(oda_id=oda_id)
+    except KarsilasmaOdasi.DoesNotExist:
+        return JsonResponse({'success': True})
+
+    # Oyun başlamışsa dokunma
+    if oda.oyun_durumu == 'oynaniyor':
+        return JsonResponse({'success': False, 'error': 'Oyun başlamış'}, status=400)
+
+    # Oda sahibi ayrılıyorsa ve rakip yoksa → odayı sil
+    if oda.oyuncu1 == request.user and oda.oyuncu2 is None:
+        logger.info(f"Oda silindi (bekleme sırasında ayrıldı): OdaID={oda_id}, User={request.user.username}")
+        oda.delete()
+        return JsonResponse({'success': True})
+
+    # Oyuncu2 ayrılıyorsa → temizle
+    if oda.oyuncu2 == request.user:
+        oda.oyuncu2 = None
+        oda.oyuncu2_hazir = False
+        oda.oyuncu1_hazir = False
+        oda.save()
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': True})
 
 
 # ==================== MEYDAN OKUMA ====================

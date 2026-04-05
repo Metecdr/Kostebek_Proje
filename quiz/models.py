@@ -81,10 +81,17 @@ class Soru(models.Model):
     sinav_tipi = models.CharField(max_length=10, default="", blank=True, db_index=True, verbose_name='Sınav Tipi')
     
     konu = models.ForeignKey(
-        'Konu', 
-        on_delete=models.CASCADE, 
+        'Konu',
+        on_delete=models.CASCADE,
         verbose_name='Konu',
         default=1
+    )
+
+    detayli_aciklama = models.TextField(
+        blank=True,
+        default='',
+        verbose_name='Detaylı Açıklama',
+        help_text='Doğru cevabın detaylı açıklaması (konu anlatımı gibi)'
     )
 
     class Meta:
@@ -385,7 +392,7 @@ class KullaniciCevap(models.Model):
     kullanici = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
     oda = models.ForeignKey(KarsilasmaOdasi, on_delete=models.CASCADE)
     soru = models.ForeignKey(Soru, on_delete=models.CASCADE)
-    verilen_cevap = models.ForeignKey(Cevap, on_delete=models.CASCADE)
+    verilen_cevap = models.ForeignKey(Cevap, on_delete=models.CASCADE, null=True, blank=True)
     dogru_mu = models.BooleanField(db_index=True)
     tarih = models.DateTimeField(auto_now_add=True, db_index=True)
 
@@ -470,7 +477,7 @@ class BulBakalimOyun(models.Model):
         self.oyun_durumu = 'bitti'
         self.bitirme_tarihi = timezone.now()
         
-        if self.dogru_sayisi >= 3:
+        if self.dogru_sayisi >= 6:
             self.toplam_puan = 10
         else:
             self.toplam_puan = 0
@@ -511,7 +518,7 @@ class BulBakalimOyun(models.Model):
         return sonuclar
 
     def __str__(self):
-        return f"{self.oyuncu.username} - {self.dogru_sayisi}/5 - {self.oyun_durumu}"
+        return f"{self.oyuncu.username} - {self.dogru_sayisi}/10 - {self.oyun_durumu}"
 
 
 # ==================== ROZET SİSTEMİ ====================

@@ -442,6 +442,156 @@
         box-shadow: 0 10px 25px rgba(108, 117, 125, 0.4);
     }
 
+    /* WRONG ANSWERS SECTION */
+    .wrong-section {
+        margin-top: 40px;
+        text-align: left;
+        animation: fadeInUp 0.8s ease-out 1.2s backwards;
+    }
+
+    .toggle-wrong-btn {
+        width: 100%;
+        padding: 18px 30px;
+        background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .toggle-wrong-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(238, 90, 111, 0.4);
+    }
+
+    .wrong-card {
+        background: linear-gradient(135deg, #fff5f5, #ffe8e8);
+        border-radius: 16px;
+        margin-top: 15px;
+        overflow: hidden;
+        border: 2px solid #fecaca;
+        transition: all 0.3s ease;
+    }
+
+    body.dark-mode .wrong-card {
+        background: linear-gradient(135deg, #2d1f1f, #1e1e2f);
+        border-color: #5a2d2d;
+    }
+
+    .wrong-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.15);
+    }
+
+    .wrong-card-header {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        padding: 12px 20px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .wrong-card-body {
+        padding: 20px;
+    }
+
+    .question-box, .answer-box {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .question-box {
+        background: rgba(99, 102, 241, 0.08);
+        border: 1px solid rgba(99, 102, 241, 0.15);
+    }
+
+    body.dark-mode .question-box {
+        background: rgba(99, 102, 241, 0.12);
+    }
+
+    .wrong-answer {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.15);
+    }
+
+    .correct-answer {
+        background: rgba(16, 185, 129, 0.08);
+        border: 1px solid rgba(16, 185, 129, 0.15);
+    }
+
+    .box-title {
+        font-weight: 700;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .box-content {
+        font-size: 1rem;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    body.dark-mode .box-content {
+        color: #d0d0d0;
+    }
+
+    .explanation-box {
+        background: rgba(59, 130, 246, 0.08);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 10px;
+        padding: 15px 18px;
+        margin-top: 10px;
+    }
+
+    body.dark-mode .explanation-box {
+        background: rgba(59, 130, 246, 0.12);
+    }
+
+    .explanation-box .box-title {
+        color: #3b82f6;
+    }
+
+    .no-wrong-alert {
+        text-align: center;
+        padding: 30px;
+        background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        border-radius: 16px;
+        margin-top: 15px;
+    }
+
+    body.dark-mode .no-wrong-alert {
+        background: linear-gradient(135deg, #1a2e1a, #1e2e1e);
+    }
+
+    .no-wrong-icon {
+        font-size: 3rem;
+        margin-bottom: 10px;
+    }
+
+    .no-wrong-title {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #10b981;
+    }
+
     /* CONFETTI */
     .confetti {
         position: fixed;
@@ -628,6 +778,83 @@
                 <i class="bi bi-person-circle"></i> Profile Dön
             </span>
         </a>
+    </div>
+
+    <!-- YANLIŞLARIMI GÖR -->
+    <div class="wrong-section">
+        {% if yanlislar %}
+            <button class="toggle-wrong-btn"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#wrongAnswers"
+                    aria-expanded="false">
+                <span style="position: relative; z-index: 1;">
+                    <i class="bi bi-search"></i> Yanlışlarımı Göster ({{ yanlislar|length }} adet)
+                </span>
+            </button>
+
+            <div class="collapse" id="wrongAnswers">
+                {% for sonuc in yanlislar %}
+                <div class="wrong-card">
+                    <div class="wrong-card-header">
+                        <i class="bi bi-x-circle-fill"></i>
+                        Yanlış Soru {{ forloop.counter }}
+                    </div>
+                    <div class="wrong-card-body">
+                        <div class="question-box">
+                            <div class="box-title">
+                                <i class="bi bi-journal-text"></i> SORU:
+                            </div>
+                            <div class="box-content">{{ sonuc.soru.metin }}</div>
+                        </div>
+
+                        <div class="answer-box wrong-answer">
+                            <div class="box-title" style="color: #ef4444;">
+                                <i class="bi bi-x-circle-fill"></i> SENİN CEVABIN:
+                            </div>
+                            <div class="box-content">
+                                {% if sonuc.verilen_cevap %}
+                                    {{ sonuc.verilen_cevap.metin }}
+                                {% else %}
+                                    <em style="color: #6c757d;">(Cevap vermediniz - Süre bitti)</em>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="answer-box correct-answer">
+                            <div class="box-title" style="color: #10b981;">
+                                <i class="bi bi-check-circle-fill"></i> DOĞRU CEVAP:
+                            </div>
+                            <div class="box-content">
+                                {% if sonuc.dogru_cevap %}
+                                    {{ sonuc.dogru_cevap.metin }}
+                                {% else %}
+                                    <em style="color: #6c757d;">(Doğru cevap bulunamadı)</em>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if sonuc.detayli_aciklama %}
+                        <div class="explanation-box">
+                            <div class="box-title">
+                                <i class="bi bi-lightbulb-fill"></i> DETAYLI AÇIKLAMA:
+                            </div>
+                            <div class="box-content">{{ sonuc.detayli_aciklama }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            {% if benim_yanlisim == 0 %}
+            <div class="no-wrong-alert">
+                <div class="no-wrong-icon">🎉</div>
+                <h3 class="no-wrong-title">MÜKEMMEL! HİÇ YANLIŞ YAPMADINIZ!</h3>
+            </div>
+            {% endif %}
+        {% endif %}
     </div>
 </div>
 {% endblock %}
