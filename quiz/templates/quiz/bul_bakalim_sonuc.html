@@ -479,7 +479,7 @@
                 <div class="stat-label">❌ Yanlış</div>
             </div>
             <div class="stat-box">
-                <div class="stat-value" id="successRate">{% widthratio oyun.dogru_sayisi 5 100 %}%</div>
+                <div class="stat-value" id="successRate">{% widthratio oyun.dogru_sayisi 10 100 %}%</div>
                 <div class="stat-label">📊 Başarı</div>
             </div>
             <div class="stat-box">
@@ -555,6 +555,15 @@
                                     {% endif %}
                                 </div>
                             </div>
+
+                            {% if sonuc.soru.detayli_aciklama %}
+                            <div class="answer-box" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.2); margin-top: 5px;">
+                                <div class="box-title" style="color: #3b82f6;">
+                                    <i class="bi bi-lightbulb-fill"></i> DETAYLI AÇIKLAMA:
+                                </div>
+                                <div class="box-content">{{ sonuc.soru.detayli_aciklama }}</div>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
@@ -581,7 +590,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Sayaç animasyonları
     animateValue(document.getElementById('correctCount'), 0, {{ oyun.dogru_sayisi }}, 1000);
     animateValue(document.getElementById('wrongCount'), 0, {{ oyun.yanlis_sayisi }}, 1000);
-    animateValue(document.getElementById('successRate'), 0, {% widthratio oyun.dogru_sayisi 5 100 %}, 1000, '', '%');
+    animateValue(document.getElementById('successRate'), 0, {% widthratio oyun.dogru_sayisi 10 100 %}, 1000, '', '%');
     animateValue(document.getElementById('totalPoints'), 0, {{ oyun.toplam_puan }}, 1000);
 
     if (kazandi || yanlisYok) {

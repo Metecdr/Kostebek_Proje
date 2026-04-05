@@ -220,13 +220,13 @@
         border-radius: 20px;
         font-weight: 700;
         margin-top: 10px;
-        animation: bounce 0.6s;
+        animation: comboGlow 2s ease-in-out infinite;
         font-size: 0.85rem;
     }
 
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+    @keyframes comboGlow {
+        0%, 100% { box-shadow: 0 0 5px rgba(238, 90, 111, 0.3); transform: scale(1); }
+        50% { box-shadow: 0 0 15px rgba(238, 90, 111, 0.6); transform: scale(1.05); }
     }
 
     .time-text {
@@ -537,6 +537,32 @@
         to { transform: scale(1); opacity: 1; }
     }
 
+    /* RAKIP DURUM MESAJLARI */
+    .player-status {
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-top: 4px;
+        padding: 2px 8px;
+        border-radius: 8px;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .status-waiting {
+        background: rgba(255, 152, 0, 0.15);
+        color: #f57c00;
+    }
+
+    .status-answered {
+        background: rgba(76, 175, 80, 0.15);
+        color: #4caf50;
+    }
+
+    .status-your-turn {
+        background: rgba(102, 126, 234, 0.15);
+        color: #667eea;
+    }
+
     .xp-notification {
         position: fixed;
         top: 20px;
@@ -726,6 +752,7 @@
             <div class="player-details">
                 <h3>{{ request.user.username }}</h3>
                 <span class="player-level">⭐ Lv.{{ request.user.profil.seviye }}</span>
+                <div id="benStatus" class="player-status" style="display:none;"></div>
             </div>
         </div>
 
@@ -735,6 +762,7 @@
             <div class="player-details" style="text-align: right;">
                 <h3 id="rakipUsername">{{ rakip_username }}</h3>
                 <span class="player-level">⭐ Lv.<span id="rakipLevel">{{ rakip_seviye }}</span></span>
+                <div id="rakipStatus" class="player-status" style="display:none;"></div>
             </div>
             <div class="player-avatar" id="rakipAvatar">{{ rakip_avatar }}</div>
         </div>
@@ -859,7 +887,7 @@ window.checkAnswer = async function(cevapId, btn) {
     
     console.log('📤 Cevap gönderiliyor:', cevapId);
     cevapVerildi = true;
-    clearInterval(timer);
+    // Timer durmaz, süre akmaya devam eder
     
     document.querySelectorAll('.answer-btn').forEach(b => {
         b.disabled = true;
@@ -966,6 +994,19 @@ function showCorrectAnswer() {
         }
     }
 }
+
+// Sayfa kapanırken rakip yoksa odayı temizle
+window.addEventListener('beforeunload', function() {
+    const rakipEl = document.getElementById('rakipUsername');
+    const rakipAdi = rakipEl ? rakipEl.textContent.trim() : '';
+    // Rakip yoksa veya hala "Rakip Bekleniyor" ise odayı temizle
+    if (!rakipAdi || rakipAdi === 'Rakip Bekleniyor...') {
+        navigator.sendBeacon(
+            `/karsilasma/oda-birak/${odaId}/`,
+            new URLSearchParams({ csrfmiddlewaretoken: getCookie('csrftoken') })
+        );
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🎮 Oyun başlıyor...');
@@ -1195,6 +1236,53 @@ function updateScores(data) {
 
     document.getElementById('soruNo').textContent = data.aktif_soru_no;
     document.getElementById('soruNoText').textContent = data.aktif_soru_no;
+
+    // Rakip durum mesajları
+    updatePlayerStatus(data);
+}
+
+function updatePlayerStatus(data) {
+    const benCevapladi = isOyuncu1 ? data.oyuncu1_cevapladi : data.oyuncu2_cevapladi;
+    const rakipCevapladi = isOyuncu1 ? data.oyuncu2_cevapladi : data.oyuncu1_cevapladi;
+
+    const benStatusEl = document.getElementById('benStatus');
+    const rakipStatusEl = document.getElementById('rakipStatus');
+
+    // Ben cevapladıysam
+    if (benCevapladi && !rakipCevapladi) {
+        benStatusEl.style.display = 'inline-block';
+        benStatusEl.className = 'player-status status-answered';
+        benStatusEl.textContent = '✅ Cevapladın';
+
+        rakipStatusEl.style.display = 'inline-block';
+        rakipStatusEl.className = 'player-status status-waiting';
+        rakipStatusEl.textContent = '⏳ Cevaplıyor...';
+    }
+    // Rakip cevapladı ama ben henüz
+    else if (!benCevapladi && rakipCevapladi) {
+        rakipStatusEl.style.display = 'inline-block';
+        rakipStatusEl.className = 'player-status status-answered';
+        rakipStatusEl.textContent = '✅ Cevapladı';
+
+        benStatusEl.style.display = 'inline-block';
+        benStatusEl.className = 'player-status status-your-turn';
+        benStatusEl.textContent = '🎯 Cevapla!';
+    }
+    // İkisi de cevapladı
+    else if (benCevapladi && rakipCevapladi) {
+        benStatusEl.style.display = 'inline-block';
+        benStatusEl.className = 'player-status status-answered';
+        benStatusEl.textContent = '✅ Cevapladın';
+
+        rakipStatusEl.style.display = 'inline-block';
+        rakipStatusEl.className = 'player-status status-answered';
+        rakipStatusEl.textContent = '✅ Cevapladı';
+    }
+    // Hiçbiri cevaplamamış
+    else {
+        benStatusEl.style.display = 'none';
+        rakipStatusEl.style.display = 'none';
+    }
 }
 
 function updateQuestion(data) {
@@ -1211,6 +1299,10 @@ function updateQuestion(data) {
     cevapVerildi = false;
     roundModalGosterildi = false;
     sonIslenmisSoruNo = data.aktif_soru_no || 0;
+
+    // Durum mesajlarını sıfırla
+    document.getElementById('benStatus').style.display = 'none';
+    document.getElementById('rakipStatus').style.display = 'none';
 
     const rm = bootstrap.Modal.getInstance(document.getElementById('roundModal'));
     if (rm) rm.hide();

@@ -87,12 +87,12 @@ def bul_bakalim_basla(request):
         cache.set(cache_key, sorular, 300)
         logger.debug(f"Sorular cache'lendi: Ders={ders}, Sınav Tipi={sinav_tipi}, Sayı={len(sorular)}")
 
-    if len(sorular) < 5:
-        messages.error(request, f'"{ders}" dersinde yeterli soru bulunamadı! En az 5 soru gerekli.')
+    if len(sorular) < 10:
+        messages.error(request, f'"{ders}" dersinde yeterli soru bulunamadı! En az 10 soru gerekli.')
         logger.warning(f"Yetersiz soru: Ders={ders}, Sınav Tipi={sinav_tipi}, Sayı={len(sorular)}")
         return redirect('bul_bakalim_ders_secimi')
 
-    secilen_sorular = random.sample(sorular, min(5, len(sorular)))
+    secilen_sorular = random.sample(sorular, min(10, len(sorular)))
     yeni_oyun = BulBakalimOyun.objects.create(
         oyuncu=request.user,
         sorular=secilen_sorular,
@@ -131,7 +131,7 @@ def bul_bakalim_oyun(request, oyun_id):
         'cevaplar': cevaplar,
         'soru_no': cevaplanan_soru_sayisi + 1,
         'toplam_soru': len(oyun.sorular),
-        'sure': 90,
+        'sure': 240,
     }
     return render(request, 'quiz/bul_bakalim_oyun.html', context)
 
@@ -353,7 +353,7 @@ def bul_bakalim_sonuc(request, oyun_id):
     kazanilan_puan = 0
     puan_carpani = 1.0
     puan_bonusu = 0
-    kazandi = oyun.dogru_sayisi >= 3
+    kazandi = oyun.dogru_sayisi >= 6
 
     try:
         profil = request.user.profil
@@ -365,7 +365,7 @@ def bul_bakalim_sonuc(request, oyun_id):
                 taban_puan=10,
                 sebep='Bul Bakalım kazanıldı',
                 dogru=oyun.dogru_sayisi,
-                toplam=5
+                toplam=10
             )
             kazanilan_puan = puan_sonuc['kazanilan_puan']
             puan_carpani = puan_sonuc['carpan']
