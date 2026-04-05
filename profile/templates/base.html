@@ -15,7 +15,7 @@
 
     <!-- Google Search Console Doğrulama -->
     {% if GOOGLE_SC_TOKEN %}
-    <meta name="google-site-verification" content="0eMtR7dy6HU_L7yeXRvBH77ffg5EAblTYoptPM3dDxo" />
+    <meta name="google-site-verification" content="{{ GOOGLE_SC_TOKEN }}" />
     {% endif %}
 
     <!-- Google Analytics GA4 -->
@@ -2521,4 +2521,4 @@
     
     {% block extra_js %}{% endblock %}
 </body>
-</html>
+</html>  
