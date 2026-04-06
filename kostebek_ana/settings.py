@@ -74,11 +74,12 @@ WSGI_APPLICATION = 'kostebek_ana.wsgi.application'
 # ==================== DATABASE ====================
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        'OPTIONS': {
-            'timeout': 20,
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'kostebekyks',
+        'USER': 'kostebekuser',
+        'PASSWORD': 'Kostebek2024',
+        'HOST': 'localhost',
+        'PORT': '5432',
         'CONN_MAX_AGE': 600,
     }
 }
@@ -223,9 +224,10 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # ==================== PRODUCTION SETTINGS (DEBUG=False için) ====================
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
+    SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    CSRF_TRUSTED_ORIGINS = ['https://kostebekyks.com', 'https://www.kostebekyks.com']
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
