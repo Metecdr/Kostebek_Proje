@@ -1,5 +1,5 @@
 import django.utils.timezone
-from django.db import migrations, models
+from django.db import migrations
 
 
 class Migration(migrations.Migration):
@@ -34,90 +34,74 @@ class Migration(migrations.Migration):
             "DROP INDEX IF EXISTS profil_gunluk_idx;",
             migrations.RunSQL.noop,
         ),
-        
-        # YENİ FIELD'LARI EKLE
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='aktif_mi',
-            field=models.BooleanField(default=True, verbose_name='Aktif Mi'),
+
+        # FIELD'LARI GÜVENLİ EKLE (IF NOT EXISTS)
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS aktif_mi boolean NOT NULL DEFAULT true;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS aktif_mi;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='gunluk_puan',
-            field=models.IntegerField(db_index=True, default=0, verbose_name='Günlük Puan'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS gunluk_puan integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS gunluk_puan;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='haftalik_puan',
-            field=models.IntegerField(db_index=True, default=0, verbose_name='Haftalık Puan'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS haftalik_puan integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS haftalik_puan;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='aylik_puan',
-            field=models.IntegerField(db_index=True, default=0, verbose_name='Aylık Puan'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS aylik_puan integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS aylik_puan;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='gunluk_cozulen',
-            field=models.IntegerField(default=0, verbose_name='Günlük Çözülen'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS gunluk_cozulen integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS gunluk_cozulen;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='gunluk_dogru',
-            field=models.IntegerField(default=0, verbose_name='Günlük Doğru'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS gunluk_dogru integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS gunluk_dogru;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='gunluk_yanlis',
-            field=models.IntegerField(default=0, verbose_name='Günlük Yanlış'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS gunluk_yanlis integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS gunluk_yanlis;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='haftalik_cozulen',
-            field=models.IntegerField(default=0, verbose_name='Haftalık Çözülen'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS haftalik_cozulen integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS haftalik_cozulen;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='haftalik_dogru',
-            field=models.IntegerField(default=0, verbose_name='Haftalık Doğru'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS haftalik_dogru integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS haftalik_dogru;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='haftalik_yanlis',
-            field=models.IntegerField(default=0, verbose_name='Haftalık Yanlış'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS haftalik_yanlis integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS haftalik_yanlis;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='aylik_cozulen',
-            field=models.IntegerField(default=0, verbose_name='Aylık Çözülen'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS aylik_cozulen integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS aylik_cozulen;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='aylik_dogru',
-            field=models.IntegerField(default=0, verbose_name='Aylık Doğru'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS aylik_dogru integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS aylik_dogru;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='aylik_yanlis',
-            field=models.IntegerField(default=0, verbose_name='Aylık Yanlış'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS aylik_yanlis integer NOT NULL DEFAULT 0;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS aylik_yanlis;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='son_gunluk_reset',
-            field=models.DateField(default=django.utils.timezone.now, verbose_name='Son Günlük Reset'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS son_gunluk_reset date NOT NULL DEFAULT CURRENT_DATE;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS son_gunluk_reset;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='son_haftalik_reset',
-            field=models.DateField(default=django.utils.timezone.now, verbose_name='Son Haftalık Reset'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS son_haftalik_reset date NOT NULL DEFAULT CURRENT_DATE;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS son_haftalik_reset;",
         ),
-        migrations.AddField(
-            model_name='ogrenciprofili',
-            name='son_aylik_reset',
-            field=models.DateField(default=django.utils.timezone.now, verbose_name='Son Aylık Reset'),
+        migrations.RunSQL(
+            "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS son_aylik_reset date NOT NULL DEFAULT CURRENT_DATE;",
+            "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS son_aylik_reset;",
         ),
-        
-        # YENİ INDEX'LERİ EKLE (IF NOT EXISTS mantığıyla)
+
+        # YENİ INDEX'LER
         migrations.RunSQL(
             "CREATE INDEX IF NOT EXISTS profil_toplam_idx ON profile_ogrenciprofili (toplam_puan DESC);",
             "DROP INDEX IF EXISTS profil_toplam_idx;",
