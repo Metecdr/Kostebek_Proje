@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Kullanım Koşulları - Köstebek YKS{% endblock %}
+
+{% block content %}
+<div class="policy-container">
+    <h1>📋 Kullanım Koşulları</h1>
+    <p class="policy-date">Son güncelleme: 9 Nisan 2026</p>
+
+    <div class="policy-section">
+        <h2>1. Hizmet Tanımı</h2>
+        <p>Köstebek YKS, öğrencilere YKS sınavına hazırlık sürecinde oyunlaştırılmış bir öğrenme ortamı sunan ücretsiz bir eğitim platformudur. Karşılaşma modu, tabu oyunu, bul bakalım ve turnuva gibi etkileşimli oyun modları ile öğrenmeyi eğlenceli hale getirmeyi amaçlar.</p>
+    </div>
+
+    <div class="policy-section">
+        <h2>2. Hesap Oluşturma ve Kullanım</h2>
+        <p>Platforma kayıt olmak için geçerli bir kullanıcı adı, e-posta adresi ve şifre belirlemeniz gerekmektedir. Hesabınızın güvenliğinden siz sorumlusunuz. Başka bir kullanıcının hesabını kullanmak veya sahte hesap oluşturmak yasaktır.</p>
+    </div>
+
+    <div class="policy-section">
+        <h2>3. Kullanıcı Davranış Kuralları</h2>
+        <p>Platform üzerinde aşağıdaki davranışlar yasaktır:</p>
+        <p>Hakaret, küfür veya uygunsuz içerik paylaşmak; diğer kullanıcıları taciz etmek; hile yapmak veya sistemi kötüye kullanmak; spam veya reklam amaçlı içerik paylaşmak; platformun teknik altyapısına zarar vermeye çalışmak.</p>
+    </div>
+
+    <div class="policy-section">
+        <h2>4. Fikri Mülkiyet</h2>
+        <p>Platform üzerindeki tüm içerikler (sorular, tasarımlar, logolar, kodlar) Köstebek YKS'ye aittir. İçeriklerin izinsiz kopyalanması, dağıtılması veya ticari amaçla kullanılması yasaktır.</p>
+    </div>
+
+    <div class="policy-section">
+        <h2>5. Puan ve Rozet Sistemi</h2>
+        <p>Platformda kazanılan puanlar, rozetler ve XP'ler tamamen eğitim amaçlı motivasyon araçlarıdır. Maddi bir değeri yoktur ve nakde çevrilemez.</p>
+    </div>
+
+    <div class="policy-section">
+        <h2>6. Hizmet Değişiklikleri</h2>
+        <p>Köstebek YKS, platformun özelliklerini, içeriğini ve bu kullanım koşullarını önceden bildirim yapmaksızın değiştirme hakkını saklı tutar.</p>
+    </div>
+
+    <div class="policy-section">
+        <h2>7. Hesap Askıya Alma ve Silme</h2>
+        <p>Kullanım koşullarını ihlal eden hesaplar geçici veya kalıcı olarak askıya alınabilir. Kendi hesabınızı silmek isterseniz iletişim sayfasından talepte bulunabilirsiniz.</p>
+    </div>
+
+    <div class="policy-section">
+        <h2>8. İletişim</h2>
+        <p>Kullanım koşulları hakkında sorularınız için <a href="{% url 'iletisim' %}">iletişim sayfamızdan</a> bize ulaşabilirsiniz.</p>
+    </div>
+</div>
+
+<style>
+    .policy-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 50px;
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .policy-container h1 {
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+
+    .policy-date {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 30px;
+    }
+
+    .policy-section {
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--card-border);
+    }
+
+    .policy-section:last-child {
+        border-bottom: none;
+    }
+
+    .policy-section h2 {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+
+    .policy-section p {
+        color: var(--text-secondary);
+        line-height: 1.8;
+        font-size: 1rem;
+    }
+
+    .policy-section a {
+        color: #667eea;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .policy-section a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .policy-container {
+            margin: 20px;
+            padding: 30px 20px;
+        }
+
+        .policy-container h1 {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+{% endblock %}

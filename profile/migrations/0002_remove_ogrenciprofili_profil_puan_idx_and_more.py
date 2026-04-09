@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
             "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS gunluk_dogru integer NOT NULL DEFAULT 0;",
             "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS gunluk_dogru;",
         ),
-<<<<<<< HEAD
+
 
         # FIELD'LARI GÜVENLİ EKLE (IF NOT EXISTS)
         migrations.RunSQL(
@@ -109,7 +109,6 @@ class Migration(migrations.Migration):
         ),
 
         # YENİ INDEX'LER
-=======
         migrations.RunSQL(
             "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS gunluk_yanlis integer NOT NULL DEFAULT 0;",
             "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS gunluk_yanlis;",
@@ -150,8 +149,6 @@ class Migration(migrations.Migration):
             "ALTER TABLE profile_ogrenciprofili ADD COLUMN IF NOT EXISTS son_aylik_reset date NOT NULL DEFAULT CURRENT_DATE;",
             "ALTER TABLE profile_ogrenciprofili DROP COLUMN IF EXISTS son_aylik_reset;",
         ),
-
->>>>>>> 9acce33fa02cdba7d208a629f718d829b2572cd6
         migrations.RunSQL(
             "CREATE INDEX IF NOT EXISTS profil_toplam_idx ON profile_ogrenciprofili (toplam_puan DESC);",
             "DROP INDEX IF EXISTS profil_toplam_idx;",

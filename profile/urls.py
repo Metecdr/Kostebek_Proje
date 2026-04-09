@@ -45,6 +45,8 @@ urlpatterns = [
     path('sss/', views.sss, name='sss'),
     path('iletisim/', views.iletisim, name='iletisim'),
     path('gizlilik-politikasi/', views.gizlilik_politikasi, name='gizlilik_politikasi'),
+    path('kullanim-kosullari/', views.kullanim_kosullari, name='kullanim_kosullari'),
+    path('hakkimizda/', views.hakkimizda, name='hakkimizda'),
 
     # Görevler
     path('gorevler/', gunluk_gorevler_view, name='gunluk_gorevler'),

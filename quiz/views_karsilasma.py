@@ -666,6 +666,10 @@ def karsilasma_sonuc(request, oda_id):
         except Exception as e:
             logger.error(f"Yanlış cevap getirme hatası: {e}", exc_info=True)
 
+        # Rakip kullanıcı ID'si (rövanş için)
+        rakip_kullanici = oda.oyuncu2 if is_oyuncu1 else oda.oyuncu1
+        rakip_kullanici_id = rakip_kullanici.id if rakip_kullanici else None
+
         context = {
             'oda': oda,
             'kazandim': kazandim,
@@ -684,6 +688,8 @@ def karsilasma_sonuc(request, oda_id):
             'kazanilan_puan': kazanilan_puan,
             'puan_carpani': puan_carpani,
             'puan_bonusu': puan_bonusu,
+            # ✅ Rövanş için rakip ID
+            'rakip_kullanici_id': rakip_kullanici_id,
         }
 
         return render(request, 'quiz/karsilasma_sonuc.html', context)
