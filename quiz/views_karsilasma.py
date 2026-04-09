@@ -147,10 +147,11 @@ def karsilasma_durum_guncelle(request, oda_id):
     logger.info(f"🔔 Durum kontrolü: Method={request.method}, Oda={oda_id}")
 
     try:
+        # KRİTİK FIX:
+        # select_for_update ile birlikte select_related(nullable side) PostgreSQL'de
+        # "FOR UPDATE cannot be applied to the nullable side of an outer join" hatası verebilir.
         oda = get_object_or_404(
-            KarsilasmaOdasi.objects.select_for_update().select_related(
-                'oyuncu1', 'oyuncu2', 'aktif_soru', 'ilk_dogru_cevaplayan'
-            ),
+            KarsilasmaOdasi.objects.select_for_update(),
             oda_id=oda_id
         )
 
