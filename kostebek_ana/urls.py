@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from django.http import HttpResponse
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from kostebek_ana.sitemaps import StatikSayfalarSitemap, AnaSayfaSitemap
@@ -29,6 +30,15 @@ urlpatterns = [
 
     # Magaza
     path('magaza/', include('magaza.urls')),
+
+    # Robots.txt
+    path(
+    "robots.txt",
+    lambda r: HttpResponse(
+        "User-agent: *\nAllow: /\n\nSitemap: https://kostebekyks.com/sitemap.xml\n",
+        content_type="text/plain",
+    ),
+),
 ]
 
 if settings.DEBUG:
