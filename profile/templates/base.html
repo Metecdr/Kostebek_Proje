@@ -1852,8 +1852,9 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'quiz_anasayfa' %}">
-                <img src="{% static 'images/kostebek_logo.png' %}" alt="Köstebek" style="height:32px; width:auto; vertical-align:middle; margin-right:6px;"> Köstebek YKS
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'quiz_anasayfa' %}">
+                <img src="{% static 'images/kostebek_logo.png' %}" alt="Köstebek" class="site-logo me-2">
+                <span>Köstebek YKS</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -2538,15 +2539,4 @@
                     showToast(
                         "{{ message }}",
                         "{{ message.tags }}".includes('error') ? 'error' : 
-                        "{{ message.tags }}".includes('danger') ? 'danger' : 
-                        "{{ message.tags }}".includes('success') ? 'success' : 
-                        "{{ message.tags }}".includes('warning') ? 'warning' : 'info'
-                    );
-                {% endfor %}
-            {% endif %}
-        });
-    </script>
-    
-    {% block extra_js %}{% endblock %}
-</body>
-</html>  
+                        "{{ message.tags }}".includes('danger') ? 'danger' : 
