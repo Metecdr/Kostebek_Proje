@@ -964,6 +964,9 @@ async function autoSubmitAnswer() {
 
     showCorrectAnswer();
 
+    // Süre doldu bilgi modalı göster
+    showSureDolduModal();
+
     try {
         await fetch(`/karsilasma/durum/${odaId}/`, {
             method: 'POST',
@@ -979,6 +982,28 @@ async function autoSubmitAnswer() {
 
     // Hızlı poll - sunucu her iki tarafı da işleyecek
     setPolling(300);
+}
+
+/* ===== SÜRE DOLDU MODAL ===== */
+function showSureDolduModal() {
+    const icon = document.getElementById('roundFlashIcon');
+    const textEl = document.getElementById('roundNextText');
+    const dotsEl = document.getElementById('roundLoadingDots');
+
+    icon.textContent = '⏰';
+    textEl.textContent = 'Süre doldu! Soru pas geçildi...';
+    dotsEl.style.display = 'flex';
+
+    const el = document.getElementById('roundModal');
+    let modal = bootstrap.Modal.getInstance(el);
+    if (!modal) modal = new bootstrap.Modal(el, { backdrop: 'static', keyboard: false });
+    modal.show();
+
+    // 2 saniye sonra modalı kapat (yeni soru gelince zaten kapanacak)
+    setTimeout(() => {
+        const rm = bootstrap.Modal.getInstance(el);
+        if (rm && !roundModalGosterildi) rm.hide();
+    }, 2500);
 }
 
 /* ===== DOĞRU CEVABI İŞARETLE ===== */

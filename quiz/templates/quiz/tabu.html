@@ -555,8 +555,6 @@
 
 {% block content %}
 <div class="tabu-header">
-    <img src="{% static 'kostebek_sol_png.png' %}" alt="Köstebek Logo" class="tabu-header-logo" />
-    <span class="tabu-header-title">Köstebek</span>
     <div class="tabu-header-sure" id="timer-box">
         Süre: <span id="zaman">{{ SURE }}</span>s
         <span style="margin-left: 12px;font-size: 1rem;color:#fff;font-weight:800;">
@@ -594,7 +592,6 @@
 
     <!-- ORTA KUTU -->
     <div class="tabu-center">
-        <div class="tabu-title">🎭 TABU</div>
         <div class="tabu-tahmin-box">
             <div class="tabu-tahmin-title">Tahminler</div>
             <div class="tabu-tahmin-metin" id="ana-kelime">{{ kelime.kelime }}</div>
@@ -693,6 +690,9 @@ function turuBaslat() {
 
 function turGuncelle(action) {
     if (!turAktif) return;
+
+    // Süreyi durdur
+    if (sayac) clearInterval(sayac);
 
     // Butonları devre dışı bırak
     document.getElementById('btnDogru').disabled = true;
@@ -796,6 +796,10 @@ function siradakiSoru() {
     document.getElementById('btnDogru').disabled = false;
     document.getElementById('btnPas').disabled = false;
     document.getElementById('btnTabu').disabled = false;
+
+    // Süreyi tekrar başlat
+    if (sayac) clearInterval(sayac);
+    sayac = setInterval(zamanlayici, 1000);
 }
 
 function turuBitir() {

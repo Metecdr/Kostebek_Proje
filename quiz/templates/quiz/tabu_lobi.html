@@ -127,42 +127,114 @@
         z-index: 1;
     }
 
-    /* TAKIM INPUT */
+    /* TAKIM INPUT - MODERN */
     .takim-section {
-        margin-bottom: 30px;
+        margin-bottom: 28px;
+        position: relative;
+    }
+
+    .takim-card {
+        background: linear-gradient(135deg, #f8f4ff, #f0e9ff);
+        border: 2px solid #e0d4f5;
+        border-radius: 20px;
+        padding: 22px 24px;
+        transition: all 0.3s ease;
+    }
+
+    .takim-card:hover {
+        border-color: #9e7bfa;
+        box-shadow: 0 8px 25px rgba(158, 123, 250, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .takim-card.team-b {
+        background: linear-gradient(135deg, #fff4ee, #ffe8d6);
+        border-color: #f5d4b8;
+    }
+
+    .takim-card.team-b:hover {
+        border-color: #ff9800;
+        box-shadow: 0 8px 25px rgba(255, 152, 0, 0.15);
     }
 
     .takim-label {
         display: flex;
         align-items: center;
         gap: 10px;
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: #333;
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #5a3e9e;
         margin-bottom: 12px;
+    }
+
+    .takim-card.team-b .takim-label {
+        color: #c76f00;
+    }
+
+    .takim-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #9e7bfa, #764ba2);
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 900;
+    }
+
+    .takim-card.team-b .takim-number {
+        background: linear-gradient(135deg, #ff9800, #f57c00);
     }
 
     .takim-input {
         width: 100%;
-        padding:  18px 20px;
-        border: 3px solid #e9ecef;
-        border-radius: 15px;
+        padding: 16px 20px;
+        border: 2px solid transparent;
+        border-radius: 14px;
         font-size: 1.1rem;
-        font-weight: 600;
+        font-weight: 700;
         transition: all 0.3s;
-        background: #f8f9fa;
+        background: white;
+        color: #333;
     }
 
     .takim-input:focus {
         outline: none;
-        border-color: #667eea;
+        border-color: #9e7bfa;
         background: white;
-        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
-        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(158, 123, 250, 0.2);
+    }
+
+    .takim-card.team-b .takim-input:focus {
+        border-color: #ff9800;
+        box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2);
     }
 
     .takim-input::placeholder {
-        color: #adb5bd;
+        color: #bbb;
+        font-weight: 500;
+    }
+
+    .vs-divider {
+        text-align: center;
+        margin: -8px 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .vs-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        font-size: 1rem;
+        font-weight: 900;
+        line-height: 44px;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
     /* KÖSTEBEK IMAGES */
@@ -358,32 +430,41 @@
 
             <!-- 1. TAKIM -->
             <div class="takim-section">
-                <label class="takim-label">
-                    🚩 1.Takım
-                </label>
-                <input 
-                    type="text" 
-                    name="takim_a" 
-                    class="takim-input" 
-                    placeholder="Örn: Aslanlar"
-                    required
-                    maxlength="20"
-                >
+                <div class="takim-card">
+                    <label class="takim-label">
+                        <span class="takim-number">1</span> Takım
+                    </label>
+                    <input
+                        type="text"
+                        name="takim_a"
+                        class="takim-input"
+                        placeholder="Takım adını girin..."
+                        required
+                        maxlength="20"
+                    >
+                </div>
+            </div>
+
+            <!-- VS DIVIDER -->
+            <div class="vs-divider">
+                <span class="vs-badge">VS</span>
             </div>
 
             <!-- 2.TAKIM -->
             <div class="takim-section">
-                <label class="takim-label">
-                    🚩 2.Takım
-                </label>
-                <input 
-                    type="text" 
-                    name="takim_b" 
-                    class="takim-input" 
-                    placeholder="Örn: Kaplanlar"
-                    required
-                    maxlength="20"
-                >
+                <div class="takim-card team-b">
+                    <label class="takim-label">
+                        <span class="takim-number">2</span> Takım
+                    </label>
+                    <input
+                        type="text"
+                        name="takim_b"
+                        class="takim-input"
+                        placeholder="Takım adını girin..."
+                        required
+                        maxlength="20"
+                    >
+                </div>
             </div>
 
             <!-- KÖSTEBEK IMAGES -->

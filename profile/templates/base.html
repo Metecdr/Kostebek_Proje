@@ -564,6 +564,8 @@
         [data-theme="dark"] .stat-card h1,
         [data-theme="dark"] .stat-card h2 {
             color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            background: none !important;
             text-shadow: 0 0 20px rgba(255,255,255,0.3), 0 0 40px rgba(139, 92, 246, 0.2) !important;
             font-weight: 900 !important;
         }
@@ -919,6 +921,19 @@
             font-weight: 900 !important;
             -webkit-text-fill-color: #ffffff !important;
             background: none !important;
+        }
+
+        /* Dark mode - tüm renkli kutucuklardaki mor/gradient yazıları beyaz yap */
+        [data-theme="dark"] .score-value,
+        [data-theme="dark"] .player-score div,
+        [data-theme="dark"] .stat-card .stat-value,
+        [data-theme="dark"] .stat-card .stat-label,
+        body.dark-mode .stat-value,
+        body.dark-mode .score-value,
+        body.dark-mode .player-score div {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            background-image: none !important;
         }
 
         [data-theme="dark"] .stat-item .stat-label,
@@ -2036,7 +2051,7 @@
                         <li><a href="{% url 'rozetler_view' %}"><i class="bi bi-chevron-right"></i> Rozetler</a></li>
                         <li><a href="{% url 'gunluk_gorevler' %}"><i class="bi bi-chevron-right"></i> Günlük Görevler</a></li>
                         <li><a href="{% url 'calisma_takvimi' %}"><i class="bi bi-chevron-right"></i> Çalışma Takvimi</a></li>
-                        <li><a href="#"><i class="bi bi-chevron-right"></i> Hakkımızda</a></li>
+                        <li><a href="{% url 'hakkimizda' %}"><i class="bi bi-chevron-right"></i> Hakkımızda</a></li>
                     </ul>
                 </div>
                 

@@ -1212,6 +1212,14 @@ def gizlilik_politikasi(request):
     return render(request, 'gizlilik_politikasi.html')
 
 
+def kullanim_kosullari(request):
+    return render(request, 'kullanim_kosullari.html')
+
+
+def hakkimizda(request):
+    return render(request, 'hakkimizda.html')
+
+
 @login_required
 def admin_dashboard(request):
     """Özel admin dashboard - sadece superuser"""

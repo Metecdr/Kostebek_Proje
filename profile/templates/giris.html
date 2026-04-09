@@ -14,7 +14,7 @@
             </div>
 
             <div class="auth-header">
-                <h2>Tekrar Hoş Geldin!  👋</h2>
+                <h2>Köstebek'e Hoşgeldin! 👋</h2>
                 <p>Hesabına giriş yap ve öğrenmeye devam et</p>
             </div>
 
@@ -83,39 +83,25 @@
         <div class="auth-right">
             <!-- ORTA İÇERİK -->
             <div class="auth-hero">
-                <h2>YKS'ye Eğlenerek Hazırlan!  </h2>
-                <p>Oyunlaştırılmış sistemle arkadaşlarınla yarış, konuları pekiştir!  </p>
-                
-                <div class="stats-preview">
-                    <div class="stat-item">
-                        <div class="stat-icon">👥</div>
-                        <div class="stat-number">10K+</div>
-                        <div class="stat-label">Aktif Öğrenci</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-icon">📝</div>
-                        <div class="stat-number">50K+</div>
-                        <div class="stat-label">Çözülen Soru</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-icon">🏅</div>
-                        <div class="stat-number">1000+</div>
-                        <div class="stat-label">Kazanılan Rozet</div>
-                    </div>
-                </div>
+                <h2>YKS'ye Eğlenerek Hazırlan!</h2>
+                <p>Arkadaşlarınla yarış, konuları pekiştir, oyunlarla öğren!</p>
 
                 <div class="feature-highlights">
                     <div class="highlight-item">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                        <span>Karşılaşma Modu</span>
+                    </div>
+                    <div class="highlight-item">
+                        <i class="bi bi-chat-square-text-fill"></i>
+                        <span>Tabu Oyunu</span>
+                    </div>
+                    <div class="highlight-item">
                         <i class="bi bi-trophy-fill"></i>
-                        <span>Liderlik Tablosu</span>
+                        <span>Turnuvalar</span>
                     </div>
                     <div class="highlight-item">
-                        <i class="bi bi-controller"></i>
-                        <span>Eğlenceli Oyunlar</span>
-                    </div>
-                    <div class="highlight-item">
-                        <i class="bi bi-graph-up"></i>
-                        <span>Detaylı İstatistikler</span>
+                        <i class="bi bi-search"></i>
+                        <span>Bul Bakalım</span>
                     </div>
                 </div>
             </div>
@@ -516,51 +502,12 @@
         margin-right: auto;
     }
 
-    .stats-preview {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 30px;
-        margin-bottom: 50px;
-    }
-
-    .stat-item {
-        text-align: center;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        padding: 25px 15px;
-        border-radius:  20px;
-        transition: all 0.3s;
-    }
-
-    .stat-item:hover {
-        transform: translateY(-10px);
-        background: rgba(255, 255, 255, 0.15);
-    }
-
-    .stat-icon {
-        font-size: 2.5rem;
-        margin-bottom: 10px;
-    }
-
-    .stat-number {
-        color: white;
-        font-size: 2.5rem;
-        font-weight:  900;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        margin-bottom: 5px;
-    }
-
-    .stat-label {
-        color: rgba(255, 255, 255, 0.9);
-        font-size: 0.95rem;
-        font-weight: 600;
-    }
-
     .feature-highlights {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        max-width: 420px;
+        margin: 0 auto;
     }
 
     .highlight-item {

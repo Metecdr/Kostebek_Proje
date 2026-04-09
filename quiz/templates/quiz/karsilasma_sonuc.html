@@ -442,6 +442,28 @@
         box-shadow: 0 10px 25px rgba(108, 117, 125, 0.4);
     }
 
+    .btn-revans-custom {
+        background: linear-gradient(135deg, #e91e63, #c2185b);
+        color: white;
+        box-shadow: 0 10px 25px rgba(233, 30, 99, 0.4);
+        animation: revansGlow 2s ease-in-out infinite;
+    }
+
+    .btn-revans-custom:hover {
+        box-shadow: 0 15px 35px rgba(233, 30, 99, 0.6);
+    }
+
+    @keyframes revansGlow {
+        0%, 100% { box-shadow: 0 10px 25px rgba(233, 30, 99, 0.4); }
+        50% { box-shadow: 0 10px 35px rgba(233, 30, 99, 0.7); }
+    }
+
+    .btn-revans-custom:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        animation: none;
+    }
+
     /* WRONG ANSWERS SECTION */
     .wrong-section {
         margin-top: 40px;
@@ -761,13 +783,19 @@
             </span>
         </a>
         {% else %}
+        <!-- ⚔️ RÖVANŞ BUTONU -->
+        <button id="revansBtn" class="btn-custom btn-revans-custom" onclick="revansGonder()">
+            <span style="position: relative; z-index: 1;">
+                <i class="bi bi-lightning-charge-fill"></i> Rövanş İste
+            </span>
+        </button>
         <a href="{% url 'karsilasma_sinav_tipi_secimi' %}" class="btn-custom btn-success-custom">
             <span style="position: relative; z-index: 1;">
                 <i class="bi bi-arrow-repeat"></i> Tekrar Oyna
             </span>
         </a>
         {% endif %}
-        
+
         <a href="{% url 'liderlik' %}" class="btn-custom btn-primary-custom">
             <span style="position: relative; z-index: 1;">
                 <i class="bi bi-trophy-fill"></i> Liderlik Tablosu
@@ -779,6 +807,9 @@
             </span>
         </a>
     </div>
+
+    <!-- RÖVANŞ DURUM MESAJI -->
+    <div id="revansDurum" style="display:none; margin-top:15px; padding:15px 25px; border-radius:15px; font-weight:700; font-size:1rem; text-align:center; animation: fadeInUp 0.5s ease-out;"></div>
 
     <!-- YANLIŞLARIMI GÖR -->
     <div class="wrong-section">
@@ -948,6 +979,72 @@
         } else {
             console.log(`[${type.toUpperCase()}] ${message}`);
         }
+    }
+
+    // Rövanş gönderme fonksiyonu
+    function revansGonder() {
+        const btn = document.getElementById('revansBtn');
+        const durumDiv = document.getElementById('revansDurum');
+
+        btn.disabled = true;
+        btn.querySelector('span').innerHTML = '<i class="bi bi-hourglass-split"></i> Gönderiliyor...';
+
+        // Rakip kullanıcı ID'sini al
+        const rakipId = '{{ rakip_kullanici_id }}';
+        const secilen_ders = '{{ oda.secilen_ders|default:"karisik" }}';
+        const sinav_tipi = '{{ oda.sinav_tipi|default:"AYT" }}';
+
+        fetch(`/meydan-okuma/gonder/${rakipId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify({
+                ders: secilen_ders,
+                sinav_tipi: sinav_tipi
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            durumDiv.style.display = 'block';
+            if (data.success) {
+                durumDiv.style.background = 'linear-gradient(135deg, #e8f5e9, #c8e6c9)';
+                durumDiv.style.color = '#2e7d32';
+                durumDiv.innerHTML = '<i class="bi bi-check-circle-fill"></i> Rövanş isteği gönderildi! Rakibin bildirim kutusuna düştü.';
+                showToast('⚔️ Rövanş isteği gönderildi!', 'success');
+            } else {
+                durumDiv.style.background = 'linear-gradient(135deg, #fff3e0, #ffe0b2)';
+                durumDiv.style.color = '#e65100';
+                durumDiv.innerHTML = '<i class="bi bi-info-circle-fill"></i> ' + (data.message || 'Rövanş gönderilemedi.');
+                btn.disabled = false;
+                btn.querySelector('span').innerHTML = '<i class="bi bi-lightning-charge-fill"></i> Rövanş İste';
+            }
+        })
+        .catch(error => {
+            console.error('Rövanş hatası:', error);
+            durumDiv.style.display = 'block';
+            durumDiv.style.background = 'linear-gradient(135deg, #ffebee, #ffcdd2)';
+            durumDiv.style.color = '#c62828';
+            durumDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> Bir hata oluştu. Tekrar deneyin.';
+            btn.disabled = false;
+            btn.querySelector('span').innerHTML = '<i class="bi bi-lightning-charge-fill"></i> Rövanş İste';
+        });
+    }
+
+    function getCsrfToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 'csrftoken='.length) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring('csrftoken='.length));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 </script>
 {% endblock %}
