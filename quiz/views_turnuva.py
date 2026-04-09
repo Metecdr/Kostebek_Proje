@@ -386,58 +386,6 @@ def turnuva_mac_bekleme(request, mac_id):
             TurnuvaMaci.objects.select_related('turnuva', 'oyuncu1', 'oyuncu2', 'karsilasma_oda'),
             mac_id=mac_id
         )
-        
-        logger.info(f"⏳ BEKLEME ODASI: {request.user.username}")
-        
-        # Yetki kontrolü
-        if request.user not in [mac.oyuncu1, mac.oyuncu2]:
-            messages.error(request, 'Bu maçın oyuncusu değilsiniz!')
-            return redirect('turnuva_detay', turnuva_id=mac.turnuva.turnuva_id)
-        
-        # Her iki oyuncu da hazırsa maça git
-        if mac.her_iki_oyuncu_hazir and mac.karsilasma_oda:
-            logger.info(f"   ✅ Her iki oyuncu hazır! Maça yönlendiriliyor...")
-            return redirect('karsilasma_oyun', oda_id=mac.karsilasma_oda.oda_id)
-        
-        # Durum bilgileri
-        ben_hazir = (request.user == mac.oyuncu1 and mac.oyuncu1_hazir) or \
-                    (request.user == mac.oyuncu2 and mac.oyuncu2_hazir)
-        
-        rakip_hazir = (request.user == mac.oyuncu1 and mac.oyuncu2_hazir) or \
-                      (request.user == mac.oyuncu2 and mac.oyuncu1_hazir)
-        
-        rakip = mac.oyuncu2 if request.user == mac.oyuncu1 else mac.oyuncu1
-        
-        logger.info(f"   Ben: {ben_hazir}, Rakip ({rakip.username}): {rakip_hazir}")
-        
-        context = {
-            'mac': mac,
-            'turnuva': mac.turnuva,
-            'ben_hazir': ben_hazir,
-            'rakip_hazir': rakip_hazir,
-        }
-        
-        return render(request, 'quiz/turnuva_mac_bekleme.html', context)
-    
-    except TurnuvaMaci.DoesNotExist:
-        logger.error(f"❌ Maç bulunamadı: {mac_id}")
-        messages.error(request, 'Maç bulunamadı.')
-        return redirect('turnuva_listesi')
-
-    except Exception as e:
-        logger.error(f"❌ Hazır olma hatası: {str(e)}", exc_info=True)
-        messages.error(request, 'Bir hata oluştu.')
-        return redirect('turnuva_listesi')
-
-
-@login_required
-def turnuva_mac_bekleme(request, mac_id):
-    """Maç bekleme odası"""
-    try:
-        mac = get_object_or_404(
-            TurnuvaMaci.objects.select_related('turnuva', 'oyuncu1', 'oyuncu2', 'karsilasma_oda'),
-            mac_id=mac_id
-        )
 
         logger.info(f"⏳ BEKLEME ODASI: {request.user.username}")
 
@@ -481,4 +429,54 @@ def turnuva_mac_bekleme(request, mac_id):
     except Exception as e:
         logger.error(f"❌ Bekleme odası hatası: {str(e)}", exc_info=True)
         messages.error(request, 'Bir hata oluştu.')
+        return redirect('turnuva_listesi')
+
+
+@login_required
+def turnuva_mac_sonuc(request, mac_id):
+    """Turnuva maç sonucu sayfası"""
+    try:
+        mac = get_object_or_404(
+            TurnuvaMaci.objects.select_related(
+                'turnuva', 'oyuncu1', 'oyuncu2', 'kazanan', 'karsilasma_oda'
+            ),
+            mac_id=mac_id
+        )
+
+        # Yetki kontrolü
+        if request.user not in [mac.oyuncu1, mac.oyuncu2] and not request.user.is_staff:
+            messages.error(request, 'Bu maç sonucunu görüntüleme yetkiniz yok.')
+            return redirect('turnuva_detay', turnuva_id=mac.turnuva.turnuva_id)
+
+        oyuncu1_skor = mac.oyuncu1_skor if mac.oyuncu1_skor is not None else 0
+        oyuncu2_skor = mac.oyuncu2_skor if mac.oyuncu2_skor is not None else 0
+
+        # Eğer skorlar maçta yoksa, odadan fallback
+        if mac.karsilasma_oda:
+            if mac.oyuncu1_skor is None:
+                oyuncu1_skor = mac.karsilasma_oda.oyuncu1_skor
+            if mac.oyuncu2_skor is None:
+                oyuncu2_skor = mac.karsilasma_oda.oyuncu2_skor
+
+        context = {
+            'mac': mac,
+            'turnuva': mac.turnuva,
+            'oyuncu1': mac.oyuncu1,
+            'oyuncu2': mac.oyuncu2,
+            'oyuncu1_skor': oyuncu1_skor,
+            'oyuncu2_skor': oyuncu2_skor,
+            'kazanan': mac.kazanan,
+            'berabere': bool(mac.tamamlandi and oyuncu1_skor == oyuncu2_skor),
+        }
+
+        return render(request, 'quiz/turnuva_mac_sonuc.html', context)
+
+    except TurnuvaMaci.DoesNotExist:
+        logger.error(f"❌ Maç bulunamadı: {mac_id}")
+        messages.error(request, 'Maç bulunamadı.')
+        return redirect('turnuva_listesi')
+
+    except Exception as e:
+        logger.error(f"❌ Maç sonucu hatası: {str(e)}", exc_info=True)
+        messages.error(request, 'Maç sonucu yüklenirken bir hata oluştu.')
         return redirect('turnuva_listesi')
