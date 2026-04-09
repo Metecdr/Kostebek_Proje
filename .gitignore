@@ -23,7 +23,7 @@ media/
 
 # Static files
 staticfiles/
-/static/
+# /static/ git'e dahil - VPS'te collectstatic için gerekli
 
 # IDE
 .vscode/

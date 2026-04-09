@@ -2539,4 +2539,15 @@
                     showToast(
                         "{{ message }}",
                         "{{ message.tags }}".includes('error') ? 'error' : 
-                        "{{ message.tags }}".includes('danger') ? 'danger' : 
+                        "{{ message.tags }}".includes('danger') ? 'danger' :
+                        "{{ message.tags }}".includes('success') ? 'success' :
+                        "{{ message.tags }}".includes('warning') ? 'warning' : 'info'
+                    );
+                {% endfor %}
+            {% endif %}
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
