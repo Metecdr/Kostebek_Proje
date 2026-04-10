@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Soru Ekle - Köstebek{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:860px;">
+
+  <!-- Başlık -->
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <a href="{% url 'soru_yonetim_anasayfa' %}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <h3 class="mb-0 fw-bold">➕ Yeni Soru Ekle</h3>
+  </div>
+
+  <!-- Mesajlar -->
+  {% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show">
+    {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <form method="post" id="soruForm">
+    {% csrf_token %}
+
+    <!-- Soru Bilgileri -->
+    <div class="card mb-3" style="border-radius:14px;">
+      <div class="card-header fw-semibold" style="border-radius:14px 14px 0 0; background:linear-gradient(135deg,#667eea,#764ba2); color:white;">
+        📝 Soru Bilgileri
+      </div>
+      <div class="card-body">
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Ders <span class="text-danger">*</span></label>
+            <select name="ders" class="form-select" required id="dersSelect">
+              <option value="">— Ders seç —</option>
+              {% for deger, isim in ders_secenekleri %}
+              <option value="{{ deger }}" {% if post_data.ders == deger %}selected{% endif %}>{{ isim }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Sınav Tipi</label>
+            <select name="sinav_tipi" class="form-select">
+              <option value="">— Seç —</option>
+              <option value="TYT" {% if post_data.sinav_tipi == "TYT" %}selected{% endif %}>TYT</option>
+              <option value="AYT" {% if post_data.sinav_tipi == "AYT" %}selected{% endif %}>AYT</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Konu (isteğe bağlı)</label>
+            <select name="konu_id" class="form-select">
+              {% for konu in konular %}
+              <option value="{{ konu.id }}" {% if post_data.konu_id == konu.id|stringformat:"s" %}selected{% endif %}>{{ konu.isim }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Soru Metni <span class="text-danger">*</span></label>
+          <textarea name="metin" class="form-control" rows="5" placeholder="Soruyu buraya yaz. Paragraf tipi sorular için çok satır kullanabilirsin..." required style="font-size:1rem; line-height:1.7;">{% if post_data.metin %}{{ post_data.metin }}{% endif %}</textarea>
+          <small class="text-muted">Bul Bakalım için uzun paragraf soruları yazabilirsin.</small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Detaylı Açıklama</label>
+          <textarea name="detayli_aciklama" class="form-control" rows="4" placeholder="Doğru cevabın neden doğru olduğunu açıkla. Konu özeti de yazabilirsin.">{% if post_data.detayli_aciklama %}{{ post_data.detayli_aciklama }}{% endif %}</textarea>
+        </div>
+
+        <!-- Mod Seçimi -->
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" name="karsilasmada_cikar" id="karsilasma"
+                {% if not post_data or post_data.karsilasmada_cikar %}checked{% endif %}>
+              <label class="form-check-label fw-semibold" for="karsilasma">
+                ⚔️ Karşılaşmada Çıksın
+              </label>
+              <div class="text-muted small">Hızlı, kısa cevap soruları için idealdir.</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" name="bul_bakalimda_cikar" id="bulbakalim"
+                {% if not post_data or post_data.bul_bakalimda_cikar %}checked{% endif %}>
+              <label class="form-check-label fw-semibold" for="bulbakalim">
+                🔍 Bul Bakalımda Çıksın
+              </label>
+              <div class="text-muted small">Paragraf okuma ve analiz soruları için uygundur.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Şıklar -->
+    <div class="card mb-3" style="border-radius:14px;">
+      <div class="card-header fw-semibold" style="border-radius:14px 14px 0 0; background:linear-gradient(135deg,#4caf50,#2e7d32); color:white;">
+        🔤 Şıklar (A'dan E'ye kadar, en az 2 şık zorunlu)
+      </div>
+      <div class="card-body">
+
+        <div class="mb-2">
+          <label class="form-label fw-semibold">✅ Doğru Cevap</label>
+          <select name="dogru_cevap" class="form-select" id="dogruCevap" style="max-width:200px;">
+            <option value="0">A şıkkı</option>
+            <option value="1">B şıkkı</option>
+            <option value="2">C şıkkı</option>
+            <option value="3">D şıkkı</option>
+            <option value="4">E şıkkı</option>
+          </select>
+        </div>
+
+        {% for harf, idx in "ABCDE"|zip:"01234" %}
+        <div class="input-group mb-2" id="sikDiv{{ forloop.counter }}">
+          <span class="input-group-text fw-bold" id="sikLabel{{ forloop.counter }}"
+            style="background:linear-gradient(135deg,#667eea,#764ba2); color:white; width:42px; justify-content:center;">
+            {{ harf }}
+          </span>
+          <textarea name="cevap_{{ forloop.counter }}" class="form-control sik-input"
+            placeholder="{% if forloop.counter <= 2 %}Şık {{ harf }} — zorunlu{% else %}Şık {{ harf }} — isteğe bağlı{% endif %}"
+            rows="2" data-idx="{{ forloop.counter0 }}"
+            style="resize:vertical;">{% if post_data %}{{ post_data|getitem:"cevap_"|add:forloop.counter|default:"" }}{% endif %}</textarea>
+        </div>
+        {% endfor %}
+
+        <small class="text-muted">💡 Doğru cevabın label'ı yeşile döner.</small>
+      </div>
+    </div>
+
+    <!-- Kaydet Butonları -->
+    <div class="d-flex gap-2 justify-content-end flex-wrap">
+      <a href="{% url 'soru_yonetim_anasayfa' %}" class="btn btn-outline-secondary">İptal</a>
+      <button type="submit" name="kaydet_ve_yeni" class="btn btn-outline-primary">
+        <i class="bi bi-plus-circle"></i> Kaydet & Yeni Soru
+      </button>
+      <button type="submit" class="btn btn-success px-4">
+        <i class="bi bi-check-lg"></i> Kaydet
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+// Doğru cevap seçilince ilgili label yeşile döner
+document.getElementById('dogruCevap').addEventListener('change', function() {
+    const idx = parseInt(this.value);
+    const harfler = ['A', 'B', 'C', 'D', 'E'];
+    document.querySelectorAll('.input-group-text').forEach((el, i) => {
+        if (i === idx) {
+            el.style.background = 'linear-gradient(135deg,#4caf50,#2e7d32)';
+        } else {
+            el.style.background = 'linear-gradient(135deg,#667eea,#764ba2)';
+        }
+    });
+});
+
+// Sayfa yüklenince de uygula
+document.getElementById('dogruCevap').dispatchEvent(new Event('change'));
+</script>
+{% endblock %}

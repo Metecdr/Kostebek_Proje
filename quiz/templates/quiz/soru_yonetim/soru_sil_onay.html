@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Soruyu Sil - Köstebek{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width:600px;">
+  <div class="card border-danger" style="border-radius:16px;">
+    <div class="card-header bg-danger text-white fw-bold" style="border-radius:16px 16px 0 0;">
+      🗑️ Soruyu Sil
+    </div>
+    <div class="card-body">
+      <p class="mb-3">Bu soruyu silmek istediğinize emin misiniz? Bu işlem <strong>geri alınamaz</strong>.</p>
+      <div class="alert alert-warning">
+        <strong>Soru #{{ soru.id }}:</strong><br>
+        {{ soru.metin|truncatechars:200 }}
+      </div>
+      <div class="text-muted small mb-3">
+        <strong>Ders:</strong> {{ soru.get_ders_display }} &nbsp;|&nbsp;
+        <strong>Sınav:</strong> {{ soru.sinav_tipi|default:"—" }} &nbsp;|&nbsp;
+        <strong>Şık sayısı:</strong> {{ soru.cevaplar.count }}
+      </div>
+      <div class="d-flex gap-2 justify-content-end">
+        <a href="{% url 'soru_yonetim_anasayfa' %}" class="btn btn-outline-secondary">İptal</a>
+        <form method="post" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Evet, Sil
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

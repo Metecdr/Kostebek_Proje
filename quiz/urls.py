@@ -2,7 +2,7 @@ from django.urls import path
 from quiz.views import quiz_anasayfa
 from . import views_turnuva
 from quiz.views_tabu import (
-    tabu_anasayfa, tabu_bolum_sec, tabu_lobi, tabu_oyun_basla, 
+    tabu_anasayfa, tabu_bolum_sec, tabu_lobi, tabu_oyun_basla,
     tabu_oyun, tabu_tur_guncelle, tabu_tur_degistir, tabu_sonuc
 )
 from quiz.views_karsilasma import (
@@ -17,6 +17,13 @@ from quiz.views_karsilasma import (
     meydan_okuma_iptal,
     revans_gonder,
     karsilasma_gecmis,
+)
+from quiz.views_soru_yonetim import (
+    soru_yonetim_anasayfa,
+    soru_ekle,
+    soru_duzenle,
+    soru_sil,
+    toplu_metin_ekle,
 )
 from quiz.views_bul_bakalim import (
     bul_bakalim_sinav_tipi_secimi, bul_bakalim_ders_secimi, bul_bakalim_basla, 
@@ -82,6 +89,13 @@ urlpatterns = [
     path('turnuva/mac/<uuid:mac_id>/hazir/', views_turnuva.turnuva_mac_hazir, name='turnuva_mac_hazir'),
     path('turnuva/mac/<uuid:mac_id>/bekleme/', views_turnuva.turnuva_mac_bekleme, name='turnuva_mac_bekleme'),
     path('turnuva/mac/<uuid:mac_id>/sonuc/', views_turnuva.turnuva_mac_sonuc, name='turnuva_mac_sonuc'),
+
+    # ==================== SORU YÖNETİM PANELİ ====================
+    path('soru-yonetim/', soru_yonetim_anasayfa, name='soru_yonetim_anasayfa'),
+    path('soru-yonetim/ekle/', soru_ekle, name='soru_ekle'),
+    path('soru-yonetim/duzenle/<int:soru_id>/', soru_duzenle, name='soru_duzenle'),
+    path('soru-yonetim/sil/<int:soru_id>/', soru_sil, name='soru_sil'),
+    path('soru-yonetim/toplu-ekle/', toplu_metin_ekle, name='toplu_metin_ekle'),
 
     # ==================== RÖVANŞ ====================
     path('revans/gonder/<int:kullanici_id>/', revans_gonder, name='revans_gonder'),
