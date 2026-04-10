@@ -994,7 +994,7 @@
         const secilen_ders = '{{ oda.secilen_ders|default:"karisik" }}';
         const sinav_tipi = '{{ oda.sinav_tipi|default:"AYT" }}';
 
-        fetch(`/meydan-okuma/gonder/${rakipId}/`, {
+        fetch(`/revans/gonder/${rakipId}/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -391,12 +391,6 @@
         75% { transform: translateX(10px); }
     }
 
-    .answer-btn.correct-answer-highlight {
-        border: 3px solid #4caf50 !important;
-        box-shadow: 0 0 25px rgba(76, 175, 80, 0.7) !important;
-        background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(69, 160, 73, 0.2)) !important;
-    }
-
     .answer-btn:disabled {
         cursor: not-allowed;
         opacity: 0.7;
@@ -926,7 +920,6 @@ window.checkAnswer = async function(cevapId, btn) {
             btn.classList.add('correct');
         } else {
             btn.classList.add('wrong');
-            showCorrectAnswer();
         }
 
         showXPNotification(data.kazanilan_xp);
@@ -961,8 +954,6 @@ async function autoSubmitAnswer() {
         b.disabled = true;
         b.style.opacity = '0.5';
     });
-
-    showCorrectAnswer();
 
     // Süre doldu bilgi modalı göster
     showSureDolduModal();
@@ -1004,17 +995,6 @@ function showSureDolduModal() {
         const rm = bootstrap.Modal.getInstance(el);
         if (rm && !roundModalGosterildi) rm.hide();
     }, 2500);
-}
-
-/* ===== DOĞRU CEVABI İŞARETLE ===== */
-function showCorrectAnswer() {
-    const dogruCevapId = document.getElementById('soruMetin').getAttribute('data-dogru-cevap-id');
-    if (dogruCevapId) {
-        const correctBtn = document.querySelector(`[data-cevap-id="${dogruCevapId}"]`);
-        if (correctBtn) {
-            correctBtn.classList.add('correct-answer-highlight');
-        }
-    }
 }
 
 /* ===== SAYFA KAPATMA TEMİZLİĞİ ===== */
