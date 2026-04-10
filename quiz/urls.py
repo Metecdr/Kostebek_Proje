@@ -15,6 +15,7 @@ from quiz.views_karsilasma import (
     meydan_okuma_reddet,
     meydan_okumalarim,
     meydan_okuma_iptal,
+    revans_gonder,
     karsilasma_gecmis,
 )
 from quiz.views_bul_bakalim import (
@@ -81,6 +82,9 @@ urlpatterns = [
     path('turnuva/mac/<uuid:mac_id>/hazir/', views_turnuva.turnuva_mac_hazir, name='turnuva_mac_hazir'),
     path('turnuva/mac/<uuid:mac_id>/bekleme/', views_turnuva.turnuva_mac_bekleme, name='turnuva_mac_bekleme'),
     path('turnuva/mac/<uuid:mac_id>/sonuc/', views_turnuva.turnuva_mac_sonuc, name='turnuva_mac_sonuc'),
+
+    # ==================== RÖVANŞ ====================
+    path('revans/gonder/<int:kullanici_id>/', revans_gonder, name='revans_gonder'),
 
     # ==================== MEYDAN OKUMA ====================
     path('meydan-okuma/gonder/<int:kullanici_id>/', meydan_okuma_gonder, name='meydan_okuma_gonder'),

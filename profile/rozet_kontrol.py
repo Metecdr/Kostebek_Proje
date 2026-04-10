@@ -139,20 +139,24 @@ def soru_rozet_kontrol(profil):
             yeni_rozetler.append(rozet)
             logger.info(f"✅ {profil.kullanici.username} 'Net Avcısı (Usta)' rozetini kazandı!")
     
-        # ✅ DÜZELTİLDİ:  Başarı Oranı Rozeti (METOD ÇAĞRISI)
-        if profil.genel_basari_orani() >= 70 and profil.cozulen_soru_sayisi >= 30:
-            rozet = Rozet.objects.filter(kod='yuksek_basari').first()
-            if rozet and not KazanilanRozet.objects.filter(profil=profil, rozet=rozet).exists():
-                KazanilanRozet.objects.create(profil=profil, rozet=rozet)
-                kazanilan.append(rozet)
-        
-        # ✅ DÜZELTİLDİ: Mükemmellik (METOD ÇAĞRISI)
-        if profil.genel_basari_orani() >= 90 and profil.cozulen_soru_sayisi >= 100:
-            rozet = Rozet.objects.filter(kod='mukemmellik').first()
-            if rozet and not KazanilanRozet.objects.filter(profil=profil, rozet=rozet).exists():
-                KazanilanRozet.objects.create(profil=profil, rozet=rozet)
-                kazanilan.append(rozet)
-    
+    # HATASIZ KUSURSUZ - Çaylak (%70+ başarı, 30+ soru)
+    if profil.cozulen_soru_sayisi >= 30:
+        basari = profil.genel_basari_orani() if callable(getattr(profil, 'genel_basari_orani', None)) else 0
+        if basari >= 70:
+            if not Rozet.objects.filter(profil=profil, kategori='hatasiz_kusursuz', seviye='caylak').exists():
+                rozet = Rozet.objects.create(profil=profil, kategori='hatasiz_kusursuz', seviye='caylak')
+                yeni_rozetler.append(rozet)
+                logger.info(f"✅ {profil.kullanici.username} 'Hatasız Kusursuz (Çaylak)' rozetini kazandı!")
+
+    # HATASIZ KUSURSUZ - Usta (%90+ başarı, 100+ soru)
+    if profil.cozulen_soru_sayisi >= 100:
+        basari = profil.genel_basari_orani() if callable(getattr(profil, 'genel_basari_orani', None)) else 0
+        if basari >= 90:
+            if not Rozet.objects.filter(profil=profil, kategori='hatasiz_kusursuz', seviye='usta').exists():
+                rozet = Rozet.objects.create(profil=profil, kategori='hatasiz_kusursuz', seviye='usta')
+                yeni_rozetler.append(rozet)
+                logger.info(f"✅ {profil.kullanici.username} 'Hatasız Kusursuz (Usta)' rozetini kazandı!")
+
     return yeni_rozetler
 
 

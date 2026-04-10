@@ -129,6 +129,67 @@
             flex-direction: column;
             background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
             color: var(--text-primary);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* ==================== GENEL UI BOYUT DÜZELTMESİ ==================== */
+        .container, .container-fluid {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .card {
+            padding: 1.25rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.95rem;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .form-control, .form-select {
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            min-height: 44px;
+        }
+
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.65rem; }
+        h3 { font-size: 1.35rem; }
+        h4 { font-size: 1.15rem; }
+        p, li, span, td, th { font-size: 1rem; }
+
+        /* Mobil uyumluluk - minimum dokunma alanı 44px */
+        @media (max-width: 768px) {
+            body { font-size: 15px; }
+            .container, .container-fluid {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+            .btn {
+                padding: 0.65rem 1rem;
+                font-size: 0.9rem;
+                min-height: 48px;
+            }
+            .form-control, .form-select {
+                min-height: 48px;
+                font-size: 16px; /* iOS zoom engelleme */
+            }
+            .card {
+                padding: 1rem;
+                margin-bottom: 0.75rem;
+            }
+            h1 { font-size: 1.6rem; }
+            h2 { font-size: 1.35rem; }
+            h3 { font-size: 1.15rem; }
+        }
+
+        /* Daha geniş ekranlar için ferah görünüm */
+        @media (min-width: 1200px) {
+            .container { max-width: 1140px; }
         }
 
         [data-theme="dark"] body {
@@ -2107,26 +2168,53 @@
         class SoundManager {
             constructor() {
                 this.muted = this.getSavedMuteState();
+                this.sounds = {};
+                this.soundFiles = {
+                    'correct': '{% static "sounds/correct.mp3.mpeg" %}',
+                    'wrong': '{% static "sounds/wrong.mp3.mpeg" %}',
+                    'combo': '{% static "sounds/combo.mp3.mpeg" %}',
+                    'tick': '{% static "sounds/tick.mp3.mpeg" %}'
+                };
+                this.preload();
             }
-            
+
+            preload() {
+                for (const [name, src] of Object.entries(this.soundFiles)) {
+                    try {
+                        const audio = new Audio(src);
+                        audio.preload = 'auto';
+                        audio.volume = name === 'tick' ? 0.3 : 0.6;
+                        this.sounds[name] = audio;
+                    } catch(e) {
+                        console.warn(`Ses yüklenemedi: ${name}`, e);
+                    }
+                }
+            }
+
             toggleMute() {
                 this.muted = !this.muted;
                 this.saveMuteState();
                 return this.muted;
             }
-            
+
             getSavedMuteState() {
                 const saved = localStorage.getItem('soundMuted');
                 return saved === 'true';
             }
-            
+
             saveMuteState() {
                 localStorage.setItem('soundMuted', this.muted.toString());
             }
-            
+
             play(soundName) {
                 if (this.muted) return;
-                console.log(`🔊 Ses çalınıyor: ${soundName}`);
+                const audio = this.sounds[soundName];
+                if (audio) {
+                    try {
+                        audio.currentTime = 0;
+                        audio.play().catch(() => {});
+                    } catch(e) {}
+                }
             }
         }
 

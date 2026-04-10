@@ -1099,6 +1099,77 @@ def meydan_okuma_gonder(request, kullanici_id):
 
 
 @login_required
+def revans_gonder(request, kullanici_id):
+    """Rövanş isteği gönder - arkadaşlık şartı yok"""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'POST gerekli'}, status=400)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'message': 'Geçersiz JSON'}, status=400)
+
+    secilen_ders = data.get('ders', 'karisik')
+    sinav_tipi = data.get('sinav_tipi', 'AYT')
+
+    try:
+        hedef_kullanici = User.objects.get(id=kullanici_id)
+    except User.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Kullanıcı bulunamadı!'}, status=404)
+
+    if hedef_kullanici == request.user:
+        return JsonResponse({'success': False, 'message': 'Kendinize rövanş gönderemezsiniz!'})
+
+    # Zaten bekleyen meydan okuma var mı?
+    mevcut = MeydanOkuma.objects.filter(
+        gonderen=request.user,
+        alan=hedef_kullanici,
+        durum='beklemede'
+    ).first()
+
+    if mevcut:
+        return JsonResponse({'success': False, 'message': 'Zaten bekleyen bir rövanş isteği var!'})
+
+    # Yeni oda oluştur
+    oda = KarsilasmaOdasi.objects.create(
+        oyuncu1=request.user,
+        oyun_durumu='bekleniyor',
+        secilen_ders=secilen_ders,
+        sinav_tipi=sinav_tipi
+    )
+
+    # Meydan okuma oluştur
+    meydan = MeydanOkuma.objects.create(
+        gonderen=request.user,
+        alan=hedef_kullanici,
+        oda=oda,
+        secilen_ders=secilen_ders,
+        sinav_tipi=sinav_tipi
+    )
+
+    # Bildirim gönder
+    try:
+        from profile.bildirim_helper import bildirim_gonder
+        bildirim_gonder(
+            kullanici=hedef_kullanici,
+            tip='sistem',
+            baslik='🔄 Rövanş İsteği!',
+            mesaj=f'{request.user.username} sana rövanş istiyor!',
+            icon='🔄'
+        )
+    except Exception as e:
+        logger.error(f"Rövanş bildirimi hatası: {e}", exc_info=True)
+
+    logger.info(f"Rövanş gönderildi: {request.user.username} → {hedef_kullanici.username}")
+
+    return JsonResponse({
+        'success': True,
+        'message': f'🔄 {hedef_kullanici.username} kullanıcısına rövanş isteği gönderildi!',
+        'meydan_id': meydan.id
+    })
+
+
+@login_required
 def meydan_okuma_kabul(request, meydan_id):
     """Meydan okumayı kabul et"""
     if request.method != 'POST':

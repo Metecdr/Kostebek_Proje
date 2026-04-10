@@ -1,14 +1,36 @@
 from profile.models import Bildirim
+from django.utils import timezone
+from datetime import timedelta
 import logging
 
 logger = logging.getLogger(__name__)
 
+# Bildirim türüne göre cooldown süreleri (dakika)
+BILDIRIM_COOLDOWN = {
+    'liderlik': 5,
+    'basari': 5,
+    'sistem': 5,
+    'rozet': 0,   # Rozet bildirimleri her zaman gönderilir
+}
+
 
 def bildirim_gonder(kullanici, tip, baslik, mesaj, icon='🔔', iliskili_rozet=None):
     """
-    Kullanıcıya bildirim gönder
+    Kullanıcıya bildirim gönder (rate limiting ile)
     """
     try:
+        # Cooldown kontrolü
+        cooldown_dk = BILDIRIM_COOLDOWN.get(tip, 5)
+        if cooldown_dk > 0:
+            son_bildirim = Bildirim.objects.filter(
+                kullanici=kullanici,
+                tip=tip,
+                olusturma_tarihi__gte=timezone.now() - timedelta(minutes=cooldown_dk)
+            ).exists()
+            if son_bildirim:
+                logger.debug(f"⏳ Bildirim cooldown: {kullanici.username} - {tip} ({cooldown_dk}dk)")
+                return None
+
         bildirim = Bildirim.objects.create(
             kullanici=kullanici,
             tip=tip,
@@ -19,7 +41,7 @@ def bildirim_gonder(kullanici, tip, baslik, mesaj, icon='🔔', iliskili_rozet=N
         )
         logger.info(f"📬 Bildirim gönderildi: {kullanici.username} - {baslik}")
         return bildirim
-    except Exception as e: 
+    except Exception as e:
         logger.error(f"Bildirim hatası: {e}", exc_info=True)
         return None
 
