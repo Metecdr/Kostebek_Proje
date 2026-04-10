@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Soru Yönetim Paneli - Köstebek{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+  <!-- Başlık -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="mb-0 fw-bold">📚 Soru Yönetim Paneli</h2>
+      <small class="text-muted">Toplam <strong>{{ toplam_soru }}</strong> soru</small>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{% url 'soru_ekle' %}" class="btn btn-success">
+        <i class="bi bi-plus-lg"></i> Tek Soru Ekle
+      </a>
+      <a href="{% url 'toplu_metin_ekle' %}" class="btn btn-primary">
+        <i class="bi bi-clipboard-plus"></i> Toplu Ekle
+      </a>
+    </div>
+  </div>
+
+  <!-- İstatistikler -->
+  <div class="row g-3 mb-4">
+    {% for stat in ders_istatistikleri %}
+    <div class="col-6 col-md-3 col-lg-2">
+      <div class="card text-center py-2 px-1" style="border-radius:12px;">
+        <div class="fw-bold fs-5">{{ stat.sayi }}</div>
+        <div class="text-muted small">{{ stat.ders|title }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Filtreler -->
+  <div class="card mb-4" style="border-radius:14px;">
+    <div class="card-body">
+      <form method="get" class="row g-2 align-items-end">
+        <div class="col-12 col-md-3">
+          <label class="form-label small fw-semibold">🔍 Arama</label>
+          <input type="text" name="q" class="form-control" placeholder="Soru metni ara..." value="{{ arama }}">
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small fw-semibold">Ders</label>
+          <select name="ders" class="form-select">
+            <option value="">Tümü</option>
+            {% for deger, isim in ders_secenekleri %}
+            <option value="{{ deger }}" {% if ders_filtre == deger %}selected{% endif %}>{{ isim }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small fw-semibold">Sınav</label>
+          <select name="sinav" class="form-select">
+            <option value="">Tümü</option>
+            <option value="TYT" {% if sinav_filtre == "TYT" %}selected{% endif %}>TYT</option>
+            <option value="AYT" {% if sinav_filtre == "AYT" %}selected{% endif %}>AYT</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small fw-semibold">Mod</label>
+          <select name="mod" class="form-select">
+            <option value="">Tümü</option>
+            <option value="karsilasma" {% if mod_filtre == "karsilasma" %}selected{% endif %}>Karşılaşma</option>
+            <option value="bul_bakalim" {% if mod_filtre == "bul_bakalim" %}selected{% endif %}>Bul Bakalım</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-3 d-flex gap-2">
+          <button type="submit" class="btn btn-primary flex-grow-1">Filtrele</button>
+          <a href="{% url 'soru_yonetim_anasayfa' %}" class="btn btn-outline-secondary">Temizle</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mesajlar -->
+  {% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'success' %}success{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <!-- Soru Listesi -->
+  <div class="card" style="border-radius:14px; overflow:hidden;">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead style="background: linear-gradient(135deg, #667eea, #764ba2); color:white;">
+          <tr>
+            <th style="width:50px;">#</th>
+            <th>Soru Metni</th>
+            <th style="width:90px;">Ders</th>
+            <th style="width:60px;">Sınav</th>
+            <th style="width:80px;">Şık</th>
+            <th style="width:100px;">Modlar</th>
+            <th style="width:120px;">İşlemler</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for soru in sorular %}
+          <tr>
+            <td class="text-muted small">{{ soru.id }}</td>
+            <td>
+              <div style="max-width:400px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ soru.metin }}">
+                {{ soru.metin|truncatechars:80 }}
+              </div>
+              {% if soru.detayli_aciklama %}
+              <small class="text-success"><i class="bi bi-check-circle"></i> Açıklama var</small>
+              {% else %}
+              <small class="text-muted"><i class="bi bi-dash"></i> Açıklama yok</small>
+              {% endif %}
+            </td>
+            <td>
+              <span class="badge" style="background: linear-gradient(135deg,#667eea,#764ba2);">
+                {{ soru.get_ders_display }}
+              </span>
+            </td>
+            <td><span class="badge bg-secondary">{{ soru.sinav_tipi|default:"-" }}</span></td>
+            <td>
+              <span class="badge bg-light text-dark border">
+                {{ soru.cevaplar.count }} şık
+              </span>
+            </td>
+            <td class="small">
+              {% if soru.karsilasmada_cikar %}<span class="badge bg-danger me-1">⚔️</span>{% endif %}
+              {% if soru.bul_bakalimda_cikar %}<span class="badge bg-info">🔍</span>{% endif %}
+            </td>
+            <td>
+              <div class="d-flex gap-1">
+                <a href="{% url 'soru_duzenle' soru.id %}" class="btn btn-sm btn-outline-primary" title="Düzenle">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'soru_sil' soru.id %}" class="btn btn-sm btn-outline-danger" title="Sil">
+                  <i class="bi bi-trash"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-center py-5 text-muted">
+              <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+              Filtrelerinize uygun soru bulunamadı.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Sayfalama -->
+  {% if sorular.has_other_pages %}
+  <nav class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% if sorular.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ sorular.previous_page_number }}&ders={{ ders_filtre }}&sinav={{ sinav_filtre }}&mod={{ mod_filtre }}&q={{ arama }}">‹</a>
+      </li>
+      {% endif %}
+      <li class="page-item disabled">
+        <span class="page-link">{{ sorular.number }} / {{ sorular.paginator.num_pages }}</span>
+      </li>
+      {% if sorular.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ sorular.next_page_number }}&ders={{ ders_filtre }}&sinav={{ sinav_filtre }}&mod={{ mod_filtre }}&q={{ arama }}">›</a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+
+</div>
+{% endblock %}

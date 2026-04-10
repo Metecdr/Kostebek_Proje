@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Soru Düzenle #{{ soru.id }} - Köstebek{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:860px;">
+
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <a href="{% url 'soru_yonetim_anasayfa' %}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <h3 class="mb-0 fw-bold">✏️ Soru Düzenle <span class="text-muted fs-5">#{{ soru.id }}</span></h3>
+  </div>
+
+  {% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show">
+    {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="card mb-3" style="border-radius:14px;">
+      <div class="card-header fw-semibold" style="border-radius:14px 14px 0 0; background:linear-gradient(135deg,#667eea,#764ba2); color:white;">
+        📝 Soru Bilgileri
+      </div>
+      <div class="card-body">
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Ders <span class="text-danger">*</span></label>
+            <select name="ders" class="form-select" required>
+              {% for deger, isim in ders_secenekleri %}
+              <option value="{{ deger }}" {% if soru.ders == deger %}selected{% endif %}>{{ isim }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Sınav Tipi</label>
+            <select name="sinav_tipi" class="form-select">
+              <option value="">— Seç —</option>
+              <option value="TYT" {% if soru.sinav_tipi == "TYT" %}selected{% endif %}>TYT</option>
+              <option value="AYT" {% if soru.sinav_tipi == "AYT" %}selected{% endif %}>AYT</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Konu</label>
+            <select name="konu_id" class="form-select">
+              {% for konu in konular %}
+              <option value="{{ konu.id }}" {% if soru.konu_id == konu.id %}selected{% endif %}>{{ konu.isim }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Soru Metni <span class="text-danger">*</span></label>
+          <textarea name="metin" class="form-control" rows="5" required style="font-size:1rem; line-height:1.7;">{{ soru.metin }}</textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Detaylı Açıklama</label>
+          <textarea name="detayli_aciklama" class="form-control" rows="4">{{ soru.detayli_aciklama }}</textarea>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" name="karsilasmada_cikar" id="karsilasma"
+                {% if soru.karsilasmada_cikar %}checked{% endif %}>
+              <label class="form-check-label fw-semibold" for="karsilasma">⚔️ Karşılaşmada Çıksın</label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" name="bul_bakalimda_cikar" id="bulbakalim"
+                {% if soru.bul_bakalimda_cikar %}checked{% endif %}>
+              <label class="form-check-label fw-semibold" for="bulbakalim">🔍 Bul Bakalımda Çıksın</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Şıklar -->
+    <div class="card mb-3" style="border-radius:14px;">
+      <div class="card-header fw-semibold" style="border-radius:14px 14px 0 0; background:linear-gradient(135deg,#4caf50,#2e7d32); color:white;">
+        🔤 Şıklar
+      </div>
+      <div class="card-body">
+
+        <!-- Mevcut doğru cevap indeksi bul -->
+        {% with dogru_idx=0 %}
+        <div class="mb-2">
+          <label class="form-label fw-semibold">✅ Doğru Cevap</label>
+          <select name="dogru_cevap" class="form-select" id="dogruCevap" style="max-width:200px;">
+            {% for cevap in cevaplar %}
+            <option value="{{ forloop.counter0 }}" {% if cevap.dogru_mu %}selected{% endif %}>
+              {% if forloop.counter == 1 %}A{% elif forloop.counter == 2 %}B{% elif forloop.counter == 3 %}C{% elif forloop.counter == 4 %}D{% elif forloop.counter == 5 %}E{% endif %} şıkkı
+            </option>
+            {% endfor %}
+            {% if cevaplar.count < 5 %}
+            {% for i in "12345" %}
+            {% if forloop.counter > cevaplar.count %}
+            <option value="{{ forloop.counter0 }}" disabled>
+              {% if forloop.counter == 1 %}A{% elif forloop.counter == 2 %}B{% elif forloop.counter == 3 %}C{% elif forloop.counter == 4 %}D{% elif forloop.counter == 5 %}E{% endif %} (boş)
+            </option>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+          </select>
+        </div>
+        {% endwith %}
+
+        {% for cevap in cevaplar %}
+        <div class="input-group mb-2">
+          <span class="input-group-text fw-bold cevap-label"
+            style="background:linear-gradient(135deg,{% if cevap.dogru_mu %}#4caf50,#2e7d32{% else %}#667eea,#764ba2{% endif %}); color:white; width:42px; justify-content:center;">
+            {% if forloop.counter == 1 %}A{% elif forloop.counter == 2 %}B{% elif forloop.counter == 3 %}C{% elif forloop.counter == 4 %}D{% elif forloop.counter == 5 %}E{% endif %}
+          </span>
+          <textarea name="cevap_{{ forloop.counter }}" class="form-control" rows="2" style="resize:vertical;">{{ cevap.metin }}</textarea>
+        </div>
+        {% endfor %}
+
+        <!-- Boş şıklar (eğer 5'ten az varsa) -->
+        {% for i in "12345" %}
+        {% if forloop.counter > cevaplar.count %}
+        <div class="input-group mb-2">
+          <span class="input-group-text fw-bold cevap-label"
+            style="background:#adb5bd; color:white; width:42px; justify-content:center;">
+            {% if forloop.counter == 1 %}A{% elif forloop.counter == 2 %}B{% elif forloop.counter == 3 %}C{% elif forloop.counter == 4 %}D{% elif forloop.counter == 5 %}E{% endif %}
+          </span>
+          <textarea name="cevap_{{ forloop.counter }}" class="form-control" rows="2"
+            placeholder="İsteğe bağlı şık" style="resize:vertical; background:#f8f9fa;"></textarea>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 justify-content-between flex-wrap">
+      <a href="{% url 'soru_sil' soru.id %}" class="btn btn-outline-danger">
+        <i class="bi bi-trash"></i> Soruyu Sil
+      </a>
+      <div class="d-flex gap-2">
+        <a href="{% url 'soru_yonetim_anasayfa' %}" class="btn btn-outline-secondary">İptal</a>
+        <button type="submit" class="btn btn-primary px-4">
+          <i class="bi bi-check-lg"></i> Güncelle
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+document.getElementById('dogruCevap').addEventListener('change', function() {
+    const idx = parseInt(this.value);
+    document.querySelectorAll('.cevap-label').forEach((el, i) => {
+        el.style.background = i === idx
+            ? 'linear-gradient(135deg,#4caf50,#2e7d32)'
+            : 'linear-gradient(135deg,#667eea,#764ba2)';
+    });
+});
+</script>
+{% endblock %}
