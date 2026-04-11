@@ -1152,7 +1152,7 @@ def revans_gonder(request, kullanici_id):
         from profile.bildirim_helper import bildirim_gonder
         bildirim_gonder(
             kullanici=hedef_kullanici,
-            tip='sistem',
+            tip='meydan_okuma',
             baslik='🔄 Rövanş İsteği!',
             mesaj=f'{request.user.username} sana rövanş istiyor!',
             icon='🔄'

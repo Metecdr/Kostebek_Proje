@@ -57,6 +57,69 @@
     /* ==================== LAYOUT ==================== */
     .anasayfa-container { max-width: 1200px; margin: 0 auto; padding: 30px 20px 60px; }
 
+    /* ==================== GÜNÜN SÖZÜ ==================== */
+    .gunun-sozu {
+        background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+        border: 1px solid rgba(255,255,255,0.12);
+        border-left: 4px solid #FFD700;
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-bottom: 25px;
+        animation: fadeInDown 0.6s ease-out 0.15s both;
+    }
+    .gunun-sozu-metin {
+        color: rgba(255,255,255,0.9);
+        font-size: 1.05rem;
+        font-weight: 600;
+        font-style: italic;
+        line-height: 1.6;
+        margin-bottom: 8px;
+    }
+    .gunun-sozu-yazar {
+        color: #FFD700;
+        font-size: 0.85rem;
+        font-weight: 800;
+        text-align: right;
+    }
+
+    /* ==================== DUYURULAR ==================== */
+    .duyurular-section {
+        margin-bottom: 25px;
+        animation: fadeInDown 0.6s ease-out 0.2s both;
+    }
+    .duyuru-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+    .duyuru-kart {
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 14px;
+        padding: 16px;
+        transition: all 0.3s;
+    }
+    .duyuru-kart:hover {
+        background: rgba(255,255,255,0.14);
+        transform: translateY(-3px);
+    }
+    .duyuru-baslik {
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+    .duyuru-mesaj {
+        color: rgba(255,255,255,0.65);
+        font-size: 0.8rem;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+    @media(max-width: 768px) {
+        .duyuru-grid { grid-template-columns: 1fr; }
+    }
+
     /* ==================== HERO ==================== */
     .hero-section {
         display: grid;
@@ -530,6 +593,29 @@
         </div>
         {% endif %}
     </div>
+
+    <!-- GÜNÜN SÖZÜ -->
+    {% if gunun_sozu %}
+    <div class="gunun-sozu">
+        <div class="gunun-sozu-metin">"{{ gunun_sozu.soz }}"</div>
+        <div class="gunun-sozu-yazar">— {{ gunun_sozu.yazar }}</div>
+    </div>
+    {% endif %}
+
+    <!-- DUYURULAR -->
+    {% if duyurular %}
+    <div class="duyurular-section">
+        <div class="bolum-baslik animate-on-scroll">📢 Duyurular</div>
+        <div class="duyuru-grid">
+            {% for duyuru in duyurular %}
+            <div class="duyuru-kart">
+                <div class="duyuru-baslik">{{ duyuru.baslik }}</div>
+                <div class="duyuru-mesaj">{{ duyuru.mesaj }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 
     <!-- QUICK STATS -->
     <div class="quick-stats">

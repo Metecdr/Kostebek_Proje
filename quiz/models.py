@@ -20,7 +20,6 @@ class Konu(models.Model):
     isim = models.CharField(max_length=100, verbose_name='Konu İsmi')
     
     DERS_SECENEKLERI = [
-        ('matematik', 'Matematik'),
         ('fizik', 'Fizik'),
         ('kimya', 'Kimya'),
         ('turkce', 'Türkçe'),
@@ -61,7 +60,6 @@ class Soru(models.Model):
     karsilasmada_cikar = models.BooleanField(default=True, db_index=True, verbose_name='Karşılaşmada Çıksın')
 
     DERS_SECENEKLERI = [
-        ('matematik', 'Matematik'),
         ('fizik', 'Fizik'),
         ('kimya', 'Kimya'),
         ('turkce', 'Türkçe'),
@@ -242,7 +240,6 @@ class KarsilasmaOdasi(models.Model):
     )
     
     DERS_SECENEKLERI = [
-        ('matematik', 'Matematik'),
         ('fizik', 'Fizik'),
         ('kimya', 'Kimya'),
         ('turkce', 'Türkçe'),
@@ -420,7 +417,6 @@ class BulBakalimOyun(models.Model):
     ]
 
     DERS_SECENEKLERI = [
-        ('matematik', 'Matematik'),
         ('fizik', 'Fizik'),
         ('kimya', 'Kimya'),
         ('turkce', 'Türkçe'),

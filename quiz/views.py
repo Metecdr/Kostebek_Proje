@@ -2,9 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.cache import cache
+from django.utils import timezone
+from datetime import timedelta
 from profile.models import OyunModuIstatistik, OgrenciProfili
 from profile.rozet_kontrol import rozet_kontrol_yap
 import logging
+import hashlib
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +61,66 @@ def quiz_anasayfa(request):
         except Exception:
             envanter = None
 
+        # Günün sözü - her gün değişir
+        gunun_sozleri = [
+            {"soz": "Başarı, her gün tekrarlanan küçük çabaların toplamıdır.", "yazar": "Robert Collier"},
+            {"soz": "Gelecek, bugünden başlar.", "yazar": "Malcolm X"},
+            {"soz": "Eğitim en güçlü silahtır; dünyayı değiştirmek için kullanabilirsiniz.", "yazar": "Nelson Mandela"},
+            {"soz": "Hayal gücü bilgiden daha önemlidir.", "yazar": "Albert Einstein"},
+            {"soz": "Bir şeyi öğrenmenin en iyi yolu, onu yapmaktır.", "yazar": "Richard Branson"},
+            {"soz": "Zor olan doğru olanı yapmak değil, doğru olanın ne olduğunu bilmektir.", "yazar": "Lyndon B. Johnson"},
+            {"soz": "Bugün yapabileceğin şeyi yarına bırakma.", "yazar": "Benjamin Franklin"},
+            {"soz": "Deha, yüzde bir ilham ve yüzde doksan dokuz terdir.", "yazar": "Thomas Edison"},
+            {"soz": "Bilmediğini bilmek, bilginin başlangıcıdır.", "yazar": "Sokrates"},
+            {"soz": "İnsanın kendini yenmesi, zaferlerin en büyüğüdür.", "yazar": "Platon"},
+            {"soz": "Her büyük yolculuk tek bir adımla başlar.", "yazar": "Lao Tzu"},
+            {"soz": "Başarısızlık, başarıya giden yolda sadece bir duraktır.", "yazar": "Denis Waitley"},
+            {"soz": "Hayat bisiklete binmek gibidir, dengenizi korumak için hareket etmeye devam etmelisiniz.", "yazar": "Albert Einstein"},
+            {"soz": "Okumak, zihni her yöne açan bir anahtardır.", "yazar": "Mustafa Kemal Atatürk"},
+            {"soz": "Bir kitap, bin öğretmenin yerine geçer.", "yazar": "Türk Atasözü"},
+            {"soz": "Emek olmadan başarı olmaz.", "yazar": "Ralph Waldo Emerson"},
+            {"soz": "Azim ve sebat, yeteneğin yerini alabilir.", "yazar": "Calvin Coolidge"},
+            {"soz": "En karanlık gece bile güneşin doğuşunu engelleyemez.", "yazar": "Victor Hugo"},
+            {"soz": "Kendine inan, yarının seni bugün hayal edemeyeceğin yerlere götürecek.", "yazar": "Anonim"},
+            {"soz": "Bugün ek, yarın biç.", "yazar": "Türk Atasözü"},
+            {"soz": "Öğrenmek, keşfetmenin başlangıcıdır.", "yazar": "Carl Sagan"},
+            {"soz": "İlim ilim bilmektir, ilim kendin bilmektir.", "yazar": "Yunus Emre"},
+            {"soz": "Sabır acıdır, meyvesi ise tatlı.", "yazar": "Jean-Jacques Rousseau"},
+            {"soz": "Bilgi güçtür.", "yazar": "Francis Bacon"},
+            {"soz": "Yapabilirsiniz diye düşünüyorsanız haklısınız; yapamam diye düşünüyorsanız yine haklısınız.", "yazar": "Henry Ford"},
+            {"soz": "Hayatta en hakiki mürşit ilimdir.", "yazar": "Mustafa Kemal Atatürk"},
+            {"soz": "Düşmekten korkma, kalkmamaktan kork.", "yazar": "Türk Atasözü"},
+            {"soz": "Başarı, cesaretle başlar.", "yazar": "Goethe"},
+            {"soz": "Güçlü olan haklı değildir, haklı olan güçlüdür.", "yazar": "Mustafa Kemal Atatürk"},
+            {"soz": "Dün geçti, yarın henüz gelmedi. Sadece bugün var, hadi başlayalım.", "yazar": "Mother Teresa"},
+        ]
+        # Her gün aynı sözü göster (güne göre deterministik seçim)
+        bugun_str = timezone.now().strftime('%Y-%m-%d')
+        soz_index = int(hashlib.md5(bugun_str.encode()).hexdigest(), 16) % len(gunun_sozleri)
+        gunun_sozu = gunun_sozleri[soz_index]
+
+        # Duyurular
+        duyurular = []
+        try:
+            from profile.models import Bildirim
+            sistem_duyurulari = Bildirim.objects.filter(
+                tip='sistem',
+                olusturma_tarihi__gte=timezone.now() - timedelta(days=7)
+            ).order_by('-olusturma_tarihi')[:3]
+            # Eğer sistem duyurusu yoksa varsayılanları göster
+            if sistem_duyurulari.exists():
+                for d in sistem_duyurulari:
+                    duyurular.append({'baslik': d.baslik, 'mesaj': d.mesaj, 'tarih': d.olusturma_tarihi})
+        except Exception:
+            pass
+
+        if not duyurular:
+            duyurular = [
+                {'baslik': '🎉 Köstebek YKS Açıldı!', 'mesaj': 'Eğlenerek öğrenmeye hazır mısın? Hadi başlayalım!', 'tarih': None},
+                {'baslik': '🆕 Bul Bakalım Modu', 'mesaj': '5 soru, 90 saniye! Yeni oyun modunu dene.', 'tarih': None},
+                {'baslik': '🏆 Turnuva Sistemi', 'mesaj': 'Turnuvalara katılarak ödül kazan!', 'tarih': None},
+            ]
+
         context = {
             'profil': profil,
             'karsilasma_ist': karsilasma_ist,
@@ -69,6 +132,8 @@ def quiz_anasayfa(request):
             'bugun_toplam': bugun_toplam,
             'basari_orani': basari_orani,
             'envanter': envanter,
+            'gunun_sozu': gunun_sozu,
+            'duyurular': duyurular,
         }
 
     except AttributeError as e:
