@@ -27,6 +27,7 @@ class Konu(models.Model):
         ('cografya', 'Coğrafya'),
         ('felsefe', 'Felsefe'),
         ('biyoloji', 'Biyoloji'),
+        ('edebiyat', 'Edebiyat'),
     ]
     
     ders = models.CharField(
@@ -67,6 +68,7 @@ class Soru(models.Model):
         ('cografya', 'Coğrafya'),
         ('felsefe', 'Felsefe'),
         ('biyoloji', 'Biyoloji'),
+        ('edebiyat', 'Edebiyat'),
     ]
     
     ders = models.CharField(
@@ -248,6 +250,7 @@ class KarsilasmaOdasi(models.Model):
         ('felsefe', 'Felsefe'),
         ('biyoloji', 'Biyoloji'),
         ('karisik', 'Karışık'),
+        ('edebiyat', 'Edebiyat'),
     ]
     
     secilen_ders = models.CharField(
@@ -424,6 +427,7 @@ class BulBakalimOyun(models.Model):
         ('cografya', 'Coğrafya'),
         ('felsefe', 'Felsefe'),
         ('biyoloji', 'Biyoloji'),
+        ('edebiyat', 'Edebiyat'),
     ]
     
     selected_ders = models.CharField(

@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "880e631da8112f55",
+        "id": "0895607da4d1773d",
         "type": "tabs",
         "children": [
           {
-            "id": "80e9b4a738a1b006",
+            "id": "a3d5eb22921c66e5",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -176,8 +176,10 @@
       "bases:Yeni taban oluştur": false
     }
   },
-  "active": "80e9b4a738a1b006",
+  "active": "a3d5eb22921c66e5",
   "lastOpenFiles": [
+    "CLAUDE.md",
+    "venv/Lib/site-packages/django/contrib/admin/static/admin/css/vendor/select2/LICENSE-SELECT2.md",
     "venv/Lib/site-packages/pip/_vendor/idna/LICENSE.md"
   ]
 }
