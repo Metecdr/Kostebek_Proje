@@ -3,55 +3,189 @@
 
 {% block title %}Gizlilik Politikası - Köstebek YKS{% endblock %}
 
+{% block extra_css %}
+<style>
+    .legal-container { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+    .legal-header { text-align: center; margin-bottom: 50px; }
+    .legal-header h1 { color: white; font-size: 2.2rem; font-weight: 900; margin-bottom: 12px; }
+    .legal-header .guncelleme { color: rgba(255,255,255,0.5); font-size: 0.88rem; font-weight: 600; }
+    .legal-intro {
+        background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);
+        border-radius: 16px; padding: 22px 26px;
+        color: rgba(255,255,255,0.8); font-size: 0.95rem; font-weight: 600; line-height: 1.7;
+        margin-bottom: 35px;
+    }
+    .bolum {
+        background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px; padding: 28px 32px; margin-bottom: 20px; transition: all 0.3s;
+    }
+    .bolum:hover { background: rgba(255,255,255,0.08); }
+    .bolum-baslik {
+        color: white; font-size: 1.1rem; font-weight: 900; margin-bottom: 16px;
+        display: flex; align-items: center; gap: 10px;
+    }
+    .bolum-baslik-no {
+        background: linear-gradient(135deg,#10b981,#059669); color: white;
+        width: 30px; height: 30px; border-radius: 50%;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 0.85rem; font-weight: 900; flex-shrink: 0;
+    }
+    .bolum p, .bolum li { color: rgba(255,255,255,0.72); font-size: 0.92rem; font-weight: 600; line-height: 1.75; }
+    .bolum ul { padding-left: 22px; margin: 10px 0; }
+    .bolum li { margin-bottom: 7px; }
+    .bolum strong { color: rgba(255,255,255,0.92); }
+    .bolum a { color: #6ee7b7; text-decoration: none; }
+    .bolum a:hover { text-decoration: underline; }
+    .tablo {
+        width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 0.88rem;
+    }
+    .tablo th {
+        background: rgba(255,255,255,0.08); color: white; font-weight: 800;
+        padding: 10px 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .tablo td {
+        padding: 10px 14px; color: rgba(255,255,255,0.68); font-weight: 600;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .geri-btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        color: rgba(255,255,255,0.6); text-decoration: none; font-weight: 700; font-size: 0.9rem;
+        margin-bottom: 30px; transition: color 0.3s;
+    }
+    .geri-btn:hover { color: white; }
+    .iletisim-kart {
+        background: linear-gradient(135deg,rgba(16,185,129,0.12),rgba(5,150,105,0.08));
+        border: 1px solid rgba(16,185,129,0.25); border-radius: 18px;
+        padding: 28px; text-align: center; margin-top: 40px;
+    }
+    .iletisim-kart h3 { color: white; font-size: 1.1rem; font-weight: 900; margin-bottom: 10px; }
+    .iletisim-kart p { color: rgba(255,255,255,0.65); font-size: 0.9rem; font-weight: 600; margin: 0; }
+    .iletisim-kart a { color: #6ee7b7; font-weight: 700; }
+    .hak-kart {
+        background: rgba(102,126,234,0.1); border: 1px solid rgba(102,126,234,0.2);
+        border-radius: 12px; padding: 14px 18px; margin-top: 14px;
+        color: rgba(255,255,255,0.75); font-size: 0.88rem; font-weight: 600;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="policy-container" style="max-width: 900px; margin: 50px auto; padding: 20px;">
-    <div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
-        <h1 style="color: #7B68EE; font-size: 2.5rem; font-weight: 900; margin-bottom: 20px;">
-            🔒 Gizlilik Politikası
-        </h1>
-        <p style="color: #6c757d; margin-bottom: 30px;">Son güncelleme: 17 Aralık 2025</p>
+<div class="legal-container">
 
-        <div class="policy-section" style="margin-bottom: 30px;">
-            <h2 style="color: #333; font-size: 1.5rem; font-weight: 800; margin-bottom: 15px;">1. Toplanan Bilgiler</h2>
-            <p style="color: #6c757d; line-height: 1.8;">
-                Köstebek YKS olarak, platformumuzu kullanırken aşağıdaki bilgileri toplarız:
-            </p>
-            <ul style="color: #6c757d; line-height: 1.8; margin-left: 20px;">
-                <li>Kullanıcı adı ve e-posta adresi</li>
-                <li>Profil fotoğrafı (opsiyonel)</li>
-                <li>Çözülen sorular ve istatistikler</li>
-                <li>Kazanılan rozetler ve puanlar</li>
-            </ul>
-        </div>
+    <a href="javascript:history.back()" class="geri-btn">
+        <i class="bi bi-arrow-left"></i> Geri Dön
+    </a>
 
-        <div class="policy-section" style="margin-bottom:  30px;">
-            <h2 style="color: #333; font-size: 1.5rem; font-weight: 800; margin-bottom: 15px;">2. Bilgilerin Kullanımı</h2>
-            <p style="color: #6c757d; line-height: 1.8;">
-                Topladığımız bilgiler sadece platformun işlevselliğini sağlamak için kullanılır. Kişisel bilgileriniz üçüncü taraflarla paylaşılmaz. 
-            </p>
-        </div>
-
-        <div class="policy-section" style="margin-bottom: 30px;">
-            <h2 style="color: #333; font-size:  1.5rem; font-weight: 800; margin-bottom: 15px;">3. Veri Güvenliği</h2>
-            <p style="color: #6c757d; line-height: 1.8;">
-                Tüm verileriniz şifrelenmiş olarak saklanır ve güvenlik önlemleriyle korunur. 
-            </p>
-        </div>
-
-        <div class="policy-section" style="margin-bottom: 30px;">
-            <h2 style="color:  #333; font-size: 1.5rem; font-weight: 800; margin-bottom:  15px;">4. Çerezler (Cookies)</h2>
-            <p style="color: #6c757d; line-height: 1.8;">
-                Platformumuz, kullanıcı deneyimini iyileştirmek için çerezler kullanır. Oturum bilgilerinizi saklamak için gereklidir.
-            </p>
-        </div>
-
-        <div class="policy-section">
-            <h2 style="color: #333; font-size: 1.5rem; font-weight: 800; margin-bottom: 15px;">5. İletişim</h2>
-            <p style="color: #6c757d; line-height: 1.8;">
-                Gizlilik politikamız hakkında sorularınız için:  
-                <a href="{% url 'iletisim' %}" style="color: #7B68EE; font-weight: 700;">destek@kostebekyks.com</a>
-            </p>
-        </div>
+    <div class="legal-header">
+        <h1>🔒 Gizlilik Politikası</h1>
+        <div class="guncelleme">Son güncelleme: 11 Nisan 2026</div>
     </div>
+
+    <div class="legal-intro">
+        Köstebek YKS olarak gizliliğinize büyük önem veriyoruz. Bu politika, <strong>kostebekyks.com</strong> üzerinden hangi verileri topladığımızı, bu verileri nasıl kullandığımızı ve haklarınızı açıklar. Platforma kayıt olarak bu politikayı kabul etmiş sayılırsınız.
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">1</span> Topladığımız Veriler</div>
+        <p>Platformu kullanırken aşağıdaki verileri toplarız:</p>
+        <table class="tablo">
+            <tr><th>Veri Türü</th><th>Açıklama</th><th>Zorunlu mu?</th></tr>
+            <tr><td>Kullanıcı adı</td><td>Platform kimliğiniz, liderlik tablosunda görünür</td><td>✅ Evet</td></tr>
+            <tr><td>E-posta adresi</td><td>Hesap doğrulama ve iletişim için</td><td>✅ Evet</td></tr>
+            <tr><td>Şifre</td><td>Şifrelenmiş (hash) olarak saklanır, düz metin olarak tutulmaz</td><td>✅ Evet</td></tr>
+            <tr><td>Oyun istatistikleri</td><td>Çözülen sorular, doğru/yanlış sayıları, puan, XP</td><td>Otomatik</td></tr>
+            <tr><td>Rozet ve başarılar</td><td>Kazanılan rozetler ve seviye bilgisi</td><td>Otomatik</td></tr>
+            <tr><td>Oturum verileri</td><td>Giriş zamanı, son aktif olma tarihi</td><td>Otomatik</td></tr>
+            <tr><td>IP adresi</td><td>Güvenlik ve hizalama amaçlı, kısa süre saklanır</td><td>Otomatik</td></tr>
+        </table>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">2</span> Verilerin Kullanım Amacı</div>
+        <p>Topladığımız veriler yalnızca aşağıdaki amaçlar için kullanılır:</p>
+        <ul>
+            <li>Hesabınızı oluşturmak ve yönetmek</li>
+            <li>Platform işlevselliğini sağlamak (oyun modları, liderlik, rozetler)</li>
+            <li>Güvenlik ihlallerini tespit etmek ve önlemek</li>
+            <li>Platform iyileştirmeleri için anonim istatistik analizi yapmak</li>
+            <li>Teknik destek sağlamak</li>
+            <li>Önemli güncellemeler veya hizmet değişiklikleri hakkında bilgi vermek</li>
+        </ul>
+        <p><strong>Verileriniz reklam amaçlı kullanılmaz, üçüncü taraflara satılmaz veya kiralanmaz.</strong></p>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">3</span> Veri Güvenliği</div>
+        <p>Verilerinizin güvenliğini sağlamak için aşağıdaki önlemleri alıyoruz:</p>
+        <ul>
+            <li><strong>Şifre şifreleme:</strong> Tüm şifreler güçlü kriptografik algoritmalar (bcrypt/PBKDF2) ile saklanır, düz metin olarak tutulmaz.</li>
+            <li><strong>HTTPS:</strong> Platform, SSL/TLS sertifikası ile güvenli bağlantı üzerinden hizmet verir.</li>
+            <li><strong>Erişim kontrolü:</strong> Kişisel verilerinize yalnızca yetkili sistem yöneticileri erişebilir.</li>
+            <li><strong>Güvenlik duvarı:</strong> Sunucularımız güvenlik duvarı ve saldırı önleme sistemleriyle korunmaktadır.</li>
+            <li><strong>Düzenli yedekleme:</strong> Veriler düzenli aralıklarla yedeklenir ve şifreli olarak saklanır.</li>
+        </ul>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">4</span> Çerezler (Cookies)</div>
+        <p>Platform, aşağıdaki amaçlar için çerez kullanır:</p>
+        <ul>
+            <li><strong>Oturum çerezleri:</strong> Giriş durumunuzu ve oturumunuzu korumak için zorunludur.</li>
+            <li><strong>Tercih çerezleri:</strong> Tema seçimi (açık/koyu mod) gibi tercihlerinizi hatırlamak için kullanılır.</li>
+            <li><strong>Güvenlik çerezleri:</strong> CSRF saldırılarına karşı koruma sağlar.</li>
+        </ul>
+        <p>Bu çerezler üçüncü taraflarla paylaşılmaz ve reklam takibi amacıyla kullanılmaz. Tarayıcınızdan çerezleri devre dışı bırakabilirsiniz, ancak bu durumda platformun bazı özellikleri çalışmayabilir.</p>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">5</span> Üçüncü Taraflarla Veri Paylaşımı</div>
+        <p>Verilerinizi aşağıdaki durumlar <strong>dışında</strong> hiçbir üçüncü tarafla paylaşmıyoruz:</p>
+        <ul>
+            <li><strong>Yasal zorunluluk:</strong> Mahkeme kararı veya yasal düzenleme gerektiriyorsa</li>
+            <li><strong>Güvenlik tehdidi:</strong> Platformun veya kullanıcıların güvenliğini tehdit eden durumların önlenmesi için</li>
+        </ul>
+        <p>Sunucu altyapısı için <strong>Hetzner Cloud</strong> kullanılmaktadır. Veriler yalnızca bu sunucularda saklanmakta olup üçüncü taraf analitik veya reklam araçları kullanılmamaktadır.</p>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">6</span> Verilerin Saklanma Süresi</div>
+        <p>Verilerinizi yalnızca gerekli olduğu süre boyunca saklarız:</p>
+        <ul>
+            <li><strong>Hesap verileri:</strong> Hesabınız aktif olduğu sürece saklanır.</li>
+            <li><strong>Hesap silme sonrası:</strong> Tüm kişisel veriler 30 gün içinde kalıcı olarak silinir.</li>
+            <li><strong>Oturum günlükleri:</strong> Güvenlik amaçlı en fazla 90 gün saklanır.</li>
+            <li><strong>Anonim istatistikler:</strong> Kişisel bilgi içermeyen istatistiksel veriler daha uzun süre saklanabilir.</li>
+        </ul>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">7</span> Kullanıcı Hakları</div>
+        <p>Kişisel verileriniz üzerinde aşağıdaki haklara sahipsiniz:</p>
+        <div class="hak-kart">
+            <strong>🔍 Erişim Hakkı</strong> — Hangi verilerinizi tuttuğumuzu öğrenebilirsiniz.<br>
+            <strong>✏️ Düzeltme Hakkı</strong> — Yanlış veya eksik verilerinizi düzelttirebilirsiniz.<br>
+            <strong>🗑️ Silme Hakkı</strong> — Hesabınızın ve verilerinizin silinmesini talep edebilirsiniz.<br>
+            <strong>📤 Taşıma Hakkı</strong> — Verilerinizin size iletilmesini isteyebilirsiniz.<br>
+            <strong>🚫 İtiraz Hakkı</strong> — Belirli veri işleme faaliyetlerine itiraz edebilirsiniz.
+        </div>
+        <p style="margin-top: 14px;">Bu haklarınızı kullanmak için <a href="mailto:destek@kostebekyks.com">destek@kostebekyks.com</a> adresine e-posta gönderebilirsiniz. Talebinize en geç <strong>30 gün</strong> içinde yanıt veririz.</p>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">8</span> Çocukların Gizliliği</div>
+        <p>Platform, 14 yaş ve üzeri kullanıcılara yöneliktir. 13 yaşın altındaki bireylerin kişisel verilerini bilerek toplamıyoruz. Böyle bir durumun farkına varırsanız lütfen <a href="mailto:destek@kostebekyks.com">destek@kostebekyks.com</a> adresine bildirin; söz konusu veriler derhal silinecektir.</p>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">9</span> Politikada Değişiklikler</div>
+        <p>Bu gizlilik politikasını zaman zaman güncelleyebiliriz. Önemli değişiklikler platform üzerinden duyurulacaktır. Platformu kullanmaya devam etmeniz güncellenmiş politikayı kabul ettiğiniz anlamına gelir.</p>
+    </div>
+
+    <div class="iletisim-kart">
+        <h3>📬 Gizlilik Sorularınız için</h3>
+        <p>Kişisel verileriniz veya bu politika hakkında sorularınız için:<br>
+        <a href="mailto:destek@kostebekyks.com">destek@kostebekyks.com</a></p>
+    </div>
+
 </div>
 {% endblock %}

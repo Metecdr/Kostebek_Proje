@@ -3,118 +3,188 @@
 
 {% block title %}Kullanım Koşulları - Köstebek YKS{% endblock %}
 
-{% block content %}
-<div class="policy-container">
-    <h1>📋 Kullanım Koşulları</h1>
-    <p class="policy-date">Son güncelleme: 9 Nisan 2026</p>
-
-    <div class="policy-section">
-        <h2>1. Hizmet Tanımı</h2>
-        <p>Köstebek YKS, öğrencilere YKS sınavına hazırlık sürecinde oyunlaştırılmış bir öğrenme ortamı sunan ücretsiz bir eğitim platformudur. Karşılaşma modu, tabu oyunu, bul bakalım ve turnuva gibi etkileşimli oyun modları ile öğrenmeyi eğlenceli hale getirmeyi amaçlar.</p>
-    </div>
-
-    <div class="policy-section">
-        <h2>2. Hesap Oluşturma ve Kullanım</h2>
-        <p>Platforma kayıt olmak için geçerli bir kullanıcı adı, e-posta adresi ve şifre belirlemeniz gerekmektedir. Hesabınızın güvenliğinden siz sorumlusunuz. Başka bir kullanıcının hesabını kullanmak veya sahte hesap oluşturmak yasaktır.</p>
-    </div>
-
-    <div class="policy-section">
-        <h2>3. Kullanıcı Davranış Kuralları</h2>
-        <p>Platform üzerinde aşağıdaki davranışlar yasaktır:</p>
-        <p>Hakaret, küfür veya uygunsuz içerik paylaşmak; diğer kullanıcıları taciz etmek; hile yapmak veya sistemi kötüye kullanmak; spam veya reklam amaçlı içerik paylaşmak; platformun teknik altyapısına zarar vermeye çalışmak.</p>
-    </div>
-
-    <div class="policy-section">
-        <h2>4. Fikri Mülkiyet</h2>
-        <p>Platform üzerindeki tüm içerikler (sorular, tasarımlar, logolar, kodlar) Köstebek YKS'ye aittir. İçeriklerin izinsiz kopyalanması, dağıtılması veya ticari amaçla kullanılması yasaktır.</p>
-    </div>
-
-    <div class="policy-section">
-        <h2>5. Puan ve Rozet Sistemi</h2>
-        <p>Platformda kazanılan puanlar, rozetler ve XP'ler tamamen eğitim amaçlı motivasyon araçlarıdır. Maddi bir değeri yoktur ve nakde çevrilemez.</p>
-    </div>
-
-    <div class="policy-section">
-        <h2>6. Hizmet Değişiklikleri</h2>
-        <p>Köstebek YKS, platformun özelliklerini, içeriğini ve bu kullanım koşullarını önceden bildirim yapmaksızın değiştirme hakkını saklı tutar.</p>
-    </div>
-
-    <div class="policy-section">
-        <h2>7. Hesap Askıya Alma ve Silme</h2>
-        <p>Kullanım koşullarını ihlal eden hesaplar geçici veya kalıcı olarak askıya alınabilir. Kendi hesabınızı silmek isterseniz iletişim sayfasından talepte bulunabilirsiniz.</p>
-    </div>
-
-    <div class="policy-section">
-        <h2>8. İletişim</h2>
-        <p>Kullanım koşulları hakkında sorularınız için <a href="{% url 'iletisim' %}">iletişim sayfamızdan</a> bize ulaşabilirsiniz.</p>
-    </div>
-</div>
-
+{% block extra_css %}
 <style>
-    .policy-container {
-        max-width: 800px;
-        margin: 40px auto;
-        padding: 50px;
-        background: var(--card-bg);
-        border-radius: 20px;
-        box-shadow: var(--shadow-lg);
+    .legal-container { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+    .legal-header { text-align: center; margin-bottom: 50px; }
+    .legal-header h1 { color: white; font-size: 2.2rem; font-weight: 900; margin-bottom: 12px; }
+    .legal-header .guncelleme { color: rgba(255,255,255,0.5); font-size: 0.88rem; font-weight: 600; }
+    .legal-intro {
+        background: rgba(102,126,234,0.12); border: 1px solid rgba(102,126,234,0.25);
+        border-radius: 16px; padding: 22px 26px;
+        color: rgba(255,255,255,0.8); font-size: 0.95rem; font-weight: 600; line-height: 1.7;
+        margin-bottom: 35px;
     }
-
-    .policy-container h1 {
-        font-size: 2.2rem;
-        font-weight: 900;
-        color: var(--text-primary);
-        margin-bottom: 10px;
+    .bolum {
+        background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px; padding: 28px 32px; margin-bottom: 20px; transition: all 0.3s;
     }
-
-    .policy-date {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        margin-bottom: 30px;
+    .bolum:hover { background: rgba(255,255,255,0.08); }
+    .bolum-baslik {
+        color: white; font-size: 1.1rem; font-weight: 900; margin-bottom: 16px;
+        display: flex; align-items: center; gap: 10px;
     }
-
-    .policy-section {
-        margin-bottom: 25px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid var(--card-border);
+    .bolum-baslik-no {
+        background: linear-gradient(135deg,#667eea,#764ba2); color: white;
+        width: 30px; height: 30px; border-radius: 50%;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 0.85rem; font-weight: 900; flex-shrink: 0;
     }
-
-    .policy-section:last-child {
-        border-bottom: none;
+    .bolum p, .bolum li { color: rgba(255,255,255,0.72); font-size: 0.92rem; font-weight: 600; line-height: 1.75; }
+    .bolum ul, .bolum ol { padding-left: 22px; margin: 10px 0; }
+    .bolum li { margin-bottom: 7px; }
+    .bolum strong { color: rgba(255,255,255,0.92); }
+    .bolum a { color: #818cf8; text-decoration: none; }
+    .bolum a:hover { text-decoration: underline; }
+    .uyari-kutu {
+        background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3);
+        border-radius: 12px; padding: 14px 18px;
+        color: rgba(255,255,255,0.75); font-size: 0.88rem; font-weight: 600; margin-top: 14px;
     }
-
-    .policy-section h2 {
-        font-size: 1.3rem;
-        font-weight: 800;
-        color: var(--text-primary);
-        margin-bottom: 10px;
+    .geri-btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        color: rgba(255,255,255,0.6); text-decoration: none; font-weight: 700; font-size: 0.9rem;
+        margin-bottom: 30px; transition: color 0.3s;
     }
-
-    .policy-section p {
-        color: var(--text-secondary);
-        line-height: 1.8;
-        font-size: 1rem;
+    .geri-btn:hover { color: white; }
+    .iletisim-kart {
+        background: linear-gradient(135deg,rgba(102,126,234,0.15),rgba(118,75,162,0.1));
+        border: 1px solid rgba(102,126,234,0.25); border-radius: 18px;
+        padding: 28px; text-align: center; margin-top: 40px;
     }
-
-    .policy-section a {
-        color: #667eea;
-        font-weight: 600;
-        text-decoration: none;
-    }
-
-    .policy-section a:hover {
-        text-decoration: underline;
-    }
-
-    @media (max-width: 768px) {
-        .policy-container {
-            margin: 20px;
-            padding: 30px 20px;
-        }
-
-        .policy-container h1 {
-            font-size: 1.8rem;
-        }
-    }
+    .iletisim-kart h3 { color: white; font-size: 1.1rem; font-weight: 900; margin-bottom: 10px; }
+    .iletisim-kart p { color: rgba(255,255,255,0.65); font-size: 0.9rem; font-weight: 600; margin: 0; }
+    .iletisim-kart a { color: #818cf8; font-weight: 700; }
 </style>
+{% endblock %}
+
+{% block content %}
+<div class="legal-container">
+
+    <a href="javascript:history.back()" class="geri-btn">
+        <i class="bi bi-arrow-left"></i> Geri Dön
+    </a>
+
+    <div class="legal-header">
+        <h1>📜 Kullanım Koşulları</h1>
+        <div class="guncelleme">Son güncelleme: 11 Nisan 2026</div>
+    </div>
+
+    <div class="legal-intro">
+        Köstebek YKS platformuna hoş geldiniz. Bu kullanım koşulları, <strong>kostebekyks.com</strong> alan adı üzerinden sunulan hizmetlerin kullanımını düzenlemektedir. Platforma kayıt olarak veya hizmetleri kullanarak bu koşulları <strong>okuduğunuzu ve kabul ettiğinizi</strong> beyan edersiniz. Koşulları kabul etmiyorsanız lütfen platformu kullanmayınız.
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">1</span> Hizmetin Tanımı</div>
+        <p>Köstebek YKS, Türkiye Yükseköğretim Kurumları Sınavı'na (YKS) hazırlanan öğrencilere yönelik <strong>oyunlaştırılmış bir eğitim platformudur</strong>. Sunulan başlıca hizmetler:</p>
+        <ul>
+            <li>Karşılaşma, Bul Bakalım ve Tabu gibi eğitici oyun modları</li>
+            <li>TYT ve AYT müfredatına uygun kapsamlı soru bankası</li>
+            <li>Kişisel performans analizi, rozet ve başarı sistemi</li>
+            <li>Arkadaş ekleme, liderlik tablosu ve turnuva sistemi</li>
+            <li>Puan ile kullanılan dijital mağaza (unvan, çerçeve, temalar)</li>
+            <li>Günlük görevler, XP sistemi ve seviye atlama</li>
+        </ul>
+        <p>Hizmet ücretsiz olarak sunulmakta olup Köstebek YKS ekibi, özellik güncellemeleri veya teknik bakım kapsamında hizmet kapsamını zaman zaman değiştirebilir.</p>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">2</span> Hesap Oluşturma ve Kullanım</div>
+        <p>Köstebek YKS'yi kullanmak için hesap oluşturmanız gerekmektedir. Kayıt olurken:</p>
+        <ul>
+            <li>Gerçek ve güncel bilgiler sağlamayı kabul edersiniz.</li>
+            <li>Hesabınızı <strong>yalnızca kendiniz kullanabilirsiniz</strong>; başkasına devredemez veya paylaşamazsınız.</li>
+            <li>Şifrenizin güvenliğini korumak sizin sorumluluğunuzdadır.</li>
+            <li>Hesabınızda gerçekleşen tüm aktivitelerden siz sorumlusunuzdur.</li>
+            <li>Yetkisiz kullanım şüphesinde derhal <a href="mailto:destek@kostebekyks.com">destek@kostebekyks.com</a> adresine bildirmelisiniz.</li>
+        </ul>
+        <p><strong>Yaş sınırı:</strong> Platform 14 yaş ve üzeri öğrencilere yöneliktir. 13 yaşın altındaki kullanıcıların hesap açması yasaktır.</p>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">3</span> Kabul Edilemez Kullanım</div>
+        <p>Aşağıdaki davranışlar yasaktır ve hesap askıya alınması ya da kalıcı silinmesiyle sonuçlanabilir:</p>
+        <ul>
+            <li>Bot, script veya yazılımla puan/XP hilesi yapmak</li>
+            <li>Diğer kullanıcılara hakaret, tehdit veya tacizde bulunmak</li>
+            <li>Platform güvenlik açıklarını sömürmek veya yetkisiz erişim denemek</li>
+            <li>Sahte hesap oluşturmak veya başkasını taklit etmek</li>
+            <li>Spam, reklam veya istenmeyen mesaj göndermek</li>
+            <li>Telif hakkı korumalı içerikleri izinsiz paylaşmak</li>
+            <li>Platformun işleyişini engelleyecek aşırı yük oluşturmak</li>
+        </ul>
+        <div class="uyari-kutu">⚠️ Kural ihlallerinde önceden uyarı yapılmaksızın hesabınız askıya alınabilir veya silinebilir.</div>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">4</span> Fikri Mülkiyet ve İçerik</div>
+        <p>Platformdaki tüm içerikler — tasarım, yazı, grafik, soru bankası, oyun mekanizmaları ve yazılım kodu — Köstebek YKS'ye aittir ve fikri mülkiyet yasalarıyla korunmaktadır.</p>
+        <ul>
+            <li>İçeriklerin ticari amaçla kopyalanması veya dağıtılması yasaktır.</li>
+            <li>Soruların başka platformlarda yayınlanması yasaktır.</li>
+            <li>Koda, API'ye veya veritabanına yetkisiz erişim yasal işleme konu olabilir.</li>
+        </ul>
+        <p>Kullanıcılar, yükledikleri içeriklerin (profil görseli vb.) telif haklarının kendilerine ait olduğunu veya gerekli izinlere sahip olduklarını beyan eder.</p>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">5</span> Puan, Rozet ve Mağaza Sistemi</div>
+        <p>Platform içindeki puan, XP, rozet ve mağaza öğeleri yalnızca <strong>platform içi kullanıma yöneliktir</strong> ve gerçek para karşılığında alınıp satılamaz.</p>
+        <ul>
+            <li>Hesap silme veya uzun süreli pasiflik durumunda puan ve rozetler sıfırlanabilir.</li>
+            <li>Platform, oyun ekonomisinde önceden haber vermeksizin değişiklik yapma hakkını saklı tutar.</li>
+            <li>Hileli yollarla edinilen puan ve ödüller iptal edilir; hesap kapatılabilir.</li>
+        </ul>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">6</span> Hizmet Değişiklikleri ve Kesintiler</div>
+        <p>Köstebek YKS aşağıdaki durumlarda değişiklik yapabilir:</p>
+        <ul>
+            <li>Yeni özellikler ekleme, mevcut özellikleri güncelleme veya kaldırma</li>
+            <li>Teknik bakım veya güvenlik güncellemeleri nedeniyle geçici hizmet kesintisi</li>
+            <li>Platformun kısmen veya tamamen kapatılması (en az 30 gün önceden duyurulur)</li>
+        </ul>
+        <p>Bu değişikliklerden doğabilecek veri kaybı veya erişim kesintisi için Köstebek YKS sorumlu tutulamaz.</p>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">7</span> Hesap Askıya Alma ve Silme</div>
+        <p><strong>Hesap askıya alma:</strong> Kural ihlali halinde hesabınız geçici olarak askıya alınabilir.</p>
+        <p><strong>Hesap silme (kullanıcı talebi):</strong></p>
+        <ul>
+            <li>Tüm kişisel veriler 30 gün içinde sistemden temizlenir.</li>
+            <li>Kazanılan puan, rozet ve mağaza öğeleri geri alınamaz.</li>
+            <li>Yasal zorunluluk olmadıkça veriler saklanmaz.</li>
+        </ul>
+        <p>Hesap silme için <a href="mailto:destek@kostebekyks.com">destek@kostebekyks.com</a> adresine e-posta gönderebilirsiniz.</p>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">8</span> Sorumluluk Sınırlaması</div>
+        <p>Köstebek YKS, platformun kullanımından kaynaklanabilecek <strong>dolaylı veya özel zararlar</strong> için sorumlu değildir:</p>
+        <ul>
+            <li>Akademik başarı veya sınav sonuçları garanti edilmez.</li>
+            <li>Teknik hatalar, sunucu kesintileri veya veri kayıplarından doğan zararlar için tazminat ödenmez.</li>
+            <li>Üçüncü taraf bağlantılar için herhangi bir sorumluluk üstlenilmez.</li>
+        </ul>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">9</span> Uygulanacak Hukuk</div>
+        <p>Bu koşullar <strong>Türkiye Cumhuriyeti hukuku</strong> çerçevesinde yorumlanır. Uyuşmazlıklarda önce dostane çözüm yolu denenir; çözüme ulaşılamazsa <strong>İstanbul Mahkemeleri ve İcra Müdürlükleri</strong> yetkilidir.</p>
+    </div>
+
+    <div class="bolum">
+        <div class="bolum-baslik"><span class="bolum-baslik-no">10</span> Koşullarda Değişiklik</div>
+        <p>Köstebek YKS bu koşulları istediği zaman güncelleme hakkını saklı tutar. Önemli değişiklikler platform üzerinden duyurulacaktır. Değişiklik sonrasında platformu kullanmaya devam etmeniz, güncellenmiş koşulları kabul ettiğiniz anlamına gelir.</p>
+    </div>
+
+    <div class="iletisim-kart">
+        <h3>📬 Sorularınız mı var?</h3>
+        <p>Kullanım koşulları hakkındaki sorularınız için:<br>
+        <a href="mailto:destek@kostebekyks.com">destek@kostebekyks.com</a></p>
+    </div>
+
+</div>
 {% endblock %}
