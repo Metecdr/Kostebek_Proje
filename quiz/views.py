@@ -99,26 +99,19 @@ def quiz_anasayfa(request):
         soz_index = int(hashlib.md5(bugun_str.encode()).hexdigest(), 16) % len(gunun_sozleri)
         gunun_sozu = gunun_sozleri[soz_index]
 
-        # Duyurular
+        # Duyurular — Duyuru modelinden çek
         duyurular = []
         try:
-            from profile.models import Bildirim
-            sistem_duyurulari = Bildirim.objects.filter(
-                tip='sistem',
-                olusturma_tarihi__gte=timezone.now() - timedelta(days=7)
-            ).order_by('-olusturma_tarihi')[:3]
-            # Eğer sistem duyurusu yoksa varsayılanları göster
-            if sistem_duyurulari.exists():
-                for d in sistem_duyurulari:
-                    duyurular.append({'baslik': d.baslik, 'mesaj': d.mesaj, 'tarih': d.olusturma_tarihi})
+            from profile.models import Duyuru
+            duyurular = [d for d in Duyuru.objects.filter(aktif=True).order_by('-olusturma_tarihi')[:4] if d.aktif_mi]
         except Exception:
             pass
-
+        # Varsayılan duyurular (model yoksa veya boşsa)
         if not duyurular:
             duyurular = [
-                {'baslik': '🎉 Köstebek YKS Açıldı!', 'mesaj': 'Eğlenerek öğrenmeye hazır mısın? Hadi başlayalım!', 'tarih': None},
-                {'baslik': '🆕 Bul Bakalım Modu', 'mesaj': '5 soru, 90 saniye! Yeni oyun modunu dene.', 'tarih': None},
-                {'baslik': '🏆 Turnuva Sistemi', 'mesaj': 'Turnuvalara katılarak ödül kazan!', 'tarih': None},
+                {'baslik': '🎉 Köstebek YKS\'ye Hoş Geldin!', 'mesaj': 'Eğlenerek öğrenmeye hazır mısın? Hadi başlayalım!', 'renk_css': 'linear-gradient(135deg,rgba(102,126,234,0.18),rgba(118,75,162,0.1))', 'sinir_rengi': '#667eea', 'icon': '🎉'},
+                {'baslik': '💡 Bul Bakalım Modu', 'mesaj': '5 soru, 90 saniye! Yeni oyun modunu dene ve puan kazan.', 'renk_css': 'linear-gradient(135deg,rgba(16,185,129,0.18),rgba(5,150,105,0.1))', 'sinir_rengi': '#10b981', 'icon': '💡'},
+                {'baslik': '🏆 Turnuva Sistemi', 'mesaj': 'Resmi turnuvalara katılarak ödül kazan ve şampiyonluk için yarış!', 'renk_css': 'linear-gradient(135deg,rgba(245,158,11,0.18),rgba(217,119,6,0.1))', 'sinir_rengi': '#f59e0b', 'icon': '🏆'},
             ]
 
         context = {

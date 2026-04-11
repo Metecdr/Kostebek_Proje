@@ -131,7 +131,7 @@ def bul_bakalim_oyun(request, oyun_id):
         'cevaplar': cevaplar,
         'soru_no': cevaplanan_soru_sayisi + 1,
         'toplam_soru': len(oyun.sorular),
-        'sure': 240,
+        'sure': 600,
     }
     return render(request, 'quiz/bul_bakalim_oyun.html', context)
 

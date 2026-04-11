@@ -63,4 +63,10 @@ urlpatterns = [
 
     # Seviye Ödülleri
     path('seviye-oduller/', views.seviye_oduller_view, name='seviye_oduller'),
+
+    # Duyuru Yönetimi (superuser only)
+    path('duyurular/', views.duyuru_listesi, name='duyuru_listesi'),
+    path('duyurular/ekle/', views.duyuru_ekle, name='duyuru_ekle'),
+    path('duyurular/<int:duyuru_id>/duzenle/', views.duyuru_duzenle, name='duyuru_duzenle'),
+    path('duyurular/<int:duyuru_id>/sil/', views.duyuru_sil, name='duyuru_sil'),
 ]

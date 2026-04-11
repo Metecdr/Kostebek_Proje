@@ -1220,6 +1220,110 @@ def hakkimizda(request):
     return render(request, 'hakkimizda.html')
 
 
+# ==================== DUYURU YÖNETİMİ ====================
+
+def _superuser_kontrol(request):
+    """Superuser değilse hata mesajı + redirect"""
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, '⛔ Bu sayfaya erişim yetkiniz yok!')
+        return False
+    return True
+
+
+@login_required
+def duyuru_listesi(request):
+    """Tüm duyuruları listele (superuser paneli)"""
+    if not _superuser_kontrol(request):
+        return redirect('quiz_anasayfa')
+    from profile.models import Duyuru
+    duyurular = Duyuru.objects.all().order_by('-olusturma_tarihi')
+    return render(request, 'duyurular/duyuru_listesi.html', {'duyurular': duyurular})
+
+
+@login_required
+def duyuru_ekle(request):
+    """Yeni duyuru ekle"""
+    if not _superuser_kontrol(request):
+        return redirect('quiz_anasayfa')
+    from profile.models import Duyuru
+    if request.method == 'POST':
+        baslik = request.POST.get('baslik', '').strip()
+        mesaj = request.POST.get('mesaj', '').strip()
+        icon = request.POST.get('icon', '📢').strip()
+        renk = request.POST.get('renk', 'mavi')
+        aktif = request.POST.get('aktif') == 'on'
+        bitis_tarihi_str = request.POST.get('bitis_tarihi', '').strip()
+        bitis_tarihi = None
+        if bitis_tarihi_str:
+            try:
+                from datetime import datetime
+                bitis_tarihi = timezone.make_aware(datetime.strptime(bitis_tarihi_str, '%Y-%m-%dT%H:%M'))
+            except ValueError:
+                pass
+        if not baslik or not mesaj:
+            messages.error(request, '❌ Başlık ve mesaj zorunludur!')
+        else:
+            Duyuru.objects.create(
+                baslik=baslik, mesaj=mesaj, icon=icon,
+                renk=renk, aktif=aktif, bitis_tarihi=bitis_tarihi,
+                olusturan=request.user
+            )
+            messages.success(request, '✅ Duyuru oluşturuldu!')
+            return redirect('duyuru_listesi')
+    from profile.models import Duyuru
+    return render(request, 'duyurular/duyuru_ekle.html', {'renk_secenekleri': Duyuru.RENK_SECENEKLERI})
+
+
+@login_required
+def duyuru_duzenle(request, duyuru_id):
+    """Duyuruyu düzenle"""
+    if not _superuser_kontrol(request):
+        return redirect('quiz_anasayfa')
+    from profile.models import Duyuru
+    from django.shortcuts import get_object_or_404
+    duyuru = get_object_or_404(Duyuru, id=duyuru_id)
+    if request.method == 'POST':
+        duyuru.baslik = request.POST.get('baslik', '').strip()
+        duyuru.mesaj = request.POST.get('mesaj', '').strip()
+        duyuru.icon = request.POST.get('icon', '📢').strip()
+        duyuru.renk = request.POST.get('renk', 'mavi')
+        duyuru.aktif = request.POST.get('aktif') == 'on'
+        bitis_tarihi_str = request.POST.get('bitis_tarihi', '').strip()
+        if bitis_tarihi_str:
+            try:
+                from datetime import datetime
+                duyuru.bitis_tarihi = timezone.make_aware(datetime.strptime(bitis_tarihi_str, '%Y-%m-%dT%H:%M'))
+            except ValueError:
+                duyuru.bitis_tarihi = None
+        else:
+            duyuru.bitis_tarihi = None
+        if not duyuru.baslik or not duyuru.mesaj:
+            messages.error(request, '❌ Başlık ve mesaj zorunludur!')
+        else:
+            duyuru.save()
+            messages.success(request, '✅ Duyuru güncellendi!')
+            return redirect('duyuru_listesi')
+    return render(request, 'duyurular/duyuru_duzenle.html', {
+        'duyuru': duyuru,
+        'renk_secenekleri': Duyuru.RENK_SECENEKLERI,
+    })
+
+
+@login_required
+def duyuru_sil(request, duyuru_id):
+    """Duyuruyu sil"""
+    if not _superuser_kontrol(request):
+        return redirect('quiz_anasayfa')
+    from profile.models import Duyuru
+    from django.shortcuts import get_object_or_404
+    duyuru = get_object_or_404(Duyuru, id=duyuru_id)
+    if request.method == 'POST':
+        duyuru.delete()
+        messages.success(request, '🗑️ Duyuru silindi!')
+        return redirect('duyuru_listesi')
+    return render(request, 'duyurular/duyuru_sil_onay.html', {'duyuru': duyuru})
+
+
 @login_required
 def admin_dashboard(request):
     """Özel admin dashboard - sadece superuser"""

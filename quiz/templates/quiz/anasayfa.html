@@ -93,28 +93,32 @@
         gap: 12px;
     }
     .duyuru-kart {
-        background: rgba(255,255,255,0.08);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.1);
         border-radius: 14px;
-        padding: 16px;
+        padding: 16px 18px;
         transition: all 0.3s;
+        border-left: 3px solid transparent;
     }
     .duyuru-kart:hover {
-        background: rgba(255,255,255,0.14);
         transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
+    .duyuru-ust {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+    }
+    .duyuru-ikon-sm { font-size: 1.1rem; }
     .duyuru-baslik {
         color: white;
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         font-weight: 800;
-        margin-bottom: 6px;
     }
     .duyuru-mesaj {
         color: rgba(255,255,255,0.65);
-        font-size: 0.8rem;
+        font-size: 0.79rem;
         font-weight: 600;
-        line-height: 1.4;
+        line-height: 1.45;
     }
     @media(max-width: 768px) {
         .duyuru-grid { grid-template-columns: 1fr; }
@@ -608,8 +612,11 @@
         <div class="bolum-baslik animate-on-scroll">📢 Duyurular</div>
         <div class="duyuru-grid">
             {% for duyuru in duyurular %}
-            <div class="duyuru-kart">
-                <div class="duyuru-baslik">{{ duyuru.baslik }}</div>
+            <div class="duyuru-kart" style="background:{{ duyuru.renk_css }};border-left-color:{{ duyuru.sinir_rengi }};">
+                <div class="duyuru-ust">
+                    <span class="duyuru-ikon-sm">{{ duyuru.icon }}</span>
+                    <span class="duyuru-baslik">{{ duyuru.baslik }}</span>
+                </div>
                 <div class="duyuru-mesaj">{{ duyuru.mesaj }}</div>
             </div>
             {% endfor %}
