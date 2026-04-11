@@ -32,6 +32,9 @@ staticfiles/
 *.swo
 *~
 
+# Claude Code Worktrees (temporary development directories)
+.claude/worktrees/
+
 # Graphify (temporary extraction files)
 .graphify_ast.json
 .graphify_detect.json
