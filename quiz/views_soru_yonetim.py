@@ -325,63 +325,124 @@ def toplu_metin_ekle(request):
 
 def _parse_toplu_metin(metin_blok):
     """
-    Metin bloğunu parse ederek soru listesi döndürür.
-    Format:
-    SORU: ...
-    A) ...
-    B) ...
-    DOGRU: A
-    ACIKLAMA: ...
-    ---
+    İki format desteklenir:
+
+    FORMAT 1 - Çok satırlı:
+        SORU: Soru metni...
+        A) Şık A
+        B) Şık B
+        DOGRU: B
+        ACIKLAMA: Açıklama
+        ---
+
+    FORMAT 2 - Tek/karma satır (şıklar soru metninin içinde inline):
+        SORU: Uzun paragraf... A) şık B) şık DOGRU: B ACIKLAMA: açıklama
+        ---
     """
+    import re
     sorular = []
-    # Blokları --- ile ayır
     bloklar = [b.strip() for b in metin_blok.split('---') if b.strip()]
 
-    harf_map = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4}
-
     for blok in bloklar:
-        satirlar = blok.split('\n')
+        blok = blok.strip()
+        if not blok:
+            continue
+
         soru_metin = ''
         cevaplar = []
         dogru_harf = ''
         aciklama = ''
-        soru_satirlari = []
-        soru_devam = False
 
-        for satir in satirlar:
-            satir = satir.strip()
-            if not satir:
-                continue
+        # ---- 1) DOGRU: ve ACIKLAMA: etiketlerini bul ----
+        dogru_m = re.search(r'DOGRU\s*:\s*([A-Ea-e])', blok, re.IGNORECASE)
+        aciklama_m = re.search(r'ACIKLAMA\s*:', blok, re.IGNORECASE)
 
-            if satir.upper().startswith('SORU:'):
-                soru_metin = satir[5:].strip()
-                soru_devam = True
-            elif satir.upper().startswith('DOGRU:'):
-                dogru_harf = satir[6:].strip().upper()
-                soru_devam = False
-            elif satir.upper().startswith('ACIKLAMA:'):
-                aciklama = satir[9:].strip()
-                soru_devam = False
-            elif len(satir) > 2 and satir[0].upper() in 'ABCDE' and satir[1] in ')' :
-                harf = satir[0].upper()
-                cevap_metin = satir[2:].strip()
-                cevaplar.append({'harf': harf, 'metin': cevap_metin, 'dogru': False})
-                soru_devam = False
-            elif soru_devam:
-                # Çok satırlı soru metni
-                soru_metin += '\n' + satir
+        if dogru_m:
+            dogru_harf = dogru_m.group(1).upper()
+        if aciklama_m:
+            aciklama = blok[aciklama_m.end():].strip()
+            # Eğer DOGRU: aciklamadan SONRA geliyorsa kes
+            if dogru_m and dogru_m.start() > aciklama_m.start():
+                aciklama = blok[aciklama_m.end():dogru_m.start()].strip()
+
+        # ---- 2) SORU: etiketini bul ----
+        soru_m = re.search(r'SORU\s*:\s*', blok, re.IGNORECASE)
+        if not soru_m:
+            continue
+        sonrasi = blok[soru_m.end():]
+
+        # ---- 3) Şıkları bul ----
+        # "A)" veya "A." şeklinde başlayan kısımları bul
+        # Sınır: sonraki şık harfi, DOGRU:, ACIKLAMA: veya metin sonu
+        sik_re = re.compile(r'\b([A-Ea-e])\s*[).][ \t]')
+        sik_pozisyonlari = [(m.start(), m.group(1).upper()) for m in sik_re.finditer(sonrasi)]
+
+        # Eğer hiç şık bulunamazsa çok satırlı formatı dene
+        if not sik_pozisyonlari:
+            satirlar = blok.split('\n')
+            soru_devam = False
+            for satir in satirlar:
+                satir = satir.strip()
+                if not satir:
+                    continue
+                upper_s = satir.upper()
+                if upper_s.startswith('SORU:'):
+                    soru_metin = satir[5:].strip()
+                    soru_devam = True
+                elif upper_s.startswith('DOGRU:'):
+                    dogru_harf = satir[6:].strip().upper()
+                    soru_devam = False
+                elif upper_s.startswith('ACIKLAMA:'):
+                    aciklama = satir[9:].strip()
+                    soru_devam = False
+                elif (len(satir) > 2 and satir[0].upper() in 'ABCDE'
+                      and satir[1] in ').'):
+                    harf = satir[0].upper()
+                    cevap_metin = satir[2:].strip()
+                    cevaplar.append({'harf': harf, 'metin': cevap_metin, 'dogru': False})
+                    soru_devam = False
+                elif soru_devam:
+                    soru_metin += '\n' + satir
+            for c in cevaplar:
+                c['dogru'] = (c['harf'] == dogru_harf)
+        else:
+            # Soru metni = SORU:'dan ilk şık başlangıcına kadar
+            ilk_sik_pos = sik_pozisyonlari[0][0]
+            soru_metin = sonrasi[:ilk_sik_pos].strip()
+
+            # Her şık: şu anki pozisyondan sonraki şık/DOGRU/ACIKLAMA'ya kadar
+            durdurucular = []
+            for pos, _ in sik_pozisyonlari[1:]:
+                durdurucular.append(pos)
+            # DOGRU: ve ACIKLAMA: da durdurucu
+            for pat in [r'DOGRU\s*:', r'ACIKLAMA\s*:']:
+                m2 = re.search(pat, sonrasi, re.IGNORECASE)
+                if m2:
+                    durdurucular.append(m2.start())
+            durdurucular.append(len(sonrasi))
+
+            for i, (pos, harf) in enumerate(sik_pozisyonlari):
+                # Bu şıktan sonraki en yakın durdurucu
+                bitis = min(d for d in durdurucular if d > pos)
+                # Şık metnini al (harf ve ) karakterinden sonrası)
+                sik_baslangic = pos + 2  # harf + ")" veya "."  + boşluk = 3 char ama değişken
+                # regex match'ten sonraki konumu bul
+                m3 = sik_re.search(sonrasi, pos)
+                if m3:
+                    sik_baslangic = m3.end()
+                cevap_metin = sonrasi[sik_baslangic:bitis].strip()
+                if cevap_metin:
+                    cevaplar.append({
+                        'harf': harf,
+                        'metin': cevap_metin,
+                        'dogru': (harf == dogru_harf),
+                    })
 
         if soru_metin and cevaplar:
-            # Doğru cevabı işaretle
-            dogru_idx = harf_map.get(dogru_harf, -1)
-            for i, c in enumerate(cevaplar):
-                c['dogru'] = (c['harf'] == dogru_harf)
-
             sorular.append({
                 'metin': soru_metin.strip(),
                 'cevaplar': cevaplar,
-                'aciklama': aciklama,
+                'aciklama': aciklama.strip(),
                 'dogru_harf': dogru_harf,
             })
 

@@ -115,18 +115,31 @@
           </select>
         </div>
 
-        {% for harf, idx in "ABCDE"|zip:"01234" %}
-        <div class="input-group mb-2" id="sikDiv{{ forloop.counter }}">
-          <span class="input-group-text fw-bold" id="sikLabel{{ forloop.counter }}"
-            style="background:linear-gradient(135deg,#667eea,#764ba2); color:white; width:42px; justify-content:center;">
-            {{ harf }}
-          </span>
-          <textarea name="cevap_{{ forloop.counter }}" class="form-control sik-input"
-            placeholder="{% if forloop.counter <= 2 %}Şık {{ harf }} — zorunlu{% else %}Şık {{ harf }} — isteğe bağlı{% endif %}"
-            rows="2" data-idx="{{ forloop.counter0 }}"
-            style="resize:vertical;">{% if post_data %}{{ post_data|getitem:"cevap_"|add:forloop.counter|default:"" }}{% endif %}</textarea>
+        <div class="input-group mb-2">
+          <span class="input-group-text fw-bold cevap-label" data-idx="0"
+            style="background:linear-gradient(135deg,#667eea,#764ba2); color:white; width:42px; justify-content:center;">A</span>
+          <textarea name="cevap_1" class="form-control" rows="2" placeholder="Şık A — zorunlu" style="resize:vertical;"></textarea>
         </div>
-        {% endfor %}
+        <div class="input-group mb-2">
+          <span class="input-group-text fw-bold cevap-label" data-idx="1"
+            style="background:linear-gradient(135deg,#667eea,#764ba2); color:white; width:42px; justify-content:center;">B</span>
+          <textarea name="cevap_2" class="form-control" rows="2" placeholder="Şık B — zorunlu" style="resize:vertical;"></textarea>
+        </div>
+        <div class="input-group mb-2">
+          <span class="input-group-text fw-bold cevap-label" data-idx="2"
+            style="background:linear-gradient(135deg,#667eea,#764ba2); color:white; width:42px; justify-content:center;">C</span>
+          <textarea name="cevap_3" class="form-control" rows="2" placeholder="Şık C — isteğe bağlı" style="resize:vertical;"></textarea>
+        </div>
+        <div class="input-group mb-2">
+          <span class="input-group-text fw-bold cevap-label" data-idx="3"
+            style="background:linear-gradient(135deg,#667eea,#764ba2); color:white; width:42px; justify-content:center;">D</span>
+          <textarea name="cevap_4" class="form-control" rows="2" placeholder="Şık D — isteğe bağlı" style="resize:vertical;"></textarea>
+        </div>
+        <div class="input-group mb-2">
+          <span class="input-group-text fw-bold cevap-label" data-idx="4"
+            style="background:linear-gradient(135deg,#667eea,#764ba2); color:white; width:42px; justify-content:center;">E</span>
+          <textarea name="cevap_5" class="form-control" rows="2" placeholder="Şık E — isteğe bağlı" style="resize:vertical;"></textarea>
+        </div>
 
         <small class="text-muted">💡 Doğru cevabın label'ı yeşile döner.</small>
       </div>
@@ -146,20 +159,16 @@
 </div>
 
 <script>
-// Doğru cevap seçilince ilgili label yeşile döner
-document.getElementById('dogruCevap').addEventListener('change', function() {
-    const idx = parseInt(this.value);
-    const harfler = ['A', 'B', 'C', 'D', 'E'];
-    document.querySelectorAll('.input-group-text').forEach((el, i) => {
-        if (i === idx) {
-            el.style.background = 'linear-gradient(135deg,#4caf50,#2e7d32)';
-        } else {
-            el.style.background = 'linear-gradient(135deg,#667eea,#764ba2)';
-        }
+function updateCevapLabels() {
+    const idx = parseInt(document.getElementById('dogruCevap').value);
+    document.querySelectorAll('.cevap-label').forEach(el => {
+        const elIdx = parseInt(el.getAttribute('data-idx'));
+        el.style.background = elIdx === idx
+            ? 'linear-gradient(135deg,#4caf50,#2e7d32)'
+            : 'linear-gradient(135deg,#667eea,#764ba2)';
     });
-});
-
-// Sayfa yüklenince de uygula
-document.getElementById('dogruCevap').dispatchEvent(new Event('change'));
+}
+document.getElementById('dogruCevap').addEventListener('change', updateCevapLabels);
+updateCevapLabels();
 </script>
 {% endblock %}
