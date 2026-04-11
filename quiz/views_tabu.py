@@ -14,7 +14,6 @@ TABU_BOLUMLERI = [
     ('sayisal', 'Sayısal'),
     ('esit_agirlik', 'Eşit Ağırlık'),
     ('sozel', 'Sözel'),
-    ('dil', 'Dil')
 ]
 
 # ✅ BÖLÜM-KATEGORİ EŞLEŞTİRMESİ (Matematik YOK)
