@@ -1383,6 +1383,66 @@ class XPGecmisi(models.Model):
         indexes = [
             models.Index(fields=['profil', '-tarih'], name='xp_profil_tarih_idx'),
         ]
-    
+
+
+class Duyuru(models.Model):
+    """Site geneli duyurular — adminler tarafından yönetilir"""
+
+    RENK_SECENEKLERI = [
+        ('mavi', 'Mavi (Bilgi)'),
+        ('yesil', 'Yeşil (Başarı/Yeni)'),
+        ('sari', 'Sarı (Uyarı)'),
+        ('kirmizi', 'Kırmızı (Önemli)'),
+        ('mor', 'Mor (Özel)'),
+    ]
+
+    baslik = models.CharField(max_length=120, verbose_name='Başlık')
+    mesaj = models.TextField(verbose_name='Mesaj')
+    icon = models.CharField(max_length=10, default='📢', verbose_name='İkon (emoji)')
+    renk = models.CharField(max_length=10, choices=RENK_SECENEKLERI, default='mavi', verbose_name='Renk')
+    aktif = models.BooleanField(default=True, verbose_name='Aktif mi?')
+    olusturan = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name='Oluşturan')
+    olusturma_tarihi = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturma Tarihi')
+    bitis_tarihi = models.DateTimeField(null=True, blank=True, verbose_name='Bitiş Tarihi (boş = süresiz)')
+
+    class Meta:
+        verbose_name = 'Duyuru'
+        verbose_name_plural = 'Duyurular'
+        ordering = ['-olusturma_tarihi']
+
+    def __str__(self):
+        return f"[{self.get_renk_display()}] {self.baslik}"
+
+    @property
+    def aktif_mi(self):
+        if not self.aktif:
+            return False
+        if self.bitis_tarihi and timezone.now() > self.bitis_tarihi:
+            return False
+        return True
+
+    @property
+    def renk_css(self):
+        """Kart için gradient renk döndürür"""
+        renk_map = {
+            'mavi':    'linear-gradient(135deg,rgba(59,130,246,0.18),rgba(37,99,235,0.1))',
+            'yesil':   'linear-gradient(135deg,rgba(16,185,129,0.18),rgba(5,150,105,0.1))',
+            'sari':    'linear-gradient(135deg,rgba(245,158,11,0.18),rgba(217,119,6,0.1))',
+            'kirmizi': 'linear-gradient(135deg,rgba(239,68,68,0.18),rgba(220,38,38,0.1))',
+            'mor':     'linear-gradient(135deg,rgba(139,92,246,0.18),rgba(109,40,217,0.1))',
+        }
+        return renk_map.get(self.renk, renk_map['mavi'])
+
+    @property
+    def sinir_rengi(self):
+        renk_map = {
+            'mavi':    '#3b82f6',
+            'yesil':   '#10b981',
+            'sari':    '#f59e0b',
+            'kirmizi': '#ef4444',
+            'mor':     '#8b5cf6',
+        }
+        return renk_map.get(self.renk, '#3b82f6')
+
     def __str__(self):
         return f"{self.profil.kullanici.username} +{self.miktar} XP - {self.sebep}"

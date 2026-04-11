@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Duyuru Yönetimi - Köstebek YKS{% endblock %}
+
+{% block extra_css %}
+<style>
+    .panel-container { max-width: 960px; margin: 0 auto; padding: 30px 20px 60px; }
+
+    .panel-header {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 30px; flex-wrap: wrap; gap: 15px;
+    }
+    .panel-header h1 { color: white; font-size: 1.8rem; font-weight: 900; margin: 0; }
+
+    .btn-yeni {
+        background: linear-gradient(135deg,#10b981,#059669);
+        color: white; padding: 12px 24px; border-radius: 12px;
+        font-weight: 800; font-size: 0.95rem; text-decoration: none;
+        display: inline-flex; align-items: center; gap: 8px;
+        box-shadow: 0 4px 15px rgba(16,185,129,0.4); transition: all 0.3s;
+    }
+    .btn-yeni:hover { transform: translateY(-2px); color: white; box-shadow: 0 8px 25px rgba(16,185,129,0.5); }
+
+    .duyuru-kart {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 16px; padding: 20px 24px;
+        margin-bottom: 14px;
+        display: grid; grid-template-columns: 1fr auto;
+        gap: 16px; align-items: start;
+        transition: all 0.3s;
+    }
+    .duyuru-kart:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+
+    .duyuru-kart.pasif { opacity: 0.55; }
+
+    .duyuru-sol { display: flex; gap: 14px; align-items: flex-start; }
+    .duyuru-ikon { font-size: 1.8rem; flex-shrink: 0; margin-top: 2px; }
+    .duyuru-baslik { color: white; font-size: 1.05rem; font-weight: 800; margin-bottom: 5px; }
+    .duyuru-mesaj { color: rgba(255,255,255,0.7); font-size: 0.88rem; font-weight: 600; line-height: 1.5; }
+    .duyuru-meta { margin-top: 8px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .duyuru-badge {
+        font-size: 0.72rem; font-weight: 800; padding: 3px 10px;
+        border-radius: 10px;
+    }
+    .badge-aktif { background: rgba(16,185,129,0.25); color: #10b981; }
+    .badge-pasif { background: rgba(239,68,68,0.2); color: #ef4444; }
+    .badge-renk-mavi    { background: rgba(59,130,246,0.2); color: #60a5fa; }
+    .badge-renk-yesil   { background: rgba(16,185,129,0.2); color: #34d399; }
+    .badge-renk-sari    { background: rgba(245,158,11,0.2); color: #fbbf24; }
+    .badge-renk-kirmizi { background: rgba(239,68,68,0.2); color: #f87171; }
+    .badge-renk-mor     { background: rgba(139,92,246,0.2); color: #a78bfa; }
+    .badge-tarih { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
+
+    .duyuru-aksiyonlar { display: flex; gap: 8px; flex-shrink: 0; }
+    .btn-edit {
+        background: rgba(59,130,246,0.2); color: #60a5fa; border: none;
+        padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 0.8rem;
+        cursor: pointer; text-decoration: none; transition: all 0.3s;
+        display: inline-flex; align-items: center; gap: 5px;
+    }
+    .btn-edit:hover { background: rgba(59,130,246,0.4); color: #93c5fd; }
+    .btn-del {
+        background: rgba(239,68,68,0.2); color: #f87171; border: none;
+        padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 0.8rem;
+        cursor: pointer; text-decoration: none; transition: all 0.3s;
+        display: inline-flex; align-items: center; gap: 5px;
+    }
+    .btn-del:hover { background: rgba(239,68,68,0.4); color: #fca5a5; }
+
+    .bos-durum { text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.45); }
+    .bos-durum-ikon { font-size: 4rem; margin-bottom: 15px; opacity: 0.4; }
+
+    .breadcrumb-nav { margin-bottom: 20px; }
+    .breadcrumb-nav a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.88rem; font-weight: 600; }
+    .breadcrumb-nav a:hover { color: white; }
+    .breadcrumb-nav span { color: rgba(255,255,255,0.4); margin: 0 8px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="panel-container">
+
+    <div class="breadcrumb-nav">
+        <a href="{% url 'quiz_anasayfa' %}">🏠 Ana Sayfa</a>
+        <span>›</span>
+        <a href="#">📢 Duyuru Yönetimi</a>
+    </div>
+
+    <div class="panel-header">
+        <h1>📢 Duyuru Yönetimi</h1>
+        <a href="{% url 'duyuru_ekle' %}" class="btn-yeni">
+            <i class="bi bi-plus-circle-fill"></i> Yeni Duyuru
+        </a>
+    </div>
+
+    {% if duyurular %}
+        {% for d in duyurular %}
+        <div class="duyuru-kart {% if not d.aktif_mi %}pasif{% endif %}">
+            <div class="duyuru-sol">
+                <div class="duyuru-ikon">{{ d.icon }}</div>
+                <div>
+                    <div class="duyuru-baslik">{{ d.baslik }}</div>
+                    <div class="duyuru-mesaj">{{ d.mesaj|truncatechars:120 }}</div>
+                    <div class="duyuru-meta">
+                        {% if d.aktif_mi %}
+                            <span class="duyuru-badge badge-aktif">✅ Aktif</span>
+                        {% else %}
+                            <span class="duyuru-badge badge-pasif">⛔ Pasif</span>
+                        {% endif %}
+                        <span class="duyuru-badge badge-renk-{{ d.renk }}">{{ d.get_renk_display }}</span>
+                        <span class="duyuru-badge badge-tarih">{{ d.olusturma_tarihi|date:"d M Y" }}</span>
+                        {% if d.bitis_tarihi %}
+                            <span class="duyuru-badge badge-tarih">⏰ {{ d.bitis_tarihi|date:"d M Y H:i" }}'e kadar</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="duyuru-aksiyonlar">
+                <a href="{% url 'duyuru_duzenle' d.id %}" class="btn-edit">
+                    <i class="bi bi-pencil-fill"></i> Düzenle
+                </a>
+                <a href="{% url 'duyuru_sil' d.id %}" class="btn-del">
+                    <i class="bi bi-trash-fill"></i> Sil
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="bos-durum">
+            <div class="bos-durum-ikon">📭</div>
+            <p>Henüz duyuru yok. Yeni duyuru oluştur!</p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

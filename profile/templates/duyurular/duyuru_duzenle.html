@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Duyuruyu Düzenle - Köstebek YKS{% endblock %}
+
+{% block extra_css %}
+<style>
+    .panel-container { max-width: 700px; margin: 0 auto; padding: 30px 20px 60px; }
+    .breadcrumb-nav { margin-bottom: 20px; }
+    .breadcrumb-nav a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.88rem; font-weight: 600; }
+    .breadcrumb-nav a:hover { color: white; }
+    .breadcrumb-nav span { color: rgba(255,255,255,0.4); margin: 0 8px; }
+    .panel-baslik { color: white; font-size: 1.8rem; font-weight: 900; margin-bottom: 30px; }
+    .form-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 32px; }
+    .form-group { margin-bottom: 22px; }
+    .form-group label { display: block; color: rgba(255,255,255,0.9); font-weight: 700; font-size: 0.9rem; margin-bottom: 8px; }
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%; padding: 12px 16px;
+        background: rgba(0,0,0,0.25); border: 1.5px solid rgba(255,255,255,0.15);
+        border-radius: 12px; color: white; font-size: 0.95rem; font-weight: 600;
+        transition: border-color 0.3s;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #667eea; }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-group select option { background: #1a1a2e; color: white; }
+    .form-hint { color: rgba(255,255,255,0.45); font-size: 0.78rem; margin-top: 5px; font-weight: 600; }
+    .checkbox-row { display: flex; align-items: center; gap: 10px; }
+    .checkbox-row input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+    .checkbox-row label { color: rgba(255,255,255,0.85); font-weight: 700; font-size: 0.9rem; margin: 0; cursor: pointer; }
+    .form-actions { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+    .btn-kaydet { background: linear-gradient(135deg,#667eea,#764ba2); color: white; padding: 13px 28px; border: none; border-radius: 12px; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; box-shadow: 0 4px 15px rgba(102,126,234,0.35); }
+    .btn-kaydet:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.5); }
+    .btn-iptal { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); padding: 13px 24px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; }
+    .btn-iptal:hover { background: rgba(255,255,255,0.15); color: white; }
+    .renk-onizleme { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    .renk-chip { padding: 6px 14px; border-radius: 10px; font-size: 0.8rem; font-weight: 800; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+    .renk-chip.aktif { border-color: white; transform: scale(1.05); }
+    .renk-mavi    { background: rgba(59,130,246,0.3); color: #93c5fd; }
+    .renk-yesil   { background: rgba(16,185,129,0.3); color: #6ee7b7; }
+    .renk-sari    { background: rgba(245,158,11,0.3); color: #fcd34d; }
+    .renk-kirmizi { background: rgba(239,68,68,0.3); color: #fca5a5; }
+    .renk-mor     { background: rgba(139,92,246,0.3); color: #c4b5fd; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="panel-container">
+
+    <div class="breadcrumb-nav">
+        <a href="{% url 'quiz_anasayfa' %}">🏠 Ana Sayfa</a>
+        <span>›</span>
+        <a href="{% url 'duyuru_listesi' %}">📢 Duyurular</a>
+        <span>›</span>
+        <a href="#">Düzenle</a>
+    </div>
+
+    <div class="panel-baslik">✏️ Duyuruyu Düzenle</div>
+
+    <div class="form-card">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>İkon (Emoji)</label>
+                <input type="text" name="icon" value="{{ duyuru.icon }}" maxlength="5" required>
+            </div>
+
+            <div class="form-group">
+                <label>Başlık</label>
+                <input type="text" name="baslik" value="{{ duyuru.baslik }}" maxlength="120" required>
+            </div>
+
+            <div class="form-group">
+                <label>Mesaj</label>
+                <textarea name="mesaj" required>{{ duyuru.mesaj }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Renk</label>
+                <select name="renk" id="renkSelect">
+                    {% for value, label in renk_secenekleri %}
+                        <option value="{{ value }}" {% if duyuru.renk == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <div class="renk-onizleme">
+                    {% for value, label in renk_secenekleri %}
+                    <span class="renk-chip renk-{{ value }} {% if duyuru.renk == value %}aktif{% endif %}"
+                          onclick="renkSec('{{ value }}', this)">{{ label|cut:" (Bilgi)"|cut:" (Başarı/Yeni)"|cut:" (Uyarı)"|cut:" (Önemli)"|cut:" (Özel)" }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Bitiş Tarihi (opsiyonel)</label>
+                <input type="datetime-local" name="bitis_tarihi"
+                    value="{% if duyuru.bitis_tarihi %}{{ duyuru.bitis_tarihi|date:'Y-m-d' }}T{{ duyuru.bitis_tarihi|date:'H:i' }}{% endif %}">
+                <div class="form-hint">Boş bırakılırsa duyuru süresiz gösterilir.</div>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox-row">
+                    <input type="checkbox" name="aktif" id="aktifCheck" {% if duyuru.aktif %}checked{% endif %}>
+                    <label for="aktifCheck">Aktif</label>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-kaydet">
+                    <i class="bi bi-check-circle-fill"></i> Güncelle
+                </button>
+                <a href="{% url 'duyuru_listesi' %}" class="btn-iptal">
+                    <i class="bi bi-x-lg"></i> İptal
+                </a>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    function renkSec(deger, el) {
+        document.getElementById('renkSelect').value = deger;
+        document.querySelectorAll('.renk-chip').forEach(c => c.classList.remove('aktif'));
+        el.classList.add('aktif');
+    }
+</script>
+{% endblock %}
