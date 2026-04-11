@@ -1,0 +1,17 @@
+---
+source_file: "staticfiles\admin\js\vendor\select2\i18n\lt.js"
+type: "code"
+community: "Community 84"
+location: "L1"
+tags:
+  - graphify/code
+  - graphify/EXTRACTED
+  - community/Community_84
+---
+
+# lt.js
+
+## Connections
+- [[n()_2]] - `contains` [EXTRACTED]
+
+#graphify/code #graphify/EXTRACTED #community/Community_84

@@ -1,0 +1,86 @@
+---
+source_file: "magaza\models.py"
+type: "code"
+community: "models.py"
+location: "L1"
+tags:
+  - graphify/code
+  - graphify/EXTRACTED
+  - community/models.py
+---
+
+# models.py
+
+## Connections
+- [[Arkadaslik]] - `contains` [EXTRACTED]
+- [[Bildirim]] - `contains` [EXTRACTED]
+- [[BulBakalimOyun]] - `contains` [EXTRACTED]
+- [[CalismaKaydi]] - `contains` [EXTRACTED]
+- [[Cevap]] - `contains` [EXTRACTED]
+- [[DersIstatistik]] - `contains` [EXTRACTED]
+- [[Duyuru]] - `contains` [EXTRACTED]
+- [[GunlukGorevSablonu]] - `contains` [EXTRACTED]
+- [[KarsilasmaOdasi]] - `contains` [EXTRACTED]
+- [[Konu]] - `contains` [EXTRACTED]
+- [[KonuIstatistik]] - `contains` [EXTRACTED]
+- [[KullaniciCevap]] - `contains` [EXTRACTED]
+- [[KullaniciEnvanter]] - `contains` [EXTRACTED]
+- [[KullaniciGunlukGorev]] - `contains` [EXTRACTED]
+- [[KullaniciRozet]] - `contains` [EXTRACTED]
+- [[MagazaUrun]] - `contains` [EXTRACTED]
+- [[Meta]] - `contains` [EXTRACTED]
+- [[MeydanOkuma]] - `contains` [EXTRACTED]
+- [[OgrenciProfili]] - `contains` [EXTRACTED]
+- [[OyunMesaj]] - `contains` [EXTRACTED]
+- [[OyunModuIstatistik]] - `contains` [EXTRACTED]
+- [[Rozet]] - `contains` [EXTRACTED]
+- [[RozetKosul]] - `contains` [EXTRACTED]
+- [[SatinAlma]] - `contains` [EXTRACTED]
+- [[Soru]] - `contains` [EXTRACTED]
+- [[TabuKelime]] - `contains` [EXTRACTED]
+- [[TabuOyun]] - `contains` [EXTRACTED]
+- [[Turnuva]] - `contains` [EXTRACTED]
+- [[TurnuvaKatilim]] - `contains` [EXTRACTED]
+- [[TurnuvaMaci]] - `contains` [EXTRACTED]
+- [[TurnuvaSiralama]] - `contains` [EXTRACTED]
+- [[XPGecmisi]] - `contains` [EXTRACTED]
+- [[YasakliKelime]] - `contains` [EXTRACTED]
+- [[aciklama()]] - `contains` [EXTRACTED]
+- [[admin.py]] - `imports_from` [EXTRACTED]
+- [[aktif_mi()]] - `contains` [EXTRACTED]
+- [[aktiflik_seviyesi()]] - `contains` [EXTRACTED]
+- [[arkadaslar_mi()]] - `contains` [EXTRACTED]
+- [[arkadaslari_getir()]] - `contains` [EXTRACTED]
+- [[aylik_basari_orani()]] - `contains` [EXTRACTED]
+- [[aylik_siralama()]] - `contains` [EXTRACTED]
+- [[basari_orani()]] - `contains` [EXTRACTED]
+- [[bekleyen_istekler()]] - `contains` [EXTRACTED]
+- [[dolu_mu()]] - `contains` [EXTRACTED]
+- [[forms.py]] - `imports_from` [EXTRACTED]
+- [[galibiyet_orani()]] - `contains` [EXTRACTED]
+- [[genel_basari_orani()]] - `contains` [EXTRACTED]
+- [[genel_siralama()]] - `contains` [EXTRACTED]
+- [[gunluk_basari_orani()]] - `contains` [EXTRACTED]
+- [[gunluk_siralama()]] - `contains` [EXTRACTED]
+- [[haftalik_basari_orani()]] - `contains` [EXTRACTED]
+- [[haftalik_siralama()]] - `contains` [EXTRACTED]
+- [[her_iki_oyuncu_hazir()]] - `contains` [EXTRACTED]
+- [[icon()]] - `contains` [EXTRACTED]
+- [[ilerleme_yuzdesi()]] - `contains` [EXTRACTED]
+- [[katilimci_sayisi()]] - `contains` [EXTRACTED]
+- [[kayit_acik_mi()]] - `contains` [EXTRACTED]
+- [[mac_baslayabilir_mi()]] - `contains` [EXTRACTED]
+- [[net()]] - `contains` [EXTRACTED]
+- [[renk()]] - `contains` [EXTRACTED]
+- [[renk_class()]] - `contains` [EXTRACTED]
+- [[renk_css()]] - `contains` [EXTRACTED]
+- [[rozet_kontrol.py]] - `imports_from` [EXTRACTED]
+- [[seviye_unvani()]] - `contains` [EXTRACTED]
+- [[signals.py]] - `imports_from` [EXTRACTED]
+- [[sinir_rengi()]] - `contains` [EXTRACTED]
+- [[sonraki_seviye_xp()]] - `contains` [EXTRACTED]
+- [[views.py]] - `imports_from` [EXTRACTED]
+- [[views_turnuva.py]] - `imports_from` [EXTRACTED]
+- [[xp_yuzdesi()]] - `contains` [EXTRACTED]
+
+#graphify/code #graphify/EXTRACTED #community/models.py
