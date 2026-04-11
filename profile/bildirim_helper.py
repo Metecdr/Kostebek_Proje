@@ -10,7 +10,9 @@ BILDIRIM_COOLDOWN = {
     'liderlik': 5,
     'basari': 5,
     'sistem': 5,
-    'rozet': 0,   # Rozet bildirimleri her zaman gönderilir
+    'rozet': 0,          # Rozet bildirimleri her zaman gönderilir
+    'meydan_okuma': 0,   # Meydan okuma/rövanş her zaman gönderilir
+    'arkadas': 0,        # Arkadaşlık istekleri her zaman gönderilir
 }
 
 

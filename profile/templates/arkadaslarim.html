@@ -267,16 +267,16 @@
     .btn-profil { display: block; width: 100%; padding: 12px; background: linear-gradient(135deg, #4ECDC4, #44A08D); border: none; border-radius: 12px; color: white !important; -webkit-text-fill-color: white !important; font-weight: 700; text-align: center; text-decoration: none; transition: all 0.3s; }
     .btn-profil:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(78,205,196,0.4); }
 
-    /* DROPDOWN */
-    .dropdown { position: relative; }
-    .dropdown-toggle { background: var(--bg-secondary); border: none; color: var(--text-primary); width: 35px; height: 35px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; transition: all 0.3s; }
-    .dropdown-toggle:hover { background: var(--card-border); transform: rotate(90deg); }
-    .dropdown-menu { display: none; position: absolute; top: 40px; right: 0; background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 12px; padding: 8px; min-width: 180px; box-shadow: 0 10px 30px var(--card-shadow); z-index: 100; }
-    .dropdown:hover .dropdown-menu { display: block; }
-    .dropdown-menu a { display: flex; align-items: center; gap: 10px; padding: 10px 15px; color: var(--text-primary); text-decoration: none; border-radius: 8px; transition: all 0.3s; font-weight: 600; font-size: 0.9rem; }
-    .dropdown-menu a:hover { background: var(--bg-secondary); }
-    .dropdown-menu a.danger { color: #FF6B6B; }
-    .dropdown-menu a.danger:hover { background: rgba(255,107,107,0.1); }
+    /* DROPDOWN (scoped to arkadas cards only) */
+    .arkadas-card .dropdown { position: relative; }
+    .arkadas-card .dropdown-toggle { background: var(--bg-secondary); border: none; color: var(--text-primary); width: 35px; height: 35px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; transition: all 0.3s; }
+    .arkadas-card .dropdown-toggle:hover { background: var(--card-border); transform: rotate(90deg); }
+    .arkadas-card .dropdown-menu { display: none; position: absolute; top: 40px; right: 0; background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 12px; padding: 8px; min-width: 180px; box-shadow: 0 10px 30px var(--card-shadow); z-index: 100; }
+    .arkadas-card .dropdown:hover .dropdown-menu { display: block; }
+    .arkadas-card .dropdown-menu a { display: flex; align-items: center; gap: 10px; padding: 10px 15px; color: var(--text-primary); text-decoration: none; border-radius: 8px; transition: all 0.3s; font-weight: 600; font-size: 0.9rem; }
+    .arkadas-card .dropdown-menu a:hover { background: var(--bg-secondary); }
+    .arkadas-card .dropdown-menu a.danger { color: #FF6B6B; }
+    .arkadas-card .dropdown-menu a.danger:hover { background: rgba(255,107,107,0.1); }
 
     /* İSTEK KARTLARI */
     .istekler-grid { display: grid; gap: 15px; }
@@ -321,10 +321,10 @@
     [data-theme="dark"] .istek-info h3 { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; background: none !important; }
     [data-theme="dark"] .istek-info p { color: #a8b3cf !important; }
     [data-theme="dark"] .gonderilen-card { background: #1e2749 !important; border-color: #2d3454 !important; }
-    [data-theme="dark"] .dropdown-toggle { background: #2d3454 !important; color: #ffffff !important; }
-    [data-theme="dark"] .dropdown-menu { background: linear-gradient(145deg,#1e2749,#151b35) !important; border-color: #2d3454 !important; }
-    [data-theme="dark"] .dropdown-menu a { color: #e5e7eb !important; }
-    [data-theme="dark"] .dropdown-menu a:hover { background: #2d3454 !important; }
+    [data-theme="dark"] .arkadas-card .dropdown-toggle { background: #2d3454 !important; color: #ffffff !important; }
+    [data-theme="dark"] .arkadas-card .dropdown-menu { background: linear-gradient(145deg,#1e2749,#151b35) !important; border-color: #2d3454 !important; }
+    [data-theme="dark"] .arkadas-card .dropdown-menu a { color: #e5e7eb !important; }
+    [data-theme="dark"] .arkadas-card .dropdown-menu a:hover { background: #2d3454 !important; }
     [data-theme="dark"] .action-btn { background: rgba(255,255,255,0.08) !important; border-color: rgba(255,255,255,0.15) !important; color: #ffffff !important; }
     [data-theme="dark"] .action-btn:hover { background: rgba(255,255,255,0.15) !important; }
     [data-theme="dark"] .online-sayac { color: #10b981 !important; }

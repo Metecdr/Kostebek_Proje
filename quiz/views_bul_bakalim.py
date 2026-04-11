@@ -56,7 +56,7 @@ def bul_bakalim_basla(request):
         if ders == 'karisik_sayisal':
             sorular = list(
                 Soru.objects.filter(
-                    ders__in=['matematik', 'fizik', 'kimya', 'biyoloji'],
+                    ders__in=['fizik', 'kimya', 'biyoloji'],
                     bul_bakalimda_cikar=True,
                     sinav_tipi__iexact=sinav_tipi
                 ).only('id').values_list('id', flat=True)
@@ -74,7 +74,7 @@ def bul_bakalim_basla(request):
                 Soru.objects.filter(
                     bul_bakalimda_cikar=True,
                     sinav_tipi__iexact=sinav_tipi
-                ).only('id').values_list('id', flat=True)
+                ).exclude(ders='matematik').only('id').values_list('id', flat=True)
             )
         else:
             sorular = list(
