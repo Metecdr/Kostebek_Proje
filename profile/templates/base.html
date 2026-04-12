@@ -18,6 +18,11 @@
     <meta name="google-site-verification" content="{{ GOOGLE_SC_TOKEN }}" />
     {% endif %}
 
+    <!-- Google Adsense Doğrulama -->
+    {% if GOOGLE_ADSENSE_ACCOUNT %}
+    <meta name="google-adsense-account" content="ca-pub-2048768663669128">
+    {% endif %}
+
     <!-- Google Analytics GA4 -->
     {% if GOOGLE_ANALYTICS_ID %}
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ GOOGLE_ANALYTICS_ID }}"></script>
@@ -1923,10 +1928,6 @@
         }       
     </style>
     
-
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2048768663669128"
-     crossorigin="anonymous"></script>
-
     {% block extra_css %}{% endblock %}
 </head>
 <body>
