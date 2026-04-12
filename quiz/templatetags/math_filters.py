@@ -33,3 +33,11 @@ def add_custom(value, arg):
         return int(value) + int(arg)
     except (ValueError, TypeError):
         return 0
+
+@register.filter
+def chr_filter(value):
+    """Sayıyı karakter'e çevirir (65='A', 66='B', ...)"""
+    try:
+        return chr(int(value))
+    except (ValueError, TypeError):
+        return ''
