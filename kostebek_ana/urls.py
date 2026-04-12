@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.http import HttpResponse
-from django.views.generic import TemplateView
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from kostebek_ana.sitemaps import StatikSayfalarSitemap, AnaSayfaSitemap
@@ -17,11 +16,20 @@ sitemaps = {
     'ana': AnaSayfaSitemap,
 }
 
+def ads_txt(request):
+    return HttpResponse(
+        "google.com, pub-2048768663669128, DIRECT, f08c47fec0942fa0",
+        content_type="text/plain"
+    )
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Sitemap (Google Search Console için)
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+
+    # Google Adsense doğrulama için ads.txt
+    path('ads.txt', ads_txt, name='ads_txt'),
 
     # Profile (giris, cikis profil içinde)
     path('', include('profile.urls')),
@@ -34,12 +42,12 @@ urlpatterns = [
 
     # Robots.txt
     path(
-    "robots.txt",
-    lambda r: HttpResponse(
-        "User-agent: *\nAllow: /\n\nSitemap: https://kostebekyks.com/sitemap.xml\n",
-        content_type="text/plain",
+        "robots.txt",
+        lambda r: HttpResponse(
+            "User-agent: *\nAllow: /\n\nSitemap: https://kostebekyks.com/sitemap.xml\n",
+            content_type="text/plain",
+        ),
     ),
-),
 ]
 
 if settings.DEBUG:
