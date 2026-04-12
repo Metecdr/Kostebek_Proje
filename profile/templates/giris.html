@@ -18,7 +18,7 @@
                 <p>Hesabına giriş yap ve öğrenmeye devam et</p>
             </div>
 
-            <form method="post" class="auth-form" id="loginForm">
+            <form method="post" class="auth-form" id="loginForm" autocomplete="off">
                 {% csrf_token %}
                 
                 <div class="form-group">
@@ -48,7 +48,7 @@
                             name="password" 
                             placeholder="••••••••"
                             required
-                            autocomplete="current-password"
+                            autocomplete="new-password"
                         >
                         <button type="button" class="toggle-password" onclick="togglePassword()">
                             <i class="bi bi-eye-fill" id="eyeIcon"></i>

@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.core.cache import cache
 from django.db import IntegrityError
 from django.urls import reverse
-from quiz.models import Soru, Cevap, BulBakalimOyun
+from quiz.models import Soru, Cevap, Konu, BulBakalimOyun
 from profile.models import OyunModuIstatistik
 from profile.rozet_kontrol import rozet_kontrol_yap
 from profile.xp_helper import soru_cozuldu_xp, bul_bakalim_tamamlandi_xp
@@ -16,6 +16,26 @@ import random
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+@login_required
+def bul_bakalim_konular(request):
+    """Ders'e göre konuları ve soru sayısını döndür (AJAX)"""
+    ders = request.GET.get('ders', '').strip()
+    sinav_tipi = request.GET.get('sinav_tipi', '').strip()
+    if not ders:
+        return JsonResponse({'konular': []})
+
+    konular = Konu.objects.filter(ders__iexact=ders).order_by('isim')
+    sonuc = []
+    for konu in konular:
+        qs = Soru.objects.filter(konu=konu, bul_bakalimda_cikar=True)
+        if sinav_tipi:
+            qs = qs.filter(sinav_tipi__iexact=sinav_tipi)
+        sayi = qs.count()
+        if sayi >= 5:
+            sonuc.append({'id': konu.id, 'isim': konu.isim, 'soru_sayisi': sayi})
+    return JsonResponse({'konular': sonuc})
 
 
 @login_required
@@ -40,6 +60,7 @@ def bul_bakalim_ders_secimi(request):
 @login_required
 def bul_bakalim_basla(request):
     ders = request.GET.get('ders', '').strip()
+    konu_id = request.GET.get('konu_id', '').strip()
     sinav_tipi = request.GET.get('sinav_tipi') or request.session.get('bulbakalim_sinav_tipi', 'TYT')
     sinav_tipi = sinav_tipi.upper()
 
@@ -47,9 +68,9 @@ def bul_bakalim_basla(request):
         messages.error(request, 'Lütfen bir ders seçin!')
         return redirect('bul_bakalim_ders_secimi')
 
-    logger.info(f"Bul Bakalım başlatılıyor: Kullanıcı={request.user.username}, Ders={ders}, Sınav Tipi={sinav_tipi}")
+    logger.info(f"Bul Bakalım başlatılıyor: Kullanıcı={request.user.username}, Ders={ders}, Konu={konu_id}, Sınav Tipi={sinav_tipi}")
 
-    cache_key = f'bulbakalim_sorular_{sinav_tipi}_{ders}'
+    cache_key = f'bulbakalim_sorular_{sinav_tipi}_{ders}_{konu_id}'
     sorular = cache.get(cache_key)
 
     if sorular is None:
@@ -77,22 +98,25 @@ def bul_bakalim_basla(request):
                 ).exclude(ders='matematik').only('id').values_list('id', flat=True)
             )
         else:
-            sorular = list(
-                Soru.objects.filter(
-                    ders__iexact=ders,
-                    bul_bakalimda_cikar=True,
-                    sinav_tipi__iexact=sinav_tipi
-                ).only('id').values_list('id', flat=True)
+            qs = Soru.objects.filter(
+                ders__iexact=ders,
+                bul_bakalimda_cikar=True,
+                sinav_tipi__iexact=sinav_tipi
             )
+            if konu_id:
+                qs = qs.filter(konu_id=konu_id)
+            sorular = list(qs.only('id').values_list('id', flat=True))
         cache.set(cache_key, sorular, 300)
         logger.debug(f"Sorular cache'lendi: Ders={ders}, Sınav Tipi={sinav_tipi}, Sayı={len(sorular)}")
 
-    if len(sorular) < 10:
-        messages.error(request, f'"{ders}" dersinde yeterli soru bulunamadı! En az 10 soru gerekli.')
+    min_soru = 5 if konu_id else 10
+    if len(sorular) < min_soru:
+        messages.error(request, f'"{ders}" dersinde yeterli soru bulunamadı! En az {min_soru} soru gerekli.')
         logger.warning(f"Yetersiz soru: Ders={ders}, Sınav Tipi={sinav_tipi}, Sayı={len(sorular)}")
         return redirect('bul_bakalim_ders_secimi')
 
-    secilen_sorular = random.sample(sorular, min(10, len(sorular)))
+    soru_adedi = min(10, len(sorular))
+    secilen_sorular = random.sample(sorular, soru_adedi)
     yeni_oyun = BulBakalimOyun.objects.create(
         oyuncu=request.user,
         sorular=secilen_sorular,

@@ -32,9 +32,10 @@ from quiz.views_soru_yonetim import (
 )
 from quiz.views_gunun_sorusu import gunun_sorusu_view, gunun_sorusu_cevapla
 from quiz.views_bul_bakalim import (
-    bul_bakalim_sinav_tipi_secimi, bul_bakalim_ders_secimi, bul_bakalim_basla, 
-    bul_bakalim_oyun, bul_bakalim_cevapla, bul_bakalim_sonuc
+    bul_bakalim_sinav_tipi_secimi, bul_bakalim_ders_secimi, bul_bakalim_basla,
+    bul_bakalim_oyun, bul_bakalim_cevapla, bul_bakalim_sonuc, bul_bakalim_konular
 )
+from quiz.views_yanlis_tekrar import yanlislarima_don, yanlis_tekrar_calis
 from quiz.views_turnuva import (
     turnuva_listesi, turnuva_detay, turnuva_katil, turnuva_ayril,
     turnuva_mac_baslat, turnuva_mac_sonuc
@@ -73,7 +74,12 @@ urlpatterns = [
     # ==================== BUL BAKALIM ====================
     path('bul-bakalim/sinav-tipi/', bul_bakalim_sinav_tipi_secimi, name='bul_bakalim_sinav_tipi_secimi'),
     path('bul-bakalim/ders-secimi/', bul_bakalim_ders_secimi, name='bul_bakalim_ders_secimi'),
+    path('bul-bakalim/konular/', bul_bakalim_konular, name='bul_bakalim_konular'),
     path('bul-bakalim/basla/', bul_bakalim_basla, name='bul_bakalim_basla'),
+
+    # ==================== YANLIŞLARIMA DÖN ====================
+    path('yanlislarima-don/', yanlislarima_don, name='yanlislarima_don'),
+    path('yanlis-tekrar/', yanlis_tekrar_calis, name='yanlis_tekrar_calis'),
     path('bul-bakalim/<uuid:oyun_id>/', bul_bakalim_oyun, name='bul_bakalim_oyun'),
     path('bul-bakalim/<uuid:oyun_id>/cevapla/', bul_bakalim_cevapla, name='bul_bakalim_cevapla'),
     path('bul-bakalim/<uuid:oyun_id>/sonuc/', bul_bakalim_sonuc, name='bul_bakalim_sonuc'),
