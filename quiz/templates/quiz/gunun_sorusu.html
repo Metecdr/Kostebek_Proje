@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static math_filters %}
 
 {% block title %}Günün Sorusu - Köstebek YKS{% endblock %}
 
@@ -126,7 +126,7 @@
         <div class="mt-4">
           {% for cevap in cevaplar %}
           <div class="sik-btn {% if cevap.dogru_mu %}dogru{% elif kullanici_cevabi.secilen_cevap_id == cevap.id %}yanlis{% endif %}" style="cursor:default;">
-            <span class="harf">{{ forloop.counter|add:64|chr }}</span>
+            <span class="harf">{{ forloop.counter|add:64|chr_filter }}</span>
             <span>{{ cevap.metin }}</span>
             {% if cevap.dogru_mu %}<span class="ms-auto text-success fw-bold">✓</span>{% endif %}
           </div>
@@ -151,7 +151,7 @@
             {% csrf_token %}
             {% for cevap in cevaplar %}
             <button type="button" class="sik-btn" onclick="cevapla({{ cevap.id }}, this)">
-              <span class="harf">{{ forloop.counter|add:64|chr }}</span>
+              <span class="harf">{{ forloop.counter|add:64|chr_filter }}</span>
               <span>{{ cevap.metin }}</span>
             </button>
             {% endfor %}
