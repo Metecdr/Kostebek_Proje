@@ -32,7 +32,7 @@
         <div class="row g-3 mb-3">
           <div class="col-md-4">
             <label class="form-label fw-semibold">Ders <span class="text-danger">*</span></label>
-            <select name="ders" class="form-select" required>
+            <select name="ders" class="form-select" required id="dersSelect">
               {% for deger, isim in ders_secenekleri %}
               <option value="{{ deger }}" {% if soru.ders == deger %}selected{% endif %}>{{ isim }}</option>
               {% endfor %}
@@ -47,11 +47,9 @@
             </select>
           </div>
           <div class="col-md-4">
-            <label class="form-label fw-semibold">Konu</label>
-            <select name="konu_id" class="form-select">
-              {% for konu in konular %}
-              <option value="{{ konu.id }}" {% if soru.konu_id == konu.id %}selected{% endif %}>{{ konu.isim }}</option>
-              {% endfor %}
+            <label class="form-label fw-semibold">Konu <small class="text-muted">(ders seçince gelir)</small></label>
+            <select name="konu_id" class="form-select" id="konuSelect">
+              <option value="">— Konu seç —</option>
             </select>
           </div>
         </div>
@@ -164,5 +162,33 @@ document.getElementById('dogruCevap').addEventListener('change', function() {
             : 'linear-gradient(135deg,#667eea,#764ba2)';
     });
 });
+
+// Ders seçilince konuları dinamik yükle
+const dersSelect = document.getElementById('dersSelect');
+const konuSelect = document.getElementById('konuSelect');
+const mevcutKonuId = '{{ soru.konu_id }}';
+
+function konulariYukle(ders, secilenKonuId) {
+    if (!ders) {
+        konuSelect.innerHTML = '<option value="">— Önce ders seçin —</option>';
+        return;
+    }
+    fetch(`/soru-yonetim/konular-by-ders/?ders=${ders}`)
+        .then(r => r.json())
+        .then(data => {
+            konuSelect.innerHTML = '<option value="">— Konu seç —</option>';
+            data.konular.forEach(k => {
+                const opt = document.createElement('option');
+                opt.value = k.id;
+                opt.textContent = k.isim;
+                if (secilenKonuId && String(k.id) === String(secilenKonuId)) opt.selected = true;
+                konuSelect.appendChild(opt);
+            });
+        });
+}
+
+dersSelect.addEventListener('change', () => konulariYukle(dersSelect.value, null));
+// Sayfa açıldığında mevcut dersin konularını ve seçili konuyu yükle
+if (dersSelect.value) konulariYukle(dersSelect.value, mevcutKonuId);
 </script>
 {% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Günün Sorusu Yönetimi - Köstebek{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:860px;">
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <a href="{% url 'soru_yonetim_anasayfa' %}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <h3 class="mb-0 fw-bold">☀️ Günün Sorusu Yönetimi</h3>
+    <a href="{% url 'gunun_sorusu' %}" class="btn btn-outline-primary btn-sm ms-auto" target="_blank">
+      <i class="bi bi-eye"></i> Kullanıcı Görünümü
+    </a>
+  </div>
+
+  {% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show">
+    {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <!-- Bugünkü soru -->
+  <div class="card mb-4" style="border-radius:14px;">
+    <div class="card-header fw-semibold" style="border-radius:14px 14px 0 0; background:linear-gradient(135deg,#f59e0b,#d97706); color:white;">
+      📅 Bugünkü Soru
+    </div>
+    <div class="card-body">
+      {% if bugunun_sorusu %}
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <span class="badge bg-success mb-2">✅ Ayarlandı</span>
+          <p class="mb-1"><strong>Soru #{{ bugunun_sorusu.soru.id }}:</strong> {{ bugunun_sorusu.soru.metin|truncatechars:120 }}</p>
+          <small class="text-muted">Bonus XP: {{ bugunun_sorusu.bonus_xp }} | Ders: {{ bugunun_sorusu.soru.ders }}</small>
+        </div>
+      </div>
+      {% else %}
+      <div class="text-muted">Bugün için günün sorusu henüz seçilmedi.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Soru seç -->
+  <div class="card" style="border-radius:14px;">
+    <div class="card-header fw-semibold" style="border-radius:14px 14px 0 0; background:linear-gradient(135deg,#667eea,#764ba2); color:white;">
+      🔍 Bugün için Soru Seç
+    </div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="row g-3 mb-3">
+          <div class="col-md-8">
+            <label class="form-label fw-semibold">Soru ID</label>
+            <input type="number" name="soru_id" class="form-control" placeholder="Soru ID gir..." required>
+            <small class="text-muted">Aşağıdaki listeden ID'yi kopyalayabilirsin.</small>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Bonus XP</label>
+            <input type="number" name="bonus_xp" class="form-control" value="15" min="5" max="50">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-warning fw-bold">
+          <i class="bi bi-sun-fill"></i> Günün Sorusunu Ayarla
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Son sorular -->
+  <div class="mt-4">
+    <h6 class="fw-semibold mb-3">Son Eklenen Sorular</h6>
+    <div class="table-responsive">
+      <table class="table table-sm table-hover">
+        <thead><tr><th>#</th><th>Ders</th><th>Metin</th><th></th></tr></thead>
+        <tbody>
+          {% for soru in son_sorular %}
+          <tr>
+            <td><code>{{ soru.id }}</code></td>
+            <td><span class="badge bg-secondary">{{ soru.ders }}</span></td>
+            <td style="max-width:400px;">{{ soru.metin|truncatechars:80 }}</td>
+            <td>
+              <button class="btn btn-xs btn-outline-warning" style="font-size:0.75rem;padding:2px 8px;"
+                onclick="document.querySelector('[name=soru_id]').value='{{ soru.id }}'">Seç</button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

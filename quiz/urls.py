@@ -24,7 +24,13 @@ from quiz.views_soru_yonetim import (
     soru_duzenle,
     soru_sil,
     toplu_metin_ekle,
+    konular_by_ders,
+    gunun_sorusu_yonetim,
+    soru_bildir,
+    soru_bildirimleri_listesi,
+    soru_bildirim_incele,
 )
+from quiz.views_gunun_sorusu import gunun_sorusu_view, gunun_sorusu_cevapla
 from quiz.views_bul_bakalim import (
     bul_bakalim_sinav_tipi_secimi, bul_bakalim_ders_secimi, bul_bakalim_basla, 
     bul_bakalim_oyun, bul_bakalim_cevapla, bul_bakalim_sonuc
@@ -90,12 +96,23 @@ urlpatterns = [
     path('turnuva/mac/<uuid:mac_id>/bekleme/', views_turnuva.turnuva_mac_bekleme, name='turnuva_mac_bekleme'),
     path('turnuva/mac/<uuid:mac_id>/sonuc/', views_turnuva.turnuva_mac_sonuc, name='turnuva_mac_sonuc'),
 
+    # ==================== GÜNÜN SORUSU ====================
+    path('gunun-sorusu/', gunun_sorusu_view, name='gunun_sorusu'),
+    path('gunun-sorusu/cevapla/', gunun_sorusu_cevapla, name='gunun_sorusu_cevapla'),
+
     # ==================== SORU YÖNETİM PANELİ ====================
     path('soru-yonetim/', soru_yonetim_anasayfa, name='soru_yonetim_anasayfa'),
     path('soru-yonetim/ekle/', soru_ekle, name='soru_ekle'),
     path('soru-yonetim/duzenle/<int:soru_id>/', soru_duzenle, name='soru_duzenle'),
     path('soru-yonetim/sil/<int:soru_id>/', soru_sil, name='soru_sil'),
     path('soru-yonetim/toplu-ekle/', toplu_metin_ekle, name='toplu_metin_ekle'),
+    path('soru-yonetim/konular-by-ders/', konular_by_ders, name='konular_by_ders'),
+    path('soru-yonetim/gunun-sorusu/', gunun_sorusu_yonetim, name='gunun_sorusu_yonetim'),
+    path('soru-yonetim/bildirimler/', soru_bildirimleri_listesi, name='soru_bildirimleri_listesi'),
+    path('soru-yonetim/bildirimler/<int:bildirim_id>/incele/', soru_bildirim_incele, name='soru_bildirim_incele'),
+
+    # ==================== SORU BİLDİR ====================
+    path('soru/<int:soru_id>/bildir/', soru_bildir, name='soru_bildir'),
 
     # ==================== RÖVANŞ ====================
     path('revans/gonder/<int:kullanici_id>/', revans_gonder, name='revans_gonder'),

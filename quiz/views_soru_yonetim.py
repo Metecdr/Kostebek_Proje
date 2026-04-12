@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
-from quiz.models import Soru, Cevap, Konu
+from quiz.models import Soru, Cevap, Konu, GununSorusu, GununSorusuCevap, SoruBildir
 
 logger = logging.getLogger(__name__)
 
@@ -447,3 +447,97 @@ def _parse_toplu_metin(metin_blok):
             })
 
     return sorular
+
+
+# ==================== AJAX: DERS'E GÖRE KONULAR ====================
+
+@superuser_required
+def konular_by_ders(request):
+    """AJAX - Seçilen derse göre konu listesi döner"""
+    ders = request.GET.get('ders', '')
+    if not ders:
+        return JsonResponse({'konular': []})
+    konular = list(
+        Konu.objects.filter(ders=ders).order_by('sira', 'isim').values('id', 'isim')
+    )
+    return JsonResponse({'konular': konular})
+
+
+# ==================== GÜNÜN SORUSU YÖNETİMİ ====================
+
+@superuser_required
+def gunun_sorusu_yonetim(request):
+    """Günün sorusunu ayarla (admin)"""
+    from datetime import date
+    bugunun_sorusu = GununSorusu.objects.filter(tarih=date.today()).first()
+
+    if request.method == 'POST':
+        soru_id = request.POST.get('soru_id')
+        bonus_xp = int(request.POST.get('bonus_xp', 15))
+        try:
+            soru = Soru.objects.get(id=soru_id)
+            GununSorusu.objects.update_or_create(
+                tarih=date.today(),
+                defaults={'soru': soru, 'bonus_xp': bonus_xp}
+            )
+            messages.success(request, f'✅ Günün sorusu güncellendi: #{soru.id}')
+        except Soru.DoesNotExist:
+            messages.error(request, '❌ Soru bulunamadı.')
+        return redirect('gunun_sorusu_yonetim')
+
+    son_sorular = Soru.objects.order_by('-id')[:50]
+    return render(request, 'quiz/soru_yonetim/gunun_sorusu_yonetim.html', {
+        'bugunun_sorusu': bugunun_sorusu,
+        'son_sorular': son_sorular,
+    })
+
+
+# ==================== SORU BİLDİR ====================
+
+@login_required
+def soru_bildir(request, soru_id):
+    """Hatalı/yanlış soru bildirimi"""
+    if request.method != 'POST':
+        return JsonResponse({'ok': False}, status=405)
+
+    soru = get_object_or_404(Soru, id=soru_id)
+    sebep_kodu = request.POST.get('sebep_kodu', 'diger')
+    aciklama = request.POST.get('aciklama', '').strip()[:300]
+
+    # Aynı kullanıcı aynı soruyu 24 saatte bir kez bildirebilir
+    from django.utils import timezone
+    from datetime import timedelta
+    son_bildirim = SoruBildir.objects.filter(
+        kullanici=request.user,
+        soru=soru,
+        tarih__gte=timezone.now() - timedelta(hours=24)
+    ).exists()
+
+    if son_bildirim:
+        return JsonResponse({'ok': False, 'hata': 'Bu soruyu zaten bildirdiniz.'})
+
+    SoruBildir.objects.create(
+        kullanici=request.user,
+        soru=soru,
+        sebep_kodu=sebep_kodu,
+        aciklama=aciklama,
+    )
+    return JsonResponse({'ok': True})
+
+
+@superuser_required
+def soru_bildirimleri_listesi(request):
+    """Admin - tüm bildirimleri listele"""
+    bildirimler = SoruBildir.objects.select_related('soru', 'kullanici').order_by('-tarih')
+    return render(request, 'quiz/soru_yonetim/soru_bildirimleri.html', {
+        'bildirimler': bildirimler,
+    })
+
+
+@superuser_required
+def soru_bildirim_incele(request, bildirim_id):
+    """Bildirimi incelendi olarak işaretle"""
+    bildirim = get_object_or_404(SoruBildir, id=bildirim_id)
+    bildirim.incelendi = True
+    bildirim.save()
+    return JsonResponse({'ok': True})

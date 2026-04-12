@@ -538,8 +538,12 @@
 
     <!-- QUESTION CARD -->
     <div class="question-card">
-        <div class="question-number">
-            <i class="bi bi-question-circle-fill"></i> SORU {{ soru_no }}
+        <div class="question-number d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-question-circle-fill"></i> SORU {{ soru_no }}</span>
+            <button class="btn btn-sm btn-outline-secondary" style="font-size:0.75rem;padding:2px 10px;border-radius:20px;"
+                onclick="soruBildir({{ aktif_soru.id }})" title="Hatalı soruyu bildir">
+                🚩 Bildir
+            </button>
         </div>
 
         <div class="question-text">
@@ -787,5 +791,58 @@ function showSonucModal(dogruMu, mesaj = '') {
 window.addEventListener('beforeunload', () => {
     if (timerInterval) clearInterval(timerInterval);
 });
+
+// ==================== SORU BİLDİR ====================
+function soruBildir(soruId) {
+    const sebepSecenekleri = [
+        ['yanlis_cevap', 'Yanlış cevap işaretlenmiş'],
+        ['hatali_soru', 'Soru hatalı/yanlış yazılmış'],
+        ['konu_yanlisi', 'Yanlış konuya atanmış'],
+        ['diger', 'Diğer'],
+    ];
+    const secimleri = sebepSecenekleri.map((s, i) =>
+        `<div class="form-check mb-1">
+          <input class="form-check-input" type="radio" name="bildir_sebep" id="sebep${i}" value="${s[0]}" ${i===0?'checked':''}>
+          <label class="form-check-label" for="sebep${i}">${s[1]}</label>
+        </div>`
+    ).join('');
+
+    const html = `
+    <div class="modal fade" id="bildirModal" tabindex="-1">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="border-radius:16px;">
+          <div class="modal-header border-0 pb-0">
+            <h6 class="modal-title fw-bold">🚩 Soruyu Bildir</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            ${secimleri}
+            <textarea class="form-control mt-2" id="bildirAciklama" rows="2" placeholder="Ek açıklama (isteğe bağlı)"></textarea>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">İptal</button>
+            <button type="button" class="btn btn-sm btn-danger" onclick="bildirGonder(${soruId})">Bildir</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+    document.getElementById('bildirModalContainer').innerHTML = html;
+    new bootstrap.Modal(document.getElementById('bildirModal')).show();
+}
+
+function bildirGonder(soruId) {
+    const sebep = document.querySelector('input[name="bildir_sebep"]:checked')?.value || 'diger';
+    const aciklama = document.getElementById('bildirAciklama').value;
+    fetch(`/soru/${soruId}/bildir/`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': '{{ csrf_token }}'},
+        body: `sebep_kodu=${sebep}&aciklama=${encodeURIComponent(aciklama)}`
+    }).then(r => r.json()).then(d => {
+        bootstrap.Modal.getInstance(document.getElementById('bildirModal')).hide();
+        if (d.ok) alert('✅ Bildiriminiz alındı, teşekkürler!');
+        else alert(d.hata || 'Bir hata oluştu.');
+    });
+}
 </script>
+<div id="bildirModalContainer"></div>
 {% endblock %}

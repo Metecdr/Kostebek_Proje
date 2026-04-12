@@ -832,6 +832,29 @@
         <!-- SAĞ KOLON -->
         <div class="sag-widget-stack">
 
+            <!-- ZAYIF KONULAR -->
+            {% if zayif_konular and goruntulenen_kullanici == request.user %}
+            <div class="sag-widget animate-on-scroll" style="border-left:4px solid #ef4444;">
+                <div class="sag-widget-baslik" style="color:#ef4444;">⚠️ Zayıf Konular</div>
+                <div style="font-size:0.8rem;color:#6b7280;margin-bottom:10px;">3+ soru çözdüğün ve %50 altında kaldığın konular</div>
+                {% for konu in zayif_konular %}
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.06);">
+                    <div>
+                        <div style="font-size:0.87rem;font-weight:600;">{{ konu.konu }}</div>
+                        <div style="font-size:0.75rem;color:#9ca3af;text-transform:capitalize;">{{ konu.ders }}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:0.85rem;font-weight:700;color:#ef4444;">%{{ konu.basari_orani|floatformat:0 }}</div>
+                        <div style="font-size:0.72rem;color:#9ca3af;">{{ konu.dogru_sayisi }}/{{ konu.toplam_soru }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+                <a href="{% url 'konu_istatistik' %}" style="display:block;text-align:center;margin-top:10px;font-size:0.8rem;color:#667eea;font-weight:600;text-decoration:none;">
+                    Tüm konu istatistiklerini gör →
+                </a>
+            </div>
+            {% endif %}
+
             <!-- OYUN İSTATİSTİKLERİ -->
             <div class="sag-widget animate-on-scroll">
                 <div class="sag-widget-baslik">🎮 Oyun Özeti</div>

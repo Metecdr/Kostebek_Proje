@@ -2,7 +2,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, date
 
 
 # ==================== SINAV SECIMI ====================
@@ -891,3 +891,64 @@ class MeydanOkuma(models.Model):
 
     def __str__(self):
         return f"{self.gonderen.username} → {self.alan.username} ({self.get_durum_display()})"
+
+
+# ==================== GÜNÜN SORUSU ====================
+
+class GununSorusu(models.Model):
+    """Her gün için öne çıkarılan soru"""
+    soru = models.ForeignKey(Soru, on_delete=models.CASCADE, verbose_name='Soru')
+    tarih = models.DateField(unique=True, default=date.today, verbose_name='Tarih', db_index=True)
+    bonus_xp = models.IntegerField(default=15, verbose_name='Bonus XP')
+
+    class Meta:
+        verbose_name = 'Günün Sorusu'
+        verbose_name_plural = 'Günün Soruları'
+        ordering = ['-tarih']
+
+    def __str__(self):
+        return f"Günün Sorusu - {self.tarih}"
+
+
+class GununSorusuCevap(models.Model):
+    """Kullanıcının günün sorusuna verdiği cevap"""
+    kullanici = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
+    gunun_sorusu = models.ForeignKey(GununSorusu, on_delete=models.CASCADE, related_name='cevaplar')
+    secilen_cevap = models.ForeignKey('Cevap', on_delete=models.CASCADE, null=True, blank=True)
+    dogru_mu = models.BooleanField()
+    tarih = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Günün Sorusu Cevabı'
+        verbose_name_plural = 'Günün Sorusu Cevapları'
+        unique_together = ['kullanici', 'gunun_sorusu']
+
+    def __str__(self):
+        return f"{self.kullanici.username} - {self.gunun_sorusu.tarih}"
+
+
+# ==================== SORU BİLDİR ====================
+
+class SoruBildir(models.Model):
+    """Hatalı/yanlış soru bildirimleri"""
+    SEBEP_SECENEKLERI = [
+        ('yanlis_cevap', 'Yanlış cevap işaretlenmiş'),
+        ('hatali_soru', 'Soru hatalı/yanlış yazılmış'),
+        ('konu_yanlisi', 'Yanlış konuya atanmış'),
+        ('diger', 'Diğer'),
+    ]
+
+    kullanici = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
+    soru = models.ForeignKey(Soru, on_delete=models.CASCADE, related_name='bildirimler', db_index=True)
+    sebep_kodu = models.CharField(max_length=20, choices=SEBEP_SECENEKLERI, default='diger')
+    aciklama = models.CharField(max_length=300, blank=True)
+    tarih = models.DateTimeField(auto_now_add=True, db_index=True)
+    incelendi = models.BooleanField(default=False, db_index=True)
+
+    class Meta:
+        verbose_name = 'Soru Bildirimi'
+        verbose_name_plural = 'Soru Bildirimleri'
+        ordering = ['-tarih']
+
+    def __str__(self):
+        return f"#{self.soru_id} - {self.kullanici.username} - {self.get_sebep_kodu_display()}"
