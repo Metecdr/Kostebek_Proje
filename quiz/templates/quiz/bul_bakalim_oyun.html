@@ -838,21 +838,27 @@ function bildirGonder(soruId) {
         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': '{{ csrf_token }}'},
         body: `sebep_kodu=${sebep}&aciklama=${encodeURIComponent(aciklama)}`
     }).then(r => r.json()).then(d => {
-        bootstrap.Modal.getInstance(document.getElementById('bildirModal')).hide();
+        const bildirModalEl = document.getElementById('bildirModal');
+        const modalInst = bootstrap.Modal.getInstance(bildirModalEl);
         if (d.ok) {
-            document.getElementById('bildirModalContainer').innerHTML += `
-            <div class="modal fade" id="bildirTesekkurModal" tabindex="-1">
-              <div class="modal-dialog modal-sm modal-dialog-centered">
-                <div class="modal-content text-center" style="border-radius:20px;padding:24px;">
-                  <div style="font-size:3rem;">✅</div>
-                  <h6 class="fw-bold mt-2">Teşekkürler!</h6>
-                  <p class="text-muted small mb-3">Sitemizi geliştirmemize yardımcı olduğunuz için teşekkürler!</p>
-                  <button class="btn btn-success btn-sm px-4" data-bs-dismiss="modal">Tamam</button>
-                </div>
-              </div>
-            </div>`;
-            new bootstrap.Modal(document.getElementById('bildirTesekkurModal')).show();
+            bildirModalEl.addEventListener('hidden.bs.modal', function onHidden() {
+                bildirModalEl.removeEventListener('hidden.bs.modal', onHidden);
+                document.getElementById('bildirModalContainer').innerHTML += `
+                <div class="modal fade" id="bildirTesekkurModal" tabindex="-1">
+                  <div class="modal-dialog modal-sm modal-dialog-centered">
+                    <div class="modal-content text-center" style="border-radius:20px;padding:24px;">
+                      <div style="font-size:3rem;">✅</div>
+                      <h6 class="fw-bold mt-2">Teşekkürler!</h6>
+                      <p class="text-muted small mb-3">Sitemizi geliştirmemize yardımcı olduğunuz için teşekkürler!</p>
+                      <button class="btn btn-success btn-sm px-4" data-bs-dismiss="modal">Tamam</button>
+                    </div>
+                  </div>
+                </div>`;
+                new bootstrap.Modal(document.getElementById('bildirTesekkurModal')).show();
+            });
+            modalInst.hide();
         } else {
+            modalInst.hide();
             alert(d.hata || 'Bir hata oluştu.');
         }
     });
