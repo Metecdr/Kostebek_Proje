@@ -48,7 +48,8 @@ def karsilasma_ders_secimi(request):
             ('tarih', 'Tarih', '🏛️'),
             ('cografya', 'Coğrafya', '🌍'),
             ('felsefe', 'Felsefe', '💭'),
-            ('karisik', 'Karışık', '🎲')
+            ('karisik_sayisal', 'Karışık Sayısal', '🔢🎲'),
+            ('karisik_sozel', 'Karışık Sözel', '📚🎲'),
         ]
     else:
         ders_secenekleri = [
@@ -60,7 +61,8 @@ def karsilasma_ders_secimi(request):
             ('tarih', 'Tarih', '🏛️'),
             ('cografya', 'Coğrafya', '🌍'),
             ('felsefe', 'Felsefe', '💭'),
-            ('karisik', 'Karışık', '🎲')
+            ('karisik_sayisal', 'Karışık Sayısal', '🔢🎲'),
+            ('karisik_sozel', 'Karışık Sözel', '📚🎲'),
         ]
 
     if request.method == 'POST':
@@ -787,7 +789,8 @@ def karsilasma_oda_kur(request):
             ('tarih', 'Tarih', '🏛️'),
             ('cografya', 'Coğrafya', '🌍'),
             ('felsefe', 'Felsefe', '💭'),
-            ('karisik', 'Karışık', '🎲')
+            ('karisik_sayisal', 'Karışık Sayısal', '🔢🎲'),
+            ('karisik_sozel', 'Karışık Sözel', '📚🎲'),
         ]
     else:
         ders_secenekleri = [
@@ -799,7 +802,8 @@ def karsilasma_oda_kur(request):
             ('tarih', 'Tarih', '🏛️'),
             ('cografya', 'Coğrafya', '🌍'),
             ('felsefe', 'Felsefe', '💭'),
-            ('karisik', 'Karışık', '🎲')
+            ('karisik_sayisal', 'Karışık Sayısal', '🔢🎲'),
+            ('karisik_sozel', 'Karışık Sözel', '📚🎲'),
         ]
 
     if request.method == 'POST':
