@@ -40,7 +40,6 @@ def karsilasma_ders_secimi(request):
 
     if sinav_tipi == 'TYT':
         ders_secenekleri = [
-            ('matematik', 'Matematik', '🔢'),
             ('turkce', 'Türkçe', '📚'),
             ('fizik', 'Fizik', '⚛️'),
             ('kimya', 'Kimya', '🧪'),
@@ -48,11 +47,11 @@ def karsilasma_ders_secimi(request):
             ('tarih', 'Tarih', '🏛️'),
             ('cografya', 'Coğrafya', '🌍'),
             ('felsefe', 'Felsefe', '💭'),
-            ('karisik', 'Karışık', '🎲')
+            ('karisik_sayisal', 'Karışık Sayısal', '🔢🎲'),
+            ('karisik_sozel', 'Karışık Sözel', '📚🎲'),
         ]
     else:
         ders_secenekleri = [
-            ('matematik', 'Matematik', '🔢'),
             ('fizik', 'Fizik', '⚛️'),
             ('kimya', 'Kimya', '🧪'),
             ('biyoloji', 'Biyoloji', '🧬'),
@@ -60,7 +59,9 @@ def karsilasma_ders_secimi(request):
             ('tarih', 'Tarih', '🏛️'),
             ('cografya', 'Coğrafya', '🌍'),
             ('felsefe', 'Felsefe', '💭'),
-            ('karisik', 'Karışık', '🎲')
+            ('karisik_sayisal', 'Karışık Sayısal (F+K+B)', '🔢🎲'),
+            ('karisik_ea', 'Karışık EA (Ed+Tar+Coğ)', '📖🎲'),
+            ('karisik_sozel_ayt', 'Karışık Sözel (Din+Fel+Ed+Tar+Coğ)', '📚🎲'),
         ]
 
     if request.method == 'POST':
@@ -779,7 +780,6 @@ def karsilasma_oda_kur(request):
 
     if sinav_tipi == 'TYT':
         ders_secenekleri = [
-            ('matematik', 'Matematik', '🔢'),
             ('turkce', 'Türkçe', '📚'),
             ('fizik', 'Fizik', '⚛️'),
             ('kimya', 'Kimya', '🧪'),
@@ -787,11 +787,11 @@ def karsilasma_oda_kur(request):
             ('tarih', 'Tarih', '🏛️'),
             ('cografya', 'Coğrafya', '🌍'),
             ('felsefe', 'Felsefe', '💭'),
-            ('karisik', 'Karışık', '🎲')
+            ('karisik_sayisal', 'Karışık Sayısal', '🔢🎲'),
+            ('karisik_sozel', 'Karışık Sözel', '📚🎲'),
         ]
     else:
         ders_secenekleri = [
-            ('matematik', 'Matematik', '🔢'),
             ('fizik', 'Fizik', '⚛️'),
             ('kimya', 'Kimya', '🧪'),
             ('biyoloji', 'Biyoloji', '🧬'),
@@ -799,7 +799,9 @@ def karsilasma_oda_kur(request):
             ('tarih', 'Tarih', '🏛️'),
             ('cografya', 'Coğrafya', '🌍'),
             ('felsefe', 'Felsefe', '💭'),
-            ('karisik', 'Karışık', '🎲')
+            ('karisik_sayisal', 'Karışık Sayısal (F+K+B)', '🔢🎲'),
+            ('karisik_ea', 'Karışık EA (Ed+Tar+Coğ)', '📖🎲'),
+            ('karisik_sozel_ayt', 'Karışık Sözel (Din+Fel+Ed+Tar+Coğ)', '📚🎲'),
         ]
 
     if request.method == 'POST':

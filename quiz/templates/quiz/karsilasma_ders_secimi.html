@@ -288,6 +288,15 @@
         z-index: 1;
     }
 
+    .ders-sub {
+        position: relative;
+        z-index: 1;
+        font-size: 0.7rem;
+        opacity: 0.85;
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
     /* DERS COLORS */
     .ders-edebiyat {
         background: linear-gradient(135deg, #a8edea, #fed6e3);
@@ -338,6 +347,26 @@
         background: linear-gradient(135deg, #fa709a, #fee140);
         color: white;
         grid-column: span 2;
+    }
+
+    .ders-karisik-sayisal {
+        background: linear-gradient(135deg, #fa709a, #fee140);
+        color: white !important;
+    }
+
+    .ders-karisik-sozel {
+        background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+        color: white !important;
+    }
+
+    .ders-karisik-ea {
+        background: linear-gradient(135deg, #f6d365, #fda085);
+        color: white !important;
+    }
+
+    .ders-karisik-sozel-ayt {
+        background: linear-gradient(135deg, #89f7fe, #66a6ff);
+        color: white !important;
     }
 
     /* BACK BUTTON */
@@ -490,9 +519,20 @@
                             <span class="ders-icon">⚛️</span>
                             <span class="ders-name">Fizik</span>
                         </button>
-                        <button type="submit" name="selected_ders" value="karisik" class="ders-btn ders-karisik">
-                            <span class="ders-icon">🎲</span>
-                            <span class="ders-name">Karışık</span>
+                        <button type="submit" name="selected_ders" value="karisik_sayisal" class="ders-btn ders-karisik-sayisal">
+                            <span class="ders-icon">🔢🎲</span>
+                            <span class="ders-name">Karışık Sayısal</span>
+                            <span class="ders-sub">Fizik+Kimya+Biyoloji</span>
+                        </button>
+                        <button type="submit" name="selected_ders" value="karisik_ea" class="ders-btn ders-karisik-ea">
+                            <span class="ders-icon">📖🎲</span>
+                            <span class="ders-name">Karışık EA</span>
+                            <span class="ders-sub">Edebiyat+Tarih+Coğrafya</span>
+                        </button>
+                        <button type="submit" name="selected_ders" value="karisik_sozel_ayt" class="ders-btn ders-karisik-sozel-ayt">
+                            <span class="ders-icon">📚🎲</span>
+                            <span class="ders-name">Karışık Sözel</span>
+                            <span class="ders-sub">Din+Fel+Ed+Tar+Coğ</span>
                         </button>
                     {% else %}
                         <!-- TYT DERSLERI -->
@@ -524,9 +564,13 @@
                             <span class="ders-icon">💭</span>
                             <span class="ders-name">Felsefe</span>
                         </button>
-                        <button type="submit" name="selected_ders" value="karisik" class="ders-btn ders-karisik">
-                            <span class="ders-icon">🎲</span>
-                            <span class="ders-name">Karışık</span>
+                        <button type="submit" name="selected_ders" value="karisik_sayisal" class="ders-btn ders-karisik-sayisal">
+                            <span class="ders-icon">🔢🎲</span>
+                            <span class="ders-name">Karışık Sayısal</span>
+                        </button>
+                        <button type="submit" name="selected_ders" value="karisik_sozel" class="ders-btn ders-karisik-sozel">
+                            <span class="ders-icon">📚🎲</span>
+                            <span class="ders-name">Karışık Sözel</span>
                         </button>
                     {% endif %}
                 </div>
@@ -548,7 +592,7 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        showToast('Karşılaşmaya hoş geldin!  ⚔️', 'info');
+        // sayfa açılış toastı kaldırıldı
     });
 </script>
 {% endblock %}

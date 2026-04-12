@@ -20,6 +20,26 @@ def get_random_soru_by_ders(ders='karisik'):
     if soru_ids is None:
         if ders == 'karisik':
             soru_ids = list(Soru.objects.filter(karsilasmada_cikar=True).exclude(ders='matematik').values_list('id', flat=True))
+        elif ders == 'karisik_sayisal':
+            soru_ids = list(Soru.objects.filter(
+                ders__in=['fizik', 'kimya', 'biyoloji'],
+                karsilasmada_cikar=True
+            ).values_list('id', flat=True))
+        elif ders == 'karisik_sozel':
+            soru_ids = list(Soru.objects.filter(
+                ders__in=['edebiyat', 'tarih', 'cografya', 'felsefe'],
+                karsilasmada_cikar=True
+            ).values_list('id', flat=True))
+        elif ders == 'karisik_ea':
+            soru_ids = list(Soru.objects.filter(
+                ders__in=['edebiyat', 'tarih', 'cografya'],
+                karsilasmada_cikar=True
+            ).values_list('id', flat=True))
+        elif ders == 'karisik_sozel_ayt':
+            soru_ids = list(Soru.objects.filter(
+                ders__in=['din_kulturu', 'felsefe', 'edebiyat', 'tarih', 'cografya'],
+                karsilasmada_cikar=True
+            ).values_list('id', flat=True))
         else:
             soru_ids = list(Soru.objects.filter(ders=ders, karsilasmada_cikar=True).values_list('id', flat=True))
         cache.set(cache_key, soru_ids, 300)

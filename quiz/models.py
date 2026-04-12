@@ -249,10 +249,14 @@ class KarsilasmaOdasi(models.Model):
         ('cografya', 'Coğrafya'),
         ('felsefe', 'Felsefe'),
         ('biyoloji', 'Biyoloji'),
-        ('karisik', 'Karışık'),
         ('edebiyat', 'Edebiyat'),
+        ('karisik', 'Karışık'),
+        ('karisik_sayisal', 'Karışık Sayısal'),
+        ('karisik_sozel', 'Karışık Sözel'),
+        ('karisik_ea', 'Karışık EA'),
+        ('karisik_sozel_ayt', 'Karışık Sözel AYT'),
     ]
-    
+
     secilen_ders = models.CharField(
         max_length=20,
         choices=DERS_SECENEKLERI,
@@ -428,8 +432,13 @@ class BulBakalimOyun(models.Model):
         ('felsefe', 'Felsefe'),
         ('biyoloji', 'Biyoloji'),
         ('edebiyat', 'Edebiyat'),
+        ('karisik', 'Karışık'),
+        ('karisik_sayisal', 'Karışık Sayısal'),
+        ('karisik_sozel', 'Karışık Sözel'),
+        ('karisik_ea', 'Karışık EA'),
+        ('karisik_sozel_ayt', 'Karışık Sözel AYT'),
     ]
-    
+
     selected_ders = models.CharField(
         max_length=20,
         choices=DERS_SECENEKLERI,
