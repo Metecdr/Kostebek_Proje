@@ -332,6 +332,23 @@ def profil_view(request):
     # ==================== SON 7 GÜN STREAK ====================
     son_7_gun = _son_7_gun_hesapla()
 
+    # ==================== ZAYIF KONULAR ====================
+    zayif_konular = []
+    try:
+        from django.db.models import ExpressionWrapper, FloatField, F
+        zayif_konular = list(
+            KonuIstatistik.objects.filter(
+                profil=profil,
+                toplam_soru__gte=3,
+            ).extra(
+                select={'basari': '100.0 * dogru_sayisi / toplam_soru'}
+            ).extra(
+                where=['100.0 * dogru_sayisi / toplam_soru < 50']
+            ).order_by('dogru_sayisi')[:5]
+        )
+    except Exception:
+        zayif_konular = []
+
     # ==================== CONTEXT ====================
     context = {
         'goruntulenen_kullanici': goruntulenen_kullanici,
@@ -349,6 +366,7 @@ def profil_view(request):
         'bugun_tamamlanan': bugun_tamamlanan,
         'bugun_toplam': bugun_toplam,
         'gelen_meydan_sayisi': gelen_meydan_sayisi,
+        'zayif_konular': zayif_konular,
     }
 
     return render(request, 'profil.html', context)

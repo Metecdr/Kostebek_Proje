@@ -51,11 +51,9 @@
             </select>
           </div>
           <div class="col-md-4">
-            <label class="form-label fw-semibold">Konu (isteğe bağlı)</label>
-            <select name="konu_id" class="form-select">
-              {% for konu in konular %}
-              <option value="{{ konu.id }}" {% if post_data.konu_id == konu.id|stringformat:"s" %}selected{% endif %}>{{ konu.isim }}</option>
-              {% endfor %}
+            <label class="form-label fw-semibold">Konu <small class="text-muted">(ders seçince gelir)</small></label>
+            <select name="konu_id" class="form-select" id="konuSelect">
+              <option value="">— Önce ders seçin —</option>
             </select>
           </div>
         </div>
@@ -170,5 +168,34 @@ function updateCevapLabels() {
 }
 document.getElementById('dogruCevap').addEventListener('change', updateCevapLabels);
 updateCevapLabels();
+
+// Ders seçilince konuları dinamik yükle
+const dersSelect = document.getElementById('dersSelect');
+const konuSelect = document.getElementById('konuSelect');
+
+function konulariYukle(ders, secilenKonuId) {
+    if (!ders) {
+        konuSelect.innerHTML = '<option value="">— Önce ders seçin —</option>';
+        return;
+    }
+    konuSelect.innerHTML = '<option value="">Yükleniyor...</option>';
+    fetch(`/soru-yonetim/konular-by-ders/?ders=${ders}`)
+        .then(r => r.json())
+        .then(data => {
+            konuSelect.innerHTML = '<option value="">— Konu seç (isteğe bağlı) —</option>';
+            data.konular.forEach(k => {
+                const opt = document.createElement('option');
+                opt.value = k.id;
+                opt.textContent = k.isim;
+                if (secilenKonuId && String(k.id) === String(secilenKonuId)) opt.selected = true;
+                konuSelect.appendChild(opt);
+            });
+        });
+}
+
+dersSelect.addEventListener('change', () => konulariYukle(dersSelect.value, null));
+
+// Sayfa açıldığında seçili ders varsa konuları yükle
+if (dersSelect.value) konulariYukle(dersSelect.value, '{{ post_data.konu_id|default:"" }}');
 </script>
 {% endblock %}

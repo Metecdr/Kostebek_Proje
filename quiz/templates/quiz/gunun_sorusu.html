@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Günün Sorusu - Köstebek YKS{% endblock %}
+
+{% block extra_css %}
+<style>
+.gs-card {
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(102,126,234,0.25);
+    max-width: 760px;
+    margin: 0 auto;
+}
+.gs-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 28px 32px 20px;
+}
+.gs-body { background: white; padding: 32px; }
+[data-theme="dark"] .gs-body { background: #1a1f3a; color: #e0e0e0; }
+.sik-btn {
+    width: 100%;
+    text-align: left;
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    font-size: 0.97rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+[data-theme="dark"] .sik-btn { background: #242840; border-color: #3a3f5c; color: #e0e0e0; }
+.sik-btn:hover:not(:disabled) { border-color: #667eea; background: #f0f2ff; transform: translateX(4px); }
+[data-theme="dark"] .sik-btn:hover:not(:disabled) { background: #2d3454; }
+.sik-btn .harf {
+    min-width: 30px; height: 30px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+}
+.sik-btn.dogru { border-color: #10b981; background: #f0fdf4; }
+.sik-btn.yanlis { border-color: #ef4444; background: #fff5f5; }
+.sik-btn.dogru .harf { background: linear-gradient(135deg,#10b981,#059669); }
+.sik-btn.yanlis .harf { background: linear-gradient(135deg,#ef4444,#dc2626); }
+[data-theme="dark"] .sik-btn.dogru { background: #0a2e1a; border-color: #10b981; }
+[data-theme="dark"] .sik-btn.yanlis { background: #2e0a0a; border-color: #ef4444; }
+.aciklama-kutu {
+    background: #f0f9ff;
+    border-left: 4px solid #667eea;
+    border-radius: 0 12px 12px 0;
+    padding: 16px;
+    margin-top: 20px;
+    display: none;
+}
+[data-theme="dark"] .aciklama-kutu { background: #1a2540; }
+.xp-badge {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white; border-radius: 20px;
+    padding: 4px 14px; font-size: 0.85rem; font-weight: 700;
+}
+.zaten-cevaplandi {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border: 2px solid #10b981;
+    border-radius: 16px; padding: 20px;
+    text-align: center; margin-top: 16px;
+}
+[data-theme="dark"] .zaten-cevaplandi { background: #0a2e1a; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="text-center mb-4">
+    <h2 class="fw-bold">☀️ Günün Sorusu</h2>
+    <p class="text-muted">Her gün yeni bir soru — doğru cevapla <span class="xp-badge">+{{ gunun_sorusu.bonus_xp }} XP</span> kazan!</p>
+  </div>
+
+  {% if not gunun_sorusu %}
+    <div class="text-center py-5">
+      <div style="font-size:4rem;">📭</div>
+      <h4 class="mt-3 text-muted">Bugün için soru eklenmemiş.</h4>
+      <p class="text-muted">Yarın tekrar gel!</p>
+    </div>
+  {% else %}
+  <div class="gs-card">
+    <div class="gs-header">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <span class="badge bg-white bg-opacity-25 mb-2">
+            {{ gunun_sorusu.tarih|date:"d F Y" }}
+          </span>
+          {% if gunun_sorusu.soru.ders %}
+          <span class="badge bg-white bg-opacity-25 ms-1 mb-2 text-capitalize">
+            {{ gunun_sorusu.soru.ders }}
+          </span>
+          {% endif %}
+        </div>
+        <span class="xp-badge">+{{ gunun_sorusu.bonus_xp }} XP</span>
+      </div>
+      <p class="mb-0 fs-5 lh-base">{{ gunun_sorusu.soru.metin }}</p>
+    </div>
+
+    <div class="gs-body">
+      {% if kullanici_cevabi %}
+        <!-- Zaten cevaplandı -->
+        <div class="zaten-cevaplandi">
+          {% if kullanici_cevabi.dogru_mu %}
+            <div style="font-size:2.5rem;">🎉</div>
+            <h5 class="fw-bold text-success mt-2">Doğru cevapladın!</h5>
+            <p class="text-muted mb-0">+{{ gunun_sorusu.bonus_xp }} XP kazandın</p>
+          {% else %}
+            <div style="font-size:2.5rem;">😔</div>
+            <h5 class="fw-bold text-danger mt-2">Yanlış cevapladın</h5>
+            <p class="text-muted mb-0">Yarın tekrar dene!</p>
+          {% endif %}
+        </div>
+
+        <!-- Şıkları sonuçla göster -->
+        <div class="mt-4">
+          {% for cevap in cevaplar %}
+          <div class="sik-btn {% if cevap.dogru_mu %}dogru{% elif kullanici_cevabi.secilen_cevap_id == cevap.id %}yanlis{% endif %}" style="cursor:default;">
+            <span class="harf">{{ forloop.counter|add:64|chr }}</span>
+            <span>{{ cevap.metin }}</span>
+            {% if cevap.dogru_mu %}<span class="ms-auto text-success fw-bold">✓</span>{% endif %}
+          </div>
+          {% endfor %}
+        </div>
+
+        {% if gunun_sorusu.soru.detayli_aciklama %}
+        <div class="aciklama-kutu" style="display:block;">
+          <div class="fw-semibold mb-1">💡 Açıklama</div>
+          <div>{{ gunun_sorusu.soru.detayli_aciklama }}</div>
+        </div>
+        {% endif %}
+
+      {% else %}
+        <!-- Henüz cevaplamadı -->
+        {% if not request.user.is_authenticated %}
+          <div class="text-center py-3">
+            <p class="text-muted">Cevaplamak için <a href="{% url 'giris' %}">giriş yap</a>.</p>
+          </div>
+        {% else %}
+          <form id="gsForm">
+            {% csrf_token %}
+            {% for cevap in cevaplar %}
+            <button type="button" class="sik-btn" onclick="cevapla({{ cevap.id }}, this)">
+              <span class="harf">{{ forloop.counter|add:64|chr }}</span>
+              <span>{{ cevap.metin }}</span>
+            </button>
+            {% endfor %}
+          </form>
+
+          <div id="sonucAlani" style="display:none;"></div>
+          <div class="aciklama-kutu" id="aciklamaKutu">
+            {% if gunun_sorusu.soru.detayli_aciklama %}
+            <div class="fw-semibold mb-1">💡 Açıklama</div>
+            <div>{{ gunun_sorusu.soru.detayli_aciklama }}</div>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      <!-- İstatistikler -->
+      <div class="mt-4 pt-3 border-top d-flex gap-4 text-muted small">
+        <span>👥 {{ toplam_cevaplayan }} kişi cevapladı</span>
+        {% if toplam_cevaplayan > 0 %}
+        <span>✅ %{{ dogru_oran }} doğru</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+function cevapla(cevapId, btn) {
+    // Tüm butonları devre dışı bırak
+    document.querySelectorAll('.sik-btn').forEach(b => b.disabled = true);
+
+    fetch("{% url 'gunun_sorusu_cevapla' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        body: `cevap_id=${cevapId}&gunun_sorusu_id={{ gunun_sorusu.id }}`
+    })
+    .then(r => r.json())
+    .then(data => {
+        document.querySelectorAll('.sik-btn').forEach(b => {
+            const bId = parseInt(b.getAttribute('onclick')?.match(/\d+/)?.[0]);
+            if (data.dogru_cevap_id === bId) b.classList.add('dogru');
+            else if (cevapId === bId) b.classList.add('yanlis');
+        });
+
+        const sonuc = document.getElementById('sonucAlani');
+        sonuc.style.display = 'block';
+        if (data.dogru_mu) {
+            sonuc.innerHTML = `<div class="alert alert-success mt-3">🎉 <strong>Doğru!</strong> +${data.bonus_xp} XP kazandın!</div>`;
+        } else {
+            sonuc.innerHTML = `<div class="alert alert-danger mt-3">😔 <strong>Yanlış.</strong> Doğru cevap işaretlendi.</div>`;
+        }
+        document.getElementById('aciklamaKutu').style.display = 'block';
+    });
+}
+</script>
+{% endblock %}
