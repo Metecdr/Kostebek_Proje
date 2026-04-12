@@ -340,6 +340,16 @@
         grid-column: span 2;
     }
 
+    .ders-karisik-sayisal {
+        background: linear-gradient(135deg, #fa709a, #fee140);
+        color: white !important;
+    }
+
+    .ders-karisik-sozel {
+        background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+        color: white !important;
+    }
+
     /* BACK BUTTON */
     .back-button {
         display: inline-flex;
@@ -490,9 +500,13 @@
                             <span class="ders-icon">⚛️</span>
                             <span class="ders-name">Fizik</span>
                         </button>
-                        <button type="submit" name="selected_ders" value="karisik" class="ders-btn ders-karisik">
-                            <span class="ders-icon">🎲</span>
-                            <span class="ders-name">Karışık</span>
+                        <button type="submit" name="selected_ders" value="karisik_sayisal" class="ders-btn ders-karisik-sayisal">
+                            <span class="ders-icon">🔢🎲</span>
+                            <span class="ders-name">Karışık Sayısal</span>
+                        </button>
+                        <button type="submit" name="selected_ders" value="karisik_sozel" class="ders-btn ders-karisik-sozel">
+                            <span class="ders-icon">📚🎲</span>
+                            <span class="ders-name">Karışık Sözel</span>
                         </button>
                     {% else %}
                         <!-- TYT DERSLERI -->
@@ -524,9 +538,13 @@
                             <span class="ders-icon">💭</span>
                             <span class="ders-name">Felsefe</span>
                         </button>
-                        <button type="submit" name="selected_ders" value="karisik" class="ders-btn ders-karisik">
-                            <span class="ders-icon">🎲</span>
-                            <span class="ders-name">Karışık</span>
+                        <button type="submit" name="selected_ders" value="karisik_sayisal" class="ders-btn ders-karisik-sayisal">
+                            <span class="ders-icon">🔢🎲</span>
+                            <span class="ders-name">Karışık Sayısal</span>
+                        </button>
+                        <button type="submit" name="selected_ders" value="karisik_sozel" class="ders-btn ders-karisik-sozel">
+                            <span class="ders-icon">📚🎲</span>
+                            <span class="ders-name">Karışık Sözel</span>
                         </button>
                     {% endif %}
                 </div>
@@ -548,7 +566,7 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        showToast('Karşılaşmaya hoş geldin!  ⚔️', 'info');
+        // sayfa açılış toastı kaldırıldı
     });
 </script>
 {% endblock %}

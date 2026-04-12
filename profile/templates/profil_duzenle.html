@@ -417,24 +417,36 @@
 
 {% block extra_js %}
 <script>
-    // Fotoğraf önizleme
-    document.getElementById('profilFoto').addEventListener('change', function() {
-        const file = this.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const wrap = document.getElementById('fotoOnizleme');
-            if (wrap.tagName === 'IMG') {
-                wrap.src = e.target.result;
-            } else {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'foto-onizleme';
-                img.id = 'fotoOnizleme';
-                wrap.replaceWith(img);
-            }
-        };
-        reader.readAsDataURL(file);
+    // Fotoğraf önizleme (element varsa)
+    const profilFotoEl = document.getElementById('profilFoto');
+    if (profilFotoEl) {
+        profilFotoEl.addEventListener('change', function() {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const wrap = document.getElementById('fotoOnizleme');
+                if (!wrap) return;
+                if (wrap.tagName === 'IMG') {
+                    wrap.src = e.target.result;
+                } else {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'foto-onizleme';
+                    img.id = 'fotoOnizleme';
+                    wrap.replaceWith(img);
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Avatar seçim kartları - tıklayınca mavi çerçeve
+    document.querySelectorAll('.avatar-secim-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.avatar-secim-item').forEach(el => el.classList.remove('secili'));
+            this.classList.add('secili');
+        });
     });
 
     // Mağaza seçim kartları - radio seçince görsel güncelle

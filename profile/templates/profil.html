@@ -695,7 +695,7 @@
             <div class="bolum-baslik animate-on-scroll">📊 İstatistikler</div>
             <div class="stats-grid">
 
-                <div class="stat-kart gold animate-on-scroll" style="animation-delay:0.05s;">
+                <a href="{% url 'seviye_oduller' %}" class="stat-kart gold animate-on-scroll" style="animation-delay:0.05s;text-decoration:none;display:block;" title="Seviye Ödüllerini Gör">
                     <div class="stat-ust">
                         <div>
                             <div class="stat-label">Seviye</div>
@@ -706,8 +706,8 @@
                     <div class="stat-xp-bg">
                         <div class="stat-xp-fill" style="width:0%" data-hedef="{{ profil.xp_yuzdesi|default:0 }}"></div>
                     </div>
-                    <span class="stat-alt">{{ profil.xp }} / {{ profil.sonraki_seviye_xp }} XP</span>
-                </div>
+                    <span class="stat-alt">{{ profil.xp }} / {{ profil.sonraki_seviye_xp }} XP · <span style="color:#667eea;font-weight:800;">Ödülleri gör →</span></span>
+                </a>
 
                 <div class="stat-kart streak animate-on-scroll" style="animation-delay:0.1s;">
                     <div class="stat-ust">
@@ -1000,52 +1000,71 @@
                 {% else %}#667eea,#764ba2{% endif %}
             );
             border-radius:18px;padding:24px;color:white;position:relative;overflow:hidden;margin-bottom:20px;">
-            <div style="position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:rgba(255,255,255,0.07);border-radius:50%;pointer-events:none;"></div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
-                <div style="font-weight:900;font-size:0.88rem;opacity:0.9;">⛏️ Köstebek YKS</div>
-                <div style="background:rgba(255,255,255,0.2);padding:3px 10px;border-radius:15px;font-size:0.7rem;font-weight:700;">Profil Kartı</div>
+            <!-- Dekoratif daireler -->
+            <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:rgba(255,255,255,0.07);border-radius:50%;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:-30px;left:-30px;width:120px;height:120px;background:rgba(255,255,255,0.05);border-radius:50%;pointer-events:none;"></div>
+
+            <!-- Üst: Logo + Profil Kartı etiketi -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <div style="display:flex;align-items:center;gap:7px;font-weight:900;font-size:0.88rem;opacity:0.95;">
+                    <img src="{% static 'images/kostebek_logo.png' %}" alt="Köstebek" style="height:22px;width:auto;filter:brightness(0) invert(1);">
+                    <span>Köstebek YKS</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.2);padding:3px 10px;border-radius:15px;font-size:0.7rem;font-weight:700;">📤 Profil Kartı</div>
             </div>
+
+            <!-- Kullanıcı bilgileri -->
             <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
-                <div style="width:60px;height:60px;border-radius:50%;border:3px solid rgba(255,255,255,0.8);background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;">
+                <div style="width:64px;height:64px;border-radius:50%;border:3px solid rgba(255,255,255,0.85);background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0;box-shadow:0 4px 15px rgba(0,0,0,0.2);">
                     {{ profil.avatar }}
                 </div>
-                <div>
-                    <div style="font-size:1.2rem;font-weight:900;">
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:1.15rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                         {% if profil.ad and profil.soyad %}{{ profil.ad }} {{ profil.soyad }}{% else %}{{ profil.kullanici.username }}{% endif %}
                     </div>
-                    <div style="opacity:0.8;font-size:0.82rem;">@{{ profil.kullanici.username }}</div>
+                    <div style="opacity:0.8;font-size:0.8rem;margin-top:2px;">@{{ profil.kullanici.username }} · Seviye {{ profil.seviye }}</div>
                     {% if envanter.aktif_unvan %}
-                    <div style="background:rgba(255,255,255,0.2);display:inline-block;padding:2px 8px;border-radius:10px;font-size:0.72rem;font-weight:800;margin-top:4px;">
+                    <div style="background:rgba(255,255,255,0.2);display:inline-block;padding:2px 8px;border-radius:10px;font-size:0.7rem;font-weight:800;margin-top:4px;">
                         {{ envanter.aktif_unvan.unvan_metni }}
                     </div>
+                    {% else %}
+                    <div style="opacity:0.75;font-size:0.75rem;margin-top:3px;font-weight:600;">{{ profil.seviye_unvani }}</div>
                     {% endif %}
                 </div>
             </div>
+
+            <!-- İstatistik kutuları -->
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
                 <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 4px;text-align:center;">
-                    <div style="font-size:1.2rem;font-weight:900;">{{ profil.toplam_puan|default:0 }}</div>
-                    <div style="font-size:0.62rem;opacity:0.8;font-weight:700;">⚡ Puan</div>
+                    <div style="font-size:1.15rem;font-weight:900;">{{ profil.toplam_puan|default:0 }}</div>
+                    <div style="font-size:0.6rem;opacity:0.85;font-weight:700;margin-top:2px;">⚡ Puan</div>
                 </div>
                 <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 4px;text-align:center;">
-                    <div style="font-size:1.2rem;font-weight:900;">{{ profil.cozulen_soru_sayisi|default:0 }}</div>
-                    <div style="font-size:0.62rem;opacity:0.8;font-weight:700;">📝 Soru</div>
+                    <div style="font-size:1.15rem;font-weight:900;">{{ profil.cozulen_soru_sayisi|default:0 }}</div>
+                    <div style="font-size:0.6rem;opacity:0.85;font-weight:700;margin-top:2px;">📝 Soru</div>
                 </div>
                 <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 4px;text-align:center;">
-                    <div style="font-size:1.2rem;font-weight:900;">{{ profil.ardasik_gun_sayisi|default:0 }}</div>
-                    <div style="font-size:0.62rem;opacity:0.8;font-weight:700;">🔥 Streak</div>
+                    <div style="font-size:1.15rem;font-weight:900;">{{ profil.ardasik_gun_sayisi|default:0 }}</div>
+                    <div style="font-size:0.6rem;opacity:0.85;font-weight:700;margin-top:2px;">🔥 Streak</div>
                 </div>
                 <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 4px;text-align:center;">
-                    <div style="font-size:1.2rem;font-weight:900;">#{{ sira|default:"--" }}</div>
-                    <div style="font-size:0.62rem;opacity:0.8;font-weight:700;">🏆 Sıra</div>
+                    <div style="font-size:1.15rem;font-weight:900;">#{{ sira|default:"--" }}</div>
+                    <div style="font-size:0.6rem;opacity:0.85;font-weight:700;margin-top:2px;">🏆 Sıra</div>
                 </div>
             </div>
+
+            <!-- Başarı oranı barı -->
             <div style="background:rgba(255,255,255,0.15);border-radius:12px;padding:12px;">
-                <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
                     <span style="font-size:0.82rem;font-weight:700;">✅ Başarı Oranı</span>
-                    <span style="font-weight:900;">%{{ basari_orani|default:0 }}</span>
+                    <span style="font-weight:900;font-size:0.88rem;">%{{ basari_orani|default:0 }}</span>
                 </div>
-                <div style="background:rgba(0,0,0,0.2);border-radius:8px;height:10px;overflow:hidden;">
-                    <div style="width:{{ basari_orani|default:0 }}%;height:100%;background:linear-gradient(90deg,#4ade80,#22c55e);border-radius:8px;"></div>
+                <div style="background:rgba(0,0,0,0.25);border-radius:8px;height:10px;overflow:hidden;">
+                    <div id="paylasimBasariBar" style="width:0%;height:100%;background:linear-gradient(90deg,#4ade80,#22c55e);border-radius:8px;transition:width 0.6s ease;" data-hedef="{{ basari_orani|default:0 }}"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:0.7rem;opacity:0.8;font-weight:700;">
+                    <span>kostebekyks.com</span>
+                    <span>{{ profil.kullanici.date_joined|date:"Y" }} · YKS Hazırlık</span>
                 </div>
             </div>
         </div>
@@ -1203,6 +1222,11 @@
         const m = document.getElementById('paylasimModal');
         m.style.display = 'flex';
         document.body.style.overflow = 'hidden';
+        // Başarı barını animasyonla doldur
+        setTimeout(() => {
+            const bar = document.getElementById('paylasimBasariBar');
+            if (bar) bar.style.width = bar.dataset.hedef + '%';
+        }, 150);
     }
     function paylasimKapat() {
         document.getElementById('paylasimModal').style.display = 'none';

@@ -118,7 +118,6 @@ def giris_view(request):
 
             if user is not None:
                 login(request, user)
-                messages.success(request, f'Hoş geldin {kullanici_adi}!')
                 logger.info(f"Başarılı giriş: {kullanici_adi}")
                 return redirect('profil')
             else:
@@ -155,7 +154,6 @@ def cikis_view(request):
         logger.error(f"Çıkış cache temizleme hatası: Kullanıcı={kullanici_adi}, Hata={e}", exc_info=True)
 
     logout(request)
-    messages.success(request, 'Başarıyla çıkış yaptın!')
     logger.info(f"Kullanıcı çıkış yaptı: {kullanici_adi}")
     return redirect('giris')
 
@@ -215,16 +213,6 @@ def profil_view(request):
             giris_bilgi = profil.gunluk_giris_kontrol()
             if giris_bilgi['bonus_verildi']:
                 xp_sonuc = gunluk_giris_xp(profil, giris_bilgi['bonus_xp'])
-                if giris_bilgi.get('ilk_giris'):
-                    messages.success(request, f"🎉 Hoş geldin! İlk giriş bonusu: +{giris_bilgi['bonus_xp']} XP!")
-                elif giris_bilgi.get('streak_devam'):
-                    messages.success(request, f"🔥 {giris_bilgi['streak']} gündür üst üste giriş! Bonus: +{giris_bilgi['bonus_xp']} XP!")
-                elif giris_bilgi.get('streak_koptu'):
-                    messages.warning(request, f"💔 Streak koptu! Yeniden başlıyorsun. +{giris_bilgi['bonus_xp']} XP")
-                else:
-                    messages.success(request, f"🎁 Günlük giriş bonusu: +{giris_bilgi['bonus_xp']} XP!")
-                if xp_sonuc.get('seviye_atlandi'):
-                    messages.success(request, f"🚀 SEVİYE ATLADIN! Seviye {xp_sonuc['yeni_seviye']} - {xp_sonuc['unvan']}")
         except Exception as e:
             logger.error(f"Günlük giriş bonus hatası: {e}", exc_info=True)
 
@@ -238,8 +226,6 @@ def profil_view(request):
                 yeni_rozetler = rozet_kontrol_yap(profil)
                 cache.set(cache_key, yeni_rozetler, 300)
                 if yeni_rozetler:
-                    for rozet in yeni_rozetler:
-                        messages.success(request, f'🏆 Yeni rozet kazandın: {rozet.icon} {rozet.get_kategori_display()} ({rozet.get_seviye_display()})!')
                     logger.info(f"Yeni rozetler kazanıldı: Kullanıcı={request.user.username}, Sayı={len(yeni_rozetler)}")
             except ImportError as e:
                 logger.error(f"Rozet modülü import hatası: Kullanıcı={request.user.username}, Hata={e}", exc_info=True)
