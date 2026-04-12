@@ -143,6 +143,26 @@
       </div>
     </div>
 
+    <!-- Günün Sorusu -->
+    <div class="card mb-3" style="border-radius:14px;">
+      <div class="card-header fw-semibold" style="border-radius:14px 14px 0 0; background:linear-gradient(135deg,#f59e0b,#d97706); color:white;">
+        ☀️ Günün Sorusu (İsteğe Bağlı)
+      </div>
+      <div class="card-body">
+        <div class="form-check form-switch mb-2">
+          <input class="form-check-input" type="checkbox" name="gunun_sorusu_olarak_ayarla" id="gunSoruCheck">
+          <label class="form-check-label fw-semibold" for="gunSoruCheck">
+            Bu soruyu bugünün sorusu olarak ayarla
+          </label>
+        </div>
+        <div id="gunSoruXP" style="display:none;">
+          <label class="form-label fw-semibold small">Bonus XP</label>
+          <input type="number" name="gunun_bonus_xp" class="form-control" value="15" min="5" max="50" style="max-width:150px;">
+          <small class="text-muted">Doğru cevaplayan kullanıcıya verilecek ekstra XP</small>
+        </div>
+      </div>
+    </div>
+
     <!-- Kaydet Butonları -->
     <div class="d-flex gap-2 justify-content-end flex-wrap">
       <a href="{% url 'soru_yonetim_anasayfa' %}" class="btn btn-outline-secondary">İptal</a>
@@ -197,5 +217,10 @@ dersSelect.addEventListener('change', () => konulariYukle(dersSelect.value, null
 
 // Sayfa açıldığında seçili ders varsa konuları yükle
 if (dersSelect.value) konulariYukle(dersSelect.value, '{{ post_data.konu_id|default:"" }}');
+
+// Günün Sorusu toggle
+document.getElementById('gunSoruCheck').addEventListener('change', function() {
+    document.getElementById('gunSoruXP').style.display = this.checked ? 'block' : 'none';
+});
 </script>
 {% endblock %}
