@@ -90,6 +90,22 @@ def bul_bakalim_basla(request):
                     sinav_tipi__iexact=sinav_tipi
                 ).only('id').values_list('id', flat=True)
             )
+        elif ders == 'karisik_ea':
+            sorular = list(
+                Soru.objects.filter(
+                    ders__in=['edebiyat', 'tarih', 'cografya'],
+                    bul_bakalimda_cikar=True,
+                    sinav_tipi__iexact=sinav_tipi
+                ).only('id').values_list('id', flat=True)
+            )
+        elif ders == 'karisik_sozel_ayt':
+            sorular = list(
+                Soru.objects.filter(
+                    ders__in=['din_kulturu', 'felsefe', 'edebiyat', 'tarih', 'cografya'],
+                    bul_bakalimda_cikar=True,
+                    sinav_tipi__iexact=sinav_tipi
+                ).only('id').values_list('id', flat=True)
+            )
         elif ders == 'karisik':
             sorular = list(
                 Soru.objects.filter(

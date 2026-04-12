@@ -253,6 +253,8 @@ class KarsilasmaOdasi(models.Model):
         ('karisik', 'Karışık'),
         ('karisik_sayisal', 'Karışık Sayısal'),
         ('karisik_sozel', 'Karışık Sözel'),
+        ('karisik_ea', 'Karışık EA'),
+        ('karisik_sozel_ayt', 'Karışık Sözel AYT'),
     ]
 
     secilen_ders = models.CharField(
@@ -433,6 +435,8 @@ class BulBakalimOyun(models.Model):
         ('karisik', 'Karışık'),
         ('karisik_sayisal', 'Karışık Sayısal'),
         ('karisik_sozel', 'Karışık Sözel'),
+        ('karisik_ea', 'Karışık EA'),
+        ('karisik_sozel_ayt', 'Karışık Sözel AYT'),
     ]
 
     selected_ders = models.CharField(

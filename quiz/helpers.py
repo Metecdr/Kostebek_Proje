@@ -30,6 +30,16 @@ def get_random_soru_by_ders(ders='karisik'):
                 ders__in=['edebiyat', 'tarih', 'cografya', 'felsefe'],
                 karsilasmada_cikar=True
             ).values_list('id', flat=True))
+        elif ders == 'karisik_ea':
+            soru_ids = list(Soru.objects.filter(
+                ders__in=['edebiyat', 'tarih', 'cografya'],
+                karsilasmada_cikar=True
+            ).values_list('id', flat=True))
+        elif ders == 'karisik_sozel_ayt':
+            soru_ids = list(Soru.objects.filter(
+                ders__in=['din_kulturu', 'felsefe', 'edebiyat', 'tarih', 'cografya'],
+                karsilasmada_cikar=True
+            ).values_list('id', flat=True))
         else:
             soru_ids = list(Soru.objects.filter(ders=ders, karsilasmada_cikar=True).values_list('id', flat=True))
         cache.set(cache_key, soru_ids, 300)
