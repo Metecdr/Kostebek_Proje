@@ -449,19 +449,31 @@
         }
 
         .result-modal-body {
-            padding: 30px 20px;
+            padding: 16px 12px;
         }
 
         .result-icon {
-            font-size: 60px;
+            font-size: 34px;
+            margin-bottom: 6px;
         }
 
         .result-title {
-            font-size: 1.5rem;
+            font-size: 1.05rem;
+            margin-bottom: 5px;
         }
 
         .result-text {
-            font-size: 1rem;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        #dinamikModal .modal-dialog {
+            margin: 8px;
+        }
+
+        #dinamikModal .loading-spinner {
+            width: 20px;
+            height: 20px;
         }
 
         .timer-value {
@@ -655,7 +667,6 @@ function handleTimeout() {
         btn.disabled = true;
     });
 
-    showToast('⏰ Süre doldu!', 'warning');
     showSonucModal(false, 'Süre bitti! ⏰');
 
     fetch(CEVAPLA_URL, {
@@ -717,7 +728,6 @@ function initAnswerButtons() {
 
                 if (data.dogru_mu) {
                     this.classList.add('correct');
-                    showToast('✅ Doğru cevap! Tebrikler! 🎉', 'success');
                 } else {
                     this.classList.add('wrong');
                     // Doğru cevabı da göster
@@ -726,7 +736,6 @@ function initAnswerButtons() {
                             b.classList.add('correct');
                         }
                     });
-                    showToast('❌ Yanlış cevap! Devam et! 💪', 'error');
                 }
 
                 showSonucModal(data.dogru_mu);
