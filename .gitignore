@@ -71,4 +71,4 @@ htmlcov/
 *.log
 __pycache__/
 *.pyc
-*.pyo
+*.pyo".obsidian/" 
