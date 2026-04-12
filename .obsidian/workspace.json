@@ -49,7 +49,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "tag:#graphify/EXTRACTED",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -70,7 +70,8 @@
               "title": "Yer İmleri"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -176,8 +177,9 @@
       "bases:Yeni taban oluştur": false
     }
   },
-  "active": "a3d5eb22921c66e5",
+  "active": "d13fe1649ce8234a",
   "lastOpenFiles": [
+    "graphify-out/obsidian/admin.py.md",
     "CLAUDE.md",
     "graphify-out/needs_update",
     "graphify-watch.log",
@@ -206,7 +208,6 @@
     "graphify-out/obsidian/production_settings.py.md",
     "graphify-out/obsidian/models.py.md",
     "graphify-out/obsidian/MagazaUrun.md",
-    "graphify-out/obsidian/Mağaza ürün fiyatlarını toplu güncelleme komutu.  Kullanım   python manage.py f.md",
     "graphify-out/obsidian",
     "graphify-out/cache/5f48042be6a8bf0d4578945b83e61d561f7f339b96739240a8dfb4d4d23540f3.json",
     "graphify-out/cache/19186b4151208e3430b2e38a6f9991cfb95da0d9be8745d5c698467512b4b99d.json",
