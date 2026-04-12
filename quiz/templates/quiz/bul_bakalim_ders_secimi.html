@@ -194,7 +194,7 @@
                 </a>
                 {% if sinav_tipi == 'AYT' %}
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sayisal&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sayisal">
-                    <span>🔢🎲 Karışık Sayısal (F+K+B)</span>
+                    <span>🔢🎲 Karışık Sayısal</span>
                 </a>
                 {% else %}
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sayisal&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sayisal">
@@ -228,10 +228,10 @@
                 </a>
                 {% if sinav_tipi == 'AYT' %}
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_ea&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-ea">
-                    <span>📖🎲 Karışık EA (Ed+Tar+Coğ)</span>
+                    <span>📖🎲 Karışık EA</span>
                 </a>
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sozel_ayt&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sozel-ayt">
-                    <span>📚🎲 Karışık Sözel (Din+Fel+Ed+Tar+Coğ)</span>
+                    <span>📚🎲 Karışık Sözel</span>
                 </a>
                 {% else %}
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sozel&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sozel">
