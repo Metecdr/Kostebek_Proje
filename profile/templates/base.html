@@ -2008,6 +2008,10 @@
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
+                                <a class="dropdown-item" href="{% url 'yanlislarima_don' %}">
+                                    <i class="bi bi-arrow-repeat text-danger"></i> Yanlışlarıma Dön
+                                </a>
+                                </li><li>
                                 <a class="dropdown-item" href="{% url 'karsilasma_gecmis' %}">
                                     <i class="bi bi-clock-history" style="color:#AB47BC;"></i> Karşılaşma Geçmişi
                                 </a>
@@ -2124,6 +2128,9 @@
                                 <li><a class="dropdown-item" href="{% url 'calisma_takvimi' %}">
                                     <i class="bi bi-calendar3 text-success"></i> Çalışma Takvimi
                                 </a></li>
+                                <li><a class="dropdown-item" href="#" onclick="showPremiumModal(); return false;">
+                                    <i class="bi bi-bar-chart-line-fill text-purple"></i> Konu Analizi <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">🔒</span>
+                                </a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="{% url 'cikis' %}">
                                     <i class="bi bi-box-arrow-right"></i> Çıkış
@@ -2140,39 +2147,7 @@
         </div>
     </nav>
 
-    <!-- TOAST BİLDİRİMLERİ -->
-    {% if messages %}
-    <div class="toast-container" id="toastContainer" style="position:fixed;top:80px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:360px;">
-        {% for message in messages %}
-        <div class="toast-msg toast-{{ message.tags }}" style="
-            background: {% if message.tags == 'success' %}linear-gradient(135deg,#10b981,#059669){% elif message.tags == 'danger' %}linear-gradient(135deg,#ef4444,#dc2626){% elif message.tags == 'warning' %}linear-gradient(135deg,#f59e0b,#d97706){% else %}linear-gradient(135deg,#3b82f6,#2563eb){% endif %};
-            color:white;padding:12px 18px;border-radius:14px;font-weight:700;font-size:0.88rem;
-            box-shadow:0 8px 25px rgba(0,0,0,0.25);display:flex;align-items:center;gap:10px;
-            animation:toastSlideIn 0.35s ease-out both;cursor:pointer;
-        " onclick="this.style.animation='toastSlideOut 0.3s ease-in forwards';setTimeout(()=>this.remove(),300);">
-            <i class="bi bi-{% if message.tags == 'success' %}check-circle-fill{% elif message.tags == 'danger' %}exclamation-triangle-fill{% elif message.tags == 'warning' %}exclamation-circle-fill{% else %}info-circle-fill{% endif %}" style="font-size:1.1rem;flex-shrink:0;"></i>
-            <span style="flex:1;">{{ message }}</span>
-            <span style="opacity:0.7;font-size:1.2rem;line-height:1;">✕</span>
-        </div>
-        {% endfor %}
-    </div>
-    <style>
-        @keyframes toastSlideIn { from { opacity:0; transform:translateX(80px); } to { opacity:1; transform:translateX(0); } }
-        @keyframes toastSlideOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(80px); } }
-        @media(max-width:768px) { .toast-container { right:10px; left:10px; max-width:none; } }
-    </style>
-    <script>
-        // Auto-dismiss toasts after 3 seconds
-        setTimeout(function() {
-            document.querySelectorAll('.toast-msg').forEach(function(el, i) {
-                setTimeout(function() {
-                    el.style.animation = 'toastSlideOut 0.3s ease-in forwards';
-                    setTimeout(function() { el.remove(); }, 300);
-                }, i * 200);
-            });
-        }, 3000);
-    </script>
-    {% endif %}
+    <!-- Toast bildirimleri JS showToast() ile gösterilir (satır 2432+) -->
 
     <div class="container mt-4">
         {% block content %}{% endblock %}
@@ -2710,6 +2685,23 @@
                 {% endfor %}
             {% endif %}
         });
+    </script>
+
+    <!-- Premium Modal -->
+    <div class="modal fade" id="premiumModal" tabindex="-1">
+      <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content text-center" style="border-radius:20px;padding:28px;">
+          <div style="font-size:3rem;">🔒</div>
+          <h5 class="fw-bold mt-2">Premium Üyelik Gerekli</h5>
+          <p class="text-muted small mb-3">Konu Analizi özelliği yakında premium üyelikle kullanıma açılacak!</p>
+          <button class="btn btn-primary btn-sm px-4" data-bs-dismiss="modal">Tamam</button>
+        </div>
+      </div>
+    </div>
+    <script>
+    function showPremiumModal() {
+        new bootstrap.Modal(document.getElementById('premiumModal')).show();
+    }
     </script>
 
     {% block extra_js %}{% endblock %}

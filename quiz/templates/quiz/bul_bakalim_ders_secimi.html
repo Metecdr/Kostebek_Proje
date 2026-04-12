@@ -436,13 +436,13 @@
                 <p class="alan-subtitle">Fizik, Kimya, Biyoloji</p>
             </div>
             <div class="ders-grid">
-                <a href="{% url 'bul_bakalim_basla' %}?ders=fizik&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-fizik">
+                <a href="#" onclick="dersSecildi('fizik','⚛️ Fizik'); return false;" class="ders-btn ders-fizik">
                     <span>⚛️ Fizik</span>
                 </a>
-                <a href="{% url 'bul_bakalim_basla' %}?ders=kimya&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-kimya">
+                <a href="#" onclick="dersSecildi('kimya','🧪 Kimya'); return false;" class="ders-btn ders-kimya">
                     <span>🧪 Kimya</span>
                 </a>
-                <a href="{% url 'bul_bakalim_basla' %}?ders=biyoloji&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-biyoloji">
+                <a href="#" onclick="dersSecildi('biyoloji','🧬 Biyoloji'); return false;" class="ders-btn ders-biyoloji">
                     <span>🧬 Biyoloji</span>
                 </a>
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sayisal&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sayisal">
@@ -459,16 +459,16 @@
                 <p class="alan-subtitle">Türkçe, Tarih, Coğrafya, Felsefe</p>
             </div>
             <div class="ders-grid">
-                <a href="{% url 'bul_bakalim_basla' %}?ders=edebiyat&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-edebiyat">
+                <a href="#" onclick="dersSecildi('edebiyat','📚 Türkçe'); return false;" class="ders-btn ders-edebiyat">
                     <span>📚 Türkçe</span>
                 </a>
-                <a href="{% url 'bul_bakalim_basla' %}?ders=tarih&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-tarih">
+                <a href="#" onclick="dersSecildi('tarih','🏛️ Tarih'); return false;" class="ders-btn ders-tarih">
                     <span>🏛️ Tarih</span>
                 </a>
-                <a href="{% url 'bul_bakalim_basla' %}?ders=cografya&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-cografya">
+                <a href="#" onclick="dersSecildi('cografya','🌍 Coğrafya'); return false;" class="ders-btn ders-cografya">
                     <span>🌍 Coğrafya</span>
                 </a>
-                <a href="{% url 'bul_bakalim_basla' %}?ders=felsefe&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-felsefe">
+                <a href="#" onclick="dersSecildi('felsefe','💭 Felsefe'); return false;" class="ders-btn ders-felsefe">
                     <span>💭 Felsefe</span>
                 </a>
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sozel&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sozel">
@@ -476,6 +476,29 @@
                 </a>
             </div>
         </div>
+
+    <!-- Konu Seçim Modalı -->
+    <div class="modal fade" id="konuSecimModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:20px;">
+          <div class="modal-header border-0" style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:20px 20px 0 0;color:white;">
+            <h5 class="modal-title fw-bold" id="konuModalBaslik">Konu Seç</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" style="max-height:400px;overflow-y:auto;">
+            <div id="konuListesi" class="d-flex flex-column gap-2"></div>
+            <div id="konuYukleniyor" class="text-center py-3" style="display:none;">
+              <div class="spinner-border spinner-border-sm text-primary"></div> Konular yükleniyor...
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <a href="#" id="tumKonularBtn" class="btn btn-primary w-100 fw-bold" style="border-radius:12px;">
+              <i class="bi bi-shuffle"></i> Tüm Konulardan Başla
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
 
     </div>
 
@@ -498,8 +521,35 @@
 
 {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // sayfa açılış toastı kaldırıldı
-    });
+const sinavTipi = '{{ sinav_tipi }}';
+const baslaUrl = '{% url "bul_bakalim_basla" %}';
+
+function dersSecildi(ders, dersAdi) {
+    document.getElementById('konuModalBaslik').textContent = dersAdi + ' — Konu Seç';
+    document.getElementById('tumKonularBtn').href = baslaUrl + '?ders=' + ders + '&sinav_tipi=' + sinavTipi;
+    document.getElementById('konuListesi').innerHTML = '';
+    document.getElementById('konuYukleniyor').style.display = 'block';
+
+    new bootstrap.Modal(document.getElementById('konuSecimModal')).show();
+
+    fetch('/bul-bakalim/konular/?ders=' + ders + '&sinav_tipi=' + sinavTipi)
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('konuYukleniyor').style.display = 'none';
+            const liste = document.getElementById('konuListesi');
+            if (data.konular.length === 0) {
+                liste.innerHTML = '<p class="text-muted text-center small">Bu ders için yeterli sorusu olan konu bulunamadı.</p>';
+                return;
+            }
+            data.konular.forEach(k => {
+                const a = document.createElement('a');
+                a.href = baslaUrl + '?ders=' + ders + '&konu_id=' + k.id + '&sinav_tipi=' + sinavTipi;
+                a.className = 'btn btn-outline-primary text-start d-flex justify-content-between align-items-center';
+                a.style.cssText = 'border-radius:12px;padding:10px 16px;';
+                a.innerHTML = '<span>' + k.isim + '</span><span class="badge bg-primary">' + k.soru_sayisi + ' soru</span>';
+                liste.appendChild(a);
+            });
+        });
+}
 </script>
 {% endblock %}

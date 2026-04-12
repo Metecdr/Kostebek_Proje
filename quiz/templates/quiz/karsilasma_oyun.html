@@ -815,9 +815,9 @@
     <div class="question-card">
         <div class="question-number d-flex justify-content-between align-items-center">
             <span><i class="bi bi-question-circle-fill"></i> SORU <span id="soruNoText">{{ oda.aktif_soru_no }}</span></span>
-            <button class="btn btn-sm btn-outline-secondary" style="font-size:0.72rem;padding:2px 9px;border-radius:20px;opacity:0.7;"
+            <button class="btn btn-sm btn-outline-warning" style="font-size:0.85rem;padding:4px 14px;border-radius:20px;font-weight:600;"
                 onclick="soruBildir(document.getElementById('soruMetin').dataset.soruId)" title="Hatalı soruyu bildir">
-                🚩 Bildir
+                <i class="bi bi-flag-fill"></i> Bildir
             </button>
         </div>
         <div class="question-text" id="soruMetin" data-soru-id="{{ soru.id|default:'' }}" data-dogru-cevap-id="">
@@ -1002,7 +1002,7 @@ function showSureDolduModal() {
 }
 
 /* ===== SAYFA KAPATMA TEMİZLİĞİ ===== */
-window.addEventListener('beforeunload', function() {
+window.addEventListener('beforeunload', function(e) {
     const rakipEl = document.getElementById('rakipUsername');
     const rakipAdi = rakipEl ? rakipEl.textContent.trim() : '';
     if (!rakipAdi || rakipAdi === 'Rakip Bekleniyor...') {
@@ -1010,6 +1010,10 @@ window.addEventListener('beforeunload', function() {
             `/karsilasma/oda-birak/${odaId}/`,
             new URLSearchParams({ csrfmiddlewaretoken: getCookie('csrftoken') })
         );
+    } else if (!oyunBittiYonlendirme) {
+        // Oyun devam ediyorsa uyarı göster
+        e.preventDefault();
+        e.returnValue = '';
     }
 });
 
@@ -1039,6 +1043,7 @@ function renderAnswers(cevaplar) {
     cevaplar.forEach((cevap, index) => {
         const btn = document.createElement('button');
         btn.className = 'answer-btn';
+        btn.disabled = true; // İlk anda devre dışı (guard)
         btn.setAttribute('data-cevap-id', cevap.id);
         btn.setAttribute('data-dogru', cevap.dogru_mu || false);
         btn.innerHTML = `<span style="position: relative; z-index: 1;"><strong>${String.fromCharCode(65 + index)}</strong>) ${cevap.metin}</span>`;
@@ -1053,11 +1058,17 @@ function renderAnswers(cevaplar) {
             document.getElementById('soruMetin').setAttribute('data-dogru-cevap-id', cevap.id);
         }
     });
+
+    // 300ms sonra butonları aktif et (yanlışlıkla tıklamayı önler)
+    setTimeout(() => {
+        cevaplarDiv.querySelectorAll('.answer-btn').forEach(b => b.disabled = false);
+    }, 300);
 }
 
 /* ===== TIMER ===== */
 function startTimer() {
-    timeLeft = SURE_LIMIT;
+    const savedTime = sessionStorage.getItem('karsilasma_timer_' + odaId + '_' + mevcutSoruId);
+    timeLeft = (savedTime && parseInt(savedTime) > 0) ? parseInt(savedTime) : SURE_LIMIT;
     warningShown = false;
     if (timer) clearInterval(timer);
     updateTimerDisplay();
@@ -1066,12 +1077,14 @@ function startTimer() {
 
 function updateTimerTick() {
     timeLeft--;
+    sessionStorage.setItem('karsilasma_timer_' + odaId + '_' + mevcutSoruId, timeLeft);
 
     if (timeLeft <= 0) {
         timeLeft = 0;
         updateTimerDisplay();
         clearInterval(timer);
         timer = null;
+        sessionStorage.removeItem('karsilasma_timer_' + odaId + '_' + mevcutSoruId);
         autoSubmitAnswer();
         return;
     }
@@ -1278,6 +1291,9 @@ function setStatus(el, text, className) {
 }
 
 function updateQuestion(data) {
+    // Eski timer key'i temizle
+    if (mevcutSoruId) sessionStorage.removeItem('karsilasma_timer_' + odaId + '_' + mevcutSoruId);
+
     const soruMetinDiv = document.getElementById('soruMetin');
     soruMetinDiv.textContent = data.soru || 'Soru yükleniyor...';
     soruMetinDiv.setAttribute('data-soru-id', data.soru_id || '');
@@ -1421,8 +1437,22 @@ function bildirGonder(soruId) {
         body:`sebep_kodu=${sebep}&aciklama=${encodeURIComponent(aciklama)}`
     }).then(r=>r.json()).then(d=>{
         bootstrap.Modal.getInstance(document.getElementById('bildirModal')).hide();
-        if(d.ok) alert('✅ Bildiriminiz alındı!');
-        else alert(d.hata||'Bir hata oluştu.');
+        if(d.ok) {
+            document.getElementById('bildirModalContainer').innerHTML += `
+            <div class="modal fade" id="bildirTesekkurModal" tabindex="-1">
+              <div class="modal-dialog modal-sm modal-dialog-centered">
+                <div class="modal-content text-center" style="border-radius:20px;padding:24px;">
+                  <div style="font-size:3rem;">✅</div>
+                  <h6 class="fw-bold mt-2">Teşekkürler!</h6>
+                  <p class="text-muted small mb-3">Sitemizi geliştirmemize yardımcı olduğunuz için teşekkürler!</p>
+                  <button class="btn btn-success btn-sm px-4" data-bs-dismiss="modal">Tamam</button>
+                </div>
+              </div>
+            </div>`;
+            new bootstrap.Modal(document.getElementById('bildirTesekkurModal')).show();
+        } else {
+            alert(d.hata||'Bir hata oluştu.');
+        }
     });
 }
 </script>
