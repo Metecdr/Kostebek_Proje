@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Yanlışlarıma Dön - Köstebek{% endblock %}
+
+{% block extra_css %}
+<style>
+.yanlis-header {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border-radius: 20px;
+    padding: 28px 32px 20px;
+    margin-bottom: 28px;
+}
+.konu-card {
+    border-radius: 14px;
+    border: 2px solid #fee2e2;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+}
+.konu-card:hover { border-color: #ef4444; background: #fff5f5; transform: translateX(4px); }
+[data-theme="dark"] .konu-card { border-color: #3a1a1a; background: #1a0f0f; }
+[data-theme="dark"] .konu-card:hover { border-color: #ef4444; background: #2a0f0f; }
+.ders-badge {
+    font-size: 0.8rem; font-weight: 700; padding: 4px 12px;
+    border-radius: 20px; text-transform: capitalize;
+}
+.empty-state { text-align: center; padding: 60px 20px; }
+.empty-state .icon { font-size: 4rem; margin-bottom: 16px; }
+.tab-btn {
+    padding: 10px 24px; border-radius: 12px; border: 2px solid transparent;
+    font-weight: 600; cursor: pointer; background: none;
+    transition: all 0.2s;
+}
+.tab-btn.active { background: #ef4444; color: white; }
+.tab-btn:not(.active) { border-color: #ef4444; color: #ef4444; }
+[data-theme="dark"] .tab-btn:not(.active) { color: #f87171; border-color: #f87171; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:860px;">
+
+  <div class="yanlis-header">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div>
+        <h2 class="fw-bold mb-1" style="color:white!important;-webkit-text-fill-color:white!important;">
+          🔄 Yanlışlarıma Dön
+        </h2>
+        <p class="mb-0" style="opacity:0.85;">Yanlış cevapladığın soruları tekrar çöz!</p>
+      </div>
+      <div class="d-flex gap-3">
+        <div class="text-center">
+          <div style="font-size:1.6rem;font-weight:900;">{{ bb_toplam }}</div>
+          <div style="font-size:0.75rem;opacity:0.85;">Bul Bakalım</div>
+        </div>
+        <div class="text-center">
+          <div style="font-size:1.6rem;font-weight:900;">{{ karsilasma_toplam }}</div>
+          <div style="font-size:0.75rem;opacity:0.85;">Karşılaşma</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab seçimi -->
+  <div class="d-flex gap-2 mb-4">
+    <button class="tab-btn active" id="tabBB" onclick="switchTab('bb')">
+      🔍 Bul Bakalım
+    </button>
+    <button class="tab-btn" id="tabKarsilasma" onclick="switchTab('karsilasma')">
+      ⚔️ Karşılaşma
+    </button>
+  </div>
+
+  <!-- Bul Bakalım -->
+  <div id="panelBB">
+    {% if bb_gruplar %}
+      <div class="accordion" id="bbAccordion">
+        {% for ders, konular in bb_gruplar.items %}
+        <div class="accordion-item mb-3" style="border-radius:14px;border:none;overflow:hidden;">
+          <h2 class="accordion-header">
+            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}"
+              type="button" data-bs-toggle="collapse"
+              data-bs-target="#bb_{{ ders }}" style="border-radius:14px;font-weight:700;">
+              <span class="ders-badge bg-danger text-white me-2">{{ ders|title }}</span>
+              <span class="text-muted small ms-2">
+                {% for k in konular %}{% if not forloop.last %}{% endif %}{% endfor %}
+                {{ konular|length }} konu
+              </span>
+              <span class="ms-auto badge bg-danger me-2">
+                {% for k in konular %}{{ k.sayi }}{% if not forloop.last %}+{% endif %}{% endfor %} soru
+              </span>
+            </button>
+          </h2>
+          <div id="bb_{{ ders }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}">
+            <div class="accordion-body pt-2">
+              <div class="d-flex flex-column gap-2">
+                {% for konu in konular %}
+                <div class="konu-card">
+                  <div>
+                    <div class="fw-semibold">{{ konu.konu_isim }}</div>
+                    <div class="text-muted small">{{ konu.sayi }} yanlış soru</div>
+                  </div>
+                  <a href="{% url 'yanlis_tekrar_calis' %}?mod=bb&ders={{ ders }}&konu_id={{ konu.konu_id }}"
+                    class="btn btn-sm btn-danger" style="border-radius:10px;">
+                    <i class="bi bi-play-fill"></i> Çalış
+                  </a>
+                </div>
+                {% endfor %}
+                <a href="{% url 'yanlis_tekrar_calis' %}?mod=bb&ders={{ ders }}"
+                  class="btn btn-outline-danger btn-sm mt-1" style="border-radius:10px;">
+                  <i class="bi bi-shuffle"></i> Tüm {{ ders|title }} Yanlışları
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="text-center mt-3">
+        <a href="{% url 'yanlis_tekrar_calis' %}?mod=bb"
+          class="btn btn-danger px-5 fw-bold" style="border-radius:14px;">
+          <i class="bi bi-shuffle"></i> Tüm Yanlışları Karıştır
+        </a>
+      </div>
+
+    {% else %}
+      <div class="empty-state">
+        <div class="icon">🎉</div>
+        <h4 class="fw-bold">Bul Bakalım'da yanlışın yok!</h4>
+        <p class="text-muted">Harika iş çıkarıyorsun. Oyna ve burada görürsün.</p>
+        <a href="{% url 'bul_bakalim_sinav_tipi_secimi' %}" class="btn btn-primary mt-2">
+          <i class="bi bi-play-fill"></i> Oyna
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Karşılaşma -->
+  <div id="panelKarsilasma" style="display:none;">
+    {% if karsilasma_gruplar %}
+      <div class="accordion" id="karsilasmaAccordion">
+        {% for ders, konular in karsilasma_gruplar.items %}
+        <div class="accordion-item mb-3" style="border-radius:14px;border:none;overflow:hidden;">
+          <h2 class="accordion-header">
+            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}"
+              type="button" data-bs-toggle="collapse"
+              data-bs-target="#ks_{{ ders }}" style="border-radius:14px;font-weight:700;">
+              <span class="ders-badge bg-danger text-white me-2">{{ ders|title }}</span>
+              <span class="text-muted small ms-2">{{ konular|length }} konu</span>
+              <span class="ms-auto badge bg-danger me-2">
+                {% for k in konular %}{{ k.sayi }}{% if not forloop.last %}+{% endif %}{% endfor %} soru
+              </span>
+            </button>
+          </h2>
+          <div id="ks_{{ ders }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}">
+            <div class="accordion-body pt-2">
+              <div class="d-flex flex-column gap-2">
+                {% for konu in konular %}
+                <div class="konu-card">
+                  <div>
+                    <div class="fw-semibold">{{ konu.konu_isim }}</div>
+                    <div class="text-muted small">{{ konu.sayi }} yanlış soru</div>
+                  </div>
+                  <a href="{% url 'yanlis_tekrar_calis' %}?mod=karsilasma&ders={{ ders }}&konu_id={{ konu.konu_id }}"
+                    class="btn btn-sm btn-danger" style="border-radius:10px;">
+                    <i class="bi bi-play-fill"></i> Çalış
+                  </a>
+                </div>
+                {% endfor %}
+                <a href="{% url 'yanlis_tekrar_calis' %}?mod=karsilasma&ders={{ ders }}"
+                  class="btn btn-outline-danger btn-sm mt-1" style="border-radius:10px;">
+                  <i class="bi bi-shuffle"></i> Tüm {{ ders|title }} Yanlışları
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="text-center mt-3">
+        <a href="{% url 'yanlis_tekrar_calis' %}?mod=karsilasma"
+          class="btn btn-danger px-5 fw-bold" style="border-radius:14px;">
+          <i class="bi bi-shuffle"></i> Tüm Yanlışları Karıştır
+        </a>
+      </div>
+
+    {% else %}
+      <div class="empty-state">
+        <div class="icon">🎉</div>
+        <h4 class="fw-bold">Karşılaşma'da yanlışın yok!</h4>
+        <p class="text-muted">Harika iş çıkarıyorsun. Karşılaşmaya gir ve burada görürsün.</p>
+        <a href="{% url 'karsilasma_sinav_tipi_secimi' %}" class="btn btn-primary mt-2">
+          <i class="bi bi-play-fill"></i> Oyna
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<script>
+function switchTab(tab) {
+    document.getElementById('panelBB').style.display = tab === 'bb' ? 'block' : 'none';
+    document.getElementById('panelKarsilasma').style.display = tab === 'karsilasma' ? 'block' : 'none';
+    document.getElementById('tabBB').classList.toggle('active', tab === 'bb');
+    document.getElementById('tabKarsilasma').classList.toggle('active', tab === 'karsilasma');
+}
+</script>
+{% endblock %}
