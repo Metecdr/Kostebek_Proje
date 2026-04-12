@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from kostebek_ana.sitemaps import StatikSayfalarSitemap, AnaSayfaSitemap
@@ -30,6 +30,9 @@ urlpatterns = [
 
     # Google Adsense doğrulama için ads.txt
     path('ads.txt', ads_txt, name='ads_txt'),
+
+    # Favicon (Google arama sonuçlarında logo gösterimi için)
+    path('favicon.ico', lambda r: HttpResponseRedirect('/static/images/kostebek_logo.png')),
 
     # Profile (giris, cikis profil içinde)
     path('', include('profile.urls')),
