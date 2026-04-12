@@ -304,6 +304,18 @@
         grid-column: span 2;
     }
 
+    .ders-karisik-ea {
+        background: linear-gradient(135deg, #f6d365, #fda085);
+        color: white !important;
+        grid-column: span 2;
+    }
+
+    .ders-karisik-sozel-ayt {
+        background: linear-gradient(135deg, #89f7fe, #66a6ff);
+        color: white !important;
+        grid-column: span 2;
+    }
+
     /* ===== INFO CARD ===== */
     .info-card {
         background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
@@ -409,7 +421,9 @@
         .alan-section { grid-template-columns: 1fr; }
         .ders-grid { grid-template-columns: 1fr; }
         .ders-karisik-sayisal,
-        .ders-karisik-sozel { grid-column: span 1; }
+        .ders-karisik-sozel,
+        .ders-karisik-ea,
+        .ders-karisik-sozel-ayt { grid-column: span 1; }
         .alan-card { padding: 30px 20px; }
     }
 </style>
@@ -445,9 +459,15 @@
                 <a href="#" onclick="dersSecildi('biyoloji','🧬 Biyoloji'); return false;" class="ders-btn ders-biyoloji">
                     <span>🧬 Biyoloji</span>
                 </a>
+                {% if sinav_tipi == 'AYT' %}
+                <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sayisal&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sayisal">
+                    <span>🔢🎲 Karışık Sayısal (F+K+B)</span>
+                </a>
+                {% else %}
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sayisal&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sayisal">
                     <span>🎲 Karışık Sayısal</span>
                 </a>
+                {% endif %}
             </div>
         </div>
 
@@ -471,9 +491,18 @@
                 <a href="#" onclick="dersSecildi('felsefe','💭 Felsefe'); return false;" class="ders-btn ders-felsefe">
                     <span>💭 Felsefe</span>
                 </a>
+                {% if sinav_tipi == 'AYT' %}
+                <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_ea&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-ea">
+                    <span>📖🎲 Karışık EA (Ed+Tar+Coğ)</span>
+                </a>
+                <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sozel_ayt&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sozel-ayt">
+                    <span>📚🎲 Karışık Sözel (Din+Fel+Ed+Tar+Coğ)</span>
+                </a>
+                {% else %}
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sozel&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sozel">
                     <span>🎲 Karışık Sözel</span>
                 </a>
+                {% endif %}
             </div>
         </div>
 
