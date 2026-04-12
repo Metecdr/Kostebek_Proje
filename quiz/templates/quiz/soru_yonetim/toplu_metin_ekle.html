@@ -3,6 +3,31 @@
 
 {% block title %}Toplu Soru Ekle - Köstebek{% endblock %}
 
+{% block extra_css %}
+<style>
+[data-theme="dark"] #formatRehberi .card-body {
+    background: #1a1f3a !important;
+    color: #c4b5fd !important;
+    border-color: #2d3454 !important;
+}
+[data-theme="dark"] .onizleme-dogru {
+    background: #0a2e1a !important;
+    border-color: #10b981 !important;
+}
+[data-theme="dark"] .onizleme-yanlis {
+    background: #1a1f3a !important;
+    border-color: #2d3454 !important;
+}
+[data-theme="dark"] .onizleme-aciklama {
+    background: #1a2540 !important;
+    border-left-color: #f59e0b !important;
+}
+[data-theme="dark"] #boshAlani {
+    color: #a8b3cf !important;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-4" style="max-width:1100px;">
 
@@ -41,6 +66,13 @@
                 <option value="AYT">AYT</option>
               </select>
             </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Konu <small class="text-muted">(ders seçince gelir)</small></label>
+            <select id="konuSelect" class="form-select">
+              <option value="">— Önce ders seçin —</option>
+            </select>
           </div>
 
           <div class="row g-2 mb-3">
@@ -140,6 +172,26 @@ A) ..."></textarea>
 <script>
 let parsedSorular = [];
 
+// Konu AJAX
+const dersSelect = document.getElementById('dersSelect');
+const konuSelect = document.getElementById('konuSelect');
+
+function konulariYukle(ders) {
+    if (!ders) { konuSelect.innerHTML = '<option value="">— Önce ders seçin —</option>'; return; }
+    konuSelect.innerHTML = '<option value="">Yükleniyor...</option>';
+    fetch(`/soru-yonetim/konular-by-ders/?ders=${ders}`)
+        .then(r => r.json())
+        .then(data => {
+            konuSelect.innerHTML = '<option value="">— Konu seç (isteğe bağlı) —</option>';
+            data.konular.forEach(k => {
+                const opt = document.createElement('option');
+                opt.value = k.id; opt.textContent = k.isim;
+                konuSelect.appendChild(opt);
+            });
+        });
+}
+dersSelect.addEventListener('change', () => konulariYukle(dersSelect.value));
+
 async function parseMetin() {
     const metin = document.getElementById('metinInput').value.trim();
     const ders = document.getElementById('dersSelect').value;
@@ -207,11 +259,10 @@ function renderOnizleme(sorular) {
         `;
 
         soru.cevaplar.forEach((cevap, cidx) => {
-            const bgColor = cevap.dogru ? '#e8f5e9' : '#f8f9fa';
-            const borderColor = cevap.dogru ? '#4caf50' : '#dee2e6';
+            const cls = cevap.dogru ? 'onizleme-dogru' : 'onizleme-yanlis';
             const icon = cevap.dogru ? '✅' : '';
             html += `
-              <div class="d-flex align-items-start gap-2 mb-1 p-2 rounded" style="background:${bgColor}; border:1px solid ${borderColor};">
+              <div class="d-flex align-items-start gap-2 mb-1 p-2 rounded ${cls}" style="${cevap.dogru ? 'background:#e8f5e9;border:1px solid #4caf50;' : 'background:#f8f9fa;border:1px solid #dee2e6;'}">
                 <span class="fw-bold" style="min-width:22px;">${cevap.harf})</span>
                 <span>${icon} ${escapeHtml(cevap.metin)}</span>
               </div>
@@ -222,7 +273,7 @@ function renderOnizleme(sorular) {
 
         if (soru.aciklama) {
             html += `
-            <div class="mt-2 p-2 rounded" style="background:#fff3e0; border-left:3px solid #ff9800;">
+            <div class="mt-2 p-2 rounded onizleme-aciklama" style="background:#fff3e0; border-left:3px solid #ff9800;">
               <small><strong>📖 Açıklama:</strong> ${escapeHtml(soru.aciklama)}</small>
             </div>`;
         }
@@ -267,6 +318,7 @@ async function soruKaydet() {
                 sorular: parsedSorular,
                 ders: ders,
                 sinav_tipi: sinav,
+                konu_id: document.getElementById('konuSelect').value || null,
                 bul_bakalimda_cikar: bulbakalim,
                 karsilasmada_cikar: karsilasma,
             }),

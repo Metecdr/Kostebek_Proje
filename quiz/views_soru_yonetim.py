@@ -146,8 +146,19 @@ def soru_ekle(request):
                     dogru_mu=(i == dogru_cevap_index),
                 )
 
-            logger.info(f"✅ Soru eklendi #{soru.id} - {ders} - {request.user.username}")
-            messages.success(request, f'✅ Soru #{soru.id} başarıyla eklendi!')
+            # Günün sorusu olarak ayarla
+            if request.POST.get('gunun_sorusu_olarak_ayarla'):
+                from datetime import date
+                bonus_xp = max(5, min(50, int(request.POST.get('gunun_bonus_xp', 15) or 15)))
+                GununSorusu.objects.update_or_create(
+                    tarih=date.today(),
+                    defaults={'soru': soru, 'bonus_xp': bonus_xp}
+                )
+                logger.info(f"☀️ Günün sorusu ayarlandı #{soru.id}")
+                messages.success(request, f'✅ Soru #{soru.id} eklendi ve bugünün sorusu olarak ayarlandı!')
+            else:
+                logger.info(f"✅ Soru eklendi #{soru.id} - {ders} - {request.user.username}")
+                messages.success(request, f'✅ Soru #{soru.id} başarıyla eklendi!')
 
             # Yeni soru ekle veya listeye dön
             if 'kaydet_ve_yeni' in request.POST:
@@ -283,7 +294,11 @@ def toplu_metin_ekle(request):
                 bul_bakalimda_cikar = data.get('bul_bakalimda_cikar', True)
                 karsilasmada_cikar = data.get('karsilasmada_cikar', True)
 
-            konu = Konu.objects.first()
+            konu_id = data.get('konu_id') if data else request.POST.get('konu_id')
+            try:
+                konu = Konu.objects.get(id=konu_id) if konu_id else Konu.objects.first()
+            except Konu.DoesNotExist:
+                konu = Konu.objects.first()
             eklenen = 0
 
             for s in sorular:

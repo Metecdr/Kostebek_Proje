@@ -616,10 +616,23 @@
         [data-theme="dark"] .card-title,
         [data-theme="dark"] h2,
         [data-theme="dark"] h3 {
-            background: linear-gradient(135deg, #a78bfa, #60a5fa) !important;
-            -webkit-background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-            background-clip: text !important;
+            color: #c4b5fd !important;
+            background: none !important;
+            -webkit-background-clip: unset !important;
+            -webkit-text-fill-color: unset !important;
+            background-clip: unset !important;
+        }
+
+        /* Gradient arka planlı elementlerin içindeki yazılar ve emojiler beyaz kalır */
+        [data-theme="dark"] [style*="background:linear-gradient"] h2,
+        [data-theme="dark"] [style*="background:linear-gradient"] h3,
+        [data-theme="dark"] [style*="background: linear-gradient"] h2,
+        [data-theme="dark"] [style*="background: linear-gradient"] h3,
+        [data-theme="dark"] [class*="card-header"] h2,
+        [data-theme="dark"] [class*="card-header"] h3 {
+            color: #ffffff !important;
+            background: none !important;
+            -webkit-text-fill-color: #ffffff !important;
         }
 
         [data-theme="dark"] .stat-value,
