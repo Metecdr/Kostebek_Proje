@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /giris
+Disallow: /kayit
 
 Sitemap: https://kostebekyks.com/sitemap.xml
