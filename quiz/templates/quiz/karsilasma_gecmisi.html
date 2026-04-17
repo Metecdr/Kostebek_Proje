@@ -1038,6 +1038,895 @@
       padding: 18px 16px;
     }
   }
+    /* ─── FONT ─── */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px)
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0)
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px)
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0)
+        }
+    }
+
+    @keyframes zoomIn {
+        from {
+            opacity: 0;
+            transform: scale(.92)
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1)
+        }
+    }
+
+    @keyframes glow {
+
+        0%,
+        100% {
+            box-shadow: 0 0 18px rgba(102, 126, 234, .35)
+        }
+
+        50% {
+            box-shadow: 0 0 36px rgba(102, 126, 234, .65)
+        }
+    }
+
+    @keyframes shimmer {
+        0% {
+            background-position: -400px 0
+        }
+
+        100% {
+            background-position: 400px 0
+        }
+    }
+
+    @keyframes barIn {
+        from {
+            width: 0 !important
+        }
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1
+        }
+
+        50% {
+            opacity: .55
+        }
+    }
+
+    /* ─── BASE ─── */
+    .kh-page {
+        font-family: 'Inter', sans-serif;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 20px 80px;
+    }
+
+    /* ══════════════════════════════════════
+   BANNER
+══════════════════════════════════════ */
+    .kh-banner {
+        position: relative;
+        background: linear-gradient(135deg, #0f0c29 0%, #302b63 55%, #24243e 100%);
+        border-radius: 30px;
+        padding: 40px 44px 36px;
+        margin-bottom: 22px;
+        overflow: hidden;
+        animation: slideDown .55s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    /* Dekoratif daireler */
+    .kh-banner::before {
+        content: '';
+        position: absolute;
+        width: 450px;
+        height: 450px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(102, 126, 234, .2) 0%, transparent 70%);
+        top: -140px;
+        right: -90px;
+        pointer-events: none;
+    }
+
+    .kh-banner::after {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(118, 75, 162, .18) 0%, transparent 70%);
+        bottom: -90px;
+        left: 50px;
+        pointer-events: none;
+    }
+
+    /* Başlık satırı */
+    .kh-top-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 34px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .kh-heading {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .kh-heading-icon {
+        width: 52px;
+        height: 52px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, .5);
+        animation: glow 3s ease-in-out infinite;
+        flex-shrink: 0;
+    }
+
+    .kh-heading-text h1 {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #fff;
+        margin: 0 0 5px;
+        letter-spacing: -.3px;
+    }
+
+    .kh-heading-text p {
+        font-size: .88rem;
+        color: rgba(255, 255, 255, .48);
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .kh-btn-reset {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 22px;
+        background: rgba(255, 255, 255, .09);
+        border: 1.5px solid rgba(255, 255, 255, .18);
+        border-radius: 14px;
+        color: rgba(255, 255, 255, .82);
+        font-weight: 700;
+        font-size: .88rem;
+        cursor: pointer;
+        transition: all .25s;
+        backdrop-filter: blur(10px);
+        white-space: nowrap;
+    }
+
+    .kh-btn-reset:hover {
+        background: rgba(255, 255, 255, .18);
+        color: #fff;
+        border-color: rgba(255, 255, 255, .3);
+        transform: translateY(-2px);
+    }
+
+    /* Stat kutuları */
+    .kh-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .kh-stat-box {
+        background: rgba(255, 255, 255, .07);
+        border: 1px solid rgba(255, 255, 255, .12);
+        border-radius: 20px;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        backdrop-filter: blur(14px);
+        transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+        animation: zoomIn .5s ease-out both;
+        cursor: default;
+    }
+
+    .kh-stat-box:hover {
+        background: rgba(255, 255, 255, .14);
+        border-color: rgba(255, 255, 255, .22);
+        transform: translateY(-4px) scale(1.02);
+    }
+
+    .kh-stat-dot {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+        transition: transform .35s cubic-bezier(.175, .885, .32, 1.275);
+    }
+
+    .kh-stat-box:hover .kh-stat-dot {
+        transform: scale(1.2) rotate(10deg);
+    }
+
+    .dot-purple {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        box-shadow: 0 4px 16px rgba(102, 126, 234, .55);
+    }
+
+    .dot-green {
+        background: linear-gradient(135deg, #11998e, #38ef7d);
+        box-shadow: 0 4px 16px rgba(17, 153, 142, .55);
+    }
+
+    .dot-red {
+        background: linear-gradient(135deg, #f857a6, #ff5858);
+        box-shadow: 0 4px 16px rgba(248, 87, 166, .55);
+    }
+
+    .dot-gold {
+        background: linear-gradient(135deg, #f7971e, #ffd200);
+        box-shadow: 0 4px 16px rgba(247, 151, 30, .55);
+    }
+
+    .kh-stat-info {
+        min-width: 0;
+    }
+
+    .kh-stat-lbl {
+        font-size: .72rem;
+        font-weight: 800;
+        color: rgba(255, 255, 255, .48);
+        text-transform: uppercase;
+        letter-spacing: .8px;
+    }
+
+    .kh-stat-num {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #fff;
+        line-height: 1;
+        margin-top: 4px;
+    }
+
+    /* ══════════════════════════════════════
+   FİLTRE — LIGHT MODE
+══════════════════════════════════════ */
+    .kh-filter {
+        background: #ffffff;
+        border-radius: 22px;
+        padding: 22px 26px;
+        box-shadow: 0 4px 28px rgba(0, 0, 0, .09);
+        border: 1.5px solid #e8ecf4;
+        margin-bottom: 22px;
+        animation: slideUp .5s cubic-bezier(.22, 1, .36, 1) .08s both;
+    }
+
+    .kh-filter-row {
+        display: grid;
+        grid-template-columns: 1.8fr 1fr 1fr 1fr 48px;
+        gap: 12px;
+        align-items: flex-end;
+    }
+
+    .kh-flt-grp label {
+        display: block;
+        font-size: .74rem;
+        font-weight: 800;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        margin-bottom: 8px;
+    }
+
+    .kh-flt-grp input,
+    .kh-flt-grp select {
+        width: 100%;
+        height: 46px;
+        border: 2px solid #e2e8f0;
+        border-radius: 13px;
+        background: #f8fafc;
+        padding: 0 14px;
+        font-size: .9rem;
+        font-weight: 600;
+        color: #334155;
+        outline: none;
+        transition: all .25s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .kh-flt-grp input::placeholder {
+        color: #cbd5e1;
+    }
+
+    .kh-flt-grp input:focus,
+    .kh-flt-grp select:focus {
+        border-color: #667eea;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, .12);
+    }
+
+    .kh-btn-go {
+        width: 46px;
+        height: 46px;
+        border: none;
+        border-radius: 13px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .25s;
+        box-shadow: 0 4px 14px rgba(102, 126, 234, .4);
+        flex-shrink: 0;
+    }
+
+    .kh-btn-go:hover {
+        transform: translateY(-2px) scale(1.08);
+        box-shadow: 0 8px 22px rgba(102, 126, 234, .55);
+    }
+
+    /* ══════════════════════════════════════
+   MAÇ KARTI — LIGHT MODE
+══════════════════════════════════════ */
+    .kh-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .kh-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 0;
+        box-shadow: 0 2px 18px rgba(0, 0, 0, .07);
+        border: 1.5px solid #edf0f7;
+        overflow: hidden;
+        transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+        animation: slideUp .4s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .kh-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 14px 40px rgba(0, 0, 0, .12);
+        border-color: #dde2f0;
+    }
+
+    .kh-card.kh-win {
+        border-left: 4px solid #11998e;
+    }
+
+    .kh-card.kh-lose {
+        border-left: 4px solid #f857a6;
+    }
+
+    .kh-card.kh-draw {
+        border-left: 4px solid #4facfe;
+    }
+
+    /* Üst renk şeridi */
+    .kh-accent {
+        height: 4px;
+        width: 100%;
+    }
+
+    .kh-win .kh-accent {
+        background: linear-gradient(90deg, #11998e, #38ef7d);
+    }
+
+    .kh-lose .kh-accent {
+        background: linear-gradient(90deg, #f857a6, #ff5858);
+    }
+
+    .kh-draw .kh-accent {
+        background: linear-gradient(90deg, #4facfe, #00f2fe);
+    }
+
+    .kh-card-inner {
+        padding: 22px 26px 20px;
+    }
+
+    /* Üst satır */
+    .kh-main-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+    /* Avatar + İsim */
+    .kh-who {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 180px;
+    }
+
+    .kh-avi {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #c4b5fd, #7c3aed);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        font-weight: 900;
+        overflow: hidden;
+        flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(124, 58, 237, .3);
+    }
+
+    .kh-avi img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .kh-name {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 3px;
+        text-transform: capitalize;
+        /* ← baş harf büyük */
+    }
+
+    .kh-date {
+        font-size: .78rem;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    /* Etiketler */
+    .kh-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .kh-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 14px;
+        border-radius: 100px;
+        font-size: .78rem;
+        font-weight: 800;
+        white-space: nowrap;
+        text-transform: capitalize;
+        /* ← baş harf büyük */
+    }
+
+    /* Light mode tag renkleri — belirgin */
+    .t-lesson {
+        background: rgba(102, 126, 234, .12);
+        color: #4338ca;
+        border: 1px solid rgba(102, 126, 234, .2);
+    }
+
+    .t-tour {
+        background: rgba(247, 151, 30, .12);
+        color: #b45309;
+        border: 1px solid rgba(247, 151, 30, .2);
+    }
+
+    .t-normal {
+        background: rgba(100, 116, 139, .1);
+        color: #475569;
+        border: 1px solid rgba(100, 116, 139, .2);
+    }
+
+    .t-win {
+        background: rgba(17, 153, 142, .1);
+        color: #0f766e;
+        border: 1px solid rgba(17, 153, 142, .2);
+    }
+
+    .t-lose {
+        background: rgba(248, 87, 166, .12);
+        color: #be185d;
+        border: 1px solid rgba(248, 87, 166, .2);
+    }
+
+    .t-draw {
+        background: rgba(79, 172, 254, .12);
+        color: #0369a1;
+        border: 1px solid rgba(79, 172, 254, .25);
+    }
+
+    .t-diff {
+        background: #f1f5f9;
+        color: #334155;
+        border: 1px solid #e2e8f0;
+        font-weight: 900;
+        text-transform: none;
+    }
+
+    /* Detay butonu */
+    .kh-btn-detail {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 22px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #1e293b, #334155);
+        color: #fff;
+        font-weight: 800;
+        font-size: .85rem;
+        text-decoration: none;
+        transition: all .25s;
+        white-space: nowrap;
+        box-shadow: 0 4px 14px rgba(30, 41, 59, .2);
+    }
+
+    .kh-btn-detail:hover {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(102, 126, 234, .45);
+    }
+
+    .kh-btn-detail i {
+        transition: transform .25s;
+    }
+
+    .kh-btn-detail:hover i {
+        transform: translateX(4px);
+    }
+
+    /* Skor bölümü */
+    .kh-score-area {
+        background: #f8fafc;
+        border-radius: 14px;
+        padding: 13px 16px;
+        border: 1.5px solid #e2e8f0;
+    }
+
+    .kh-score-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 9px;
+    }
+
+    .kh-score-main {
+        font-size: 1rem;
+        font-weight: 900;
+        color: #1e293b;
+    }
+
+    .kh-score-main span {
+        color: #667eea;
+    }
+
+    .kh-score-rate {
+        font-size: .8rem;
+        font-weight: 700;
+        color: #94a3b8;
+    }
+
+    .kh-prog {
+        height: 9px;
+        background: #e2e8f0;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .kh-prog-fill {
+        height: 100%;
+        border-radius: 6px;
+        position: relative;
+        overflow: hidden;
+        animation: barIn 1.2s cubic-bezier(.4, 0, .2, 1) both;
+        transition: width 1.2s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .kh-prog-fill::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .55), transparent);
+        background-size: 400px 100%;
+        animation: shimmer 2s infinite;
+    }
+
+    /* Alt bilgi */
+    .kh-footer {
+        text-align: center;
+        margin-top: 28px;
+        font-size: .88rem;
+        font-weight: 700;
+        color: #94a3b8;
+    }
+
+    .kh-footer strong {
+        color: #667eea;
+    }
+
+    #emptyHint {
+        display: none;
+        margin-top: 12px;
+        color: #f857a6;
+        font-weight: 800;
+        font-size: .9rem;
+    }
+
+    /* Boş durum */
+    .kh-empty {
+        background: #fff;
+        border-radius: 24px;
+        padding: 80px 30px;
+        text-align: center;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, .08);
+        border: 1.5px solid #edf0f7;
+        animation: zoomIn .5s ease-out both;
+    }
+
+    .kh-empty-emoji {
+        font-size: 4.5rem;
+        display: block;
+        margin-bottom: 18px;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    .kh-empty h2 {
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: #1e293b;
+        margin: 0 0 10px;
+    }
+
+    .kh-empty p {
+        color: #94a3b8;
+        font-weight: 500;
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    /* ══════════════════════════════════════
+   DARK MODE — belirgin fark
+══════════════════════════════════════ */
+
+    /* Filtre kartı */
+    [data-theme="dark"] .kh-filter {
+        background: #111827 !important;
+        border-color: #1f2d48 !important;
+        box-shadow: 0 4px 32px rgba(0, 0, 0, .6) !important;
+    }
+
+    [data-theme="dark"] .kh-flt-grp label {
+        color: #4b6079 !important;
+    }
+
+    [data-theme="dark"] .kh-flt-grp input,
+    [data-theme="dark"] .kh-flt-grp select {
+        background: #1a2235 !important;
+        border-color: #263350 !important;
+        color: #e2e8f0 !important;
+    }
+
+    [data-theme="dark"] .kh-flt-grp input::placeholder {
+        color: #3d5170 !important;
+    }
+
+    [data-theme="dark"] .kh-flt-grp input:focus,
+    [data-theme="dark"] .kh-flt-grp select:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, .15) !important;
+        background: #1e293b !important;
+    }
+
+    /* Maç kartları */
+    [data-theme="dark"] .kh-card {
+        background: #0f172a !important;
+        border-color: #1e2d4a !important;
+        box-shadow: 0 4px 28px rgba(0, 0, 0, .6) !important;
+    }
+
+    [data-theme="dark"] .kh-card:hover {
+        box-shadow: 0 16px 50px rgba(0, 0, 0, .7) !important;
+        border-color: #263d63 !important;
+    }
+
+    [data-theme="dark"] .kh-card.kh-win {
+        border-left-color: #38ef7d !important;
+    }
+
+    [data-theme="dark"] .kh-card.kh-lose {
+        border-left-color: #ff5858 !important;
+    }
+
+    [data-theme="dark"] .kh-card.kh-draw {
+        border-left-color: #4facfe !important;
+    }
+
+    [data-theme="dark"] .kh-name {
+        color: #f1f5f9 !important;
+    }
+
+    [data-theme="dark"] .kh-date {
+        color: #3d5170 !important;
+    }
+
+    [data-theme="dark"] .kh-score-main {
+        color: #f1f5f9 !important;
+    }
+
+    [data-theme="dark"] .kh-score-rate {
+        color: #3d5170 !important;
+    }
+
+    /* Dark mode skor alanı */
+    [data-theme="dark"] .kh-score-area {
+        background: #1a2235 !important;
+        border-color: #263350 !important;
+    }
+
+    [data-theme="dark"] .kh-prog {
+        background: #1e2d4a !important;
+    }
+
+    /* Dark mode etiketler — parlak ve belirgin */
+    [data-theme="dark"] .t-lesson {
+        background: rgba(102, 126, 234, .25) !important;
+        color: #a5b4fc !important;
+        border-color: rgba(102, 126, 234, .35) !important;
+    }
+
+    [data-theme="dark"] .t-tour {
+        background: rgba(247, 151, 30, .22) !important;
+        color: #fbbf24 !important;
+        border-color: rgba(247, 151, 30, .35) !important;
+    }
+
+    [data-theme="dark"] .t-normal {
+        background: rgba(148, 163, 184, .15) !important;
+        color: #94a3b8 !important;
+        border-color: rgba(148, 163, 184, .25) !important;
+    }
+
+    [data-theme="dark"] .t-win {
+        background: rgba(17, 153, 142, .25) !important;
+        color: #34d399 !important;
+        border-color: rgba(17, 153, 142, .35) !important;
+    }
+
+    [data-theme="dark"] .t-lose {
+        background: rgba(248, 87, 166, .25) !important;
+        color: #f9a8d4 !important;
+        border-color: rgba(248, 87, 166, .35) !important;
+    }
+
+    [data-theme="dark"] .t-draw {
+        background: rgba(79, 172, 254, .22) !important;
+        color: #7dd3fc !important;
+        border-color: rgba(79, 172, 254, .35) !important;
+    }
+
+    [data-theme="dark"] .t-diff {
+        background: #1e2d4a !important;
+        color: #94a3b8 !important;
+        border-color: #263350 !important;
+    }
+
+    /* Dark mode detay butonu */
+    [data-theme="dark"] .kh-btn-detail {
+        background: linear-gradient(135deg, #1e2d4a, #263d63) !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, .4) !important;
+    }
+
+    /* Dark mode boş durum */
+    [data-theme="dark"] .kh-empty {
+        background: #0f172a !important;
+        border-color: #1e2d4a !important;
+        box-shadow: 0 4px 28px rgba(0, 0, 0, .6) !important;
+    }
+
+    [data-theme="dark"] .kh-empty h2 {
+        color: #f1f5f9 !important;
+    }
+
+    /* Dark mode alt bilgi */
+    [data-theme="dark"] .kh-footer {
+        color: #3d5170 !important;
+    }
+
+    [data-theme="dark"] .kh-footer strong {
+        color: #667eea !important;
+    }
+
+    /* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+    @media (max-width:920px) {
+        .kh-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .kh-filter-row {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .kh-filter-row .kh-flt-grp:first-child {
+            grid-column: span 2;
+        }
+    }
+
+    @media (max-width:600px) {
+        .kh-banner {
+            padding: 26px 20px 24px;
+        }
+
+        .kh-stats {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .kh-filter-row {
+            grid-template-columns: 1fr;
+        }
+
+        .kh-filter-row .kh-flt-grp:first-child {
+            grid-column: 1;
+        }
+
+        .kh-main-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .kh-tags {
+            justify-content: flex-start;
+        }
+
+        .kh-heading-text h1 {
+            font-size: 1.4rem;
+        }
+
+        .kh-card-inner {
+            padding: 18px 16px;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -1285,6 +2174,218 @@
     <p>Henüz tamamlanmış bir karşılaşman bulunmuyor.<br>Meydan okumaya hazır mısın?</p>
   </div>
   {% endif %}
+    <!-- ══ BANNER ══ -->
+    <div class="kh-banner">
+        <div class="kh-top-row">
+            <div class="kh-heading">
+                <div class="kh-heading-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <div class="kh-heading-text">
+                    <h1>Karşılaşma Geçmişi</h1>
+                    <p>En yeni maç en üstte &nbsp;•&nbsp; Turnuva maçları otomatik etiketlenir</p>
+                </div>
+            </div>
+            <button class="kh-btn-reset" id="btnClearFilters">
+                <i class="bi bi-arrow-counterclockwise"></i> Filtreleri Sıfırla
+            </button>
+        </div>
+
+        <div class="kh-stats">
+            <div class="kh-stat-box" style="animation-delay:.06s">
+                <div class="kh-stat-dot dot-purple"><i class="bi bi-controller"></i></div>
+                <div class="kh-stat-info">
+                    <div class="kh-stat-lbl">Toplam Maç</div>
+                    <div class="kh-stat-num" id="sumTotal">0</div>
+                </div>
+            </div>
+            <div class="kh-stat-box" style="animation-delay:.12s">
+                <div class="kh-stat-dot dot-green"><i class="bi bi-trophy-fill"></i></div>
+                <div class="kh-stat-info">
+                    <div class="kh-stat-lbl">Kazanılan</div>
+                    <div class="kh-stat-num" id="sumWin">0</div>
+                </div>
+            </div>
+            <div class="kh-stat-box" style="animation-delay:.18s">
+                <div class="kh-stat-dot dot-red"><i class="bi bi-x-circle-fill"></i></div>
+                <div class="kh-stat-info">
+                    <div class="kh-stat-lbl">Kaybedilen</div>
+                    <div class="kh-stat-num" id="sumLose">0</div>
+                </div>
+            </div>
+            <div class="kh-stat-box" style="animation-delay:.24s">
+                <div class="kh-stat-dot dot-gold"><i class="bi bi-award-fill"></i></div>
+                <div class="kh-stat-info">
+                    <div class="kh-stat-lbl">Turnuva</div>
+                    <div class="kh-stat-num" id="sumTournament">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ FİLTRELER ══ -->
+    <div class="kh-filter">
+        <div class="kh-filter-row">
+            <div class="kh-flt-grp">
+                <label>Rakip Ara</label>
+                <input id="filterSearch" type="text" placeholder="Örn. metehan">
+            </div>
+            <div class="kh-flt-grp">
+                <label>Sonuç</label>
+                <select id="filterResult">
+                    <option value="all">Hepsi</option>
+                    <option value="Kazandı">Kazandı</option>
+                    <option value="Kaybetti">Kaybetti</option>
+                    <option value="Berabere">Berabere</option>
+                </select>
+            </div>
+            <div class="kh-flt-grp">
+                <label>Tür</label>
+                <select id="filterType">
+                    <option value="all">Hepsi</option>
+                    <option value="tournament">Turnuva</option>
+                    <option value="normal">Normal</option>
+                </select>
+            </div>
+            <div class="kh-flt-grp">
+                <label>Ders</label>
+                <select id="filterLesson">
+                    <option value="all">Hepsi</option>
+                </select>
+            </div>
+            <button class="kh-btn-go" id="btnApplyFilters" title="Ara">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ══ MAÇ LİSTESİ ══ -->
+    {% if rows %}
+    <div class="kh-list" id="matchList">
+
+        {% for r in rows %}
+        {% with toplam=r.benim_skor|add:r.rakip_skor %}
+
+        <div class="kh-card match-row
+        {% if r.sonuc == 'Kazandı' %}kh-win{% elif r.sonuc == 'Kaybetti' %}kh-lose{% else %}kh-draw{% endif %}"
+            data-rakip="{% if r.rakip %}{{ r.rakip.username|lower }}{% endif %}" data-sonuc="{{ r.sonuc }}"
+            data-tur="{% if r.is_turnuva %}tournament{% else %}normal{% endif %}" data-ders="{{ r.oda.secilen_ders }}"
+            style="animation-delay:{{ forloop.counter0 }}00ms;">
+
+            <div class="kh-accent"></div>
+
+            <div class="kh-card-inner">
+
+                <!-- Üst satır -->
+                <div class="kh-main-row">
+
+                    <!-- Kullanıcı -->
+                    <div class="kh-who">
+                        <div class="kh-avi">
+                            {% if r.rakip and r.rakip.profil and r.rakip.profil.profil_fotografi %}
+                            <img src="{{ r.rakip.profil.profil_fotografi.url }}" alt="{{ r.rakip.username }}">
+                            {% elif r.rakip %}
+                            {{ r.rakip.username|slice:":1"|upper }}
+                            {% else %}
+                            <i class="bi bi-person-fill"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="kh-name">
+                                {% if r.rakip %}{{ r.rakip.username }}{% else %}Gizli Rakip{% endif %}
+                            </div>
+                            <div class="kh-date">
+                                {% if r.oda.bitis_zamani %}{{ r.oda.bitis_zamani|date:"d M Y, H:i" }}
+                                {% else %}{{ r.oda.olusturma_tarihi|date:"d M Y, H:i" }}{% endif %}
+                                {% if r.rakip and r.rakip.profil %}&nbsp;·&nbsp;{{ r.rakip.profil.get_alan_display }}{%
+                                endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Etiketler -->
+                    <div class="kh-tags">
+                        <span class="kh-tag t-lesson">
+                            <i class="bi bi-book-fill"></i> {{ r.oda.secilen_ders }}
+                        </span>
+
+                        {% if r.is_turnuva %}
+                        <span class="kh-tag t-tour">
+                            <i class="bi bi-lightning-charge-fill"></i> Turnuva
+                        </span>
+                        {% else %}
+                        <span class="kh-tag t-normal">
+                            <i class="bi bi-controller"></i> Normal
+                        </span>
+                        {% endif %}
+
+                        {% if r.sonuc == "Kazandı" %}
+                        <span class="kh-tag t-win">
+                            <i class="bi bi-check-circle-fill"></i> Kazandı
+                        </span>
+                        {% elif r.sonuc == "Kaybetti" %}
+                        <span class="kh-tag t-lose">
+                            <i class="bi bi-x-circle-fill"></i> Kaybetti
+                        </span>
+                        {% else %}
+                        <span class="kh-tag t-draw">
+                            <i class="bi bi-dash-circle-fill"></i> Berabere
+                        </span>
+                        {% endif %}
+
+                        <span class="kh-tag t-diff">Fark: {{ r.puan_farki }}</span>
+                    </div>
+
+                    <!-- Detay butonu -->
+                    <a class="kh-btn-detail" href="{% url 'karsilasma_sonuc' r.oda.oda_id %}">
+                        Detaylar <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                </div><!-- /kh-main-row -->
+
+                <!-- Skor çubuğu -->
+                <div class="kh-score-area">
+                    <div class="kh-score-top">
+                        <div class="kh-score-main">
+                            Skor: <span>{{ r.benim_skor }}</span> &mdash; {{ r.rakip_skor }}
+                        </div>
+                        <div class="kh-score-rate">
+                            Başarı Oranı: %{% if toplam > 0 %}{% widthratio r.benim_skor toplam 100 %}{% else %}50{%
+                            endif %}
+                        </div>
+                    </div>
+                    <div class="kh-prog">
+                        <div class="kh-prog-fill js-fill" data-sonuc="{{ r.sonuc }}"
+                            style="width:{% if toplam > 0 %}{% widthratio r.benim_skor toplam 100 %}{% else %}50{% endif %}%;">
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /kh-card-inner -->
+        </div><!-- /kh-card -->
+
+        {% endwith %}
+        {% endfor %}
+
+    </div><!-- /kh-list -->
+
+    <div class="kh-footer">
+        Gösterilen: <strong id="visibleCount">0</strong>
+        &nbsp;/&nbsp;
+        Toplam: <strong id="totalCount" style="color:#1e293b;">0</strong>
+        <div id="emptyHint">
+            <i class="bi bi-search"></i> Filtrelere uygun sonuç bulunamadı.
+        </div>
+    </div>
+
+    {% else %}
+    <div class="kh-empty">
+        <span class="kh-empty-emoji">📭</span>
+        <h2>Geçmiş Tertemiz!</h2>
+        <p>Henüz tamamlanmış bir karşılaşman bulunmuyor.<br>Meydan okumaya hazır mısın?</p>
+    </div>
+    {% endif %}
+>>>>>>> a5477126 (Önemli Yenilikler)
 
 </div><!-- /kh-page -->
 {% endblock %}
@@ -1406,5 +2507,120 @@
     paintBars();
     applyFilters();
   });
+    document.addEventListener('DOMContentLoaded', function () {
+
+        /* Bar renkleri */
+        function paintBars() {
+            document.querySelectorAll('.js-fill').forEach(function (el) {
+                var s = el.dataset.sonuc || '';
+                if (s === 'Kazandı') el.style.background = 'linear-gradient(90deg,#11998e,#38ef7d)';
+                else if (s === 'Kaybetti') el.style.background = 'linear-gradient(90deg,#f857a6,#ff5858)';
+                else el.style.background = 'linear-gradient(90deg,#4facfe,#00f2fe)';
+            });
+        }
+
+        /* Sayaç animasyonu */
+        function animCount(el, target) {
+            if (!el) return;
+            var dur = 1000;
+            var step = function (ts) {
+                if (!step.t) step.t = ts;
+                var p = Math.min((ts - step.t) / dur, 1);
+                var e = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.floor(e * target);
+                if (p < 1) requestAnimationFrame(step);
+                else el.textContent = target;
+            };
+            requestAnimationFrame(step);
+        }
+
+        var items = Array.from(document.querySelectorAll('.match-row'));
+        var fSearch = document.getElementById('filterSearch');
+        var fResult = document.getElementById('filterResult');
+        var fType = document.getElementById('filterType');
+        var fLesson = document.getElementById('filterLesson');
+        var emptyHint = document.getElementById('emptyHint');
+
+        if (!items.length) return;
+
+        /* Ders listesi */
+        function buildLessons() {
+            var set = {};
+            items.forEach(function (r) { var d = r.dataset.ders; if (d) set[d] = 1; });
+            var lessons = Object.keys(set).sort();
+            var cur = fLesson.value;
+            while (fLesson.options.length > 1) fLesson.remove(1);
+            lessons.forEach(function (l) {
+                var o = document.createElement('option');
+                o.value = o.textContent = l;
+                fLesson.appendChild(o);
+            });
+            if (cur) fLesson.value = cur;
+        }
+
+        /* İstatistikleri güncelle */
+        function updateStats() {
+            var total = 0, win = 0, lose = 0, tour = 0, visible = 0;
+            items.forEach(function (r) {
+                total++;
+                if (r.dataset.sonuc === 'Kazandı') win++;
+                if (r.dataset.sonuc === 'Kaybetti') lose++;
+                if (r.dataset.tur === 'tournament') tour++;
+                if (r.style.display !== 'none') visible++;
+            });
+            animCount(document.getElementById('sumTotal'), total);
+            animCount(document.getElementById('sumWin'), win);
+            animCount(document.getElementById('sumLose'), lose);
+            animCount(document.getElementById('sumTournament'), tour);
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('visibleCount').textContent = visible;
+            if (emptyHint) emptyHint.style.display = (visible === 0 && total > 0) ? 'block' : 'none';
+        }
+
+        /* Filtreleri uygula */
+        function applyFilters() {
+            var q = (fSearch.value || '').trim().toLowerCase();
+            var result = fResult.value;
+            var type = fType.value;
+            var lesson = fLesson.value;
+
+            items.forEach(function (r) {
+                var ok = true;
+                if (q && !(r.dataset.rakip || '').includes(q)) ok = false;
+                if (result !== 'all' && r.dataset.sonuc !== result) ok = false;
+                if (type !== 'all' && r.dataset.tur !== type) ok = false;
+                if (lesson !== 'all' && r.dataset.ders !== lesson) ok = false;
+
+                if (ok) {
+                    r.style.display = '';
+                    r.style.animation = 'none';
+                    r.offsetHeight; /* reflow */
+                    r.style.animation = 'zoomIn .3s ease-out both';
+                } else {
+                    r.style.display = 'none';
+                }
+            });
+            updateStats();
+        }
+
+        /* Olaylar */
+        document.getElementById('btnApplyFilters').addEventListener('click', applyFilters);
+        document.getElementById('btnClearFilters').addEventListener('click', function () {
+            fSearch.value = '';
+            fResult.value = 'all';
+            fType.value = 'all';
+            fLesson.value = 'all';
+            applyFilters();
+        });
+        fSearch.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyFilters(); });
+        [fResult, fType, fLesson].forEach(function (el) {
+            el.addEventListener('change', applyFilters);
+        });
+
+        /* İlk yükleme */
+        buildLessons();
+        paintBars();
+        applyFilters();
+    });
 </script>
 {% endblock %}

@@ -1,0 +1,552 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Rozetlerim - Köstebek Matematik{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #4a90e2;
+        --success-color: #27ae60;
+        --warning-color: #f39c12;
+        --danger-color: #e74c3c;
+        --dark-color: #2c3e50;
+        --light-color: #ecf0f1;
+        --gray-color: #95a5a6;
+    }
+
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .rozetler-container {
+        padding: 40px 0;
+    }
+
+    .page-header {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        text-align: center;
+    }
+
+    .page-header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--dark-color);
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-header p {
+        font-size: 1.2rem;
+        color: var(--gray-color);
+        margin: 0;
+    }
+
+    /* İstatistik Kartları */
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-card .icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+
+    .stat-card h3 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 10px;
+    }
+
+    .stat-card p {
+        color: var(--gray-color);
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    /* İlerleme Çubuğu */
+    .progress-container {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 40px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--dark-color);
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .custom-progress {
+        height: 40px;
+        border-radius: 20px;
+        background: var(--light-color);
+        overflow: hidden;
+        position: relative;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: width 1s ease;
+        border-radius: 20px;
+    }
+
+    /* Rozet Kategorileri */
+    .rozet-section {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 3px solid var(--light-color);
+    }
+
+    .section-header h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin: 0 0 0 15px;
+    }
+
+    .section-icon {
+        font-size: 2.5rem;
+    }
+
+    /* Rozet Kartları */
+    .rozetler-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+    }
+
+    .rozet-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border: 3px solid transparent;
+    }
+
+    .rozet-card.kazanildi {
+        border-color: var(--success-color);
+        background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
+    }
+
+    .rozet-card.kazanilmadi {
+        border-color: var(--gray-color);
+        opacity: 0.6;
+        filter: grayscale(50%);
+    }
+
+    .rozet-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .rozet-card.kazanildi:hover {
+        box-shadow: 0 15px 35px rgba(39, 174, 96, 0.3);
+    }
+
+    .rozet-emoji {
+        font-size: 5rem;
+        margin-bottom: 20px;
+        display: block;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .rozet-card.kazanilmadi .rozet-emoji {
+        filter: grayscale(100%);
+        opacity: 0.5;
+    }
+
+    .rozet-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 10px;
+    }
+
+    .rozet-description {
+        font-size: 0.95rem;
+        color: var(--gray-color);
+        margin-bottom: 15px;
+        line-height: 1.5;
+    }
+
+    .rozet-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    .badge-kazanildi {
+        background: var(--success-color);
+        color: white;
+    }
+
+    .badge-kazanilmadi {
+        background: var(--gray-color);
+        color: white;
+    }
+
+    .rozet-date {
+        font-size: 0.85rem;
+        color: var(--success-color);
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    .rozet-condition {
+        font-size: 0.9rem;
+        color: var(--dark-color);
+        background: var(--light-color);
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 10px;
+    }
+
+    /* Boş Durum */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        margin-bottom: 30px;
+    }
+
+    .empty-state .icon {
+        font-size: 5rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-state h3 {
+        font-size: 1.8rem;
+        color: var(--dark-color);
+        margin-bottom: 15px;
+    }
+
+    .empty-state p {
+        font-size: 1.1rem;
+        color: var(--gray-color);
+        margin-bottom: 30px;
+    }
+
+    /* Butonlar */
+    .btn-custom {
+        padding: 15px 40px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 30px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        color: white;
+    }
+
+    .btn-success-custom {
+        background: var(--success-color);
+        color: white;
+        box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+    }
+
+    .btn-success-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(39, 174, 96, 0.6);
+        color: white;
+    }
+
+    /* Kategori Filtreleme */
+    .filter-container {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 10px 25px;
+        border: 2px solid var(--primary-color);
+        background: white;
+        color: var(--primary-color);
+        border-radius: 25px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .page-header h1 {
+            font-size: 2rem;
+        }
+
+        .rozetler-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Animasyonlar */
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .rozet-card {
+        animation: slideInUp 0.5s ease forwards;
+    }
+
+    .rozet-card:nth-child(1) { animation-delay: 0.1s; }
+    .rozet-card:nth-child(2) { animation-delay: 0.2s; }
+    .rozet-card:nth-child(3) { animation-delay: 0.3s; }
+    .rozet-card:nth-child(4) { animation-delay: 0.4s; }
+    .rozet-card:nth-child(5) { animation-delay: 0.5s; }
+    .rozet-card:nth-child(6) { animation-delay: 0.6s; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="rozetler-container">
+    <div class="container">
+        
+        <!-- Sayfa Başlığı -->
+        <div class="page-header">
+            <h1>🏆 Rozet Koleksiyonum</h1>
+            <p>Başarılarınızı keşfedin ve yeni rozetler kazanın!</p>
+        </div>
+
+        <!-- İstatistik Kartları -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="icon">🏆</div>
+                <h3>{{ kazanilan_sayi }}</h3>
+                <p>Kazanılan Rozet</p>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🔒</div>
+                <h3>{{ toplam_rozet|add:"-"|add:kazanilan_sayi }}</h3>
+                <p>Kilitli Rozet</p>
+            </div>
+            <div class="stat-card">
+                <div class="icon">📊</div>
+                <h3>{% widthratio kazanilan_sayi toplam_rozet 100 %}%</h3>
+                <p>Tamamlanma Oranı</p>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🎯</div>
+                <h3>{{ toplam_rozet }}</h3>
+                <p>Toplam Rozet</p>
+            </div>
+        </div>
+
+        <!-- İlerleme Çubuğu -->
+        <div class="progress-container">
+            <div class="progress-title">📈 Rozet Toplama İlerlemen</div>
+            <div class="custom-progress">
+                {% widthratio kazanilan_sayi toplam_rozet 100 as yuzde %}
+                <div class="custom-progress-bar" style="width: {{ yuzde }}%;">
+                    {{ kazanilan_sayi }} / {{ toplam_rozet }} (%{{ yuzde }})
+                </div>
+            </div>
+        </div>
+
+        <!-- Kazanılan Rozetler -->
+        <div class="rozet-section">
+            <div class="section-header">
+                <span class="section-icon">✅</span>
+                <h2>Kazandığım Rozetler</h2>
+            </div>
+
+            {% if kazanilan_rozetler %}
+                <div class="rozetler-grid">
+                    {% for kullanici_rozet in kazanilan_rozetler %}
+                        <div class="rozet-card kazanildi">
+                            <span class="rozet-emoji">{{ kullanici_rozet.rozet.emoji }}</span>
+                            <h3 class="rozet-title">{{ kullanici_rozet.rozet.isim }}</h3>
+                            <p class="rozet-description">{{ kullanici_rozet.rozet.aciklama }}</p>
+                            <span class="rozet-badge badge-kazanildi">✓ Kazanıldı</span>
+                            <div class="rozet-date">
+                                📅 {{ kullanici_rozet.kazanma_tarihi|date:"d F Y" }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon">😢</div>
+                    <h3>Henüz Rozet Kazanmadın</h3>
+                    <p>Oyun oynayarak ve başarılar elde ederek rozetler kazanabilirsin!</p>
+                    <a href="{% url 'karsilasma_rakip_bul' %}" class="btn-custom btn-success-custom">
+                        🎮 Hemen Oyna
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Kazanılmamış Rozetler -->
+        <div class="rozet-section">
+            <div class="section-header">
+                <span class="section-icon">🔒</span>
+                <h2>Kilidi Açılmamış Rozetler</h2>
+            </div>
+
+            {% if kazanilmamis_rozetler %}
+                <div class="rozetler-grid">
+                    {% for rozet in kazanilmamis_rozetler %}
+                        <div class="rozet-card kazanilmadi">
+                            <span class="rozet-emoji">{{ rozet.emoji }}</span>
+                            <h3 class="rozet-title">{{ rozet.isim }}</h3>
+                            <p class="rozet-description">{{ rozet.aciklama }}</p>
+                            <span class="rozet-badge badge-kazanilmadi">🔒 Kilitli</span>
+                            <div class="rozet-condition">
+                                <strong>Koşul:</strong>
+                                {% if rozet.kosul_turu == 'oyun_sayisi' %}
+                                    🎮 {{ rozet.kosul_degeri }} oyun oyna
+                                {% elif rozet.kosul_turu == 'toplam_puan' %}
+                                    ⭐ {{ rozet.kosul_degeri }} puan kazan
+                                {% elif rozet.kosul_turu == 'dogru_sayisi' %}
+                                    ✅ {{ rozet.kosul_degeri }} doğru cevap ver
+                                {% elif rozet.kosul_turu == 'galibsiyet' %}
+                                    🏆 {{ rozet.kosul_degeri }} oyun kazan
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon">🎉</div>
+                    <h3>Tebrikler!</h3>
+                    <p>Tüm rozetleri topladın! Sen bir efsanesin! 🌟</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Alt Butonlar -->
+        <div class="text-center" style="margin: 40px 0;">
+            <a href="{% url 'profil' %}" class="btn-custom btn-primary-custom">
+                ← Profile Dön
+            </a>
+            <a href="{% url 'karsilasma_rakip_bul' %}" class="btn-custom btn-success-custom">
+                🎮 Oyuna Başla
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // İlerleme çubuğu animasyonu
+    document.addEventListener('DOMContentLoaded', function() {
+        const progressBar = document.querySelector('.custom-progress-bar');
+        if (progressBar) {
+            const width = progressBar.style.width;
+            progressBar.style.width = '0';
+            setTimeout(() => {
+                progressBar.style.width = width;
+            }, 100);
+        }
+    });
+</script>
+{% endblock %}
