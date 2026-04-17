@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
 from django.contrib import messages
 from django.utils import timezone
-from django.db.models import Q
+from django.utils.dateparse import parse_datetime
+from django.db.models import Q, Count
 from django.db import transaction
 from datetime import timedelta
 from .models import Turnuva, TurnuvaMaci, TurnuvaKatilim, KarsilasmaOdasi
@@ -12,6 +13,141 @@ import random
 import logging
 
 logger = logging.getLogger(__name__)
+
+superuser_required = user_passes_test(lambda u: u.is_active and u.is_superuser)
+
+DERS_SECENEKLERI_TURNUVA = [
+    ('fizik', 'Fizik'), ('kimya', 'Kimya'), ('biyoloji', 'Biyoloji'),
+    ('edebiyat', 'Edebiyat'), ('tarih', 'Tarih'), ('cografya', 'Coğrafya'),
+    ('felsefe', 'Felsefe'), ('turkce', 'Türkçe'),
+    ('karisik_sayisal', 'Karışık Sayısal'), ('karisik_sozel', 'Karışık Sözel'),
+    ('karisik_ea', 'Karışık EA'), ('karisik_sozel_ayt', 'Karışık Sözel AYT'),
+]
+
+
+@login_required
+@superuser_required
+@transaction.atomic
+def turnuva_yonetim(request):
+    """Superuser-only turnuva yönetim paneli"""
+    if request.method == 'POST':
+        aksiyon = request.POST.get('aksiyon')
+
+        if aksiyon == 'create':
+            try:
+                isim = request.POST.get('isim', '').strip()
+                if not isim:
+                    messages.error(request, 'Turnuva adı zorunludur.')
+                    return redirect('turnuva_yonetim')
+
+                aciklama = request.POST.get('aciklama', '').strip()
+                sinav_tipi = request.POST.get('sinav_tipi', 'TYT')
+                ders = request.POST.get('ders', 'karisik_sayisal')
+                toplam_soru = int(request.POST.get('toplam_soru', 5))
+                max_katilimci = int(request.POST.get('max_katilimci', 16))
+                odul_1 = int(request.POST.get('odul_1', 100))
+                odul_2 = int(request.POST.get('odul_2', 50))
+                odul_3 = int(request.POST.get('odul_3', 25))
+
+                # Tarihler
+                baslangic_str = request.POST.get('baslangic_tarihi')
+                bitis_str = request.POST.get('bitis_tarihi')
+                baslangic = None
+                bitis = None
+                if baslangic_str:
+                    dt = parse_datetime(baslangic_str)
+                    if dt:
+                        baslangic = timezone.make_aware(dt) if timezone.is_naive(dt) else dt
+                if bitis_str:
+                    dt = parse_datetime(bitis_str)
+                    if dt:
+                        bitis = timezone.make_aware(dt) if timezone.is_naive(dt) else dt
+
+                t = Turnuva.objects.create(
+                    isim=isim, aciklama=aciklama, sinav_tipi=sinav_tipi,
+                    ders=ders, toplam_soru=toplam_soru, max_katilimci=max_katilimci,
+                    odul_birinci=odul_1, odul_ikinci=odul_2, odul_ucuncu=odul_3,
+                    baslangic_tarihi=baslangic, bitis_tarihi=bitis,
+                    durum='beklemede'
+                )
+                messages.success(request, f'✅ "{t.isim}" turnuvası oluşturuldu.')
+            except Exception as e:
+                messages.error(request, f'Hata: {e}')
+
+        elif aksiyon == 'durum_degistir':
+            tid = request.POST.get('turnuva_id')
+            yeni_durum = request.POST.get('durum')
+            try:
+                t = Turnuva.objects.get(pk=tid)
+                t.durum = yeni_durum
+                t.save(update_fields=['durum'])
+                messages.success(request, f'"{t.isim}" durumu → {yeni_durum}')
+            except Turnuva.DoesNotExist:
+                messages.error(request, 'Turnuva bulunamadı.')
+
+        elif aksiyon == 'bracket_olustur':
+            tid = request.POST.get('turnuva_id')
+            try:
+                t = Turnuva.objects.get(pk=tid)
+                katilimcilar = list(TurnuvaKatilim.objects.filter(
+                    turnuva=t, durum='aktif'
+                ).select_related('kullanici'))
+                if len(katilimcilar) < 2:
+                    messages.error(request, 'Bracket için en az 2 katılımcı gerekli.')
+                    return redirect('turnuva_yonetim')
+
+                # Mevcut maçları temizle
+                TurnuvaMaci.objects.filter(turnuva=t).delete()
+
+                random.shuffle(katilimcilar)
+                tur = 1
+                for i in range(0, len(katilimcilar), 2):
+                    o1 = katilimcilar[i].kullanici
+                    if i + 1 < len(katilimcilar):
+                        o2 = katilimcilar[i + 1].kullanici
+                        TurnuvaMaci.objects.create(turnuva=t, tur=tur, oyuncu1=o1, oyuncu2=o2)
+                    else:
+                        # Tek kalan → bye (direkt geçiş)
+                        TurnuvaMaci.objects.create(
+                            turnuva=t, tur=tur, oyuncu1=o1, oyuncu2=None,
+                            kazanan=o1, tamamlandi=True
+                        )
+
+                t.durum = 'basladi'
+                t.save(update_fields=['durum'])
+                messages.success(request, f'✅ "{t.isim}" bracket oluşturuldu, turnuva başladı!')
+            except Turnuva.DoesNotExist:
+                messages.error(request, 'Turnuva bulunamadı.')
+            except Exception as e:
+                messages.error(request, f'Bracket hatası: {e}')
+
+        elif aksiyon == 'sil':
+            tid = request.POST.get('turnuva_id')
+            try:
+                t = Turnuva.objects.get(pk=tid)
+                isim = t.isim
+                t.delete()
+                messages.success(request, f'🗑️ "{isim}" silindi.')
+            except Turnuva.DoesNotExist:
+                messages.error(request, 'Turnuva bulunamadı.')
+
+        return redirect('turnuva_yonetim')
+
+    # GET
+    turnuvalar = Turnuva.objects.annotate(
+        katilimci_count=Count('turnuvakatilim', distinct=True),
+        mac_count=Count('turnuvamaci', distinct=True)
+    ).order_by('-olusturulma_tarihi')
+
+    context = {
+        'turnuvalar': turnuvalar,
+        'ders_secenekleri': DERS_SECENEKLERI_TURNUVA,
+        'durum_secenekleri': Turnuva.DURUM_CHOICES if hasattr(Turnuva, 'DURUM_CHOICES') else [
+            ('beklemede', 'Beklemede'), ('kayit_acik', 'Kayıt Açık'),
+            ('basladi', 'Başladı'), ('devam_ediyor', 'Devam Ediyor'), ('bitti', 'Bitti'),
+        ],
+    }
+    return render(request, 'quiz/turnuva_yonetim.html', context)
 
 
 @login_required

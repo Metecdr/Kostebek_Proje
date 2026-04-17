@@ -550,6 +550,26 @@
             width: 100%;
         }
     }
+
+    /* DARK MODE */
+    [data-theme="dark"] .tabu-kelime-box,
+    [data-theme="dark"] .tabu-yasakli-box,
+    [data-theme="dark"] .tabu-tahmin-box {
+        background: linear-gradient(145deg, #1a1f3a, #151929) !important;
+        border: 1.5px solid #2d3454 !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;
+    }
+    [data-theme="dark"] .tabu-kelime-title,
+    [data-theme="dark"] .tabu-yasakli-title,
+    [data-theme="dark"] .tabu-tahmin-title { color: #a78bfa !important; }
+    [data-theme="dark"] .tabu-kelime { color: #ffffff !important; }
+    [data-theme="dark"] .tabu-yasakli-list li { color: #cbd5e1 !important; }
+    [data-theme="dark"] .tabu-tahmin-metin { color: #e2e8f0 !important; }
+    [data-theme="dark"] .tabu-araekran {
+        background: linear-gradient(145deg, #1a1f3a, #151929) !important;
+        border: 1.5px solid #2d3454 !important;
+    }
+    [data-theme="dark"] .tabu-araekran-text { color: #cbd5e1 !important; }
 </style>
 {% endblock %}
 

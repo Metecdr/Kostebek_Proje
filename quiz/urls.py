@@ -38,7 +38,7 @@ from quiz.views_bul_bakalim import (
 from quiz.views_yanlis_tekrar import yanlislarima_don, yanlis_tekrar_calis
 from quiz.views_turnuva import (
     turnuva_listesi, turnuva_detay, turnuva_katil, turnuva_ayril,
-    turnuva_mac_baslat, turnuva_mac_sonuc
+    turnuva_mac_baslat, turnuva_mac_sonuc, turnuva_yonetim
 )
 
 urlpatterns = [
@@ -85,6 +85,7 @@ urlpatterns = [
     path('bul-bakalim/<uuid:oyun_id>/sonuc/', bul_bakalim_sonuc, name='bul_bakalim_sonuc'),
     
     # ==================== 🏆 TURNUVA ====================
+    path('turnuva-yonetim/', turnuva_yonetim, name='turnuva_yonetim'),
     path('turnuvalar/', turnuva_listesi, name='turnuva_listesi'),
     path('turnuva/<uuid:turnuva_id>/', turnuva_detay, name='turnuva_detay'),
     path('turnuva/<uuid:turnuva_id>/katil/', turnuva_katil, name='turnuva_katil'),

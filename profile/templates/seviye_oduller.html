@@ -120,6 +120,142 @@ body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-heigh
 }
 .so-back:hover { background: rgba(255,255,255,.15); color: #fff; }
 
+/* ── ANIMASYONLAR ── */
+@keyframes floatStar {
+    0%   { opacity:0; transform: translateY(0); }
+    20%  { opacity:.6; }
+    80%  { opacity:.4; }
+    100% { opacity:0; transform: translateY(-60px); }
+}
+@keyframes goldShimmer {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+@keyframes popIn {
+    0%   { opacity:0; transform: scale(.85); }
+    60%  { transform: scale(1.03); }
+    100% { opacity:1; transform: scale(1); }
+}
+@keyframes shine {
+    0%   { left:-60%; opacity:.6; }
+    100% { left:130%; opacity:0; }
+}
+@keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+}
+@keyframes progressShift {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+@keyframes itemIn {
+    from { opacity:0; transform: translateX(-18px); }
+    to   { opacity:1; transform: translateX(0); }
+}
+@keyframes aktifPulse {
+    0%,100% { box-shadow: 0 0 20px rgba(102,126,234,.2); }
+    50%      { box-shadow: 0 0 32px rgba(102,126,234,.45); }
+}
+@keyframes rewardGlow {
+    0%,100% { box-shadow: 0 0 0 rgba(255,215,0,0); }
+    50%      { box-shadow: 0 0 12px rgba(255,215,0,.45); }
+}
+@keyframes checkPop {
+    0%   { transform: scale(0) rotate(-90deg); opacity:0; }
+    70%  { transform: scale(1.25) rotate(5deg); }
+    100% { transform: scale(1) rotate(0); opacity:1; }
+}
+
+/* Arkaplan dekorasyon yıldızları */
+.so-bg-deco {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+.so-bg-deco span {
+    position: absolute;
+    font-size: 1.4rem;
+    opacity: 0;
+    animation: floatStar 14s infinite ease-in-out;
+}
+.so-bg-deco span:nth-child(1) { left:10%; top:80%; animation-delay:0s; }
+.so-bg-deco span:nth-child(2) { left:30%; top:70%; animation-delay:3s; }
+.so-bg-deco span:nth-child(3) { left:55%; top:85%; animation-delay:6s; }
+.so-bg-deco span:nth-child(4) { left:75%; top:75%; animation-delay:2s; }
+.so-bg-deco span:nth-child(5) { left:88%; top:60%; animation-delay:8s; }
+.so-bg-deco span:nth-child(6) { left:20%; top:50%; animation-delay:11s; }
+.so-container { position: relative; z-index: 1; }
+
+/* Başlık shimmer */
+.so-header h1 {
+    background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700, #FF8C00);
+    background-size: 200% 200%;
+    animation: goldShimmer 4s ease infinite;
+}
+
+/* Aktif seviye kartı */
+.so-current {
+    animation: popIn .6s cubic-bezier(.34,1.56,.64,1) both;
+    overflow: hidden;
+    position: relative;
+}
+.so-current::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -60%;
+    width: 40%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+    animation: shine 3.5s ease 1s infinite;
+}
+.so-current-level { animation: bounce 2.2s ease-in-out infinite; display: inline-block; }
+
+/* Progress bar animasyonu */
+.so-progress-fill {
+    background: linear-gradient(90deg, #FFD700, #FF6B6B, #FFD700);
+    background-size: 200% 100%;
+    animation: progressShift 2.5s linear infinite;
+}
+
+/* Liste item giriş */
+.so-item { animation: itemIn .45s ease both; }
+.so-item:nth-child(1)  { animation-delay:.05s; }
+.so-item:nth-child(2)  { animation-delay:.10s; }
+.so-item:nth-child(3)  { animation-delay:.15s; }
+.so-item:nth-child(4)  { animation-delay:.20s; }
+.so-item:nth-child(5)  { animation-delay:.25s; }
+.so-item:nth-child(6)  { animation-delay:.30s; }
+.so-item:nth-child(7)  { animation-delay:.35s; }
+.so-item:nth-child(8)  { animation-delay:.40s; }
+.so-item:nth-child(9)  { animation-delay:.45s; }
+.so-item:nth-child(10) { animation-delay:.50s; }
+.so-item:nth-child(n+11) { animation-delay:.55s; }
+
+/* Hover efektleri */
+.so-item:hover { transform: translateX(4px); }
+.so-item:hover .so-num { transform: rotate(-8deg) scale(1.08); }
+
+/* Aktif item pulse */
+.so-item.aktif { animation: itemIn .45s ease both, aktifPulse 2.5s ease-in-out 1s infinite; }
+
+/* Ödül etiketi glow */
+.so-item.aktif .so-reward { animation: rewardGlow 2s ease-in-out infinite; }
+
+/* Tik işareti */
+.so-check { animation: checkPop .5s cubic-bezier(.34,1.56,.64,1) both; }
+
+/* Erişilebilirlik */
+@media (prefers-reduced-motion: reduce) {
+    .so-bg-deco span, .so-header h1, .so-current::before,
+    .so-current-level, .so-progress-fill, .so-item,
+    .so-item.aktif, .so-item.aktif .so-reward, .so-check {
+        animation: none !important;
+    }
+    .so-item:hover { transform: none; }
+}
+
 @media (max-width: 600px) {
     .so-item { padding: 12px 14px; gap: 10px; }
     .so-num { width: 38px; height: 38px; font-size: .95rem; }
@@ -130,6 +266,10 @@ body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-heigh
 {% endblock %}
 
 {% block content %}
+<div class="so-bg-deco" aria-hidden="true">
+    <span>⭐</span><span>🌟</span><span>✨</span>
+    <span>⭐</span><span>🌟</span><span>✨</span>
+</div>
 <div class="so-container">
     <a href="{% url 'profil' %}" class="so-back"><i class="bi bi-arrow-left"></i> Profile Dön</a>
 

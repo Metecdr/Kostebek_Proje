@@ -31,9 +31,10 @@
     /* ALAN CARDS */
     .alan-section {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 14px;
         margin-bottom: 14px;
+        align-items: start;
     }
 
     .alan-card {
@@ -42,6 +43,11 @@
         padding: 20px;
         border: 1.5px solid #ede9fe;
         box-shadow: 0 2px 8px rgba(124,58,237,0.06);
+        transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .alan-card:hover {
+        box-shadow: 0 6px 20px rgba(124,58,237,0.13);
+        border-color: #c4b5fd;
     }
     [data-theme="dark"] .alan-card {
         background: #1a1a2e;
@@ -146,12 +152,24 @@
         text-decoration: none;
     }
 
+    /* Biyoloji tek başına kalmasın */
+    .ders-biyoloji-son { grid-column: span 2; }
+
+    /* Modal dark mode */
+    [data-theme="dark"] #konuSecimModal .modal-content {
+        background: #1a1f3a;
+        border: 1.5px solid #2d3454;
+    }
+    [data-theme="dark"] #konuSecimModal .modal-body { background: #1a1f3a; }
+    [data-theme="dark"] #konuSecimModal .modal-footer { background: #151929; border-top: 1px solid #2d3454; }
+
     /* RESPONSIVE */
     @media (max-width: 640px) {
         .alan-section { grid-template-columns: 1fr; }
         .ders-secimi-container { padding: 10px 10px 32px; }
         .alan-card { padding: 14px; }
         .ders-grid { grid-template-columns: 1fr; }
+        .ders-biyoloji-son { grid-column: span 1; }
         .ders-karisik-sayisal,
         .ders-karisik-sozel,
         .ders-karisik-ea,
@@ -189,7 +207,7 @@
                 <a href="#" onclick="dersSecildi('kimya','🧪 Kimya'); return false;" class="ders-btn ders-kimya">
                     <span>🧪 Kimya</span>
                 </a>
-                <a href="#" onclick="dersSecildi('biyoloji','🧬 Biyoloji'); return false;" class="ders-btn ders-biyoloji">
+                <a href="#" onclick="dersSecildi('biyoloji','🧬 Biyoloji'); return false;" class="ders-btn ders-biyoloji ders-biyoloji-son">
                     <span>🧬 Biyoloji</span>
                 </a>
                 {% if sinav_tipi == 'AYT' %}
@@ -307,11 +325,20 @@ function dersSecildi(ders, dersAdi) {
                 liste.innerHTML = '<p class="text-muted text-center small">Bu ders için yeterli sorusu olan konu bulunamadı.</p>';
                 return;
             }
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             data.konular.forEach(k => {
                 const a = document.createElement('a');
                 a.href = baslaUrl + '?ders=' + ders + '&konu_id=' + k.id + '&sinav_tipi=' + sinavTipi;
                 a.className = 'btn text-start d-flex justify-content-between align-items-center';
-                a.style.cssText = 'border-radius:10px;padding:9px 14px;background:#f5f3ff;color:#5b21b6;font-size:0.88rem;font-weight:600;border:1.5px solid #ddd6fe;';
+                if (isDark) {
+                    a.style.cssText = 'border-radius:10px;padding:9px 14px;background:#1e2749;color:#c4b5fd;font-size:0.88rem;font-weight:600;border:1.5px solid #2d3454;transition:all 0.2s;';
+                    a.addEventListener('mouseenter', () => { a.style.background='#2d3454'; a.style.borderColor='#8b5cf6'; });
+                    a.addEventListener('mouseleave', () => { a.style.background='#1e2749'; a.style.borderColor='#2d3454'; });
+                } else {
+                    a.style.cssText = 'border-radius:10px;padding:9px 14px;background:#f5f3ff;color:#5b21b6;font-size:0.88rem;font-weight:600;border:1.5px solid #ddd6fe;transition:all 0.2s;';
+                    a.addEventListener('mouseenter', () => { a.style.background='#ede9fe'; a.style.borderColor='#a78bfa'; });
+                    a.addEventListener('mouseleave', () => { a.style.background='#f5f3ff'; a.style.borderColor='#ddd6fe'; });
+                }
                 const badge = isSuperuser ? '<span class="badge" style="background:#7c3aed;font-size:0.72rem;">' + k.soru_sayisi + ' soru</span>' : '';
                 a.innerHTML = '<span>' + k.isim + '</span>' + badge;
                 liste.appendChild(a);

@@ -507,6 +507,11 @@
     <div class="page-header">
         <h1>🏆 Turnuvalar</h1>
         <p>En iyi oyuncularla yarış ve ödülleri kazan!</p>
+        {% if user.is_superuser %}
+        <a href="{% url 'turnuva_yonetim' %}" style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:10px 22px;background:rgba(255,255,255,0.2);color:white;border-radius:50px;font-weight:700;text-decoration:none;backdrop-filter:blur(10px);border:1.5px solid rgba(255,255,255,0.3);transition:all 0.25s;font-size:.9rem;">
+            <i class="bi bi-gear-fill"></i> Turnuva Yönetimi
+        </a>
+        {% endif %}
     </div>
 
     <!-- DEBUG BİLGİSİ (Sadece Admin) -->

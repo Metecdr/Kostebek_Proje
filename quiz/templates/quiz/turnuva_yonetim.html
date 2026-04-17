@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Turnuva Yönetimi - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+.ty-container { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+
+.ty-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 20px;
+    padding: 30px 32px;
+    color: #fff;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+.ty-header h1 { font-size: 1.7rem; font-weight: 900; margin: 0; }
+.ty-header p  { margin: 4px 0 0; opacity: .85; font-size: .9rem; }
+[data-theme="dark"] .ty-header h1,
+[data-theme="dark"] .ty-header p { color: #fff !important; -webkit-text-fill-color: #fff !important; }
+
+/* Stat cards */
+.ty-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 12px; margin-bottom: 28px; }
+.ty-stat {
+    background: #fff;
+    border-radius: 14px;
+    padding: 18px 20px;
+    border: 1.5px solid #ede9fe;
+    box-shadow: 0 2px 8px rgba(124,58,237,.07);
+    text-align: center;
+}
+[data-theme="dark"] .ty-stat { background: linear-gradient(145deg,#1a1f3a,#151929); border-color: #2d3454; }
+.ty-stat-num { font-size: 2rem; font-weight: 900; color: #7c3aed; }
+[data-theme="dark"] .ty-stat-num { color: #a78bfa; }
+.ty-stat-label { font-size: .78rem; color: #6b7280; font-weight: 600; margin-top: 2px; }
+[data-theme="dark"] .ty-stat-label { color: #9ca3af; }
+
+/* Create form */
+.ty-create-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 28px 28px;
+    border: 1.5px solid #ede9fe;
+    box-shadow: 0 4px 16px rgba(124,58,237,.07);
+    margin-bottom: 28px;
+}
+[data-theme="dark"] .ty-create-card { background: linear-gradient(145deg,#1a1f3a,#151929); border-color: #2d3454; }
+.ty-section-title {
+    font-size: 1.1rem; font-weight: 900; color: #7c3aed; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 8px;
+}
+[data-theme="dark"] .ty-section-title { color: #a78bfa; }
+.ty-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ty-form-group { display: flex; flex-direction: column; gap: 5px; }
+.ty-form-group label { font-size: .82rem; font-weight: 700; color: #374151; }
+[data-theme="dark"] .ty-form-group label { color: #d1d5db; }
+.ty-form-group input, .ty-form-group select, .ty-form-group textarea {
+    padding: 9px 12px; border-radius: 10px;
+    border: 1.5px solid #ddd6fe; font-size: .88rem;
+    background: #faf9ff; color: #1f2937;
+    transition: border-color .2s;
+}
+[data-theme="dark"] .ty-form-group input,
+[data-theme="dark"] .ty-form-group select,
+[data-theme="dark"] .ty-form-group textarea {
+    background: #1e2749 !important; border-color: #2d3454 !important; color: #fff !important;
+}
+.ty-form-group input:focus, .ty-form-group select:focus, .ty-form-group textarea:focus {
+    outline: none; border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,.12);
+}
+.ty-form-full { grid-column: span 2; }
+.ty-btn-primary {
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    color: #fff; border: none; border-radius: 50px;
+    padding: 11px 28px; font-size: .9rem; font-weight: 800;
+    cursor: pointer; transition: transform .15s, box-shadow .15s;
+}
+.ty-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(102,126,234,.35); }
+
+/* Turnuva table */
+.ty-table-card {
+    background: #fff;
+    border-radius: 18px;
+    border: 1.5px solid #ede9fe;
+    box-shadow: 0 4px 16px rgba(124,58,237,.07);
+    overflow: hidden;
+}
+[data-theme="dark"] .ty-table-card { background: linear-gradient(145deg,#1a1f3a,#151929); border-color: #2d3454; }
+
+.ty-table { width: 100%; border-collapse: collapse; }
+.ty-table thead th {
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    color: #fff; font-size: .82rem; font-weight: 700;
+    padding: 12px 14px; text-align: left;
+}
+.ty-table tbody tr { border-bottom: 1px solid #ede9fe; transition: background .15s; }
+[data-theme="dark"] .ty-table tbody tr { border-bottom-color: #2d3454; }
+.ty-table tbody tr:hover { background: #faf9ff; }
+[data-theme="dark"] .ty-table tbody tr:hover { background: #1e2749; }
+.ty-table td { padding: 12px 14px; font-size: .85rem; color: #374151; vertical-align: middle; }
+[data-theme="dark"] .ty-table td { color: #d1d5db; }
+
+/* Durum badge */
+.ty-badge {
+    padding: 4px 10px; border-radius: 50px; font-size: .75rem; font-weight: 800; white-space: nowrap;
+}
+.ty-badge-beklemede   { background: #fef3c7; color: #92400e; }
+.ty-badge-kayit_acik  { background: #d1fae5; color: #065f46; }
+.ty-badge-basladi     { background: #dbeafe; color: #1e40af; }
+.ty-badge-devam_ediyor{ background: #ede9fe; color: #5b21b6; }
+.ty-badge-bitti       { background: #f3f4f6; color: #374151; }
+
+/* Action buttons */
+.ty-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.ty-btn-sm {
+    padding: 5px 12px; border-radius: 8px; font-size: .78rem; font-weight: 700;
+    cursor: pointer; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;
+}
+.ty-btn-detail { background: #ede9fe; color: #5b21b6; }
+.ty-btn-detail:hover { background: #ddd6fe; color: #4c1d95; text-decoration: none; }
+.ty-btn-bracket { background: #d1fae5; color: #065f46; }
+.ty-btn-bracket:hover { background: #a7f3d0; }
+.ty-btn-danger { background: #fee2e2; color: #991b1b; }
+.ty-btn-danger:hover { background: #fecaca; }
+.ty-select-durum {
+    padding: 4px 8px; border-radius: 8px; border: 1.5px solid #ddd6fe;
+    font-size: .78rem; font-weight: 700; background: #faf9ff; color: #374151; cursor: pointer;
+}
+[data-theme="dark"] .ty-select-durum { background: #1e2749; border-color: #2d3454; color: #d1d5db; }
+
+/* Entrance animation */
+@keyframes slideUp {
+    from { opacity:0; transform: translateY(18px); }
+    to   { opacity:1; transform: translateY(0); }
+}
+.ty-table tbody tr { animation: slideUp .35s ease both; }
+.ty-table tbody tr:nth-child(1)  { animation-delay:.04s; }
+.ty-table tbody tr:nth-child(2)  { animation-delay:.08s; }
+.ty-table tbody tr:nth-child(3)  { animation-delay:.12s; }
+.ty-table tbody tr:nth-child(4)  { animation-delay:.16s; }
+.ty-table tbody tr:nth-child(5)  { animation-delay:.20s; }
+.ty-table tbody tr:nth-child(n+6){ animation-delay:.24s; }
+
+@media (max-width: 768px) {
+    .ty-form-grid { grid-template-columns: 1fr; }
+    .ty-form-full { grid-column: span 1; }
+    .ty-header { padding: 22px 18px; }
+    .ty-table { font-size: .8rem; }
+    .ty-table td, .ty-table thead th { padding: 9px 8px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ty-container">
+
+    <!-- HEADER -->
+    <div class="ty-header">
+        <div>
+            <h1>⚙️ Turnuva Yönetimi</h1>
+            <p>Turnuvaları oluştur, yönet ve takip et.</p>
+        </div>
+        <a href="{% url 'turnuva_listesi' %}" style="color:rgba(255,255,255,.85);font-size:.88rem;text-decoration:none;">
+            ← Turnuva Listesine Dön
+        </a>
+    </div>
+
+    <!-- STATS -->
+    <div class="ty-stats">
+        <div class="ty-stat">
+            <div class="ty-stat-num">{{ turnuvalar.count }}</div>
+            <div class="ty-stat-label">Toplam Turnuva</div>
+        </div>
+        <div class="ty-stat">
+            <div class="ty-stat-num">{{ turnuvalar|length }}</div>
+            <div class="ty-stat-label">Listelenen</div>
+        </div>
+        <div class="ty-stat">
+            <div class="ty-stat-num">{{ turnuvalar|dictsortreversed:"katilimci_count"|first|default_if_none:"0" }}</div>
+            <div class="ty-stat-label">Max Katılımcı</div>
+        </div>
+        <div class="ty-stat">
+            <div class="ty-stat-num">
+                {% for t in turnuvalar %}{% if t.durum == 'basladi' or t.durum == 'devam_ediyor' %}●{% endif %}{% endfor %}
+            </div>
+            <div class="ty-stat-label">Aktif</div>
+        </div>
+    </div>
+
+    <!-- CREATE FORM -->
+    <div class="ty-create-card">
+        <div class="ty-section-title"><i class="bi bi-plus-circle-fill"></i> Yeni Turnuva Oluştur</div>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="aksiyon" value="create">
+            <div class="ty-form-grid">
+                <div class="ty-form-group ty-form-full">
+                    <label>Turnuva Adı *</label>
+                    <input type="text" name="isim" placeholder="ör. Fizik Şampiyonası" required>
+                </div>
+                <div class="ty-form-group ty-form-full">
+                    <label>Açıklama</label>
+                    <textarea name="aciklama" rows="2" placeholder="Kısa bir açıklama..."></textarea>
+                </div>
+                <div class="ty-form-group">
+                    <label>Sınav Tipi</label>
+                    <select name="sinav_tipi">
+                        <option value="TYT">TYT</option>
+                        <option value="AYT">AYT</option>
+                    </select>
+                </div>
+                <div class="ty-form-group">
+                    <label>Ders</label>
+                    <select name="ders">
+                        {% for k, v in ders_secenekleri %}
+                        <option value="{{ k }}">{{ v }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="ty-form-group">
+                    <label>Toplam Soru</label>
+                    <input type="number" name="toplam_soru" value="5" min="3" max="20">
+                </div>
+                <div class="ty-form-group">
+                    <label>Max Katılımcı</label>
+                    <input type="number" name="max_katilimci" value="16" min="4" max="64">
+                </div>
+                <div class="ty-form-group">
+                    <label>🥇 1. Puan</label>
+                    <input type="number" name="odul_1" value="100" min="0">
+                </div>
+                <div class="ty-form-group">
+                    <label>🥈 2. Puan</label>
+                    <input type="number" name="odul_2" value="50" min="0">
+                </div>
+                <div class="ty-form-group">
+                    <label>🥉 3. Puan</label>
+                    <input type="number" name="odul_3" value="25" min="0">
+                </div>
+                <div class="ty-form-group">
+                    <label>Kayıt Başlangıç</label>
+                    <input type="datetime-local" name="baslangic_tarihi">
+                </div>
+                <div class="ty-form-group">
+                    <label>Bitiş Tarihi</label>
+                    <input type="datetime-local" name="bitis_tarihi">
+                </div>
+            </div>
+            <div style="margin-top:18px;">
+                <button type="submit" class="ty-btn-primary">
+                    <i class="bi bi-plus-lg"></i> Turnuva Oluştur
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- TURNUVA LİSTESİ -->
+    <div class="ty-table-card">
+        <div style="padding:18px 22px 10px; border-bottom:1px solid #ede9fe;">
+            <div class="ty-section-title" style="margin-bottom:0;"><i class="bi bi-list-ul"></i> Mevcut Turnuvalar</div>
+        </div>
+        {% if turnuvalar %}
+        <div style="overflow-x:auto;">
+        <table class="ty-table">
+            <thead>
+                <tr>
+                    <th>Ad</th>
+                    <th>Ders</th>
+                    <th>Durum</th>
+                    <th>Katılımcı</th>
+                    <th>Maç</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in turnuvalar %}
+                <tr>
+                    <td><strong>{{ t.isim }}</strong><br><small style="color:#9ca3af;">{{ t.sinav_tipi }}</small></td>
+                    <td>{{ t.ders }}</td>
+                    <td>
+                        <span class="ty-badge ty-badge-{{ t.durum }}">
+                            {% if t.durum == 'beklemede' %}⏳ Beklemede
+                            {% elif t.durum == 'kayit_acik' %}✅ Kayıt Açık
+                            {% elif t.durum == 'basladi' %}🚀 Başladı
+                            {% elif t.durum == 'devam_ediyor' %}⚔️ Devam Ediyor
+                            {% elif t.durum == 'bitti' %}🏁 Bitti
+                            {% else %}{{ t.durum }}{% endif %}
+                        </span>
+                    </td>
+                    <td>{{ t.katilimci_count }} / {{ t.max_katilimci }}</td>
+                    <td>{{ t.mac_count }}</td>
+                    <td>
+                        <div class="ty-actions">
+                            <!-- Detay -->
+                            <a href="{% url 'turnuva_detay' t.id %}" class="ty-btn-sm ty-btn-detail">
+                                <i class="bi bi-eye"></i> Detay
+                            </a>
+                            <!-- Durum değiştir -->
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="aksiyon" value="durum_degistir">
+                                <input type="hidden" name="turnuva_id" value="{{ t.id }}">
+                                <select name="durum" class="ty-select-durum" onchange="this.form.submit()">
+                                    {% for dk, dv in durum_secenekleri %}
+                                    <option value="{{ dk }}" {% if dk == t.durum %}selected{% endif %}>{{ dv }}</option>
+                                    {% endfor %}
+                                </select>
+                            </form>
+                            <!-- Bracket -->
+                            {% if t.durum == 'kayit_acik' and t.mac_count == 0 %}
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="aksiyon" value="bracket_olustur">
+                                <input type="hidden" name="turnuva_id" value="{{ t.id }}">
+                                <button type="submit" class="ty-btn-sm ty-btn-bracket">
+                                    <i class="bi bi-diagram-3"></i> Bracket
+                                </button>
+                            </form>
+                            {% endif %}
+                            <!-- Sil -->
+                            <form method="post" style="display:inline;" onsubmit="return confirm('{{ t.isim }} silinsin mi?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="aksiyon" value="sil">
+                                <input type="hidden" name="turnuva_id" value="{{ t.id }}">
+                                <button type="submit" class="ty-btn-sm ty-btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% else %}
+        <div style="padding:40px;text-align:center;color:#9ca3af;">
+            <div style="font-size:3rem;">🏆</div>
+            <p>Henüz turnuva yok. Yukarıdan oluştur!</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
