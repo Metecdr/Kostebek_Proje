@@ -5,176 +5,414 @@
 
 {% block extra_css %}
 <style>
-.gs-card {
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(102,126,234,0.25);
+/* ── LAYOUT ── */
+.gs-page {
     max-width: 760px;
     margin: 0 auto;
+    padding: 28px 16px 56px;
 }
-.gs-header {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+
+/* ── HEADER ── */
+.gs-hero {
+    background: linear-gradient(135deg, #f59e0b, #d97706, #b45309);
+    border-radius: 24px;
+    padding: 28px 32px 22px;
     color: white;
-    padding: 28px 32px 20px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(245,158,11,0.35);
 }
-.gs-body { background: white; padding: 32px; }
-[data-theme="dark"] .gs-body { background: #1a1f3a; color: #e0e0e0; }
+.gs-hero::before {
+    content: '☀️';
+    position: absolute;
+    font-size: 12rem;
+    opacity: 0.08;
+    right: -30px;
+    top: -40px;
+    pointer-events: none;
+    animation: gs-spin 30s linear infinite;
+}
+@keyframes gs-spin { to { transform: rotate(360deg); } }
+
+.gs-hero-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.gs-hero-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.gs-xp-badge {
+    background: rgba(255,255,255,0.22);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    backdrop-filter: blur(8px);
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-size: .88rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.gs-meta-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.gs-chip {
+    background: rgba(255,255,255,0.18);
+    border-radius: 50px;
+    padding: 3px 12px;
+    font-size: .78rem;
+    font-weight: 700;
+    border: 1px solid rgba(255,255,255,0.25);
+}
+.gs-soru-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.65;
+    margin-top: 14px;
+}
+
+/* ── CEVAP SEÇENEKLERİ ── */
+.gs-body {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px 28px;
+    border: 1.5px solid #f1f5f9;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+}
+[data-theme="dark"] .gs-body {
+    background: linear-gradient(145deg, #1a1f3a, #151929);
+    border-color: #2d3454;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
 .sik-btn {
     width: 100%;
     text-align: left;
-    padding: 14px 18px;
-    border-radius: 12px;
+    padding: 13px 16px;
+    border-radius: 13px;
     border: 2px solid #e2e8f0;
-    background: white;
-    font-size: 0.97rem;
+    background: #fafafa;
+    font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.2s;
-    margin-bottom: 10px;
+    margin-bottom: 9px;
     display: flex;
     align-items: flex-start;
     gap: 12px;
+    color: #1f2937;
 }
-[data-theme="dark"] .sik-btn { background: #242840; border-color: #3a3f5c; color: #e0e0e0; }
-.sik-btn:hover:not(:disabled) { border-color: #667eea; background: #f0f2ff; transform: translateX(4px); }
-[data-theme="dark"] .sik-btn:hover:not(:disabled) { background: #2d3454; }
+[data-theme="dark"] .sik-btn {
+    background: #1e2749;
+    border-color: #2d3454;
+    color: #e2e8f0;
+}
+.sik-btn:hover:not(:disabled) {
+    border-color: #f59e0b;
+    background: #fffbeb;
+    transform: translateX(4px);
+    box-shadow: 0 2px 10px rgba(245,158,11,0.15);
+}
+[data-theme="dark"] .sik-btn:hover:not(:disabled) {
+    background: #2d3454;
+    border-color: #f59e0b;
+}
 .sik-btn .harf {
-    min-width: 30px; height: 30px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-width: 32px; height: 32px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
     color: white; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+    font-weight: 800; font-size: 0.85rem; flex-shrink: 0;
 }
-.sik-btn.dogru { border-color: #10b981; background: #f0fdf4; }
-.sik-btn.yanlis { border-color: #ef4444; background: #fff5f5; }
-.sik-btn.dogru .harf { background: linear-gradient(135deg,#10b981,#059669); }
-.sik-btn.yanlis .harf { background: linear-gradient(135deg,#ef4444,#dc2626); }
-[data-theme="dark"] .sik-btn.dogru { background: #0a2e1a; border-color: #10b981; }
-[data-theme="dark"] .sik-btn.yanlis { background: #2e0a0a; border-color: #ef4444; }
-.aciklama-kutu {
-    background: #f0f9ff;
-    border-left: 4px solid #667eea;
-    border-radius: 0 12px 12px 0;
-    padding: 16px;
-    margin-top: 20px;
+.sik-btn.dogru {
+    border-color: #10b981 !important;
+    background: #f0fdf4 !important;
+}
+.sik-btn.yanlis {
+    border-color: #ef4444 !important;
+    background: #fff5f5 !important;
+}
+.sik-btn.dogru .harf { background: linear-gradient(135deg,#10b981,#059669) !important; }
+.sik-btn.yanlis .harf { background: linear-gradient(135deg,#ef4444,#dc2626) !important; }
+[data-theme="dark"] .sik-btn.dogru { background: rgba(16,185,129,0.12) !important; }
+[data-theme="dark"] .sik-btn.yanlis { background: rgba(239,68,68,0.12) !important; }
+
+/* ── SONUÇ BANNER ── */
+.gs-result-banner {
+    border-radius: 16px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+.gs-result-banner.dogru {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    border: 2px solid #10b981;
+    color: #065f46;
+}
+.gs-result-banner.yanlis {
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    border: 2px solid #ef4444;
+    color: #991b1b;
+}
+[data-theme="dark"] .gs-result-banner.dogru { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+[data-theme="dark"] .gs-result-banner.yanlis { background: rgba(239,68,68,0.15); color: #fca5a5; }
+.gs-result-icon { font-size: 2rem; flex-shrink: 0; }
+.gs-result-label { font-size: 1.05rem; }
+.gs-result-sub { font-size: .85rem; font-weight: 500; opacity: .85; }
+
+/* ── AÇIKLAMA ── */
+.gs-aciklama {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border: 1.5px solid #fcd34d;
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-top: 14px;
     display: none;
 }
-[data-theme="dark"] .aciklama-kutu { background: #1a2540; }
-.xp-badge {
+[data-theme="dark"] .gs-aciklama {
+    background: rgba(245,158,11,0.08);
+    border-color: rgba(245,158,11,0.3);
+}
+.gs-aciklama-title {
+    font-weight: 800;
+    color: #92400e;
+    margin-bottom: 6px;
+    font-size: .9rem;
+}
+[data-theme="dark"] .gs-aciklama-title { color: #fcd34d; }
+.gs-aciklama-text { color: #78350f; font-size: .92rem; line-height: 1.6; }
+[data-theme="dark"] .gs-aciklama-text { color: #fef3c7; }
+
+/* ── İSTATİSTİKLER ── */
+.gs-stats {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding-top: 16px;
+    margin-top: 16px;
+    border-top: 1.5px solid #f1f5f9;
+}
+[data-theme="dark"] .gs-stats { border-top-color: #2d3454; }
+.gs-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .83rem;
+    color: #6b7280;
+    font-weight: 600;
+}
+[data-theme="dark"] .gs-stat-item { color: #9ca3af; }
+.gs-stat-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+}
+
+/* ── BOŞ DURUM ── */
+.gs-empty {
+    background: #fff;
+    border-radius: 20px;
+    padding: 48px 32px;
+    text-align: center;
+    border: 1.5px solid #f1f5f9;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+[data-theme="dark"] .gs-empty {
+    background: linear-gradient(145deg, #1a1f3a, #151929);
+    border-color: #2d3454;
+}
+.gs-empty-icon { font-size: 4rem; display: block; margin-bottom: 16px; }
+.gs-empty-title { font-size: 1.2rem; font-weight: 800; color: #374151; margin-bottom: 8px; }
+[data-theme="dark"] .gs-empty-title { color: #e2e8f0; }
+.gs-empty-text { color: #6b7280; font-size: .92rem; }
+[data-theme="dark"] .gs-empty-text { color: #9ca3af; }
+.gs-empty-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 11px 24px;
     background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: white; border-radius: 20px;
-    padding: 4px 14px; font-size: 0.85rem; font-weight: 700;
+    color: white;
+    border-radius: 50px;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: .9rem;
+    transition: transform .15s, box-shadow .15s;
 }
-.zaten-cevaplandi {
-    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-    border: 2px solid #10b981;
-    border-radius: 16px; padding: 20px;
-    text-align: center; margin-top: 16px;
+.gs-empty-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(245,158,11,0.4);
+    color: white;
+    text-decoration: none;
 }
-[data-theme="dark"] .zaten-cevaplandi { background: #0a2e1a; }
+
+/* ── GİRİŞ YAPILMADI ── */
+.gs-login-prompt {
+    text-align: center;
+    padding: 32px 20px;
+}
+.gs-login-prompt a {
+    color: #f59e0b;
+    font-weight: 700;
+}
+
+/* ── COUNTDOWN / STREAK ── */
+.gs-streak-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 8px 16px;
+    margin-top: 12px;
+    font-size: .82rem;
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    .gs-hero { padding: 20px 18px 18px; }
+    .gs-hero-title { font-size: 1.2rem; }
+    .gs-body { padding: 18px 16px; }
+    .sik-btn { padding: 11px 13px; font-size: .88rem; }
+    .gs-soru-text { font-size: 1rem; }
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-4">
+<div class="gs-page">
 
-  <div class="text-center mb-4">
-    <h2 class="fw-bold">☀️ Günün Sorusu</h2>
-    <p class="text-muted">Her gün yeni bir soru — doğru cevapla <span class="xp-badge">+{{ gunun_sorusu.bonus_xp }} XP</span> kazan!</p>
+  <!-- HERO HEADER -->
+  <div class="gs-hero">
+    <div class="gs-hero-top">
+      <div class="gs-hero-title">
+        <span>☀️</span> Günün Sorusu
+      </div>
+      {% if gunun_sorusu %}
+      <div class="gs-xp-badge">
+        <span>⚡</span> +{{ gunun_sorusu.bonus_xp }} XP
+      </div>
+      {% endif %}
+    </div>
+
+    {% if gunun_sorusu %}
+    <div class="gs-meta-chips">
+      <span class="gs-chip">📅 {{ gunun_sorusu.tarih|date:"d F Y" }}</span>
+      {% if gunun_sorusu.soru.ders %}
+      <span class="gs-chip">📚 {{ gunun_sorusu.soru.ders|capfirst }}</span>
+      {% endif %}
+      {% if gunun_sorusu.soru.konu %}
+      <span class="gs-chip">🎯 {{ gunun_sorusu.soru.konu }}</span>
+      {% endif %}
+    </div>
+    <div class="gs-soru-text">{{ gunun_sorusu.soru.metin }}</div>
+    {% else %}
+    <div style="opacity:.85;font-size:.95rem;margin-top:6px;">Her gün yeni bir soru — doğru cevapla <strong>XP</strong> kazan!</div>
+    {% endif %}
   </div>
 
   {% if not gunun_sorusu %}
-    <div class="text-center py-5">
-      <div style="font-size:4rem;">📭</div>
-      <h4 class="mt-3 text-muted">Bugün için soru eklenmemiş.</h4>
-      <p class="text-muted">Yarın tekrar gel!</p>
-    </div>
+  <!-- BOŞ DURUM -->
+  <div class="gs-empty">
+    <span class="gs-empty-icon">📭</span>
+    <div class="gs-empty-title">Bugün için soru eklenmemiş</div>
+    <div class="gs-empty-text">Yarın tekrar gel, seni bekliyor olacak!</div>
+    <a href="{% url 'quiz_anasayfa' %}" class="gs-empty-cta">
+      <i class="bi bi-house-fill"></i> Ana Sayfaya Dön
+    </a>
+  </div>
+
   {% else %}
-  <div class="gs-card">
-    <div class="gs-header">
-      <div class="d-flex justify-content-between align-items-start">
+  <!-- SORU KARTI -->
+  <div class="gs-body">
+
+    {% if kullanici_cevabi %}
+      <!-- Sonuç banner -->
+      <div class="gs-result-banner {% if kullanici_cevabi.dogru_mu %}dogru{% else %}yanlis{% endif %}">
+        <div class="gs-result-icon">{% if kullanici_cevabi.dogru_mu %}🎉{% else %}😔{% endif %}</div>
         <div>
-          <span class="badge bg-white bg-opacity-25 mb-2">
-            {{ gunun_sorusu.tarih|date:"d F Y" }}
-          </span>
-          {% if gunun_sorusu.soru.ders %}
-          <span class="badge bg-white bg-opacity-25 ms-1 mb-2 text-capitalize">
-            {{ gunun_sorusu.soru.ders }}
-          </span>
-          {% endif %}
+          <div class="gs-result-label">{% if kullanici_cevabi.dogru_mu %}Doğru cevapladın!{% else %}Yanlış cevap{% endif %}</div>
+          <div class="gs-result-sub">{% if kullanici_cevabi.dogru_mu %}+{{ gunun_sorusu.bonus_xp }} XP kazandın{% else %}Yarın tekrar dene!{% endif %}</div>
         </div>
-        <span class="xp-badge">+{{ gunun_sorusu.bonus_xp }} XP</span>
       </div>
-      <p class="mb-0 fs-5 lh-base">{{ gunun_sorusu.soru.metin }}</p>
-    </div>
 
-    <div class="gs-body">
-      {% if kullanici_cevabi %}
-        <!-- Zaten cevaplandı -->
-        <div class="zaten-cevaplandi">
-          {% if kullanici_cevabi.dogru_mu %}
-            <div style="font-size:2.5rem;">🎉</div>
-            <h5 class="fw-bold text-success mt-2">Doğru cevapladın!</h5>
-            <p class="text-muted mb-0">+{{ gunun_sorusu.bonus_xp }} XP kazandın</p>
-          {% else %}
-            <div style="font-size:2.5rem;">😔</div>
-            <h5 class="fw-bold text-danger mt-2">Yanlış cevapladın</h5>
-            <p class="text-muted mb-0">Yarın tekrar dene!</p>
-          {% endif %}
-        </div>
+      <!-- Şıklar (sonuçlu) -->
+      {% for cevap in cevaplar %}
+      <div class="sik-btn {% if cevap.dogru_mu %}dogru{% elif kullanici_cevabi.secilen_cevap_id == cevap.id %}yanlis{% endif %}" style="cursor:default;">
+        <span class="harf">{{ forloop.counter|add:64|chr_filter }}</span>
+        <span style="flex:1;">{{ cevap.metin }}</span>
+        {% if cevap.dogru_mu %}<span style="color:#10b981;font-weight:800;margin-left:auto;">✓</span>{% endif %}
+      </div>
+      {% endfor %}
 
-        <!-- Şıkları sonuçla göster -->
-        <div class="mt-4">
-          {% for cevap in cevaplar %}
-          <div class="sik-btn {% if cevap.dogru_mu %}dogru{% elif kullanici_cevabi.secilen_cevap_id == cevap.id %}yanlis{% endif %}" style="cursor:default;">
-            <span class="harf">{{ forloop.counter|add:64|chr_filter }}</span>
-            <span>{{ cevap.metin }}</span>
-            {% if cevap.dogru_mu %}<span class="ms-auto text-success fw-bold">✓</span>{% endif %}
-          </div>
-          {% endfor %}
-        </div>
-
-        {% if gunun_sorusu.soru.detayli_aciklama %}
-        <div class="aciklama-kutu" style="display:block;">
-          <div class="fw-semibold mb-1">💡 Açıklama</div>
-          <div>{{ gunun_sorusu.soru.detayli_aciklama }}</div>
-        </div>
-        {% endif %}
-
-      {% else %}
-        <!-- Henüz cevaplamadı -->
-        {% if not request.user.is_authenticated %}
-          <div class="text-center py-3">
-            <p class="text-muted">Cevaplamak için <a href="{% url 'giris' %}">giriş yap</a>.</p>
-          </div>
-        {% else %}
-          <form id="gsForm">
-            {% csrf_token %}
-            {% for cevap in cevaplar %}
-            <button type="button" class="sik-btn" onclick="cevapla({{ cevap.id }}, this)">
-              <span class="harf">{{ forloop.counter|add:64|chr_filter }}</span>
-              <span>{{ cevap.metin }}</span>
-            </button>
-            {% endfor %}
-          </form>
-
-          <div id="sonucAlani" style="display:none;"></div>
-          <div class="aciklama-kutu" id="aciklamaKutu">
-            {% if gunun_sorusu.soru.detayli_aciklama %}
-            <div class="fw-semibold mb-1">💡 Açıklama</div>
-            <div>{{ gunun_sorusu.soru.detayli_aciklama }}</div>
-            {% endif %}
-          </div>
-        {% endif %}
+      {% if gunun_sorusu.soru.detayli_aciklama %}
+      <div class="gs-aciklama" style="display:block;">
+        <div class="gs-aciklama-title">💡 Açıklama</div>
+        <div class="gs-aciklama-text">{{ gunun_sorusu.soru.detayli_aciklama }}</div>
+      </div>
       {% endif %}
 
-      <!-- İstatistikler -->
-      <div class="mt-4 pt-3 border-top d-flex gap-4 text-muted small">
-        <span>👥 {{ toplam_cevaplayan }} kişi cevapladı</span>
-        {% if toplam_cevaplayan > 0 %}
-        <span>✅ %{{ dogru_oran }} doğru</span>
+    {% else %}
+      {% if not request.user.is_authenticated %}
+      <div class="gs-login-prompt">
+        <div style="font-size:2.5rem;margin-bottom:12px;">🔐</div>
+        <p>Cevaplamak için <a href="{% url 'giris' %}">giriş yap</a></p>
+      </div>
+      {% else %}
+      <!-- Cevap formu -->
+      <form id="gsForm">
+        {% csrf_token %}
+        {% for cevap in cevaplar %}
+        <button type="button" class="sik-btn" onclick="cevapla({{ cevap.id }}, this)">
+          <span class="harf">{{ forloop.counter|add:64|chr_filter }}</span>
+          <span>{{ cevap.metin }}</span>
+        </button>
+        {% endfor %}
+      </form>
+
+      <div id="gsSonuc" style="display:none;"></div>
+      <div class="gs-aciklama" id="gsAciklama">
+        {% if gunun_sorusu.soru.detayli_aciklama %}
+        <div class="gs-aciklama-title">💡 Açıklama</div>
+        <div class="gs-aciklama-text">{{ gunun_sorusu.soru.detayli_aciklama }}</div>
         {% endif %}
       </div>
+      {% endif %}
+    {% endif %}
+
+    <!-- İstatistikler -->
+    {% if toplam_cevaplayan > 0 %}
+    <div class="gs-stats">
+      <div class="gs-stat-item">
+        <span class="gs-stat-dot" style="background:#667eea;"></span>
+        👥 {{ toplam_cevaplayan }} kişi cevapladı
+      </div>
+      <div class="gs-stat-item">
+        <span class="gs-stat-dot" style="background:#10b981;"></span>
+        ✅ %{{ dogru_oran }} doğru oran
+      </div>
     </div>
+    {% elif toplam_cevaplayan == 0 and kullanici_cevabi == None and request.user.is_authenticated %}
+    <div class="gs-stats">
+      <div class="gs-stat-item" style="color:#f59e0b;">
+        🌟 İlk cevaplayan sen olabilirsin!
+      </div>
+    </div>
+    {% endif %}
+
   </div>
   {% endif %}
 
@@ -182,7 +420,6 @@
 
 <script>
 function cevapla(cevapId, btn) {
-    // Tüm butonları devre dışı bırak
     document.querySelectorAll('.sik-btn').forEach(b => b.disabled = true);
 
     fetch("{% url 'gunun_sorusu_cevapla' %}", {
@@ -198,17 +435,18 @@ function cevapla(cevapId, btn) {
         document.querySelectorAll('.sik-btn').forEach(b => {
             const bId = parseInt(b.getAttribute('onclick')?.match(/\d+/)?.[0]);
             if (data.dogru_cevap_id === bId) b.classList.add('dogru');
-            else if (cevapId === bId) b.classList.add('yanlis');
+            else if (cevapId === bId && !data.dogru_mu) b.classList.add('yanlis');
         });
 
-        const sonuc = document.getElementById('sonucAlani');
+        const sonuc = document.getElementById('gsSonuc');
         sonuc.style.display = 'block';
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         if (data.dogru_mu) {
-            sonuc.innerHTML = `<div class="alert alert-success mt-3">🎉 <strong>Doğru!</strong> +${data.bonus_xp} XP kazandın!</div>`;
+            sonuc.innerHTML = `<div class="gs-result-banner dogru"><div class="gs-result-icon">🎉</div><div><div class="gs-result-label">Doğru!</div><div class="gs-result-sub">+${data.bonus_xp} XP kazandın</div></div></div>`;
         } else {
-            sonuc.innerHTML = `<div class="alert alert-danger mt-3">😔 <strong>Yanlış.</strong> Doğru cevap işaretlendi.</div>`;
+            sonuc.innerHTML = `<div class="gs-result-banner yanlis"><div class="gs-result-icon">😔</div><div><div class="gs-result-label">Yanlış cevap</div><div class="gs-result-sub">Yarın tekrar dene!</div></div></div>`;
         }
-        document.getElementById('aciklamaKutu').style.display = 'block';
+        document.getElementById('gsAciklama').style.display = 'block';
     });
 }
 </script>
