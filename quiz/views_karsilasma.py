@@ -446,6 +446,19 @@ def karsilasma_durum_guncelle(request, oda_id):
 
                         oda.save()
 
+            # Fallback: oyun oynaniyor ama aktif soru atanmadıysa ata
+            if oda.oyun_durumu == 'oynaniyor' and oda.aktif_soru is None and not oda.round_bekleme_durumu:
+                fallback_soru = get_random_soru_by_ders(oda.secilen_ders)
+                if fallback_soru:
+                    oda.aktif_soru = fallback_soru
+                    if not oda.aktif_soru_no:
+                        oda.aktif_soru_no = 1
+                    oda.soru_baslangic_zamani = timezone.now()
+                    oda.oyuncu1_cevapladi = False
+                    oda.oyuncu2_cevapladi = False
+                    oda.save()
+                    logger.warning(f"⚠️ Fallback soru atandı: Oda={oda_id}, Soru={fallback_soru.id}")
+
             # Response hazırla
             soru_obj = oda.aktif_soru
             cevaplar = []

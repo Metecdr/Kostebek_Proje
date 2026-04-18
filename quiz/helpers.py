@@ -17,7 +17,7 @@ def get_random_soru_by_ders(ders='karisik'):
     cache_key = f'karsilasma_soru_ids_{ders}'
     soru_ids = cache.get(cache_key)
     
-    if soru_ids is None:
+    if not soru_ids:
         if ders == 'karisik':
             soru_ids = list(Soru.objects.filter(karsilasmada_cikar=True).exclude(ders='matematik').values_list('id', flat=True))
         elif ders == 'karisik_sayisal':

@@ -45,29 +45,33 @@ def turnuva_yonetim(request):
                 ders = request.POST.get('ders', 'karisik_sayisal')
                 toplam_soru = int(request.POST.get('toplam_soru', 5))
                 max_katilimci = int(request.POST.get('max_katilimci', 16))
-                odul_1 = int(request.POST.get('odul_1', 100))
-                odul_2 = int(request.POST.get('odul_2', 50))
-                odul_3 = int(request.POST.get('odul_3', 25))
+                odul_1 = int(request.POST.get('odul_1', 1000))
+                odul_2 = int(request.POST.get('odul_2', 500))
+                odul_3 = int(request.POST.get('odul_3', 250))
 
-                # Tarihler
-                baslangic_str = request.POST.get('baslangic_tarihi')
-                bitis_str = request.POST.get('bitis_tarihi')
-                baslangic = None
-                bitis = None
-                if baslangic_str:
-                    dt = parse_datetime(baslangic_str)
+                def _parse_dt(s):
+                    if not s:
+                        return None
+                    dt = parse_datetime(s)
                     if dt:
-                        baslangic = timezone.make_aware(dt) if timezone.is_naive(dt) else dt
-                if bitis_str:
-                    dt = parse_datetime(bitis_str)
-                    if dt:
-                        bitis = timezone.make_aware(dt) if timezone.is_naive(dt) else dt
+                        return timezone.make_aware(dt) if timezone.is_naive(dt) else dt
+                    return None
+
+                kayit_baslangic = _parse_dt(request.POST.get('kayit_baslangic'))
+                kayit_bitis = _parse_dt(request.POST.get('kayit_bitis'))
+                baslangic = _parse_dt(request.POST.get('baslangic'))
+                bitis = _parse_dt(request.POST.get('bitis'))
+
+                if not kayit_baslangic or not kayit_bitis or not baslangic:
+                    messages.error(request, 'Kayıt başlangıç, kayıt bitiş ve turnuva başlangıç tarihleri zorunludur.')
+                    return redirect('turnuva_yonetim')
 
                 t = Turnuva.objects.create(
                     isim=isim, aciklama=aciklama, sinav_tipi=sinav_tipi,
                     ders=ders, toplam_soru=toplam_soru, max_katilimci=max_katilimci,
-                    odul_birinci=odul_1, odul_ikinci=odul_2, odul_ucuncu=odul_3,
-                    baslangic_tarihi=baslangic, bitis_tarihi=bitis,
+                    odul_xp_1=odul_1, odul_xp_2=odul_2, odul_xp_3=odul_3,
+                    kayit_baslangic=kayit_baslangic, kayit_bitis=kayit_bitis,
+                    baslangic=baslangic, bitis=bitis,
                     durum='beklemede'
                 )
                 messages.success(request, f'✅ "{t.isim}" turnuvası oluşturuldu.')
@@ -137,7 +141,7 @@ def turnuva_yonetim(request):
     turnuvalar = Turnuva.objects.annotate(
         katilimci_count=Count('turnuvakatilim', distinct=True),
         mac_count=Count('turnuvamaci', distinct=True)
-    ).order_by('-olusturulma_tarihi')
+    ).order_by('-olusturma_tarihi')
 
     context = {
         'turnuvalar': turnuvalar,
