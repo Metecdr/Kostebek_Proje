@@ -2055,8 +2055,7 @@
                             <div class="kh-date">
                                 {% if r.oda.bitis_zamani %}{{ r.oda.bitis_zamani|date:"d M Y, H:i" }}
                                 {% else %}{{ r.oda.olusturma_tarihi|date:"d M Y, H:i" }}{% endif %}
-                                {% if r.rakip and r.rakip.profil %}&nbsp;·&nbsp;{{ r.rakip.profil.get_alan_display }}{%
-                                endif %}
+                                {% if r.rakip and r.rakip.profil %}&nbsp;·&nbsp;{{ r.rakip.profil.get_alan_display }}{% endif %}
                             </div>
                         </div>
                     </div>
@@ -2108,8 +2107,7 @@
                             Skor: <span>{{ r.benim_skor }}</span> &mdash; {{ r.rakip_skor }}
                         </div>
                         <div class="kh-score-rate">
-                            Başarı Oranı: %{% if toplam > 0 %}{% widthratio r.benim_skor toplam 100 %}{% else %}50{%
-                            endif %}
+                            Başarı Oranı: %{% if toplam > 0 %}{% widthratio r.benim_skor toplam 100 %}{% else %}50{% endif %}
                         </div>
                     </div>
                     <div class="kh-prog">
