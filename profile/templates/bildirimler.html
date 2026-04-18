@@ -272,7 +272,19 @@
                     <span class="yeni-nokta"></span>
                     <span style="font-size:0.75rem;color:#4ECDC4;font-weight:700;">YENİ</span>
                     {% endif %}
-                    {% if b.link %}
+                    {% if b.tip == 'meydan_okuma' and b.link %}
+                    {# Rövanş / Meydan okuma → Kabul Et / Reddet butonları #}
+                    <div id="revans-aksiy-{{ b.id }}" style="display:inline-flex;gap:6px;align-items:center;margin-top:4px;">
+                        <button onclick="meydanKabul({{ b.link }}, {{ b.id }}, this)"
+                                style="background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;border:none;padding:5px 14px;border-radius:8px;font-weight:700;font-size:0.8rem;cursor:pointer;">
+                            ✅ Kabul Et
+                        </button>
+                        <button onclick="meydanReddet({{ b.link }}, {{ b.id }}, this)"
+                                style="background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;border:none;padding:5px 14px;border-radius:8px;font-weight:700;font-size:0.8rem;cursor:pointer;">
+                            ❌ Reddet
+                        </button>
+                    </div>
+                    {% elif b.link %}
                     <a href="{{ b.link }}" style="font-size:0.78rem;color:#667eea;font-weight:700;text-decoration:none;">
                         Görüntüle →
                     </a>
@@ -388,6 +400,67 @@
             }
         }
         return cookieValue;
+    }
+
+    // RÖVANŞ / MEYDAN OKUMA — Kabul & Reddet
+    function meydanKabul(meydanId, bildirimId, btn) {
+        const grup = document.getElementById('revans-aksiy-' + bildirimId);
+        const btns = grup ? grup.querySelectorAll('button') : [];
+        btns.forEach(b => { b.disabled = true; b.style.opacity = '0.6'; });
+
+        fetch('/quiz/meydan-okuma/kabul/' + meydanId + '/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && data.redirect_url) {
+                showToast('✅ Rövanş kabul edildi! Oyun başlıyor...', 'success');
+                setTimeout(() => { window.location.href = data.redirect_url; }, 1200);
+            } else {
+                showToast(data.message || '❌ Bir hata oluştu.', 'error');
+                btns.forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+            }
+        })
+        .catch(() => {
+            showToast('❌ Bağlantı hatası.', 'error');
+            btns.forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+        });
+    }
+
+    function meydanReddet(meydanId, bildirimId, btn) {
+        const grup = document.getElementById('revans-aksiy-' + bildirimId);
+        const btns = grup ? grup.querySelectorAll('button') : [];
+        btns.forEach(b => { b.disabled = true; b.style.opacity = '0.6'; });
+
+        fetch('/quiz/meydan-okuma/reddet/' + meydanId + '/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast('❌ Rövanş reddedildi.', 'info');
+                if (grup) {
+                    grup.style.transition = 'opacity 0.4s';
+                    grup.style.opacity = '0';
+                    setTimeout(() => { grup.remove(); }, 400);
+                }
+            } else {
+                showToast(data.message || '❌ Bir hata oluştu.', 'error');
+                btns.forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+            }
+        })
+        .catch(() => {
+            showToast('❌ Bağlantı hatası.', 'error');
+            btns.forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+        });
     }
 </script>
 {% endblock %}

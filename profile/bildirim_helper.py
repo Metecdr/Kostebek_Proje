@@ -16,7 +16,7 @@ BILDIRIM_COOLDOWN = {
 }
 
 
-def bildirim_gonder(kullanici, tip, baslik, mesaj, icon='🔔', iliskili_rozet=None):
+def bildirim_gonder(kullanici, tip, baslik, mesaj, icon='🔔', iliskili_rozet=None, link=None):
     """
     Kullanıcıya bildirim gönder (rate limiting ile)
     """
@@ -39,7 +39,8 @@ def bildirim_gonder(kullanici, tip, baslik, mesaj, icon='🔔', iliskili_rozet=N
             baslik=baslik,
             mesaj=mesaj,
             icon=icon,
-            iliskili_rozet=iliskili_rozet
+            iliskili_rozet=iliskili_rozet,
+            link=link
         )
         logger.info(f"📬 Bildirim gönderildi: {kullanici.username} - {baslik}")
         return bildirim

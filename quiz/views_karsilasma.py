@@ -171,7 +171,7 @@ def karsilasma_durum_guncelle(request, oda_id):
                 # Client timer'ı manipüle edilse bile sunucu kontrolü geçilmez
                 if cevap_id is not None and oda.soru_baslangic_zamani:
                     gecen_sure = (timezone.now() - oda.soru_baslangic_zamani).total_seconds()
-                    if gecen_sure < 2.0:
+                    if gecen_sure < 0.4:
                         logger.warning(f"⚠️ Anti-cheat: Çok hızlı cevap! User={request.user.username}, süre={gecen_sure:.2f}s")
                         return JsonResponse({'error': 'Çok hızlı cevap gönderildi'}, status=429)
 
@@ -1282,8 +1282,9 @@ def revans_gonder(request, kullanici_id):
             kullanici=hedef_kullanici,
             tip='meydan_okuma',
             baslik='🔄 Rövanş İsteği!',
-            mesaj=f'{request.user.username} sana rövanş istiyor!',
-            icon='🔄'
+            mesaj=f'{request.user.username} sana rövanş istiyor! ({data.get("sinav_tipi","AYT")} / {data.get("ders","karisik")})',
+            icon='🔄',
+            link=str(meydan.id)   # meydan_id — kabul/reddet butonları için
         )
     except Exception as e:
         logger.error(f"Rövanş bildirimi hatası: {e}", exc_info=True)
