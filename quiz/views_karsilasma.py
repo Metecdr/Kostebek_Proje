@@ -1354,17 +1354,21 @@ def karsilasma_gecmis(request):
             .order_by('-bitis_zamani', '-olusturma_tarihi')
         )
 
-        # Turnuva maçlarını tek seferde çek
-        turnuva_maclari = (
-            TurnuvaMaci.objects
-            .filter(karsilasma_oda__in=odalar)
-            .select_related('turnuva', 'kazanan', 'karsilasma_oda')
-        )
-        turnuva_by_oda_id = {
-            tm.karsilasma_oda_id: tm
-            for tm in turnuva_maclari
-            if tm.karsilasma_oda_id
-        }
+        # Turnuva maçlarını tek seferde çek (DB sütunu yoksa sessizce atla)
+        try:
+            turnuva_maclari = (
+                TurnuvaMaci.objects
+                .filter(karsilasma_oda__in=odalar)
+                .select_related('turnuva', 'kazanan', 'karsilasma_oda')
+            )
+            turnuva_by_oda_id = {
+                tm.karsilasma_oda_id: tm
+                for tm in turnuva_maclari
+                if tm.karsilasma_oda_id
+            }
+        except Exception as tm_err:
+            logger.warning(f"⚠️ TurnuvaMaci sorgusu atlandı: {tm_err}")
+            turnuva_by_oda_id = {}
 
         rows = []
         for oda in odalar:

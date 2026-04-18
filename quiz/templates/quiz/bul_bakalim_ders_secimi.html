@@ -5,176 +5,380 @@
 
 {% block extra_css %}
 <style>
+    body {
+        background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+        min-height: 100vh;
+    }
+
     .ders-secimi-container {
-        max-width: 860px;
+        max-width: 1200px;
         margin: 0 auto;
-        padding: 20px 16px 40px;
+        padding: 40px 20px;
+        animation: fadeIn 0.6s ease-out;
     }
 
-    /* HEADER */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    /* ══ PAGE HEADER ══ */
     .page-header {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        border-radius: 25px;
+        padding: 50px 40px;
+        margin-bottom: 40px;
         text-align: center;
-        padding: 24px 20px 16px;
-        margin-bottom: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        animation: slideDown 0.8s ease-out;
+        position: relative;
+        overflow: hidden;
     }
-    .page-icon { font-size: 2.8rem; margin-bottom: 8px; display: block; }
-    .page-title {
-        font-size: 1.8rem;
-        font-weight: 900;
-        color: #7c3aed;
-        margin-bottom: 4px;
-    }
-    [data-theme="dark"] .page-title { color: #a78bfa; }
-    .page-subtitle { color: #6b7280; font-size: 0.9rem; font-weight: 500; margin: 0; }
-    [data-theme="dark"] .page-subtitle { color: #9ca3af; }
 
-    /* ALAN CARDS */
-    .alan-section {
+    .page-header::before {
+        content: '🦔';
+        position: absolute;
+        font-size: 18rem;
+        opacity: 0.05;
+        top: -60px;
+        right: -60px;
+        animation: rotate 25s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+    }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-50px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-icon {
+        font-size: 5rem;
+        margin-bottom: 20px;
+        display: block;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0) rotate(-8deg); }
+        50%       { transform: translateY(-18px) rotate(8deg); }
+    }
+
+    .page-title {
+        font-size: 3rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #7c3aed, #4f46e5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+        font-size: 1.2rem;
+        color: #666;
+        font-weight: 600;
+    }
+
+    /* ══ ALAN SECTIONS ══ */
+    .alan-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 14px;
-        margin-bottom: 14px;
-        align-items: start;
+        grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+        animation: fadeInUp 0.8s ease-out 0.3s backwards;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to   { opacity: 1; transform: translateY(0); }
     }
 
     .alan-card {
-        background: #fff;
-        border-radius: 16px;
-        padding: 20px;
-        border: 1.5px solid #ede9fe;
-        box-shadow: 0 2px 8px rgba(124,58,237,0.06);
-        transition: box-shadow 0.2s, border-color 0.2s;
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        border-radius: 25px;
+        padding: 40px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
     }
+
+    .alan-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 6px;
+    }
+
+    .alan-card.sayisal::before { background: linear-gradient(90deg, #7c3aed, #4f46e5); }
+    .alan-card.sozel::before   { background: linear-gradient(90deg, #db2777, #9333ea); }
+
     .alan-card:hover {
-        box-shadow: 0 6px 20px rgba(124,58,237,0.13);
-        border-color: #c4b5fd;
-    }
-    [data-theme="dark"] .alan-card {
-        background: #1a1a2e;
-        border-color: #3d2d6e;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+        transform: translateY(-5px);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     }
 
     .alan-header {
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 14px;
-        padding-bottom: 12px;
-        border-bottom: 1.5px solid #ede9fe;
+        gap: 14px;
+        margin-bottom: 24px;
+        padding-bottom: 18px;
+        border-bottom: 2px solid rgba(0,0,0,0.06);
     }
-    [data-theme="dark"] .alan-header { border-bottom-color: #2d2050; }
 
-    .alan-icon { font-size: 1.6rem; line-height: 1; flex-shrink: 0; }
-    .alan-title { font-size: 1rem; font-weight: 800; color: #7c3aed; margin: 0; }
-    [data-theme="dark"] .alan-title { color: #a78bfa; }
-    .alan-subtitle { font-size: 0.72rem; color: #9ca3af; margin: 0; }
+    .alan-icon-wrap {
+        font-size: 2.5rem;
+        line-height: 1;
+    }
 
-    /* DERS BUTTONS */
+    .alan-title {
+        font-size: 1.6rem;
+        font-weight: 900;
+        margin: 0 0 4px;
+    }
+
+    .alan-card.sayisal .alan-title {
+        background: linear-gradient(135deg, #7c3aed, #4f46e5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .alan-card.sozel .alan-title {
+        background: linear-gradient(135deg, #db2777, #9333ea);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .alan-subtitle {
+        font-size: 0.82rem;
+        color: #9ca3af;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    /* ══ DERS BUTTONS ══ */
     .ders-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+        gap: 14px;
     }
 
     .ders-btn {
-        padding: 11px 12px;
-        border-radius: 11px;
-        font-size: 0.85rem;
+        padding: 22px 16px;
+        border: none;
+        border-radius: 18px;
+        font-size: 1rem;
         font-weight: 700;
         cursor: pointer;
-        transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         text-decoration: none;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 5px;
-        border: none;
+        gap: 8px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        position: relative;
+        overflow: hidden;
         color: white !important;
     }
+
+    .ders-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 0; height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.35);
+        transform: translate(-50%, -50%);
+        transition: width 0.55s, height 0.55s;
+    }
+
+    .ders-btn:hover::before { width: 350px; height: 350px; }
+
     .ders-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 14px rgba(0,0,0,0.2);
-        filter: brightness(1.08);
+        transform: translateY(-8px) scale(1.04);
+        box-shadow: 0 14px 38px rgba(0,0,0,0.28);
         text-decoration: none;
         color: white !important;
     }
-    .ders-btn:active { transform: translateY(0); }
 
-    .ders-fizik    { background: #8b5cf6; }
-    .ders-kimya    { background: #0891b2; }
-    .ders-biyoloji { background: #059669; }
-    .ders-edebiyat { background: #db2777; }
-    .ders-turkce   { background: #dc2626; }
-    .ders-tarih    { background: #d97706; }
-    .ders-cografya { background: #0d9488; }
-    .ders-felsefe  { background: #4f46e5; }
+    .ders-btn:active { transform: translateY(-3px) scale(1.01); }
 
-    .ders-karisik-sayisal  { background: linear-gradient(135deg, #8b5cf6, #059669); grid-column: span 2; }
-    .ders-karisik-sozel    { background: linear-gradient(135deg, #db2777, #4f46e5); grid-column: span 2; }
-    .ders-karisik-ea       { background: linear-gradient(135deg, #d97706, #db2777); grid-column: span 2; }
-    .ders-karisik-sozel-ayt { background: linear-gradient(135deg, #4f46e5, #0891b2); grid-column: span 2; }
+    .ders-icon { font-size: 2rem; position: relative; z-index: 1; }
+    .ders-name { position: relative; z-index: 1; font-size: 0.95rem; font-weight: 800; }
+    .ders-sub  { position: relative; z-index: 1; font-size: 0.68rem; opacity: 0.85; font-weight: 500; }
 
-    /* INFO CARD */
-    .info-card {
-        background: #f5f3ff;
-        border-radius: 13px;
-        padding: 12px 18px;
-        text-align: center;
-        margin-bottom: 14px;
-        border: 1.5px solid #ddd6fe;
+    /* Colors */
+    .ders-fizik    { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .ders-kimya    { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+    .ders-biyoloji { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+    .ders-edebiyat { background: linear-gradient(135deg, #a8edea, #fed6e3); color: #444 !important; }
+    .ders-tarih    { background: linear-gradient(135deg, #ffecd2, #fcb69f); color: #444 !important; }
+    .ders-cografya { background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #444 !important; }
+    .ders-felsefe  { background: linear-gradient(135deg, #fbc2eb, #a6c1ee); }
+    .ders-turkce   { background: linear-gradient(135deg, #ff9a9e, #fecfef); }
+
+    .ders-karisik-sayisal  { background: linear-gradient(135deg, #fa709a, #fee140); grid-column: span 2; }
+    .ders-karisik-sozel    { background: linear-gradient(135deg, #fbc2eb, #a6c1ee); grid-column: span 2; }
+    .ders-karisik-ea       { background: linear-gradient(135deg, #f6d365, #fda085); grid-column: span 2; }
+    .ders-karisik-sozel-ayt{ background: linear-gradient(135deg, #89f7fe, #66a6ff); grid-column: span 2; }
+
+    /* ══ INFO CARD ══ */
+    .info-strip {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        border-radius: 20px;
+        padding: 25px 35px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        justify-content: center;
+        box-shadow: 0 10px 35px rgba(0,0,0,0.2);
+        margin-bottom: 30px;
+        animation: fadeInUp 0.8s ease-out 0.5s backwards;
+        flex-wrap: wrap;
     }
-    [data-theme="dark"] .info-card { background: #1e1630; border-color: #4c1d95; }
-    .info-icon { font-size: 1.4rem; flex-shrink: 0; }
-    .info-title { font-size: 0.9rem; font-weight: 800; color: #7c3aed; margin: 0; }
-    [data-theme="dark"] .info-title { color: #a78bfa; }
-    .info-text { font-size: 0.78rem; color: #6b7280; margin: 0; }
-    [data-theme="dark"] .info-text { color: #9ca3af; }
 
-    /* BACK BUTTON */
+    .info-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 22px;
+        border-radius: 50px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+        color: #5b21b6;
+    }
+
+    /* ══ BACK BUTTON ══ */
     .back-button {
         display: inline-flex;
         align-items: center;
-        gap: 7px;
-        padding: 9px 22px;
-        background: #7c3aed;
-        color: white !important;
+        gap: 10px;
+        padding: 15px 35px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+        color: #7c3aed;
         border-radius: 50px;
         font-weight: 700;
-        font-size: 0.88rem;
+        font-size: 1.1rem;
         text-decoration: none;
-        transition: background 0.2s, transform 0.15s;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
+
+    .back-button::before {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 0; height: 0;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #7c3aed, #4f46e5);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .back-button:hover::before { width: 400px; height: 400px; }
+
     .back-button:hover {
-        background: #6d28d9;
-        transform: translateY(-2px);
-        color: white !important;
-        text-decoration: none;
+        color: white;
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.3);
     }
 
-    /* Biyoloji tek başına kalmasın */
-    .ders-biyoloji-son { grid-column: span 2; }
+    .back-button span { position: relative; z-index: 1; }
 
-    /* Modal dark mode */
+    /* ══ MODAL ══ */
+    #konuSecimModal .modal-content {
+        border-radius: 20px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+    }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 1024px) {
+        .alan-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+        .page-title { font-size: 2rem; }
+        .page-icon  { font-size: 3.5rem; }
+        .alan-card  { padding: 28px 20px; }
+    }
+
+    @media (max-width: 480px) {
+        .ders-grid { grid-template-columns: 1fr; }
+        .ders-karisik-sayisal,
+        .ders-karisik-sozel,
+        .ders-karisik-ea,
+        .ders-karisik-sozel-ayt { grid-column: span 1; }
+        .info-strip { padding: 18px 20px; }
+    }
+
+    /* ══ DARK MODE ══ */
+    [data-theme="dark"] .page-header {
+        background: linear-gradient(135deg, rgba(26,31,58,0.97), rgba(21,25,41,0.95)) !important;
+        border: 1.5px solid #2d3454;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    [data-theme="dark"] .page-title {
+        background: linear-gradient(135deg, #a78bfa, #818cf8) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+    }
+    [data-theme="dark"] .page-subtitle { color: #94a3b8 !important; }
+
+    [data-theme="dark"] .alan-card {
+        background: linear-gradient(135deg, rgba(26,31,58,0.97), rgba(21,25,41,0.95)) !important;
+        border: 1.5px solid #2d3454;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+    }
+    [data-theme="dark"] .alan-card .alan-header { border-bottom-color: #2d3454 !important; }
+    [data-theme="dark"] .alan-card.sayisal .alan-title {
+        background: linear-gradient(135deg, #a78bfa, #818cf8) !important;
+        -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; background-clip: text !important;
+    }
+    [data-theme="dark"] .alan-card.sozel .alan-title {
+        background: linear-gradient(135deg, #f9a8d4, #c084fc) !important;
+        -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; background-clip: text !important;
+    }
+    [data-theme="dark"] .alan-subtitle { color: #475569 !important; }
+
+    [data-theme="dark"] .info-strip {
+        background: linear-gradient(135deg, rgba(26,31,58,0.97), rgba(21,25,41,0.95)) !important;
+        border: 1.5px solid #2d3454;
+    }
+    [data-theme="dark"] .info-chip {
+        background: rgba(139,92,246,0.15) !important;
+        color: #a78bfa !important;
+        border: 1px solid rgba(139,92,246,0.3);
+    }
+
+    [data-theme="dark"] .back-button {
+        background: linear-gradient(135deg, rgba(26,31,58,0.97), rgba(21,25,41,0.95)) !important;
+        border: 1.5px solid #2d3454;
+        color: #a78bfa !important;
+    }
+    [data-theme="dark"] .back-button:hover { color: white !important; }
+
     [data-theme="dark"] #konuSecimModal .modal-content {
         background: #1a1f3a;
         border: 1.5px solid #2d3454;
     }
     [data-theme="dark"] #konuSecimModal .modal-body { background: #1a1f3a; }
     [data-theme="dark"] #konuSecimModal .modal-footer { background: #151929; border-top: 1px solid #2d3454; }
-
-    /* RESPONSIVE */
-    @media (max-width: 640px) {
-        .alan-section { grid-template-columns: 1fr; }
-        .ders-secimi-container { padding: 10px 10px 32px; }
-        .alan-card { padding: 14px; }
-        .ders-grid { grid-template-columns: 1fr; }
-        .ders-biyoloji-son { grid-column: span 1; }
-        .ders-karisik-sayisal,
-        .ders-karisik-sozel,
-        .ders-karisik-ea,
-        .ders-karisik-sozel-ayt { grid-column: span 1; }
-    }
+    [data-theme="dark"] #konuSecimModal .modal-title { color: white; }
 </style>
 {% endblock %}
 
@@ -183,113 +387,105 @@
 
     <!-- PAGE HEADER -->
     <div class="page-header">
-        <div class="page-icon">🦔</div>
+        <span class="page-icon">🦔</span>
         <h1 class="page-title">Bul Bakalım</h1>
-        <p class="page-subtitle">Hangi derste bilgini test etmek istersin?</p>
+        <p class="page-subtitle">Hangi derste bilgini sınamak istersin?</p>
     </div>
 
-    <!-- ALAN SEÇİMİ -->
-    <div class="alan-section">
+    <!-- ALAN CARDS -->
+    <div class="alan-grid">
 
-        <!-- SAYISAL ALAN -->
-        <div class="alan-card">
+        <!-- SAYISAL -->
+        <div class="alan-card sayisal">
             <div class="alan-header">
-                <span class="alan-icon">🔢</span>
+                <div class="alan-icon-wrap">🔢</div>
                 <div>
                     <h2 class="alan-title">SAYISAL</h2>
-                    <p class="alan-subtitle">Fizik, Kimya, Biyoloji</p>
+                    <p class="alan-subtitle">Fizik · Kimya · Biyoloji</p>
                 </div>
             </div>
             <div class="ders-grid">
                 <a href="#" onclick="dersSecildi('fizik','⚛️ Fizik'); return false;" class="ders-btn ders-fizik">
-                    <span>⚛️ Fizik</span>
+                    <span class="ders-icon">⚛️</span>
+                    <span class="ders-name">Fizik</span>
                 </a>
                 <a href="#" onclick="dersSecildi('kimya','🧪 Kimya'); return false;" class="ders-btn ders-kimya">
-                    <span>🧪 Kimya</span>
+                    <span class="ders-icon">🧪</span>
+                    <span class="ders-name">Kimya</span>
                 </a>
-                <a href="#" onclick="dersSecildi('biyoloji','🧬 Biyoloji'); return false;" class="ders-btn ders-biyoloji ders-biyoloji-son">
-                    <span>🧬 Biyoloji</span>
+                <a href="#" onclick="dersSecildi('biyoloji','🧬 Biyoloji'); return false;" class="ders-btn ders-biyoloji">
+                    <span class="ders-icon">🧬</span>
+                    <span class="ders-name">Biyoloji</span>
                 </a>
                 {% if sinav_tipi == 'AYT' %}
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sayisal&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sayisal">
-                    <span>🔢🎲 Karışık Sayısal</span>
+                    <span class="ders-icon">🔢🎲</span>
+                    <span class="ders-name">Karışık Sayısal</span>
+                    <span class="ders-sub">Fizik · Kimya · Biyoloji</span>
                 </a>
                 {% else %}
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sayisal&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sayisal">
-                    <span>🎲 Karışık Sayısal</span>
+                    <span class="ders-icon">🎲</span>
+                    <span class="ders-name">Karışık Sayısal</span>
                 </a>
                 {% endif %}
             </div>
         </div>
 
-        <!-- SÖZEL ALAN -->
-        <div class="alan-card">
+        <!-- SÖZEL -->
+        <div class="alan-card sozel">
             <div class="alan-header">
-                <span class="alan-icon">📖</span>
+                <div class="alan-icon-wrap">📖</div>
                 <div>
                     <h2 class="alan-title">SÖZEL</h2>
-                    <p class="alan-subtitle">Edebiyat, Tarih, Coğrafya, Felsefe</p>
+                    <p class="alan-subtitle">Edebiyat · Tarih · Coğrafya · Felsefe</p>
                 </div>
             </div>
             <div class="ders-grid">
                 <a href="#" onclick="dersSecildi('edebiyat','📚 Edebiyat'); return false;" class="ders-btn ders-edebiyat">
-                    <span>📚 Edebiyat</span>
+                    <span class="ders-icon">📚</span>
+                    <span class="ders-name">Edebiyat</span>
                 </a>
                 <a href="#" onclick="dersSecildi('tarih','🏛️ Tarih'); return false;" class="ders-btn ders-tarih">
-                    <span>🏛️ Tarih</span>
+                    <span class="ders-icon">🏛️</span>
+                    <span class="ders-name">Tarih</span>
                 </a>
                 <a href="#" onclick="dersSecildi('cografya','🌍 Coğrafya'); return false;" class="ders-btn ders-cografya">
-                    <span>🌍 Coğrafya</span>
+                    <span class="ders-icon">🌍</span>
+                    <span class="ders-name">Coğrafya</span>
                 </a>
                 <a href="#" onclick="dersSecildi('felsefe','💭 Felsefe'); return false;" class="ders-btn ders-felsefe">
-                    <span>💭 Felsefe</span>
+                    <span class="ders-icon">💭</span>
+                    <span class="ders-name">Felsefe</span>
                 </a>
                 {% if sinav_tipi == 'AYT' %}
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_ea&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-ea">
-                    <span>📖🎲 Karışık EA</span>
+                    <span class="ders-icon">📖🎲</span>
+                    <span class="ders-name">Karışık EA</span>
+                    <span class="ders-sub">Ed · Tar · Coğ</span>
                 </a>
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sozel_ayt&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sozel-ayt">
-                    <span>📚🎲 Karışık Sözel</span>
+                    <span class="ders-icon">📚🎲</span>
+                    <span class="ders-name">Karışık Sözel</span>
+                    <span class="ders-sub">Fel · Ed · Tar · Coğ</span>
                 </a>
                 {% else %}
                 <a href="{% url 'bul_bakalim_basla' %}?ders=karisik_sozel&sinav_tipi={{ sinav_tipi }}" class="ders-btn ders-karisik-sozel">
-                    <span>🎲 Karışık Sözel</span>
+                    <span class="ders-icon">🎲</span>
+                    <span class="ders-name">Karışık Sözel</span>
                 </a>
                 {% endif %}
             </div>
         </div>
 
-    <!-- Konu Seçim Modalı -->
-    <div class="modal fade" id="konuSecimModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius:20px;">
-          <div class="modal-header border-0" style="background:#7c3aed;border-radius:16px 16px 0 0;color:white;padding:14px 18px;">
-            <h6 class="modal-title fw-bold" id="konuModalBaslik">Konu Seç</h6>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body" style="max-height:380px;overflow-y:auto;padding:12px 14px;">
-            <div id="konuListesi" class="d-flex flex-column gap-2"></div>
-            <div id="konuYukleniyor" class="text-center py-3" style="display:none;">
-              <div class="spinner-border spinner-border-sm" style="color:#7c3aed;"></div>
-              <span class="ms-2 small text-muted">Konular yükleniyor...</span>
-            </div>
-          </div>
-          <div class="modal-footer border-0" style="padding:10px 14px;">
-            <a href="#" id="tumKonularBtn" class="btn w-100 fw-bold" style="border-radius:10px;background:#7c3aed;color:white;font-size:0.88rem;">
-              <i class="bi bi-shuffle"></i> Tüm Konulardan Başla
-            </a>
-          </div>
-        </div>
-      </div>
     </div>
 
-    </div>
-
-    <!-- INFO CARD -->
-    <div class="info-card">
-        <div class="info-icon">🎯</div>
-        <div class="info-title">5 Soru - 1 Puan</div>
-        <div class="info-text">5 sorudan 3'ünü doğru cevaplayarak puan kazanabilirsin!</div>
+    <!-- INFO STRIP -->
+    <div class="info-strip">
+        <span class="info-chip">🎯 5 Soru</span>
+        <span class="info-chip">✅ 3 Doğru = Kazandın</span>
+        <span class="info-chip">⚡ 1 Puan</span>
+        <span class="info-chip">📌 {{ sinav_tipi|upper }}</span>
     </div>
 
     <!-- BACK BUTTON -->
@@ -300,12 +496,36 @@
     </div>
 
 </div>
+
+<!-- KONU SEÇİM MODALI -->
+<div class="modal fade" id="konuSecimModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0" style="background: linear-gradient(135deg,#7c3aed,#4f46e5); border-radius: 20px 20px 0 0; color: white; padding: 16px 20px;">
+        <h6 class="modal-title fw-bold" id="konuModalBaslik">Konu Seç</h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="max-height: 380px; overflow-y: auto; padding: 14px 16px;">
+        <div id="konuListesi" class="d-flex flex-column gap-2"></div>
+        <div id="konuYukleniyor" class="text-center py-3">
+          <div class="spinner-border spinner-border-sm" style="color:#7c3aed;"></div>
+          <span class="ms-2 small text-muted">Konular yükleniyor...</span>
+        </div>
+      </div>
+      <div class="modal-footer border-0" style="padding: 10px 16px; background: inherit;">
+        <a href="#" id="tumKonularBtn" class="btn w-100 fw-bold" style="border-radius: 12px; background: linear-gradient(135deg,#7c3aed,#4f46e5); color: white; font-size: 0.9rem;">
+          <i class="bi bi-shuffle"></i> Tüm Konulardan Başla
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
 const sinavTipi = '{{ sinav_tipi }}';
-const baslaUrl = '{% url "bul_bakalim_basla" %}';
+const baslaUrl  = '{% url "bul_bakalim_basla" %}';
 const isSuperuser = {{ request.user.is_superuser|yesno:"true,false" }};
 
 function dersSecildi(ders, dersAdi) {
@@ -322,7 +542,7 @@ function dersSecildi(ders, dersAdi) {
             document.getElementById('konuYukleniyor').style.display = 'none';
             const liste = document.getElementById('konuListesi');
             if (data.konular.length === 0) {
-                liste.innerHTML = '<p class="text-muted text-center small">Bu ders için yeterli sorusu olan konu bulunamadı.</p>';
+                liste.innerHTML = '<p class="text-muted text-center small py-2">Bu ders için yeterli soru bulunamadı.</p>';
                 return;
             }
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -331,15 +551,17 @@ function dersSecildi(ders, dersAdi) {
                 a.href = baslaUrl + '?ders=' + ders + '&konu_id=' + k.id + '&sinav_tipi=' + sinavTipi;
                 a.className = 'btn text-start d-flex justify-content-between align-items-center';
                 if (isDark) {
-                    a.style.cssText = 'border-radius:10px;padding:9px 14px;background:#1e2749;color:#c4b5fd;font-size:0.88rem;font-weight:600;border:1.5px solid #2d3454;transition:all 0.2s;';
+                    a.style.cssText = 'border-radius:12px;padding:10px 14px;background:#1e2749;color:#c4b5fd;font-size:0.9rem;font-weight:600;border:1.5px solid #2d3454;transition:all 0.2s;';
                     a.addEventListener('mouseenter', () => { a.style.background='#2d3454'; a.style.borderColor='#8b5cf6'; });
                     a.addEventListener('mouseleave', () => { a.style.background='#1e2749'; a.style.borderColor='#2d3454'; });
                 } else {
-                    a.style.cssText = 'border-radius:10px;padding:9px 14px;background:#f5f3ff;color:#5b21b6;font-size:0.88rem;font-weight:600;border:1.5px solid #ddd6fe;transition:all 0.2s;';
+                    a.style.cssText = 'border-radius:12px;padding:10px 14px;background:#f5f3ff;color:#5b21b6;font-size:0.9rem;font-weight:600;border:1.5px solid #ddd6fe;transition:all 0.2s;';
                     a.addEventListener('mouseenter', () => { a.style.background='#ede9fe'; a.style.borderColor='#a78bfa'; });
                     a.addEventListener('mouseleave', () => { a.style.background='#f5f3ff'; a.style.borderColor='#ddd6fe'; });
                 }
-                const badge = isSuperuser ? '<span class="badge" style="background:#7c3aed;font-size:0.72rem;">' + k.soru_sayisi + ' soru</span>' : '';
+                const badge = isSuperuser
+                    ? '<span class="badge" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);font-size:0.72rem;">' + k.soru_sayisi + ' soru</span>'
+                    : '';
                 a.innerHTML = '<span>' + k.isim + '</span>' + badge;
                 liste.appendChild(a);
             });
