@@ -47,6 +47,7 @@ staticfiles/
 .graphify_cached.json
 .graphify_uncached.txt
 graphify-out/.graphify_chunk_*.json
+graphify-out/cache/
 
 # OS
 .DS_Store
