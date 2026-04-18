@@ -141,323 +141,358 @@ def karsilasma_oyun(request, oda_id):
 
 
 @login_required
-@transaction.atomic
+@require_http_methods(["GET", "POST"])
 def karsilasma_durum_guncelle(request, oda_id):
     """Karşılaşma durum güncelleme - AJAX endpoint"""
 
     logger.info(f"🔔 Durum kontrolü: Method={request.method}, Oda={oda_id}")
 
     try:
-        # KRİTİK FIX:
-        # select_for_update ile birlikte select_related(nullable side) PostgreSQL'de
-        # "FOR UPDATE cannot be applied to the nullable side of an outer join" hatası verebilir.
-        oda = get_object_or_404(
-            KarsilasmaOdasi.objects.select_for_update(),
-            oda_id=oda_id
-        )
-
         # ==================== POST: CEVAP GÖNDERME ====================
         if request.method == 'POST':
-            data = json.loads(request.body)
+            try:
+                data = json.loads(request.body)
+            except json.JSONDecodeError:
+                return JsonResponse({'error': 'Geçersiz JSON formatı'}, status=400)
+
             cevap_id = data.get('cevap_id')
 
-            # BOŞ GEÇİŞ
-            if cevap_id is None:
-                logger.info(f'⏰ BOŞ GEÇİŞ! User={request.user.username}, Oda={oda_id}')
+            with transaction.atomic():
+                oda = get_object_or_404(
+                    KarsilasmaOdasi.objects.select_for_update(),
+                    oda_id=oda_id
+                )
+
+                # BOŞ GEÇİŞ
+                if cevap_id is None:
+                    logger.info(f'⏰ BOŞ GEÇİŞ! User={request.user.username}, Oda={oda_id}')
+
+                    is_oyuncu1 = (oda.oyuncu1 == request.user)
+
+                    if (is_oyuncu1 and oda.oyuncu1_cevapladi) or (not is_oyuncu1 and oda.oyuncu2_cevapladi):
+                        return JsonResponse({'error': 'Zaten cevaplandı'}, status=400)
+
+                    cevap_zamani = timezone.now()
+
+                    if is_oyuncu1:
+                        oda.oyuncu1_cevapladi = True
+                        oda.oyuncu1_cevap_zamani = cevap_zamani
+                        oda.oyuncu1_yanlis += 1
+                        oda.oyuncu1_combo = 0
+                    else:
+                        oda.oyuncu2_cevapladi = True
+                        oda.oyuncu2_cevap_zamani = cevap_zamani
+                        oda.oyuncu2_yanlis += 1
+                        oda.oyuncu2_combo = 0
+
+                    if oda.oyuncu1_cevapladi and oda.oyuncu2_cevapladi and not oda.round_bekleme_durumu:
+                        oda.round_bekleme_durumu = True
+                        oda.round_bitis_zamani = timezone.now()
+                        logger.info(f"⏳ Round bekleme BAŞLATILDI (BOŞ GEÇİŞ)")
+
+                    oda.save()
+
+                    # Kullanıcı cevabını kaydet (boş geçiş) - duplicate önle
+                    try:
+                        if oda.aktif_soru:
+                            if not KullaniciCevap.objects.filter(
+                                kullanici=request.user, oda=oda, soru=oda.aktif_soru
+                            ).exists():
+                                KullaniciCevap.objects.create(
+                                    kullanici=request.user,
+                                    oda=oda,
+                                    soru=oda.aktif_soru,
+                                    verilen_cevap=None,
+                                    dogru_mu=False
+                                )
+                    except Exception as e:
+                        logger.error(f"KullaniciCevap kayıt hatası (boş geçiş): {e}", exc_info=True)
+
+                    # ==================== GÖREV: SORU ÇÖZÜLDÜ (BOŞ GEÇİŞ) ====================
+                    try:
+                        profil = request.user.profil
+                        gorev_ilerleme_guncelle(profil, 'soru_coz', 1)
+                        calisma_kaydi_guncelle(profil, cozulen=1, yanlis=1)
+                    except Exception as e:
+                        logger.error(f"Görev güncelleme hatası (boş geçiş): {e}", exc_info=True)
+
+                    return JsonResponse({
+                        'success': True,
+                        'dogru_mu': False,
+                        'kazanilan_xp': 0,
+                        'seviye_atlandi': False,
+                        'bos_gecis': True
+                    })
+
+                # NORMAL CEVAP
+                try:
+                    cevap_obj = Cevap.objects.select_related('soru').get(id=cevap_id)
+                except Cevap.DoesNotExist:
+                    return JsonResponse({'error': 'Geçersiz cevap'}, status=400)
+
+                if not oda.aktif_soru or cevap_obj.soru != oda.aktif_soru:
+                    return JsonResponse({'error': 'Geçersiz soru'}, status=400)
 
                 is_oyuncu1 = (oda.oyuncu1 == request.user)
 
                 if (is_oyuncu1 and oda.oyuncu1_cevapladi) or (not is_oyuncu1 and oda.oyuncu2_cevapladi):
                     return JsonResponse({'error': 'Zaten cevaplandı'}, status=400)
 
-                cevap_zamani = timezone.now()
+                dogru_mu = cevap_obj.dogru_mu
+                seviye_atlandi = False
+                yeni_seviye = 0
+                yeni_unvan = ''
+                kazanilan_xp = 0
 
+                cevap_zamani = timezone.now()
                 if is_oyuncu1:
                     oda.oyuncu1_cevapladi = True
                     oda.oyuncu1_cevap_zamani = cevap_zamani
-                    oda.oyuncu1_yanlis += 1
-                    oda.oyuncu1_combo = 0
                 else:
                     oda.oyuncu2_cevapladi = True
                     oda.oyuncu2_cevap_zamani = cevap_zamani
-                    oda.oyuncu2_yanlis += 1
-                    oda.oyuncu2_combo = 0
 
+                # İstatistik güncelle
+                update_stats_with_combo(request.user, oda, cevap_obj, is_oyuncu1)
+
+                # Kullanıcı cevabını kaydet - duplicate önle
+                try:
+                    if not KullaniciCevap.objects.filter(
+                        kullanici=request.user, oda=oda, soru=oda.aktif_soru
+                    ).exists():
+                        KullaniciCevap.objects.create(
+                            kullanici=request.user,
+                            oda=oda,
+                            soru=oda.aktif_soru,
+                            verilen_cevap=cevap_obj,
+                            dogru_mu=dogru_mu
+                        )
+                except Exception as e:
+                    logger.error(f"KullaniciCevap kayıt hatası: {e}", exc_info=True)
+
+                # XP + Görev güncelle
+                try:
+                    profil = request.user.profil
+                    xp_sonuc = soru_cozuldu_xp(profil, dogru_mu)
+
+                    seviye_atlandi = xp_sonuc.get('seviye_atlandi', False)
+                    yeni_seviye = xp_sonuc.get('yeni_seviye', 0)
+                    yeni_unvan = xp_sonuc.get('unvan', '')
+                    kazanilan_xp = 5 if dogru_mu else 1
+
+                    # ==================== GÖREV: SORU ÇÖZÜLDÜ ====================
+                    gorev_ilerleme_guncelle(profil, 'soru_coz', 1)
+
+                    # ==================== GÖREV: DOĞRU CEVAP ====================
+                    if dogru_mu:
+                        gorev_ilerleme_guncelle(profil, 'dogru_cevap', 1)
+
+                    # ==================== ÇALIŞMA TAKVİMİ ====================
+                    calisma_kaydi_guncelle(
+                        profil,
+                        cozulen=1,
+                        dogru=1 if dogru_mu else 0,
+                        yanlis=0 if dogru_mu else 1,
+                        xp=kazanilan_xp,
+                    )
+
+                    # Rozet kontrolü (her 10 soruda bir)
+                    if profil.cozulen_soru_sayisi % 10 == 0:
+                        try:
+                            rozet_kontrol_yap(profil)
+                        except Exception:
+                            pass
+
+                except Exception as e:
+                    logger.error(f"XP/Görev hatası: {e}", exc_info=True)
+
+                # Round bekleme
                 if oda.oyuncu1_cevapladi and oda.oyuncu2_cevapladi and not oda.round_bekleme_durumu:
                     oda.round_bekleme_durumu = True
                     oda.round_bitis_zamani = timezone.now()
-                    logger.info(f"⏳ Round bekleme BAŞLATILDI (BOŞ GEÇİŞ)")
+                    logger.info(f"⏳ Round bekleme BAŞLATILDI")
 
                 oda.save()
 
-                # Kullanıcı cevabını kaydet (boş geçiş) - duplicate önle
-                try:
-                    if oda.aktif_soru:
-                        if not KullaniciCevap.objects.filter(
-                            kullanici=request.user, oda=oda, soru=oda.aktif_soru
-                        ).exists():
-                            KullaniciCevap.objects.create(
-                                kullanici=request.user,
-                                oda=oda,
-                                soru=oda.aktif_soru,
-                                verilen_cevap=None,
-                                dogru_mu=False
-                            )
-                except Exception as e:
-                    logger.error(f"KullaniciCevap kayıt hatası (boş geçiş): {e}", exc_info=True)
-
-                # ==================== GÖREV: SORU ÇÖZÜLDÜ (BOŞ GEÇİŞ) ====================
-                try:
-                    profil = request.user.profil
-                    gorev_ilerleme_guncelle(profil, 'soru_coz', 1)
-                    calisma_kaydi_guncelle(profil, cozulen=1, yanlis=1)
-                except Exception as e:
-                    logger.error(f"Görev güncelleme hatası (boş geçiş): {e}", exc_info=True)
-
-                return JsonResponse({
+                response_data = {
                     'success': True,
-                    'dogru_mu': False,
-                    'kazanilan_xp': 0,
-                    'seviye_atlandi': False,
-                    'bos_gecis': True
-                })
+                    'dogru_mu': dogru_mu,
+                    'kazanilan_xp': kazanilan_xp,
+                    'seviye_atlandi': seviye_atlandi
+                }
+                if seviye_atlandi:
+                    response_data['yeni_seviye'] = yeni_seviye
+                    response_data['yeni_unvan'] = yeni_unvan
 
-            # NORMAL CEVAP
-            try:
-                cevap_obj = Cevap.objects.select_related('soru').get(id=cevap_id)
-            except Cevap.DoesNotExist:
-                return JsonResponse({'error': 'Geçersiz cevap'}, status=400)
-
-            if not oda.aktif_soru or cevap_obj.soru != oda.aktif_soru:
-                return JsonResponse({'error': 'Geçersiz soru'}, status=400)
-
-            is_oyuncu1 = (oda.oyuncu1 == request.user)
-
-            if (is_oyuncu1 and oda.oyuncu1_cevapladi) or (not is_oyuncu1 and oda.oyuncu2_cevapladi):
-                return JsonResponse({'error': 'Zaten cevaplandı'}, status=400)
-
-            dogru_mu = cevap_obj.dogru_mu
-            seviye_atlandi = False
-            yeni_seviye = 0
-            yeni_unvan = ''
-            kazanilan_xp = 0
-
-            cevap_zamani = timezone.now()
-            if is_oyuncu1:
-                oda.oyuncu1_cevapladi = True
-                oda.oyuncu1_cevap_zamani = cevap_zamani
-            else:
-                oda.oyuncu2_cevapladi = True
-                oda.oyuncu2_cevap_zamani = cevap_zamani
-
-            # İstatistik güncelle
-            update_stats_with_combo(request.user, oda, cevap_obj, is_oyuncu1)
-
-            # Kullanıcı cevabını kaydet - duplicate önle
-            try:
-                if not KullaniciCevap.objects.filter(
-                    kullanici=request.user, oda=oda, soru=oda.aktif_soru
-                ).exists():
-                    KullaniciCevap.objects.create(
-                        kullanici=request.user,
-                        oda=oda,
-                        soru=oda.aktif_soru,
-                        verilen_cevap=cevap_obj,
-                        dogru_mu=dogru_mu
-                    )
-            except Exception as e:
-                logger.error(f"KullaniciCevap kayıt hatası: {e}", exc_info=True)
-
-            # XP + Görev güncelle
-            try:
-                profil = request.user.profil
-                xp_sonuc = soru_cozuldu_xp(profil, dogru_mu)
-
-                seviye_atlandi = xp_sonuc.get('seviye_atlandi', False)
-                yeni_seviye = xp_sonuc.get('yeni_seviye', 0)
-                yeni_unvan = xp_sonuc.get('unvan', '')
-                kazanilan_xp = 5 if dogru_mu else 1
-
-                # ==================== GÖREV: SORU ÇÖZÜLDÜ ====================
-                gorev_ilerleme_guncelle(profil, 'soru_coz', 1)
-
-                # ==================== GÖREV: DOĞRU CEVAP ====================
-                if dogru_mu:
-                    gorev_ilerleme_guncelle(profil, 'dogru_cevap', 1)
-
-                # ==================== ÇALIŞMA TAKVİMİ ====================
-                calisma_kaydi_guncelle(
-                    profil,
-                    cozulen=1,
-                    dogru=1 if dogru_mu else 0,
-                    yanlis=0 if dogru_mu else 1,
-                    xp=kazanilan_xp,
-                )
-
-                # Rozet kontrolü (her 10 soruda bir)
-                if profil.cozulen_soru_sayisi % 10 == 0:
-                    try:
-                        rozet_kontrol_yap(profil)
-                    except Exception:
-                        pass
-
-            except Exception as e:
-                logger.error(f"XP/Görev hatası: {e}", exc_info=True)
-
-            # Round bekleme
-            if oda.oyuncu1_cevapladi and oda.oyuncu2_cevapladi and not oda.round_bekleme_durumu:
-                oda.round_bekleme_durumu = True
-                oda.round_bitis_zamani = timezone.now()
-                logger.info(f"⏳ Round bekleme BAŞLATILDI")
-
-            oda.save()
-
-            response_data = {
-                'success': True,
-                'dogru_mu': dogru_mu,
-                'kazanilan_xp': kazanilan_xp,
-                'seviye_atlandi': seviye_atlandi
-            }
-            if seviye_atlandi:
-                response_data['yeni_seviye'] = yeni_seviye
-                response_data['yeni_unvan'] = yeni_unvan
-
-            return JsonResponse(response_data)
+                return JsonResponse(response_data)
 
         # ==================== GET: DURUM KONTROLÜ ====================
         elif request.method == 'GET':
+            # İlk hızlı okuma — kilitsiz (polling'i yavaşlatmamak için)
+            oda = get_object_or_404(KarsilasmaOdasi, oda_id=oda_id)
 
             # Oyun henüz başlamadıysa ve oda kodu varsa → hazır sayfasına yönlendir
             if oda.oyun_durumu == 'bekleniyor' and oda.oda_kodu:
-                return JsonResponse({
+                resp = JsonResponse({
                     'redirect_bekleme': reverse('karsilasma_oda_bekleme', args=[oda.oda_kodu])
                 })
+                resp['Cache-Control'] = 'no-store'
+                return resp
 
-            # ⏰ SUNUCU TARAFI TIMEOUT: 32 saniye (client 30sn + 2sn tolerans)
-            if oda.soru_baslangic_zamani and oda.oyun_durumu == 'oynaniyor':
-                soru_gecen = (timezone.now() - oda.soru_baslangic_zamani).total_seconds()
-                if soru_gecen >= 32 and not (oda.oyuncu1_cevapladi and oda.oyuncu2_cevapladi):
-                    if not oda.oyuncu1_cevapladi:
-                        oda.oyuncu1_cevapladi = True
-                        oda.oyuncu1_cevap_zamani = timezone.now()
-                        oda.oyuncu1_yanlis += 1
-                        oda.oyuncu1_combo = 0
-                        # Timeout boş geçiş cevap kaydı
-                        if oda.aktif_soru and not KullaniciCevap.objects.filter(
-                            kullanici=oda.oyuncu1, oda=oda, soru=oda.aktif_soru
-                        ).exists():
-                            KullaniciCevap.objects.create(
-                                kullanici=oda.oyuncu1, oda=oda, soru=oda.aktif_soru,
-                                verilen_cevap=None, dogru_mu=False
-                            )
-                        logger.info(f"⏰ Oyuncu1 timeout (boş geçiş): {oda.oyuncu1.username}")
-                    if not oda.oyuncu2_cevapladi and oda.oyuncu2:
-                        oda.oyuncu2_cevapladi = True
-                        oda.oyuncu2_cevap_zamani = timezone.now()
-                        oda.oyuncu2_yanlis += 1
-                        oda.oyuncu2_combo = 0
-                        # Timeout boş geçiş cevap kaydı
-                        if oda.aktif_soru and not KullaniciCevap.objects.filter(
-                            kullanici=oda.oyuncu2, oda=oda, soru=oda.aktif_soru
-                        ).exists():
-                            KullaniciCevap.objects.create(
-                                kullanici=oda.oyuncu2, oda=oda, soru=oda.aktif_soru,
-                                verilen_cevap=None, dogru_mu=False
-                            )
-                        logger.info(f"⏰ Oyuncu2 timeout (boş geçiş): {oda.oyuncu2.username}")
-                    if not oda.round_bekleme_durumu:
-                        oda.round_bekleme_durumu = True
-                        oda.round_bitis_zamani = timezone.now()
-                        logger.info(f"⏳ Round bekleme BAŞLATILDI (TIMEOUT)")
-                    oda.save()
+            now = timezone.now()
 
-            if oda.oyuncu1_cevapladi and oda.oyuncu2_cevapladi and oda.round_bekleme_durumu:
-                if oda.round_bitis_zamani:
-                    gecen_sure = (timezone.now() - oda.round_bitis_zamani).total_seconds()
+            # Yazma gereken durumları önceden tespit et
+            timeout_needed = (
+                oda.soru_baslangic_zamani is not None and
+                oda.oyun_durumu == 'oynaniyor' and
+                (now - oda.soru_baslangic_zamani).total_seconds() >= 32 and
+                not (oda.oyuncu1_cevapladi and oda.oyuncu2_cevapladi)
+            )
+            round_transition_needed = (
+                oda.oyuncu1_cevapladi and
+                oda.oyuncu2_cevapladi and
+                oda.round_bekleme_durumu and
+                oda.round_bitis_zamani is not None and
+                (now - oda.round_bitis_zamani).total_seconds() >= 3
+            )
+            fallback_needed = (
+                oda.oyun_durumu == 'oynaniyor' and
+                oda.aktif_soru is None and
+                not oda.round_bekleme_durumu
+            )
 
-                    if gecen_sure >= 3:
-                        logger.info(f"✅ 3 saniye geçti, yeni soruya geçiliyor")
+            if timeout_needed or round_transition_needed or fallback_needed:
+                with transaction.atomic():
+                    # Kilitle ve taze oku — çift işlem önle
+                    oda = get_object_or_404(
+                        KarsilasmaOdasi.objects.select_for_update(),
+                        oda_id=oda_id
+                    )
+                    now = timezone.now()
 
-                        if oda.aktif_soru_no >= oda.toplam_soru:
-                            # OYUN BİTTİ
-                            oda.oyun_durumu = 'bitti'
-                            oda.bitis_zamani = timezone.now()
-                            oda.aktif_soru = None
+                    # ⏰ SUNUCU TARAFI TIMEOUT: 32 saniye (client 30sn + 2sn tolerans)
+                    if oda.soru_baslangic_zamani and oda.oyun_durumu == 'oynaniyor':
+                        soru_gecen = (now - oda.soru_baslangic_zamani).total_seconds()
+                        if soru_gecen >= 32 and not (oda.oyuncu1_cevapladi and oda.oyuncu2_cevapladi):
+                            if not oda.oyuncu1_cevapladi:
+                                oda.oyuncu1_cevapladi = True
+                                oda.oyuncu1_cevap_zamani = now
+                                oda.oyuncu1_yanlis += 1
+                                oda.oyuncu1_combo = 0
+                                if oda.aktif_soru and not KullaniciCevap.objects.filter(
+                                    kullanici=oda.oyuncu1, oda=oda, soru=oda.aktif_soru
+                                ).exists():
+                                    KullaniciCevap.objects.create(
+                                        kullanici=oda.oyuncu1, oda=oda, soru=oda.aktif_soru,
+                                        verilen_cevap=None, dogru_mu=False
+                                    )
+                                logger.info(f"⏰ Oyuncu1 timeout (boş geçiş): {oda.oyuncu1.username}")
+                            if not oda.oyuncu2_cevapladi and oda.oyuncu2:
+                                oda.oyuncu2_cevapladi = True
+                                oda.oyuncu2_cevap_zamani = now
+                                oda.oyuncu2_yanlis += 1
+                                oda.oyuncu2_combo = 0
+                                if oda.aktif_soru and not KullaniciCevap.objects.filter(
+                                    kullanici=oda.oyuncu2, oda=oda, soru=oda.aktif_soru
+                                ).exists():
+                                    KullaniciCevap.objects.create(
+                                        kullanici=oda.oyuncu2, oda=oda, soru=oda.aktif_soru,
+                                        verilen_cevap=None, dogru_mu=False
+                                    )
+                                logger.info(f"⏰ Oyuncu2 timeout (boş geçiş): {oda.oyuncu2.username}")
+                            if not oda.round_bekleme_durumu:
+                                oda.round_bekleme_durumu = True
+                                oda.round_bitis_zamani = now
+                                logger.info(f"⏳ Round bekleme BAŞLATILDI (TIMEOUT)")
                             oda.save()
-                            logger.info(f"🏁 OYUN BİTTİ!")
 
-                            # Turnuva maçı otomatik sonuçlandir
-                            try:
-                                from quiz.models import TurnuvaMaci
-                                turnuva_maci = TurnuvaMaci.objects.filter(
-                                    karsilasma_oda=oda,
-                                    tamamlandi=False
-                                ).select_related('turnuva', 'oyuncu1', 'oyuncu2').first()
+                    if oda.oyuncu1_cevapladi and oda.oyuncu2_cevapladi and oda.round_bekleme_durumu:
+                        if oda.round_bitis_zamani:
+                            gecen_sure = (now - oda.round_bitis_zamani).total_seconds()
 
-                                if turnuva_maci:
-                                    logger.info(f"🏆 TURNUVA MAÇI TESPİT EDİLDİ!")
+                            if gecen_sure >= 3:
+                                logger.info(f"✅ 3 saniye geçti, yeni soruya geçiliyor")
 
-                                    if oda.oyuncu1_skor > oda.oyuncu2_skor:
-                                        kazanan = turnuva_maci.oyuncu1
-                                    elif oda.oyuncu2_skor > oda.oyuncu1_skor:
-                                        kazanan = turnuva_maci.oyuncu2
+                                if oda.aktif_soru_no >= oda.toplam_soru:
+                                    # OYUN BİTTİ
+                                    oda.oyun_durumu = 'bitti'
+                                    oda.bitis_zamani = now
+                                    oda.aktif_soru = None
+                                    oda.save()
+                                    logger.info(f"🏁 OYUN BİTTİ!")
+
+                                    # Turnuva maçı otomatik sonuçlandir
+                                    try:
+                                        from quiz.models import TurnuvaMaci
+                                        turnuva_maci = TurnuvaMaci.objects.filter(
+                                            karsilasma_oda=oda,
+                                            tamamlandi=False
+                                        ).select_related('turnuva', 'oyuncu1', 'oyuncu2').first()
+
+                                        if turnuva_maci:
+                                            logger.info(f"🏆 TURNUVA MAÇI TESPİT EDİLDİ!")
+
+                                            if oda.oyuncu1_skor > oda.oyuncu2_skor:
+                                                kazanan = turnuva_maci.oyuncu1
+                                            elif oda.oyuncu2_skor > oda.oyuncu1_skor:
+                                                kazanan = turnuva_maci.oyuncu2
+                                            else:
+                                                if oda.oyuncu1_dogru > oda.oyuncu2_dogru:
+                                                    kazanan = turnuva_maci.oyuncu1
+                                                elif oda.oyuncu2_dogru > oda.oyuncu1_dogru:
+                                                    kazanan = turnuva_maci.oyuncu2
+                                                else:
+                                                    kazanan = random.choice([turnuva_maci.oyuncu1, turnuva_maci.oyuncu2])
+                                                    logger.warning(f"🎲 BERABERE! Rastgele: {kazanan.username}")
+
+                                            logger.info(f"👑 Kazanan: {kazanan.username}")
+                                            turnuva_maci.oyuncu1_skor = oda.oyuncu1_skor
+                                            turnuva_maci.oyuncu2_skor = oda.oyuncu2_skor
+                                            turnuva_maci.save()
+
+                                            from quiz.helpers import turnuva_mac_bitir, turnuva_siralama_guncelle
+                                            turnuva_bitti = turnuva_mac_bitir(turnuva_maci, kazanan)
+                                            if turnuva_bitti:
+                                                turnuva_siralama_guncelle(turnuva_maci.turnuva)
+                                                logger.info(f"🏆 TURNUVA BİTTİ!")
+
+                                    except Exception as e:
+                                        logger.error(f"❌ Turnuva sonuçlandırma hatası: {str(e)}", exc_info=True)
+
+                                else:
+                                    # Yeni soruya geç
+                                    oda.aktif_soru_no += 1
+                                    yeni_soru = get_random_soru_by_ders(oda.secilen_ders)
+
+                                    if yeni_soru:
+                                        oda.aktif_soru = yeni_soru
+                                        oda.soru_baslangic_zamani = now
+                                        oda.oyuncu1_cevapladi = False
+                                        oda.oyuncu2_cevapladi = False
+                                        oda.oyuncu1_cevap_zamani = None
+                                        oda.oyuncu2_cevap_zamani = None
+                                        oda.ilk_dogru_cevaplayan = None
+                                        oda.round_bekleme_durumu = False
+                                        oda.round_bitis_zamani = None
+                                        logger.info(f"❓ Yeni soru: {oda.aktif_soru_no}/{oda.toplam_soru}")
                                     else:
-                                        if oda.oyuncu1_dogru > oda.oyuncu2_dogru:
-                                            kazanan = turnuva_maci.oyuncu1
-                                        elif oda.oyuncu2_dogru > oda.oyuncu1_dogru:
-                                            kazanan = turnuva_maci.oyuncu2
-                                        else:
-                                            kazanan = random.choice([turnuva_maci.oyuncu1, turnuva_maci.oyuncu2])
-                                            logger.warning(f"🎲 BERABERE! Rastgele: {kazanan.username}")
+                                        oda.oyun_durumu = 'bitti'
+                                        logger.error(f"❌ Soru bulunamadı!")
 
-                                    logger.info(f"👑 Kazanan: {kazanan.username}")
-                                    turnuva_maci.oyuncu1_skor = oda.oyuncu1_skor
-                                    turnuva_maci.oyuncu2_skor = oda.oyuncu2_skor
-                                    turnuva_maci.save()
+                                    oda.save()
 
-                                    from quiz.helpers import turnuva_mac_bitir, turnuva_siralama_guncelle
-                                    turnuva_bitti = turnuva_mac_bitir(turnuva_maci, kazanan)
-                                    if turnuva_bitti:
-                                        turnuva_siralama_guncelle(turnuva_maci.turnuva)
-                                        logger.info(f"🏆 TURNUVA BİTTİ!")
-
-                            except Exception as e:
-                                logger.error(f"❌ Turnuva sonuçlandırma hatası: {str(e)}", exc_info=True)
-
-                        else:
-                            # Yeni soruya geç
-                            oda.aktif_soru_no += 1
-                            yeni_soru = get_random_soru_by_ders(oda.secilen_ders)
-
-                            if yeni_soru:
-                                oda.aktif_soru = yeni_soru
-                                oda.soru_baslangic_zamani = timezone.now()
-                                oda.oyuncu1_cevapladi = False
-                                oda.oyuncu2_cevapladi = False
-                                oda.oyuncu1_cevap_zamani = None
-                                oda.oyuncu2_cevap_zamani = None
-                                oda.ilk_dogru_cevaplayan = None
-                                oda.round_bekleme_durumu = False
-                                oda.round_bitis_zamani = None
-                                logger.info(f"❓ Yeni soru: {oda.aktif_soru_no}/{oda.toplam_soru}")
-                            else:
-                                oda.oyun_durumu = 'bitti'
-                                logger.error(f"❌ Soru bulunamadı!")
-
-                        oda.save()
-
-            # Fallback: oyun oynaniyor ama aktif soru atanmadıysa ata
-            if oda.oyun_durumu == 'oynaniyor' and oda.aktif_soru is None and not oda.round_bekleme_durumu:
-                fallback_soru = get_random_soru_by_ders(oda.secilen_ders)
-                if fallback_soru:
-                    oda.aktif_soru = fallback_soru
-                    if not oda.aktif_soru_no:
-                        oda.aktif_soru_no = 1
-                    oda.soru_baslangic_zamani = timezone.now()
-                    oda.oyuncu1_cevapladi = False
-                    oda.oyuncu2_cevapladi = False
-                    oda.save()
-                    logger.warning(f"⚠️ Fallback soru atandı: Oda={oda_id}, Soru={fallback_soru.id}")
+                    # Fallback: oyun oynaniyor ama aktif soru atanmadıysa ata
+                    if oda.oyun_durumu == 'oynaniyor' and oda.aktif_soru is None and not oda.round_bekleme_durumu:
+                        fallback_soru = get_random_soru_by_ders(oda.secilen_ders)
+                        if fallback_soru:
+                            oda.aktif_soru = fallback_soru
+                            if not oda.aktif_soru_no:
+                                oda.aktif_soru_no = 1
+                            oda.soru_baslangic_zamani = now
+                            oda.oyuncu1_cevapladi = False
+                            oda.oyuncu2_cevapladi = False
+                            oda.save()
+                            logger.warning(f"⚠️ Fallback soru atandı: Oda={oda_id}, Soru={fallback_soru.id}")
 
             # Response hazırla
             soru_obj = oda.aktif_soru
@@ -494,7 +529,9 @@ def karsilasma_durum_guncelle(request, oda_id):
                 'kalan_sure': kalan_sure
             }
 
-            return JsonResponse(response_data)
+            resp = JsonResponse(response_data)
+            resp['Cache-Control'] = 'no-store'
+            return resp
 
     except Exception as e:
         logger.error(f"❌ Hata: {e}", exc_info=True)
@@ -876,7 +913,7 @@ def karsilasma_oda_bekleme_durum(request, oda_kodu):
     except KarsilasmaOdasi.DoesNotExist:
         return JsonResponse({'error': 'Oda bulunamadı'}, status=404)
 
-    return JsonResponse({
+    resp = JsonResponse({
         'oyun_durumu': oda.oyun_durumu,
         'oyuncu2_var': oda.oyuncu2 is not None,
         'oyuncu1_adi': oda.oyuncu1.username,
@@ -885,6 +922,8 @@ def karsilasma_oda_bekleme_durum(request, oda_kodu):
         'oyuncu2_hazir': oda.oyuncu2_hazir,
         'redirect_url': reverse('karsilasma_oyun', args=[str(oda.oda_id)]) if oda.oyun_durumu == 'oynaniyor' else None,
     })
+    resp['Cache-Control'] = 'no-store'
+    return resp
 
 
 @login_required

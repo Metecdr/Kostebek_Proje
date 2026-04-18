@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from quiz.models import Soru
 from profile.models import OyunModuIstatistik
+from profile.xp_helper import xp_ekle
 
 logger = logging.getLogger(__name__)
 
@@ -47,10 +48,21 @@ def get_random_soru_by_ders(ders='karisik'):
     
     if soru_ids:
         random_id = random.choice(soru_ids)
-        soru = Soru.objects.get(id=random_id)
-        logger.debug(f"Soru seçildi: ID={random_id}, Ders={ders}")
-        return soru
-    
+        try:
+            soru = Soru.objects.get(id=random_id)
+            logger.debug(f"Soru seçildi: ID={random_id}, Ders={ders}")
+            return soru
+        except Soru.DoesNotExist:
+            # Soru silinmiş, cache'i temizle ve tekrar dene
+            logger.warning(f"⚠️ Soru bulunamadı (silinmiş?): ID={random_id}, Ders={ders} — cache temizleniyor")
+            cache.delete(cache_key)
+            soru_ids = list(Soru.objects.filter(
+                karsilasmada_cikar=True,
+                **({'ders': ders} if ders not in ('karisik', 'karisik_sayisal', 'karisik_sozel', 'karisik_ea', 'karisik_sozel_ayt') else {})
+            ).values_list('id', flat=True))
+            if soru_ids:
+                return Soru.objects.get(id=random.choice(soru_ids))
+
     logger.warning(f"Hiç soru bulunamadı: Ders={ders}")
     return None
 
@@ -289,22 +301,25 @@ def turnuva_mac_bitir(mac, kazanan):
             
             # ✅ ÖDÜL XP'LERİNİ VER
             if turnuva.birinci:
-                profile = turnuva.birinci.kullanici_profili
-                profile.xp += turnuva.odul_xp_1
-                profile.save()
-                logger.info(f"💰 {turnuva.birinci.username} +{turnuva.odul_xp_1} XP kazandı!")
-            
+                try:
+                    xp_ekle(turnuva.birinci.profil, turnuva.odul_xp_1, '🏆 Turnuva 1. oldu')
+                    logger.info(f"💰 {turnuva.birinci.username} +{turnuva.odul_xp_1} XP kazandı!")
+                except Exception as e:
+                    logger.error(f"Turnuva XP hatası (birinci): {e}", exc_info=True)
+
             if turnuva.ikinci:
-                profile = turnuva.ikinci.kullanici_profili
-                profile.xp += turnuva.odul_xp_2
-                profile.save()
-                logger.info(f"💰 {turnuva.ikinci.username} +{turnuva.odul_xp_2} XP kazandı!")
-            
+                try:
+                    xp_ekle(turnuva.ikinci.profil, turnuva.odul_xp_2, '🥈 Turnuva 2. oldu')
+                    logger.info(f"💰 {turnuva.ikinci.username} +{turnuva.odul_xp_2} XP kazandı!")
+                except Exception as e:
+                    logger.error(f"Turnuva XP hatası (ikinci): {e}", exc_info=True)
+
             if turnuva.ucuncu:
-                profile = turnuva.ucuncu.kullanici_profili
-                profile.xp += turnuva.odul_xp_3
-                profile.save()
-                logger.info(f"💰 {turnuva.ucuncu.username} +{turnuva.odul_xp_3} XP kazandı!")
+                try:
+                    xp_ekle(turnuva.ucuncu.profil, turnuva.odul_xp_3, '🥉 Turnuva 3. oldu')
+                    logger.info(f"💰 {turnuva.ucuncu.username} +{turnuva.odul_xp_3} XP kazandı!")
+                except Exception as e:
+                    logger.error(f"Turnuva XP hatası (ucuncu): {e}", exc_info=True)
             
             return True  # Turnuva bitti
         
