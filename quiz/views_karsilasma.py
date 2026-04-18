@@ -776,8 +776,14 @@ def karsilasma_rakip_bul(request):
     ).first()
 
     if aktif_oda:
-        logger.info(f"Aktif oda bulundu: {aktif_oda.oda_id}")
-        return redirect('karsilasma_oyun', oda_id=aktif_oda.oda_id)
+        logger.info(f"Aktif oda bulundu: {aktif_oda.oda_id}, Durum: {aktif_oda.oyun_durumu}")
+        if aktif_oda.oyun_durumu == 'oynaniyor':
+            return redirect('karsilasma_oyun', oda_id=aktif_oda.oda_id)
+        # Bekleniyor durumundaysa oda kodunu kontrol et
+        if not aktif_oda.oda_kodu:
+            aktif_oda.oda_kodu = oda_kodu_olustur()
+            aktif_oda.save()
+        return redirect('karsilasma_oda_bekleme', oda_kodu=aktif_oda.oda_kodu)
 
     # Farklı dersteki odaları kapat
     KarsilasmaOdasi.objects.filter(
@@ -803,14 +809,16 @@ def karsilasma_rakip_bul(request):
         logger.info(f"Rakip bulundu, hazır bekleniyor: Oda={bekleyen_oda.oda_id}")
         return redirect('karsilasma_oda_bekleme', oda_kodu=bekleyen_oda.oda_kodu)
     else:
+        kod = oda_kodu_olustur()
         yeni_oda = KarsilasmaOdasi.objects.create(
             oyuncu1=request.user,
             oyun_durumu='bekleniyor',
             secilen_ders=secilen_ders,
-            sinav_tipi=sinav_tipi
+            sinav_tipi=sinav_tipi,
+            oda_kodu=kod
         )
-        logger.info(f"Yeni oda: {yeni_oda.oda_id}")
-        return redirect('karsilasma_oyun', oda_id=yeni_oda.oda_id)
+        logger.info(f"Yeni oda: {yeni_oda.oda_id}, Kod: {kod}")
+        return redirect('karsilasma_oda_bekleme', oda_kodu=kod)
 
 
 # ==================== ODA KURMA SİSTEMİ ====================
