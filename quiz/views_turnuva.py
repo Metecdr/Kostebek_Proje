@@ -139,8 +139,8 @@ def turnuva_yonetim(request):
 
     # GET
     turnuvalar = Turnuva.objects.annotate(
-        katilimci_count=Count('turnuvakatilim', distinct=True),
-        mac_count=Count('turnuvamaci', distinct=True)
+        katilimci_count=Count('katilimlar', distinct=True),
+        mac_count=Count('maclar', distinct=True)
     ).order_by('-olusturma_tarihi')
 
     context = {
