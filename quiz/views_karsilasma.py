@@ -163,6 +163,18 @@ def karsilasma_durum_guncelle(request, oda_id):
                     oda_id=oda_id
                 )
 
+                # 🚫 Oyun bitmişse cevap kabul etme
+                if oda.oyun_durumu != 'oynaniyor':
+                    return JsonResponse({'error': 'Oyun devam etmiyor'}, status=400)
+
+                # ✅ 1-F Anti-cheat: sunucu taraflı minimum cevap süresi (2 sn)
+                # Client timer'ı manipüle edilse bile sunucu kontrolü geçilmez
+                if cevap_id is not None and oda.soru_baslangic_zamani:
+                    gecen_sure = (timezone.now() - oda.soru_baslangic_zamani).total_seconds()
+                    if gecen_sure < 2.0:
+                        logger.warning(f"⚠️ Anti-cheat: Çok hızlı cevap! User={request.user.username}, süre={gecen_sure:.2f}s")
+                        return JsonResponse({'error': 'Çok hızlı cevap gönderildi'}, status=429)
+
                 # BOŞ GEÇİŞ
                 if cevap_id is None:
                     logger.info(f'⏰ BOŞ GEÇİŞ! User={request.user.username}, Oda={oda_id}')
@@ -192,19 +204,15 @@ def karsilasma_durum_guncelle(request, oda_id):
 
                     oda.save()
 
-                    # Kullanıcı cevabını kaydet (boş geçiş) - duplicate önle
+                    # ✅ get_or_create → DB-level duplicate koruması (unique_together)
                     try:
                         if oda.aktif_soru:
-                            if not KullaniciCevap.objects.filter(
-                                kullanici=request.user, oda=oda, soru=oda.aktif_soru
-                            ).exists():
-                                KullaniciCevap.objects.create(
-                                    kullanici=request.user,
-                                    oda=oda,
-                                    soru=oda.aktif_soru,
-                                    verilen_cevap=None,
-                                    dogru_mu=False
-                                )
+                            KullaniciCevap.objects.get_or_create(
+                                kullanici=request.user,
+                                oda=oda,
+                                soru=oda.aktif_soru,
+                                defaults={'verilen_cevap': None, 'dogru_mu': False}
+                            )
                     except Exception as e:
                         logger.error(f"KullaniciCevap kayıt hatası (boş geçiş): {e}", exc_info=True)
 
@@ -255,18 +263,19 @@ def karsilasma_durum_guncelle(request, oda_id):
                 # İstatistik güncelle
                 update_stats_with_combo(request.user, oda, cevap_obj, is_oyuncu1)
 
-                # Kullanıcı cevabını kaydet - duplicate önle
+                # ✅ İlk doğru cevaplayan bonusu — sadece bir kez atanır
+                if dogru_mu and oda.ilk_dogru_cevaplayan is None:
+                    oda.ilk_dogru_cevaplayan = request.user
+                    logger.info(f"⭐ İlk doğru cevaplayan: {request.user.username}, Oda={oda_id}")
+
+                # ✅ get_or_create → DB-level duplicate koruması (unique_together)
                 try:
-                    if not KullaniciCevap.objects.filter(
-                        kullanici=request.user, oda=oda, soru=oda.aktif_soru
-                    ).exists():
-                        KullaniciCevap.objects.create(
-                            kullanici=request.user,
-                            oda=oda,
-                            soru=oda.aktif_soru,
-                            verilen_cevap=cevap_obj,
-                            dogru_mu=dogru_mu
-                        )
+                    KullaniciCevap.objects.get_or_create(
+                        kullanici=request.user,
+                        oda=oda,
+                        soru=oda.aktif_soru,
+                        defaults={'verilen_cevap': cevap_obj, 'dogru_mu': dogru_mu}
+                    )
                 except Exception as e:
                     logger.error(f"KullaniciCevap kayıt hatası: {e}", exc_info=True)
 
@@ -379,12 +388,11 @@ def karsilasma_durum_guncelle(request, oda_id):
                                 oda.oyuncu1_cevap_zamani = now
                                 oda.oyuncu1_yanlis += 1
                                 oda.oyuncu1_combo = 0
-                                if oda.aktif_soru and not KullaniciCevap.objects.filter(
-                                    kullanici=oda.oyuncu1, oda=oda, soru=oda.aktif_soru
-                                ).exists():
-                                    KullaniciCevap.objects.create(
+                                # ✅ get_or_create → idempotent, race-safe
+                                if oda.aktif_soru:
+                                    KullaniciCevap.objects.get_or_create(
                                         kullanici=oda.oyuncu1, oda=oda, soru=oda.aktif_soru,
-                                        verilen_cevap=None, dogru_mu=False
+                                        defaults={'verilen_cevap': None, 'dogru_mu': False}
                                     )
                                 logger.info(f"⏰ Oyuncu1 timeout (boş geçiş): {oda.oyuncu1.username}")
                             if not oda.oyuncu2_cevapladi and oda.oyuncu2:
@@ -392,12 +400,11 @@ def karsilasma_durum_guncelle(request, oda_id):
                                 oda.oyuncu2_cevap_zamani = now
                                 oda.oyuncu2_yanlis += 1
                                 oda.oyuncu2_combo = 0
-                                if oda.aktif_soru and not KullaniciCevap.objects.filter(
-                                    kullanici=oda.oyuncu2, oda=oda, soru=oda.aktif_soru
-                                ).exists():
-                                    KullaniciCevap.objects.create(
+                                # ✅ get_or_create → idempotent, race-safe
+                                if oda.aktif_soru:
+                                    KullaniciCevap.objects.get_or_create(
                                         kullanici=oda.oyuncu2, oda=oda, soru=oda.aktif_soru,
-                                        verilen_cevap=None, dogru_mu=False
+                                        defaults={'verilen_cevap': None, 'dogru_mu': False}
                                     )
                                 logger.info(f"⏰ Oyuncu2 timeout (boş geçiş): {oda.oyuncu2.username}")
                             if not oda.round_bekleme_durumu:
@@ -494,7 +501,49 @@ def karsilasma_durum_guncelle(request, oda_id):
                             oda.save()
                             logger.warning(f"⚠️ Fallback soru atandı: Oda={oda_id}, Soru={fallback_soru.id}")
 
-            # Response hazırla
+            # ==================== PING GÜNCELLEME ====================
+            # Her GET isteğinde oyuncunun "online" olduğunu kaydeder (lightweight update)
+            is_oyuncu1_get = (oda.oyuncu1 == request.user)
+            if oda.oyun_durumu == 'oynaniyor':
+                ping_field = 'oyuncu1_son_ping' if is_oyuncu1_get else 'oyuncu2_son_ping'
+                KarsilasmaOdasi.objects.filter(oda_id=oda_id).update(**{ping_field: timezone.now()})
+
+            # ==================== DISCONNECT DETECTION ====================
+            # Rakip 15 saniyedir ping atmıyorsa oyunu bitir
+            rakip_terk_etti = False
+            if oda.oyun_durumu == 'oynaniyor' and oda.soru_baslangic_zamani:
+                # Oyunun en az 20 saniye oynandığından emin ol (ilk ping için grace period)
+                oyun_baslangic_gecen = (timezone.now() - oda.soru_baslangic_zamani).total_seconds()
+                if oyun_baslangic_gecen >= 20:
+                    ping_timeout = timedelta(seconds=15)
+                    rakip_ping = oda.oyuncu2_son_ping if is_oyuncu1_get else oda.oyuncu1_son_ping
+                    rakip = oda.oyuncu2 if is_oyuncu1_get else oda.oyuncu1
+
+                    if rakip and rakip_ping and (timezone.now() - rakip_ping) > ping_timeout:
+                        # Rakibin bağlantısı kesildi → lock al, re-check, oyunu bitir
+                        with transaction.atomic():
+                            oda_locked = get_object_or_404(
+                                KarsilasmaOdasi.objects.select_for_update(),
+                                oda_id=oda_id
+                            )
+                            rakip_ping_fresh = (
+                                oda_locked.oyuncu2_son_ping if is_oyuncu1_get
+                                else oda_locked.oyuncu1_son_ping
+                            )
+                            if (oda_locked.oyun_durumu == 'oynaniyor' and
+                                    rakip_ping_fresh and
+                                    (timezone.now() - rakip_ping_fresh) > ping_timeout):
+                                oda_locked.oyun_durumu = 'bitti'
+                                oda_locked.bitis_zamani = timezone.now()
+                                oda_locked.save(update_fields=['oyun_durumu', 'bitis_zamani'])
+                                oda = oda_locked
+                                rakip_terk_etti = True
+                                logger.info(
+                                    f"🚪 Rakip bağlantı kesti → Oyun bitti: "
+                                    f"Oda={oda_id}, Rakip={rakip.username}"
+                                )
+
+            # ==================== RESPONSE ====================
             soru_obj = oda.aktif_soru
             cevaplar = []
 
@@ -526,7 +575,8 @@ def karsilasma_durum_guncelle(request, oda_id):
                 'aktif_soru_no': oda.aktif_soru_no,
                 'toplam_soru': oda.toplam_soru,
                 'round_bekleme': oda.round_bekleme_durumu,
-                'kalan_sure': kalan_sure
+                'kalan_sure': kalan_sure,
+                'rakip_terk_etti': rakip_terk_etti,  # ✅ Frontend bu flag'le sonuca yönlendirir
             }
 
             resp = JsonResponse(response_data)
@@ -759,13 +809,29 @@ def karsilasma_rakip_bul(request):
     sinav_tipi = request.GET.get('sinav_tipi', 'AYT')
     logger.info(f"Rakip aranıyor: User={request.user.username}, Ders={secilen_ders}, Sınav={sinav_tipi}")
 
-    # Eski odaları temizle (2 dakikadan eski bekleyen odalar)
-    iki_dakika_once = timezone.now() - timedelta(minutes=2)
+    # ==================== STALE ROOM CLEANUP ====================
+    simdi = timezone.now()
+
+    # 1) 2 dakikadan eski bekleyen odalar → bitti
     KarsilasmaOdasi.objects.filter(
         oyun_durumu='bekleniyor',
         oyuncu2=None,
-        olusturma_tarihi__lt=iki_dakika_once
+        olusturma_tarihi__lt=simdi - timedelta(minutes=2)
     ).update(oyun_durumu='bitti')
+
+    # 2) 45 dakikadır soru başlamış ama hareket yok → stuck oda → bitti
+    KarsilasmaOdasi.objects.filter(
+        oyun_durumu='oynaniyor',
+        soru_baslangic_zamani__lt=simdi - timedelta(minutes=45)
+    ).update(oyun_durumu='bitti')
+
+    # 3) 'oynaniyor' ama oyuncu2 yok (veri tutarsızlığı) → bitti
+    KarsilasmaOdasi.objects.filter(
+        oyun_durumu='oynaniyor',
+        oyuncu2=None
+    ).update(oyun_durumu='bitti')
+
+    logger.debug("🧹 Stale oda cleanup tamamlandı")
 
     # Aktif oda var mı?
     aktif_oda = KarsilasmaOdasi.objects.select_related('oyuncu1', 'oyuncu2').filter(

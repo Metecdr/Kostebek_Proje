@@ -888,6 +888,12 @@ let isLoadingState = false;
 let oyunBittiYonlendirme = false;  // çift yönlendirme engelle
 let mevcutSoruId = '';  // soru değişim takibi
 
+/* ===== EXPONENTIAL BACKOFF STATE ===== */
+let pollingDelay = 500;          // mevcut polling aralığı
+let pollingErrorCount = 0;       // art arda hata sayısı
+const POLLING_MIN_DELAY = 500;   // normal durum
+const POLLING_MAX_DELAY = 8000;  // maks bekleme (sunucu down)
+
 /* ===== CEVAP GÖNDERME ===== */
 window.checkAnswer = async function(cevapId, btn) {
     if (cevapVerildi) return;
@@ -1135,10 +1141,27 @@ async function loadGameState() {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
 
+        // ✅ Başarılı istek → backoff sıfırla
+        pollingErrorCount = 0;
+        pollingDelay = POLLING_MIN_DELAY;
+
         // Hazır sayfasına yönlendir
         if (data.redirect_bekleme) {
             stopEverything();
             window.location.href = data.redirect_bekleme;
+            return;
+        }
+
+        // ✅ Rakip terk etti → bilgi ver, sonuca yönlendir
+        if (data.rakip_terk_etti && !oyunBittiYonlendirme) {
+            oyunBittiYonlendirme = true;
+            stopEverything();
+            const rm = bootstrap.Modal.getInstance(document.getElementById('roundModal'));
+            if (rm) rm.hide();
+            showRakipTerkEtti();
+            setTimeout(() => {
+                window.location.href = `/karsilasma/sonuc/${odaId}/`;
+            }, 2500);
             return;
         }
 
@@ -1147,7 +1170,6 @@ async function loadGameState() {
             if (!oyunBittiYonlendirme) {
                 oyunBittiYonlendirme = true;
                 stopEverything();
-                // Modal varsa kapat
                 const rm = bootstrap.Modal.getInstance(document.getElementById('roundModal'));
                 if (rm) rm.hide();
                 setTimeout(() => {
@@ -1180,7 +1202,6 @@ async function loadGameState() {
         }
 
         // İKİ OYUNCU DA CEVAPLADI → ROUND GEÇİŞ MODALİ
-        // Modal yalnızca benim de cevabım alındıktan (veya sürem bittikten) sonra açılır
         const modalAcilabilir = (cevapVerildi || bosGecisGonderildi || timeLeft <= 0);
         if (data.round_bekleme && data.oyuncu1_cevapladi && data.oyuncu2_cevapladi && !roundModalGosterildi && modalAcilabilir) {
             roundModalGosterildi = true;
@@ -1196,14 +1217,33 @@ async function loadGameState() {
 
         // Cevap verildi + round bekleme yok → normal hıza dön
         if (!data.round_bekleme && cevapVerildi) {
-            setPolling(500);
+            setPolling(POLLING_MIN_DELAY);
         }
 
     } catch (error) {
-        console.error('❌ Durum yükleme hatası:', error);
+        // ✅ Exponential backoff — sunucu hatası olunca yavaşla
+        pollingErrorCount++;
+        pollingDelay = Math.min(pollingDelay * 2, POLLING_MAX_DELAY);
+        console.warn(`⚠️ Polling hatası #${pollingErrorCount}, sonraki: ${pollingDelay}ms`, error);
+        setPolling(pollingDelay);
     } finally {
         isLoadingState = false;
     }
+}
+
+/* ===== RAKİP TERK ETTİ BİLDİRİMİ ===== */
+function showRakipTerkEtti() {
+    const notif = document.createElement('div');
+    notif.style.cssText = `
+        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white; padding: 24px 36px; border-radius: 20px;
+        font-size: 1.2rem; font-weight: 800; text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5); z-index: 9999;
+        animation: fadeIn 0.3s ease-out;
+    `;
+    notif.innerHTML = '🚪 Rakip oyundan ayrıldı!<br><small style="font-weight:400;opacity:0.9;">Sonuç sayfasına yönlendiriliyorsunuz...</small>';
+    document.body.appendChild(notif);
 }
 
 /* ===== YARDIMCI FONKSİYONLAR ===== */
@@ -1215,6 +1255,7 @@ function stopEverything() {
 }
 
 function setPolling(ms) {
+    pollingDelay = ms;
     clearInterval(pollingInterval);
     pollingInterval = setInterval(loadGameState, ms);
 }

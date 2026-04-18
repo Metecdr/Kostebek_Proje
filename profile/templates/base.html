@@ -293,6 +293,39 @@
             overflow: hidden;
             color: var(--navbar-text) !important;
             font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        /* ==================== NAVBAR XL OPTİMİZASYONU ==================== */
+        /* navbar-expand-xl: 1200px altı hamburger, üstü yatay */
+        @media (min-width: 1200px) and (max-width: 1399px) {
+            .nav-link { padding: 5px 7px !important; font-size: 0.82rem; }
+            .navbar-brand { font-size: 1rem; }
+            .navbar-brand span { display: none; } /* Dar XL'de sadece logo ikonu */
+            .user-badge { padding: 5px 10px; font-size: 0.82rem; }
+            .puan-nav-badge { font-size: 0.82rem; padding: 4px 10px; }
+        }
+
+        /* Hamburger açık menü (< 1200px) — touch-friendly */
+        @media (max-width: 1199px) {
+            .navbar-collapse .navbar-nav .nav-link {
+                padding: 10px 16px !important;
+                font-size: 0.95rem;
+                border-radius: 10px;
+                margin: 2px 4px;
+            }
+            .navbar-collapse .navbar-nav .dropdown-menu {
+                box-shadow: none !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
+                background: rgba(255,255,255,0.05) !important;
+                margin-left: 12px;
+            }
+            .navbar-collapse .navbar-nav .dropdown-item {
+                color: var(--navbar-text) !important;
+            }
+            .navbar-collapse .navbar-nav .dropdown-item:hover {
+                background: rgba(255,255,255,0.12) !important;
+            }
         }
         
         .nav-link::before {
@@ -1984,7 +2017,7 @@
         <span class="icon" id="themeIcon">🌙</span>
     </button>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="{% url 'quiz_anasayfa' %}">
                 <img src="{% static 'images/kostebek_logo.png' %}" alt="Köstebek" class="site-logo me-2">
@@ -2055,25 +2088,35 @@
                         </ul>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'rozetler_view' %}">
-                            <i class="bi bi-award-fill" style="color:#FF9800;"></i> Rozetler
+                    <!-- ✅ KEŞFET DROPDOWN (Rozetler + Arkadaşlar + Görevler + Takvim) -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="kesfetDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-compass-fill" style="color:#AB47BC;"></i> Keşfet
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'arkadaslarim' %}">
-                            <i class="bi bi-people-fill" style="color:#66BB6A;"></i> Arkadaşlar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'gunluk_gorevler' %}">
-                            <i class="bi bi-list-check" style="color:#42A5F5;"></i> Görevler
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'calisma_takvimi' %}">
-                            <i class="bi bi-calendar3" style="color:#26A69A;"></i> Takvim
-                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="kesfetDropdown">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'rozetler_view' %}">
+                                    <i class="bi bi-award-fill text-warning"></i> Rozetler
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'arkadaslarim' %}">
+                                    <i class="bi bi-people-fill text-success"></i> Arkadaşlar
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'gunluk_gorevler' %}">
+                                    <i class="bi bi-list-check text-info"></i> Görevler
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'calisma_takvimi' %}">
+                                    <i class="bi bi-calendar3" style="color:#26A69A;"></i> Takvim
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
                     <!-- ✅ MAĞAZA -->

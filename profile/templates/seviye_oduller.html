@@ -5,14 +5,14 @@
 
 {% block extra_css %}
 <style>
-body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-height: 100vh; }
+/* ── body override YOK — base.html tema sistemi devralır ── */
 
 .so-container { max-width: 800px; margin: 30px auto; padding: 0 15px; }
 
 .so-header {
     text-align: center;
     margin-bottom: 30px;
-    color: #fff;
+    color: var(--text-primary);
 }
 .so-header h1 {
     font-size: 2rem;
@@ -22,8 +22,9 @@ body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-heigh
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
-.so-header p { color: #94a3b8; font-size: 1rem; }
+.so-header p { color: var(--text-muted); font-size: 1rem; }
 
+/* Mevcut seviye kartı — marka rengi, her zaman mor/canlı */
 .so-current {
     background: linear-gradient(135deg, #667eea, #764ba2);
     border-radius: 20px;
@@ -38,7 +39,7 @@ body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-heigh
 .so-current-xp { font-size: .9rem; opacity: .85; }
 
 .so-progress {
-    background: rgba(255,255,255,.15);
+    background: rgba(255,255,255,.2);
     border-radius: 10px;
     height: 12px;
     margin-top: 15px;
@@ -57,14 +58,14 @@ body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-heigh
     display: flex;
     align-items: center;
     gap: 15px;
-    background: rgba(255,255,255,.06);
-    border: 1.5px solid rgba(255,255,255,.08);
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
     border-radius: 16px;
     padding: 16px 20px;
     transition: all .3s;
 }
 .so-item.aktif {
-    background: linear-gradient(135deg, rgba(102,126,234,.25), rgba(118,75,162,.25));
+    background: linear-gradient(135deg, rgba(102,126,234,.15), rgba(118,75,162,.15));
     border-color: #667eea;
     box-shadow: 0 0 20px rgba(102,126,234,.2);
 }
@@ -83,13 +84,14 @@ body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-heigh
     flex-shrink: 0;
 }
 .so-item.ulasildi .so-num { background: linear-gradient(135deg, #4caf50, #2e7d32); color: #fff; }
-.so-item.aktif .so-num { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
-.so-item.kilitli .so-num { background: rgba(255,255,255,.1); color: #64748b; }
+.so-item.aktif    .so-num { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
+.so-item.kilitli  .so-num { background: var(--bg-secondary); color: var(--text-muted); }
 
 .so-info { flex: 1; }
-.so-title { font-weight: 800; color: #e2e8f0; font-size: 1rem; }
-.so-xp { font-size: .8rem; color: #94a3b8; margin-top: 2px; }
+.so-title { font-weight: 800; color: var(--text-primary); font-size: 1rem; }
+.so-xp { font-size: .8rem; color: var(--text-muted); margin-top: 2px; }
 
+/* Ödül etiketi — altın accent rengi sabit kalır */
 .so-reward {
     background: rgba(255,215,0,.12);
     border: 1px solid rgba(255,215,0,.3);
@@ -101,7 +103,7 @@ body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-heigh
     white-space: nowrap;
 }
 .so-item.ulasildi .so-reward { background: rgba(76,175,80,.12); border-color: rgba(76,175,80,.3); color: #4caf50; }
-.so-item.kilitli .so-reward { opacity: .5; }
+.so-item.kilitli  .so-reward { opacity: .5; }
 
 .so-check { color: #4caf50; font-size: 1.3rem; }
 
@@ -111,14 +113,19 @@ body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-heigh
     gap: 8px;
     padding: 10px 22px;
     border-radius: 12px;
-    background: rgba(255,255,255,.08);
-    color: #e2e8f0;
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    color: var(--text-primary);
     text-decoration: none;
     font-weight: 700;
     margin-bottom: 15px;
     transition: all .3s;
 }
-.so-back:hover { background: rgba(255,255,255,.15); color: #fff; }
+.so-back:hover {
+    background: var(--bg-secondary);
+    border-color: #667eea;
+    color: var(--text-primary);
+}
 
 /* ── ANIMASYONLAR ── */
 @keyframes floatStar {

@@ -337,6 +337,10 @@ class KarsilasmaOdasi(models.Model):
     # ✅ EKLE (views_karsilasma.py zaten set ediyor)
     bitis_zamani = models.DateTimeField(null=True, blank=True, db_index=True)
 
+    # ✅ DISCONNECT DETECTION — her polling GET'te güncellenir
+    oyuncu1_son_ping = models.DateTimeField(null=True, blank=True, verbose_name="Oyuncu1 Son Ping")
+    oyuncu2_son_ping = models.DateTimeField(null=True, blank=True, verbose_name="Oyuncu2 Son Ping")
+
     class Meta:
         verbose_name = "Karşılaşma Odası"
         verbose_name_plural = "Karşılaşma Odaları"
@@ -404,6 +408,8 @@ class KullaniciCevap(models.Model):
         verbose_name = "Kullanıcı Cevabı"
         verbose_name_plural = "Kullanıcı Cevapları"
         ordering = ['-tarih']
+        # ✅ DB-level duplicate engeli — race condition'a karşı son savunma hattı
+        unique_together = [['kullanici', 'oda', 'soru']]
         indexes = [
             models.Index(fields=['kullanici', '-tarih'], name='cevap_kullanici_idx'),
             models.Index(fields=['kullanici', 'dogru_mu'], name='cevap_kullanici_dogru_idx'),
