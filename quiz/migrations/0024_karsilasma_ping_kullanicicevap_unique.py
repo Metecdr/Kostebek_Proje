@@ -30,7 +30,7 @@ def deduplicate_kullanici_cevap(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('quiz', '0023_karisik_ea_sozel_ayt'),
+        ('quiz', '0002_gununsorusu_gununsorusucevap_meydanokuma_oyunmesaj_and_more'),
     ]
 
     operations = [
