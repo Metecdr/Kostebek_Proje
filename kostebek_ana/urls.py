@@ -37,6 +37,9 @@ urlpatterns = [
     # Profile (giris, cikis profil içinde)
     path('', include('profile.urls')),
 
+    # Şifre sıfırlama (Django built-in, özel template'lerle)
+    path('hesap/', include('django.contrib.auth.urls')),
+
     # Quiz
     path('', include('quiz.urls')),
 

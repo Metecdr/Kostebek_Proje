@@ -814,6 +814,85 @@
                 </a>
             </div>
 
+            <!-- MOTİVASYON + GÜNLÜK HEDEF Widget -->
+            <div class="widget animate-on-scroll" style="animation-delay:0.05s;background:linear-gradient(135deg,rgba(255,107,107,.08),rgba(255,165,0,.06));border-color:rgba(255,107,107,.25);">
+                <div class="widget-baslik">
+                    {% if gunluk_hedef_tamamlandi %}✅{% else %}🔥{% endif %} Bugünkü Hedef
+                </div>
+
+                <!-- Streak -->
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+                    <div style="font-size:2rem;line-height:1;">🔥</div>
+                    <div>
+                        <div style="font-size:1.4rem;font-weight:900;color:var(--text-primary);line-height:1.1;">
+                            {{ streak }} gün
+                        </div>
+                        <div style="font-size:0.78rem;color:var(--text-muted);">kesintisiz seri</div>
+                    </div>
+                    <div style="margin-left:auto;font-size:0.82rem;color:var(--text-muted);text-align:right;line-height:1.4;">
+                        {{ motivasyon_mesaji }}
+                    </div>
+                </div>
+
+                <!-- Günlük soru progress -->
+                <div style="margin-bottom:6px;">
+                    <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;">
+                        <span style="color:var(--text-muted);">📚 Günlük Soru</span>
+                        <span style="color:var(--text-primary);font-weight:700;">
+                            {{ gunluk_ilerleme }}/{{ GUNLUK_HEDEF_SORU }}
+                        </span>
+                    </div>
+                    <div style="background:var(--bg-secondary);border-radius:8px;height:10px;overflow:hidden;">
+                        <div style="height:100%;border-radius:8px;transition:width .6s ease;
+                                    background:{% if gunluk_hedef_tamamlandi %}linear-gradient(90deg,#4caf50,#2e7d32){% else %}linear-gradient(90deg,#FF6B6B,#FFA500){% endif %};
+                                    width:{{ gunluk_hedef_yuzde }}%;"></div>
+                    </div>
+                </div>
+
+                {% if gunluk_hedef_tamamlandi %}
+                <div style="font-size:0.82rem;color:#4caf50;font-weight:700;text-align:center;margin-top:8px;">
+                    🎉 Bugünkü hedefine ulaştın!
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- BU HAFTA Performans Widget -->
+            <div class="widget animate-on-scroll" style="animation-delay:0.08s;">
+                <div class="widget-baslik">📈 Bu Hafta</div>
+
+                <!-- Haftalık istatistikler -->
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+                    <div style="text-align:center;background:var(--bg-secondary);border-radius:10px;padding:8px 4px;">
+                        <div style="font-size:1.1rem;font-weight:900;color:var(--text-primary);">{{ profil.haftalik_cozulen|default:0 }}</div>
+                        <div style="font-size:0.7rem;color:var(--text-muted);">Çözülen</div>
+                    </div>
+                    <div style="text-align:center;background:var(--bg-secondary);border-radius:10px;padding:8px 4px;">
+                        <div style="font-size:1.1rem;font-weight:900;color:#4caf50;">{{ profil.haftalik_dogru|default:0 }}</div>
+                        <div style="font-size:0.7rem;color:var(--text-muted);">Doğru</div>
+                    </div>
+                    <div style="text-align:center;background:var(--bg-secondary);border-radius:10px;padding:8px 4px;">
+                        <div style="font-size:1.1rem;font-weight:900;color:#667eea;">{{ haftalik_basari|default:0 }}%</div>
+                        <div style="font-size:0.7rem;color:var(--text-muted);">Başarı</div>
+                    </div>
+                </div>
+
+                <!-- Son 7 gün mini bar chart -->
+                {% if son_7_gun %}
+                <div style="display:flex;align-items:flex-end;gap:4px;height:44px;">
+                    {% for gun in son_7_gun %}
+                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+                        <div style="width:100%;background:{% if gun.bugun %}linear-gradient(180deg,#667eea,#764ba2){% else %}var(--bg-secondary){% endif %};border-radius:4px 4px 0 0;
+                                    height:{% if gun.yuzde > 0 %}{{ gun.yuzde }}%{% else %}4px{% endif %};min-height:4px;transition:height .4s ease;"
+                             title="{{ gun.gun }}: {{ gun.sayi }} soru"></div>
+                        <div style="font-size:0.6rem;color:{% if gun.bugun %}#667eea{% else %}var(--text-muted){% endif %};font-weight:{% if gun.bugun %}700{% else %}400{% endif %};">
+                            {{ gun.gun }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
             <!-- LİDERLİK -->
             <div class="widget liderlik-widget animate-on-scroll" style="animation-delay:0.1s;">
                 <div class="widget-baslik">🏆 Sıralama</div>

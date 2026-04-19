@@ -7,6 +7,11 @@ urlpatterns = [
     path('kayit/', views.kayit_view, name='kayit'),
     path('giris/', views.giris_view, name='giris'),
     path('cikis/', views.cikis_view, name='cikis'),
+
+    # Email doğrulama
+    path('email-dogrula/<uuid:token>/', views.email_dogrula, name='email_dogrula'),
+    path('email-gonderildi/', views.email_dogrulama_gonderildi, name='email_dogrulama_gonderildi'),
+    path('email-yeniden-gonder/', views.email_yeniden_gonder, name='email_yeniden_gonder'),
     path('profil/', views.profil_view, name='profil'),
     path('profil/duzenle/', views.profil_duzenle_view, name='profil_duzenle'),
     

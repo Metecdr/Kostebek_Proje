@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .models import OgrenciProfili, OyunModuIstatistik, DersIstatistik, Rozet, KonuIstatistik
+from .models import OgrenciProfili, OyunModuIstatistik, DersIstatistik, Rozet, KonuIstatistik, EmailDogrulamaToken
 from quiz.models import Rozet, KullaniciRozet, Soru, KullaniciCevap
 from django.db.models import F, Q, Count, Sum
 from .rozet_kontrol import rozet_kontrol_yap
@@ -13,7 +13,11 @@ from profile.models import Rozet, Bildirim, Arkadaslik
 from django.core.cache import cache
 from django.db import transaction, IntegrityError, models
 from django.core.exceptions import ValidationError
+from django.core.validators import validate_email as django_validate_email
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from django.utils import timezone
+from django.conf import settings
 import datetime
 import logging
 from django.http import JsonResponse
@@ -35,16 +39,54 @@ def anasayfa(request):
     return render(request, 'giris_sayfasi.html')
 
 
+def _email_dogrulama_gonder(user, token_obj, request=None):
+    """Kullanıcıya email doğrulama linki gönder"""
+    try:
+        dogrulama_linki = f"https://kostebekyks.com/email-dogrula/{token_obj.token}/"
+        if request and settings.DEBUG:
+            dogrulama_linki = request.build_absolute_uri(f"/email-dogrula/{token_obj.token}/")
+
+        konu = 'Köstebek YKS — Email Adresinizi Doğrulayın'
+        mesaj = (
+            f"Merhaba {user.username},\n\n"
+            f"Köstebek YKS'ye kaydolduğunuz için teşekkürler!\n\n"
+            f"Email adresinizi doğrulamak için aşağıdaki linke tıklayın:\n"
+            f"{dogrulama_linki}\n\n"
+            f"Bu link 24 saat geçerlidir.\n\n"
+            f"Eğer bu kaydı siz yapmadıysanız bu emaili görmezden gelebilirsiniz.\n\n"
+            f"Köstebek YKS Ekibi"
+        )
+        send_mail(
+            subject=konu,
+            message=mesaj,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        logger.info(f"📧 Email doğrulama gönderildi: {user.username} → {user.email}")
+        return True
+    except Exception as e:
+        logger.error(f"Email gönderim hatası: {user.username} - {e}", exc_info=True)
+        return False
+
+
 def kayit_view(request):
     if request.method == 'POST':
-        kullanici_adi = request.POST.get('username')
-        email = request.POST.get('email')
+        kullanici_adi = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip().lower()
         sifre = request.POST.get('password')
         sifre_tekrar = request.POST.get('password2')
 
         if not kullanici_adi or not email or not sifre or not sifre_tekrar:
             messages.error(request, 'Tüm alanları doldurun!')
             logger.warning(f"Kayıt denemesi: Eksik alan - Kullanıcı: {kullanici_adi}")
+            return render(request, 'kayit.html')
+
+        # Email format kontrolü
+        try:
+            django_validate_email(email)
+        except ValidationError:
+            messages.error(request, 'Geçerli bir email adresi girin (örn: isim@gmail.com)')
             return render(request, 'kayit.html')
 
         if sifre != sifre_tekrar:
@@ -69,24 +111,25 @@ def kayit_view(request):
 
         try:
             with transaction.atomic():
-                user = User.objects.create_user(username=kullanici_adi, email=email, password=sifre)
-                profil, created = OgrenciProfili.objects.get_or_create(kullanici=user, defaults={'alan': 'sayisal'})
+                # is_active=False → email doğrulanana kadar giriş yapamaz
+                user = User.objects.create_user(
+                    username=kullanici_adi,
+                    email=email,
+                    password=sifre,
+                    is_active=False
+                )
+                OgrenciProfili.objects.get_or_create(kullanici=user, defaults={'alan': 'sayisal'})
 
-                if created:
-                    yeni_rozetler = rozet_kontrol_yap(profil)
-                    logger.info(f"Yeni kullanıcı kaydı: {kullanici_adi}, Rozet sayısı: {len(yeni_rozetler) if yeni_rozetler else 0}")
-                else:
-                    yeni_rozetler = []
-                    logger.info(f"Kullanıcı kaydı (profil mevcut): {kullanici_adi}")
+                # Doğrulama token oluştur ve email gönder
+                token_obj = EmailDogrulamaToken.objects.create(kullanici=user)
+                email_gonderildi = _email_dogrulama_gonder(user, token_obj, request)
 
-                login(request, user)
+                logger.info(f"Yeni kullanıcı kaydı (doğrulama bekleniyor): {kullanici_adi}")
 
-                if yeni_rozetler:
-                    messages.success(request, f'🎉 Hoş geldin {kullanici_adi}! {len(yeni_rozetler)} rozet kazandın!')
-                else:
-                    messages.success(request, f'Hoş geldin {kullanici_adi}! Kayıt başarılı!')
+                if not email_gonderildi:
+                    messages.warning(request, 'Kayıt yapıldı ancak email gönderilemedi. Yeniden gönder butonunu kullanın.')
 
-                return redirect('profil')
+                return redirect('email_dogrulama_gonderildi')
 
         except IntegrityError as e:
             logger.error(f"Kayıt veritabanı hatası: Kullanıcı={kullanici_adi}, Hata={e}", exc_info=True)
@@ -96,13 +139,9 @@ def kayit_view(request):
             logger.error(f"Kayıt validasyon hatası: Kullanıcı={kullanici_adi}, Hata={e}", exc_info=True)
             messages.error(request, 'Girdiğiniz bilgiler geçersiz. Lütfen kontrol edin.')
             return render(request, 'kayit.html')
-        except ImportError as e:
-            logger.error(f"Rozet modülü import hatası: Kullanıcı={kullanici_adi}, Hata={e}", exc_info=True)
-            messages.warning(request, 'Kayıt başarılı ancak rozet sistemi şu an kullanılamıyor.')
-            return redirect('profil')
         except Exception as e:
             logger.error(f"Kayıt beklenmeyen hata: Kullanıcı={kullanici_adi}, Hata={e}", exc_info=True)
-            messages.error(request, f'Kayıt sırasında bir hata oluştu: {str(e)}')
+            messages.error(request, f'Kayıt sırasında bir hata oluştu.')
             return render(request, 'kayit.html')
 
     return render(request, 'kayit.html')
@@ -110,10 +149,25 @@ def kayit_view(request):
 
 def giris_view(request):
     if request.method == 'POST':
-        kullanici_adi = request.POST.get('username')
+        kullanici_adi = request.POST.get('username', '').strip()
         sifre = request.POST.get('password')
 
         try:
+            # Önce kullanıcıyı bul — is_active=False olanlar authenticate() ile dönmez
+            try:
+                user_obj = User.objects.get(username=kullanici_adi)
+            except User.DoesNotExist:
+                user_obj = None
+
+            # Email doğrulanmamış hesap kontrolü
+            if user_obj and not user_obj.is_active and user_obj.check_password(sifre):
+                if EmailDogrulamaToken.objects.filter(kullanici=user_obj).exists():
+                    return render(request, 'giris.html', {
+                        'hata_dogrulanmamis': True,
+                        'kullanici_id': user_obj.id,
+                        'mesaj': f'"{kullanici_adi}" hesabı email doğrulaması bekliyor. Gelen kutunuzu kontrol edin.'
+                    })
+
             user = authenticate(request, username=kullanici_adi, password=sifre)
 
             if user is not None:
@@ -129,6 +183,101 @@ def giris_view(request):
             messages.error(request, 'Giriş sırasında bir hata oluştu.')
 
     return render(request, 'giris.html')
+
+
+# ==================== EMAIL DOĞRULAMA VIEW'LARI ====================
+
+def email_dogrulama_gonderildi(request):
+    """Kayıt sonrası: 'Email gönderildi' bilgi sayfası"""
+    return render(request, 'email_dogrulama_gonderildi.html')
+
+
+def email_dogrula(request, token):
+    """Email doğrulama linki — token kontrolü, hesabı aktif et"""
+    try:
+        token_obj = EmailDogrulamaToken.objects.select_related('kullanici').get(token=token)
+    except EmailDogrulamaToken.DoesNotExist:
+        return render(request, 'email_dogrulama_basarili.html', {
+            'basarili': False,
+            'hata': 'Geçersiz veya süresi dolmuş doğrulama linki.'
+        })
+
+    if token_obj.suresi_gecti_mi():
+        return render(request, 'email_dogrulama_basarili.html', {
+            'basarili': False,
+            'hata': 'Bu doğrulama linkinin süresi dolmuş. Lütfen yeniden gönder.',
+            'kullanici_id': token_obj.kullanici.id,
+            'goster_yeniden_gonder': True
+        })
+
+    user = token_obj.kullanici
+    if not user.is_active:
+        user.is_active = True
+        user.save(update_fields=['is_active'])
+
+        # Rozet kontrolü (ilk aktivasyonda)
+        try:
+            profil = user.profil
+            rozet_kontrol_yap(profil)
+        except Exception:
+            pass
+
+        # Token'ı sil (tek kullanımlık)
+        token_obj.delete()
+
+        logger.info(f"✅ Email doğrulandı: {user.username}")
+
+        # Otomatik giriş yap
+        from django.contrib.auth import get_backends
+        backend = get_backends()[0]
+        user.backend = f"{backend.__module__}.{backend.__class__.__name__}"
+        login(request, user)
+
+        messages.success(request, f'🎉 Hoş geldin {user.username}! Email adresin doğrulandı.')
+        return render(request, 'email_dogrulama_basarili.html', {
+            'basarili': True,
+            'kullanici': user
+        })
+    else:
+        # Zaten aktif, token artık yok
+        token_obj.delete()
+        return redirect('profil')
+
+
+def email_yeniden_gonder(request):
+    """Doğrulama emailini yeniden gönder (POST ile kullanici_id alır)"""
+    if request.method == 'POST':
+        kullanici_id = request.POST.get('kullanici_id')
+        try:
+            user = User.objects.get(id=kullanici_id, is_active=False)
+            token_obj, created = EmailDogrulamaToken.objects.get_or_create(kullanici=user)
+
+            # Cooldown: son gönderimden itibaren 1 dakika bekle
+            if not created:
+                bekleme = timezone.now() - token_obj.olusturma_tarihi
+                if bekleme.total_seconds() < 60:
+                    kalan = int(60 - bekleme.total_seconds())
+                    messages.warning(request, f'Lütfen {kalan} saniye bekleyin.')
+                    return render(request, 'email_dogrulama_gonderildi.html', {
+                        'yeniden_deneme': True,
+                        'kullanici_id': kullanici_id
+                    })
+                token_obj.yenile()
+            else:
+                pass
+
+            gonderildi = _email_dogrulama_gonder(user, token_obj, request)
+            if gonderildi:
+                messages.success(request, 'Doğrulama emaili tekrar gönderildi!')
+            else:
+                messages.error(request, 'Email gönderilemedi, lütfen daha sonra tekrar deneyin.')
+        except User.DoesNotExist:
+            messages.error(request, 'Kullanıcı bulunamadı.')
+
+    return render(request, 'email_dogrulama_gonderildi.html', {
+        'yeniden_deneme': True,
+        'kullanici_id': request.POST.get('kullanici_id')
+    })
 
 
 @login_required

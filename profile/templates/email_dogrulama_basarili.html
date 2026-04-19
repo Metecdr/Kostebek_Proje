@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Email Doğrulama — Köstebek YKS{% endblock %}
+
+{% block content %}
+<div style="min-height:70vh;display:flex;align-items:center;justify-content:center;padding:30px 15px;">
+    <div style="max-width:480px;width:100%;background:var(--card-bg);border:1.5px solid var(--card-border);border-radius:24px;padding:40px 36px;text-align:center;">
+
+        {% if basarili %}
+        <div style="font-size:4rem;margin-bottom:16px;">🎉</div>
+        <h2 style="font-size:1.5rem;font-weight:900;color:var(--text-primary);margin-bottom:8px;">
+            Email Doğrulandı!
+        </h2>
+        <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:28px;line-height:1.6;">
+            Hesabın aktif edildi. Otomatik olarak giriş yapılıyor...
+        </p>
+        <a href="{% url 'profil' %}"
+           style="display:inline-block;background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;padding:14px 36px;border-radius:14px;font-weight:700;font-size:1rem;text-decoration:none;">
+            <i class="bi bi-arrow-right-circle-fill"></i> Profile Git
+        </a>
+
+        {% else %}
+        <div style="font-size:4rem;margin-bottom:16px;">⚠️</div>
+        <h2 style="font-size:1.5rem;font-weight:900;color:var(--text-primary);margin-bottom:8px;">
+            Doğrulama Başarısız
+        </h2>
+        <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:20px;line-height:1.6;">
+            {{ hata }}
+        </p>
+
+        {% if goster_yeniden_gonder and kullanici_id %}
+        <form method="post" action="{% url 'email_yeniden_gonder' %}" style="margin-bottom:12px;">
+            {% csrf_token %}
+            <input type="hidden" name="kullanici_id" value="{{ kullanici_id }}">
+            <button type="submit"
+                    style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:12px 28px;border-radius:14px;font-weight:700;font-size:0.95rem;cursor:pointer;width:100%;">
+                <i class="bi bi-send-fill"></i> Yeni Link Gönder
+            </button>
+        </form>
+        {% endif %}
+
+        <a href="{% url 'giris' %}"
+           style="display:block;color:var(--text-muted);font-size:0.88rem;text-decoration:none;margin-top:8px;">
+            ← Giriş sayfasına dön
+        </a>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

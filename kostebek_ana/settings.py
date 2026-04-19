@@ -134,6 +134,42 @@ LOGIN_URL = '/giris/'  # profile/urls.py'deki giris_view
 LOGIN_REDIRECT_URL = '/profil/'  # Giriş sonrası profil sayfası
 LOGOUT_REDIRECT_URL = '/'  # Çıkış sonrası ana sayfa
 
+# Şifre sıfırlama token geçerlilik süresi (3 gün)
+PASSWORD_RESET_TIMEOUT = 259200
+
+# ==================== DJANGO CHANNELS ====================
+# VPS'de redis-cli ping → PONG ise RedisChannelLayer kullan
+# Aksi halde InMemoryChannelLayer (tek sunucu, restart'ta state sıfırlanır)
+_REDIS_HOST = os.environ.get('REDIS_HOST', '127.0.0.1')
+_REDIS_PORT = int(os.environ.get('REDIS_PORT', '6379'))
+
+if os.environ.get('USE_REDIS_CHANNEL_LAYER', 'False') == 'True':
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {"hosts": [(_REDIS_HOST, _REDIS_PORT)]},
+        }
+    }
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer"
+        }
+    }
+
+# ==================== EMAIL ====================
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Köstebek YKS <noreply@kostebekyks.com>')
+
+# Geliştirme ortamında email'leri konsola yaz
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # ==================== LOGGING ====================
 LOGS_DIR = BASE_DIR / 'logs'
 if not LOGS_DIR.exists():

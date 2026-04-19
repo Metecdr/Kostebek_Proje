@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import datetime, timedelta
+import uuid
 import profile.rozet_aciklama as rozet_aciklama
 
 
@@ -1443,6 +1444,37 @@ class Duyuru(models.Model):
             'mor':     '#8b5cf6',
         }
         return renk_map.get(self.renk, '#3b82f6')
+
+
+# ==================== EMAIL DOĞRULAMA ====================
+
+class EmailDogrulamaToken(models.Model):
+    """Kayıt sırasında email doğrulama için tek kullanımlık token"""
+    kullanici = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='email_dogrulama_token',
+        verbose_name='Kullanıcı'
+    )
+    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    olusturma_tarihi = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Email Doğrulama Token'
+        verbose_name_plural = 'Email Doğrulama Tokenları'
+
+    def __str__(self):
+        return f"{self.kullanici.username} - {self.token}"
+
+    def suresi_gecti_mi(self):
+        """Token 24 saat sonra geçersiz olur"""
+        return timezone.now() > self.olusturma_tarihi + timedelta(hours=24)
+
+    def yenile(self):
+        """Yeni token üret (yeniden gönderme için)"""
+        self.token = uuid.uuid4()
+        self.olusturma_tarihi = timezone.now()
+        self.save()
 
     def __str__(self):
         return f"{self.profil.kullanici.username} +{self.miktar} XP - {self.sebep}"

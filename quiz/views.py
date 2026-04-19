@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.cache import cache
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, date
 from profile.models import OyunModuIstatistik, OgrenciProfili
 from profile.rozet_kontrol import rozet_kontrol_yap
 import logging
@@ -114,6 +114,55 @@ def quiz_anasayfa(request):
                 {'baslik': '🏆 Turnuva Sistemi', 'mesaj': 'Resmi turnuvalara katılarak ödül kazan ve şampiyonluk için yarış!', 'renk_css': 'linear-gradient(135deg,rgba(245,158,11,0.18),rgba(217,119,6,0.1))', 'sinir_rengi': '#f59e0b', 'icon': '🏆'},
             ]
 
+        # ── Widget A: Bu Hafta Performans ──
+        haftalik_basari = round(
+            profil.haftalik_dogru / max(profil.haftalik_cozulen, 1) * 100
+        )
+        son_7_gun = []
+        try:
+            from quiz.models import KullaniciCevap
+            bugun = timezone.now().date()
+            gun_kisa_tr = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz']
+            max_sayi = 0
+            for i in range(6, -1, -1):
+                gun = bugun - timedelta(days=i)
+                sayi = KullaniciCevap.objects.filter(
+                    kullanici=request.user, tarih__date=gun
+                ).count()
+                if sayi > max_sayi:
+                    max_sayi = sayi
+                son_7_gun.append({
+                    'gun': gun_kisa_tr[gun.weekday()],
+                    'sayi': sayi,
+                    'bugun': (i == 0),
+                })
+            # Yüzde hesapla (bar chart için)
+            for g in son_7_gun:
+                g['yuzde'] = round(g['sayi'] / max(max_sayi, 1) * 100)
+        except Exception as e:
+            logger.error(f"Son 7 gün hesaplama hatası: {e}")
+            son_7_gun = []
+
+        # ── Widget B: Motivasyon + Günlük Hedef ──
+        streak = profil.ardasik_gun_sayisi or 0
+        GUNLUK_HEDEF_SORU = 10  # sabit hedef
+        gunluk_ilerleme = min(profil.gunluk_cozulen, GUNLUK_HEDEF_SORU)
+        gunluk_hedef_yuzde = round(gunluk_ilerleme / GUNLUK_HEDEF_SORU * 100)
+        gunluk_hedef_tamamlandi = gunluk_ilerleme >= GUNLUK_HEDEF_SORU
+
+        if streak == 0:
+            motivasyon_mesaji = "Bugün ilk soruyu çözerek seriye başla! 🌱"
+        elif streak == 1:
+            motivasyon_mesaji = "Harika başlangıç! Yarın devam et 🔥"
+        elif streak < 5:
+            motivasyon_mesaji = f"{streak} günlük seri! Momentum kazanıyorsun 💪"
+        elif streak < 10:
+            motivasyon_mesaji = f"{streak} günlük seri! Alışkanlık oluşuyor 🔥"
+        elif streak < 30:
+            motivasyon_mesaji = f"{streak} günlük seri! Harika bir istikrar 🏆"
+        else:
+            motivasyon_mesaji = f"{streak} gün üst üste! Efsanesin 👑"
+
         context = {
             'profil': profil,
             'karsilasma_ist': karsilasma_ist,
@@ -127,6 +176,16 @@ def quiz_anasayfa(request):
             'envanter': envanter,
             'gunun_sozu': gunun_sozu,
             'duyurular': duyurular,
+            # Widget A
+            'son_7_gun': son_7_gun,
+            'haftalik_basari': haftalik_basari,
+            # Widget B
+            'streak': streak,
+            'motivasyon_mesaji': motivasyon_mesaji,
+            'gunluk_ilerleme': gunluk_ilerleme,
+            'gunluk_hedef_yuzde': gunluk_hedef_yuzde,
+            'gunluk_hedef_tamamlandi': gunluk_hedef_tamamlandi,
+            'GUNLUK_HEDEF_SORU': GUNLUK_HEDEF_SORU,
         }
 
     except AttributeError as e:
