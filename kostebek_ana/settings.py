@@ -77,7 +77,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'kostebekyks',
         'USER': 'kostebekuser',
-        'PASSWORD': 'Kostebek2024',
+        'PASSWORD': os.getenv('DB_PASSWORD', 'Kostebek2024'),
         'HOST': 'localhost',
         'PORT': '5432',
         'CONN_MAX_AGE': 600,
